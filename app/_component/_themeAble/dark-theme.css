@@ -1,0 +1,18 @@
+* {
+    --strong-text-color: #F8F9FF;
+    --weak-text-color: #DDDEE3;
+    --weaker-text-color: #b7b7b9;
+    --strong-contrast-text-color: #27A1D4;
+    /* todo used for lower nav */
+    --weak-contrast-text-color: #1487B7;
+    --primary-background-color: #3C4552;
+    --primary-background-color-raw: 60, 69, 82;
+    --secondary-background-color: #3f4957;
+    --strong-background-color: #333b46;
+    --soft-shadow: 0 0 30px 0 rgba(0, 0, 0, .16);
+    /* TODO change */
+    --medium-shadow: 0 0 15px 0 rgba(0, 0, 0, .2);
+    --medium-shadow-highlight: 0 0 15px 0 rgba(0, 0, 0, .2);
+
+    --weak-darken: rgba(0, 0, 0, 0.15);
+}

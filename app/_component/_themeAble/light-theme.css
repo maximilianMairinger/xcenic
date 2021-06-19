@@ -1,0 +1,16 @@
+* {
+  --strong-text-color: #222934;
+  --weak-text-color: #3F454F;
+  --weaker-text-color: #76797e;
+  --strong-contrast-text-color: #1FA7E0;
+  --strong-contrast-text-color-raw: 31, 167, 224;
+  --weak-contrast-text-color: #1487B7;
+  --primary-background-color: #F9FAFE;
+  --primary-background-color-raw: 249, 250, 254;
+  --secondary-background-color: #fefefe;
+  --strong-background-color: #ffffff;
+  --soft-shadow: 0 0 30px 0 rgba(0, 0, 0, .1);
+  --medium-shadow: 0 0 15px 0 rgba(0, 0, 0, .15);
+  --medium-shadow-highlight: 0 0 15px 0 rgba(0, 0, 0, .15);
+  --weak-darken: rgba(0, 0, 0, 0.065);
+}

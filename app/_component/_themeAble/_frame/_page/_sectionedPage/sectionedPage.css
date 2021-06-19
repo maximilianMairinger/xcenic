@@ -1,0 +1,11 @@
+component-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+component-body > * {
+  display: block;
+  width: 100%;
+  position: relative;
+  float: left;
+}

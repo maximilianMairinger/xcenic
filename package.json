@@ -79,8 +79,11 @@
   },
   "dependencies": {
     "ajaon": "^1.5.11",
+    "animated-scroll-to": "^2.2.0",
     "extended-dom": "^3.6.10",
-    "josm": "^1.2.17"
+    "fast-decode-uri-component": "^1.0.1",
+    "josm": "^1.2.17",
+    "slugify": "^1.5.3"
   },
   "version": "1.0.0"
 }
