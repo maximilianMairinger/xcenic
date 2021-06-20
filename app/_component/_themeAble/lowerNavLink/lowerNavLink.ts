@@ -8,7 +8,7 @@ import lang from "./../../../lib/lang"
 import { Data } from "josm"
 
 const navigationIconIndex = {
-  xcenic: () => import("./../_icon/xcenic/xcenic"),
+  xcenic: () => import("../_icon/smallLogo/smallLogo"),
   
 }
 

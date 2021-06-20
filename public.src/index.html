@@ -8,12 +8,16 @@
     <meta content=no name=msapplication-tap-highlight>
     <!-- <link rel='manifest' href='/webmanifest.json'> -->
     <!-- <link href="/res/img/xcenic_logo_180x180.png" rel=icon type=image/png> -->
+    <link rel="prefetch" importance="low" href="/res/font/avertacy-regular.woff2" as="font" type="font/woff2" crossorigin/>
+    <link rel="preload" importance="highest" href="/dist/xcenic.js" as="script"/>
     <script src="/dist/xcenic.js"></script>
+    
 
   <style>
     html {
       height: 100%;
-      width: 100%
+      width: 100%;
+      font-family: 'Averta CY', Arial, sans-serif;
     }
 
     body {
@@ -44,6 +48,27 @@
     ::selection {
       background: rgba(0, 0, 0, 0.15);
     }
+
+    /* Dunno why but this regular font has a bold version included. Looks a little little different than the actual bold version (maybe its just an upscaled version of the regular one but this works for me rn) */
+    @font-face {
+      font-family: 'Averta CY';
+      src: local("Averta CY")
+           url('/res/font/avertacy-regular.woff2') format('woff2'),
+           url('/res/font/avertacy-regular.woff') format('woff');
+      font-style: normal;
+      font-display: swap;
+    
+    }
+    
+    /* @font-face {
+      font-family: 'Averta Cy';
+      src: url('/res/font/avertacy-bold.woff2') format('woff2'),
+          url('/res/font/avertacy-bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    
+    } */
   </style>
 </head>
 <body>

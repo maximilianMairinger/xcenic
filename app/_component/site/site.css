@@ -7,8 +7,6 @@ component-body {
 }
 
 :host {
-  font-family: 'PT Sans', sans-serif;
-  letter-spacing: 1.3px;
   position: absolute;
   left: 0;
   top: 0;

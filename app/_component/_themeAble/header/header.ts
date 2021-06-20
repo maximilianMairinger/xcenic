@@ -1,6 +1,6 @@
 import ThemeAble, { Theme } from "../themeAble"
 import declareComponent from "../../../lib/declareComponent"
-import "../_icon/xcenic/xcenic"
+import "../_icon/smallLogo/smallLogo"
 import "../../_themeAble/_button/button"
 import Link from "../link/link"
 import { ElementList } from "extended-dom"
@@ -41,7 +41,7 @@ export default class Header extends ThemeAble {
   private leftContent = this.q("left-content")
   private underlineElem = new SlidyUnderline
   private background = this.q("blurry-background")
-  private logoLogoIcon = this.q("c-xcenic-icon") as Icon
+  private logoIcon = this.q("c-small-logo") as Icon
 
   private pathDisplayLinkIndex = keyIndex((i: number) => {
     const ls = new ElementList<ArrowIcon | Link>(new ArrowIcon, new Link("", "", undefined, true, true, false))
@@ -91,6 +91,11 @@ export default class Header extends ThemeAble {
     });
     
 
+    delay(0).then(() => {
+      this.logoIcon.anim({opacity: 1}, 400);
+    });
+    
+
 
 
     
@@ -120,7 +125,7 @@ export default class Header extends ThemeAble {
   theme(): Theme
   theme(to: Theme): this
   theme(to?: Theme): any {
-    this.logoLogoIcon.theme(to)
+    this.logoIcon.theme(to)
 
     if (!this.dontChangeDisplayTheme) this.updateThemeOfPathDisplay(to)
     if (!this.dontChangeLinksTheme) {

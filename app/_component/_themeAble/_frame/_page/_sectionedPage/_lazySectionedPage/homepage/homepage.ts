@@ -17,6 +17,16 @@ export default class HomePage extends LazySectionedPage {
         key: new Import("test1", 1, (testSection: typeof TestSection) =>
           new testSection()
         ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      },
+      {
+        key: new Import("test2", 1, (testSection: typeof TestSection) =>
+          new testSection()
+        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      },
+      {
+        key: new Import("test3", 1, (testSection: typeof TestSection) =>
+          new testSection()
+        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
       }
     ), sectionChangeCallback)
 

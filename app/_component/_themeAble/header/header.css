@@ -55,7 +55,11 @@ blurry-background.blurry {
   }
 }
 
-c-tgm-logo {
+c-small-logo {
+  opacity: 0;
+}
+
+c-small-logo {
   transition: .25s;
 }
 
@@ -87,7 +91,7 @@ additional-path-display > * {
 
 
 
-left-content > c-tgm-logo {
+left-content > c-small-logo {
   height: 28px;
   width: 55px;
   position: relative;

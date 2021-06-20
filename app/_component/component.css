@@ -31,10 +31,9 @@ component-body {
   width: 100%;
   height: 100%;
   display: block;
-  font-family: inherit;
+  font-family: 'Averta CY', Arial, sans-serif;
   position: absolute;
   color: rgb(59, 59, 59);
   transition: .3s color;
   letter-spacing: .5px;
-  font-family: 'PT Sans', sans-serif;
 }

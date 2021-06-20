@@ -5,7 +5,7 @@ import getBaseUrl from "get-base-url";
 import lang from "./../lib/lang"
 
 
-const commonTitle = "TGM";
+const commonTitle = "Xcenic";
 const commonTitleSeperator = " - "
 const commonSubtileSeperator = " > "
 const maxCharactersInTitle = 20
