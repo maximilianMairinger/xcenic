@@ -1,0 +1,7 @@
+component-body {
+  background: var(--strong-text-color);
+  height: 2px;
+  width: 100%;
+  border-radius: 2px;
+  transition: background-color .25s;
+}

@@ -1,0 +1,57 @@
+:host {
+  display: block;
+  --padding: 10%;
+}
+
+icon-container {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  top: var(--padding);
+  height: calc(67% - calc(var(--padding) * 2))
+}
+
+icon-container > * {
+  margin: auto;
+  height: 100%;
+  min-height: 20px;
+  box-sizing: border-box;
+  
+}
+
+:host(.highlight) text-container {
+  color: var(--weak-contrast-text-color)
+}
+
+text-container {
+  transition: .4s color;
+  color: var(--weak-text-color)
+}
+
+text-container {
+  display: block;
+  position: absolute;
+  bottom: var(--padding);
+  left: 0;
+  right: 0;
+
+  text-align: center;
+  width: 100%;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: bold;
+
+  font-size: 14px;
+}
+
+c-button {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}

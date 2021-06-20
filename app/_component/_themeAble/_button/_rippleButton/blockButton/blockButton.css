@@ -1,0 +1,52 @@
+:host {
+  border-radius: 2px;
+  height: 30px;
+  transition: border .4s, color .4s;
+}
+
+button-container {
+  display: flex;
+  height: 100%
+}
+button-text {
+  display: block;
+  font-size: 1em;
+  margin: auto 0;
+  padding: 0 20px;
+}
+
+:host {
+  border: 1px solid rgba(0,0,0,.24);
+}
+
+:host(:not(.enabled)) {
+  border: 1px solid rgba(0,0,0,.14);
+  color: rgb(191, 191, 191)
+}
+
+:host(:not(.enabled)) loading-spinner {
+  border-color: rgb(191, 191, 191);
+  border-top-color: transparent;
+}
+
+:host(:focus) {
+  border: 1px solid rgba(0,0,0,.6);
+}
+
+loading-spinner {
+  position: absolute;
+  height: 8px;
+  width: 8px;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%) translateX(-50%);
+  border-radius: 50%;
+
+  border: 1.5px solid rgb(82, 82, 82);
+  border-top-color: transparent;
+  box-sizing: border-box;
+  opacity: 1;
+  transition: .4s border-color;
+
+  opacity: 0;
+}
