@@ -228,8 +228,7 @@ export default abstract class SectionedPage extends Page {
 
   private lastSectionName: string
   private activateSectionName(name: string) {
-    if (this.activate) {
-      if (name === "") name = this.childsDefaultDomain
+    if (this.active) {
       if (this.sectionChangeCallback && this.lastSectionName !== name) this.sectionChangeCallback(name)
       this.lastSectionName = name as string
     }
@@ -332,7 +331,6 @@ export default abstract class SectionedPage extends Page {
 
 
 
-  private childsDefaultDomain: string
   private firstDomain: string
   private mainIntersectionObserver: IntersectionObserver
   private currentlyActiveSectionRootName: string

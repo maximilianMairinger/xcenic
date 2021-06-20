@@ -41,7 +41,7 @@ export default class Header extends ThemeAble {
   private leftContent = this.q("left-content")
   private underlineElem = new SlidyUnderline
   private background = this.q("blurry-background")
-  private logoLogoIcon = this.q("c-tgm-logo") as Icon
+  private logoLogoIcon = this.q("c-xcenic-icon") as Icon
 
   private pathDisplayLinkIndex = keyIndex((i: number) => {
     const ls = new ElementList<ArrowIcon | Link>(new ArrowIcon, new Link("", "", undefined, true, true, false))
@@ -155,7 +155,6 @@ export default class Header extends ThemeAble {
 
       
       let margin = this.pathDisplayHeaderMargin.get() + (this.isLinkContainerCurrentlyHidden ? 25 : 0)
-      console.log("margin", margin)
       if (linksLeft < logo.right + margin) {
         if (!this.isLinkContainerCurrentlyHidden) {
           this.isLinkContainerCurrentlyHidden = true
@@ -221,7 +220,6 @@ export default class Header extends ThemeAble {
     let fadeOutElems = new ElementList
     let fadeInElems = new ElementList
 
-    // debugger
     //@ts-ignore
     this.pathDisplayLinkIndex(this.lastDomainLevel).last.push = true
     this.lastDomainLevel = domainLevel
@@ -403,6 +401,7 @@ export default class Header extends ThemeAble {
 
   private updateLinkAnimationToken: Symbol
   private callMeMaybe: string
+  
   public async updateSelectedLink(newSelected: string) {
 
 
@@ -413,8 +412,9 @@ export default class Header extends ThemeAble {
       return
     }
     let index = this.currentLinkContents.indexOf(newSelected)
-    if (index === -1) return
+    if (index === -1) index = 0
     let elem = this.currentLinkElems[index]
+    if (this.lastSelectedElem === elem) return
     
     if (this.inFadeInAnim || this.linksUpdated) {
       let updateLinkToken = this.updateLinkAnimationToken = Symbol()  

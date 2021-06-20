@@ -8,23 +8,13 @@ export default class HomePage extends LazySectionedPage {
 
   constructor(sectionChangeCallback?: (section: string) => void) {
     super(new ImportanceMap<() => Promise<any>, any>(
-      // {
-      //   key: new Import("", 1, (landingSection: typeof LandingSection) =>
-      //     new landingSection()
-      //   ), val: () => import(/* webpackChunkName: "LandingSection" */"../../../../_pageSection/landingSection/landingSection")
-      // },
+      {
+        key: new Import("", 1, (landingSection: typeof LandingSection) =>
+          new landingSection()
+        ), val: () => import(/* webpackChunkName: "LandingSection" */"../../../../_pageSection/landingSection/landingSection")
+      },
       {
         key: new Import("test1", 1, (testSection: typeof TestSection) =>
-          new testSection()
-        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
-      },
-      {
-        key: new Import("test2", 1, (testSection: typeof TestSection) =>
-          new testSection()
-        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
-      },
-      {
-        key: new Import("test3", 1, (testSection: typeof TestSection) =>
           new testSection()
         ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
       }
