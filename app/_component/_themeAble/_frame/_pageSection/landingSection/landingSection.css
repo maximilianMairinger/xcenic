@@ -1,3 +1,9 @@
 :host {
   height: 95%;
 }
+
+c-block-button {
+  --background: var(--primary-theme);
+  --text: var(--plain-background);
+  --border: unset;
+}

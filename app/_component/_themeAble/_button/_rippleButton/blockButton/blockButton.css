@@ -1,7 +1,6 @@
 :host {
   --background: var(--plain-background);
   --border: var(--primary-text);
-  width: 200px;
 }
 
 a {
@@ -13,13 +12,14 @@ a {
   border-radius: 5px;
   height: 30px;
   transition: border .4s, color .4s;
-  display: block;
+  display: inline-block;
 }
 
 button-container {
   display: flex;
   height: 100%;
   transition: background-color .25s;
+  width: fit-content;
 }
 button-text {
   display: block;
