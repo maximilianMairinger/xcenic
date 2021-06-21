@@ -4,12 +4,11 @@ import declareComponent from "../../../../../lib/declareComponent";
 
 
 
-export default declareComponent("block-button", class BlockButton extends RippleButton {
+export default class BlockButton extends RippleButton {
   private textElem = ce("button-text")
   private spinner = ce("loading-spinner")
   private textContainer = ce("button-container")
-  private _primary: boolean
-  constructor(content: string = "", activationCallback?: ((e?: MouseEvent | KeyboardEvent) => void | Promise<void>), primary: boolean = false) {
+  constructor(content: string = "", activationCallback?: ((e?: MouseEvent | KeyboardEvent) => void | Promise<void>)) {
     super();
 
     if (activationCallback) this.addActivationCallback(activationCallback)
@@ -21,19 +20,10 @@ export default declareComponent("block-button", class BlockButton extends Ripple
         this.textElem
       )
     )
-    this.primary(primary)
+
   }
 
-  public primary(): boolean
-  public primary(primary: boolean): this
-  public primary(primary?: boolean): any {
-    if (primary !== undefined) {
-      if (primary) this.componentBody.addClass("primary")
-      else this.componentBody.removeClass("primary")
-      return this
-    }
-    else return this._primary
-  }
+
 
   private activationCallbackIndex = new Map<Function, Function>()
   public addActivationCallback<CB extends (e?: MouseEvent | KeyboardEvent) => (void | Promise<void>)>(activationCallback: CB, animationDoneCb?: Function): CB {
@@ -98,5 +88,6 @@ export default declareComponent("block-button", class BlockButton extends Ripple
   pug() {
     return super.pug() + require("./blockButton.pug").default
   }
-})
+}
 
+declareComponent("block-button", BlockButton)

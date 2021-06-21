@@ -6,7 +6,6 @@
   height: 32px
 }
 
-
 svg {
   width: inherit;
   height: inherit;
@@ -17,10 +16,6 @@ svg {
 }
 
 
-:host(.strong) svg > g, :host(.strong) svg > path {
-  fill: var(--strong-text-color)
-}
-
-:host(.weak) svg > g, :host(.weak) svg > path {
-  fill: var(--weak-text-color) !important
+svg > g, svg > path {
+  fill: rgb(var(--primary-text))
 }

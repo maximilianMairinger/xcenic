@@ -21,7 +21,7 @@ background-color {
 
 
 background-blur {
-  background-color: rgba(var(--primary-background-color-raw), .9);
+  background-color: rgba(var(--plain-background), .9);
 }
 
 
@@ -34,7 +34,7 @@ active-slidy {
   width: 100%;
   height: 100%;
   transform: translateX(0);
-  background-color: var(--weak-darken);
+  background-color: rgba(var(--text-color),.15);
   display: none;
   opacity: 0;
 }

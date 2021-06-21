@@ -64,16 +64,7 @@ export default abstract class ThemeAble<T extends false | HTMLElement | HTMLAnch
 export type Theme = keyof typeof themeIndex
 
 const themeIndex = {
-  light: require("./light-theme.css"),
-  dark: require("./dark-theme.css"),
+  light: require("./light-theme.css")  
 }
 
 
-export function negateTheme(theme: Theme): Theme {
-  return (
-    theme === "dark" ?  "light" : 
-    theme === "light" ? "dark" :
-    "light"
-  )
-    
-}

@@ -16,13 +16,14 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
 
   private preferedTabIndex: number
   private _hotKey: string
-  constructor(protected readonly enabled: boolean = false, focusOnHover: boolean = false, public tabIndex: number = 0, public obtainDefault: boolean = false, public preventFocus = false, blurOnMouseOut: boolean = false, hotkey?: string) {
+  constructor(protected readonly enabled: boolean = false, focusOnHover: boolean = false, tabIndex: number = 0, public obtainDefault: boolean = false, public preventFocus = false, blurOnMouseOut: boolean = false, hotkey?: string) {
     super(ce("a") as any)
 
     if (enabled) this.enableForce(true)
     else this.enableForce(true)
 
-    this.preferedTabIndex = this.tabIndex
+    this.preferedTabIndex = tabIndex
+    this.componentBody.tabIndex = tabIndex
 
     let alreadyPressed = false;
 
@@ -70,7 +71,7 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
   private enableForce(prevFocus: boolean) {
     //@ts-ignore
     this.enabled = true
-    this.tabIndex = this.preferedTabIndex
+    this.componentBody.tabIndex = this.preferedTabIndex
     this.addClass("enabled");
     if (!prevFocus) this.focus()
   }
@@ -81,7 +82,7 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
   private disableForce(prevBlur: boolean) {
     //@ts-ignore
     this.enabled = false
-    this.tabIndex = undefined
+    this.componentBody.tabIndex = undefined
     this.removeClass("enabled");
     if (!prevBlur) this.blur()
   }

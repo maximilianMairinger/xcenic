@@ -1,5 +1,10 @@
 :host {
-  color: var(--strong-text-color);
+  --text: var(--primary-text)
+}
+
+
+:host {
+  color: rgb(var(--text));
   user-select: none;
   display: inline-block;
 }
@@ -9,7 +14,7 @@
 }
 
 :host(.pressed) a {
-  color: var(--weaker-text-color);
+  color: rgba(var(--text), .7);
 }
 
 :host a {
@@ -23,7 +28,7 @@ slot {
 }
 
 a {
-  color: var(--strong-text-color);
+  color: rgb(var(--text));
   font-weight: inherit;
   cursor: inherit;
   position: relative;
@@ -54,7 +59,7 @@ slidy-underline {
   display: block;
   position: absolute;
   bottom: 0;
-  background: var(--strong-text-color);
+  background: rgb(var(--text));
   border-radius: 2px;
   height: 2px;
 }

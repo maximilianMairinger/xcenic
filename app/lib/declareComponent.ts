@@ -1,5 +1,7 @@
 import Component from "../_component/component";
 
+const byMe = Symbol()
+
 /**
  * Declare new Component and append it to the customElementRegitry
  * @param name Name of the component, how it should be refelected in the dom (when not starting with "c-", "c-" will be prefixed) 
@@ -7,9 +9,11 @@ import Component from "../_component/component";
  */
 export function declareComponent<Comp>(name: string, component: Comp){
   //@ts-ignore
-  if (!component.observedAttributes) {
+  const observedAttributes = component.observedAttributes
+  if (!observedAttributes || observedAttributes[byMe]) {
     //Object.getOwnPropertyNames(Object.getPrototypeOf(Object.getPrototypeOf(component).prototype))
     let attrbs = []
+    attrbs[byMe] = true
     let cur = component
     //@ts-ignore
     while (cur.prototype instanceof Component) {

@@ -23,12 +23,12 @@ icon-container > * {
 }
 
 :host(.highlight) text-container {
-  color: var(--weak-contrast-text-color)
+  color: rgb(var(--primary-theme))
 }
 
 text-container {
   transition: .4s color;
-  color: var(--weak-text-color)
+  color: rgb(var(--primary-text))
 }
 
 text-container {

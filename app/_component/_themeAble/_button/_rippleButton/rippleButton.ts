@@ -5,10 +5,12 @@ export default abstract class RippleButton extends Button {
   private wave: HTMLElement;
     constructor(activationCallback?: (e?: MouseEvent | KeyboardEvent) => void, enabled?: boolean, focusOnHover?: boolean, tabIndex?: number) {
       super(enabled, focusOnHover, tabIndex);
-      super.addActivationCallback((e) => {
+      this.draggable = false
+
+      this.on("mousedown", (e) => {
         this.initRipple(e);
       })
-      super.addActivationCallback(activationCallback);
+      if (activationCallback) super.addActivationCallback(activationCallback);
 
       this.wave = ce("button-wave");
 

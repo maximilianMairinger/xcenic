@@ -35,7 +35,7 @@ blurry-background {
   opacity: 0;
 
   /* Only when browser does not support blur */
-  background-color: rgba(var(--primary-background-color-raw), .9);
+  background-color: rgba(var(--plain-background), .9);
 
   
 }
@@ -197,7 +197,7 @@ additional-path-display > * {
 
 
 split-line {
-  background: var(--weaker-text-color);
+  background: rgba(var(--primary-text), .3);
   width: 1px;
   height: 25px;
   margin: 0 15px;

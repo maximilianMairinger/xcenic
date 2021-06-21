@@ -1,5 +1,8 @@
 import declareComponent from "../../../../../lib/declareComponent"
 import PageSection from "../pageSection"
+import "./../../../_icon/lineAccent/lineAccent"
+import "./../../../_button/_rippleButton/blockButton/blockButton"
+import "./../../../link/link"
 
 export default class LandingSection extends PageSection {
 
