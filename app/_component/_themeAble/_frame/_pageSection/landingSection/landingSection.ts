@@ -3,6 +3,7 @@ import PageSection from "../pageSection"
 import "./../../../_icon/lineAccent/lineAccent"
 import "./../../../_button/_rippleButton/blockButton/blockButton"
 import "./../../../link/link"
+import "./../../../_icon/bigVideo/bigVideo"
 
 export default class LandingSection extends PageSection {
 

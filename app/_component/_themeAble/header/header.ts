@@ -165,7 +165,7 @@ export default class Header extends ThemeAble {
           this.isLinkContainerCurrentlyHidden = true
           let func: "css" | "anim" = this.initialResize ? "css" : "anim"
           this.linkContainerElem[func as any]({opacity: 0})
-          this.leftContent[func as any]({marginLeft: "8vw"})
+          this.leftContent[func as any]({marginLeft: "calc(10% + -12px)"})
           if (this.linksShownChangeCallback) this.linksShownChangeCallback(false, this.initialResize, func)
           this.initialResize = false
           this.componentBody.addClass("mobile")
@@ -176,7 +176,7 @@ export default class Header extends ThemeAble {
           this.isLinkContainerCurrentlyHidden = false
           let func: "css" | "anim" = this.initialResize ? "css" : "anim"
           this.linkContainerElem[func as any]({opacity: 1})
-          this.leftContent[func as any]({marginLeft: 100})
+          this.leftContent[func as any]({marginLeft: "6%"})
           if (this.linksShownChangeCallback) this.linksShownChangeCallback(true, this.initialResize, func)
           this.initialResize = false
           this.componentBody.removeClass("mobile")
