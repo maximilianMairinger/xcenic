@@ -33,6 +33,9 @@ jobs:
     - name: "Testing"
       run: npm test --if-present
 
+    - name: "Compressing images"
+      run: npm run compressImages
+
     - name: "Copying files to remote"
       uses: appleboy/scp-action@v0.1.1
       with:
