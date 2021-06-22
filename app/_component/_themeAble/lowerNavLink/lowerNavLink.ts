@@ -3,7 +3,7 @@ import declareComponent from "../../../lib/declareComponent"
 import { ElementList } from "extended-dom"
 import "./../../_themeAble/_button/button"
 import Button from "./../../_themeAble/_button/button"
-import HighlightAbleIcon from "../_icon/_highlightAbleIcon/highlightAbleIcon"
+import Icon from "../_icon/icon"
 import lang from "./../../../lib/lang"
 import { Data } from "josm"
 
@@ -80,7 +80,7 @@ export default class LowerNavLink extends ThemeAble {
 
 
   private currentIconName: string
-  private activeIconElem: HighlightAbleIcon
+  private activeIconElem: Icon
 
   public icon(): string
   public icon(icon: string): Promise<void>
@@ -107,12 +107,12 @@ export default class LowerNavLink extends ThemeAble {
 
   public highlight() {
     this.addClass(hightlightClassString)
-    if (this.activeIconElem) this.activeIconElem.highlight()
+    // if (this.activeIconElem) this.activeIconElem.highlight()
   }
 
   public downlight() {
     this.removeClass(hightlightClassString)
-    if (this.activeIconElem) this.activeIconElem.downlight()
+    // if (this.activeIconElem) this.activeIconElem.downlight()
   }
 
   public passiveTheme() {

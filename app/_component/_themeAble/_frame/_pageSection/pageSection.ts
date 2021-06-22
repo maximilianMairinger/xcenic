@@ -4,7 +4,7 @@ import { Theme } from "../../themeAble";
 
 
 export default abstract class PageSection extends Frame {
-  constructor(theme: Theme) {
+  constructor(theme?: Theme) {
     super(theme)
     
   }

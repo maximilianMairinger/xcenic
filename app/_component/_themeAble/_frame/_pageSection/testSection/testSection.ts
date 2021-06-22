@@ -5,7 +5,7 @@ import { Theme } from "../../../themeAble";
 
 export default declareComponent("test-section", class extends PageSection {
   constructor() {
-    super("dark")
+    super()
     
   }
 
