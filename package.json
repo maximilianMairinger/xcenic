@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "compressImages": "image-web app/res/img public/res/img/dist --resolutions 3K --algorithms jpg,webp,avif",
     "setEnvRepl": "npm run setEnv -- --preset repl",
     "setEnvProd": "npm run setEnv -- --preset prod",
     "setEnv": "node setEnv.js",
@@ -79,8 +80,12 @@
   },
   "dependencies": {
     "ajaon": "^1.5.11",
+    "animated-scroll-to": "^2.2.0",
     "extended-dom": "^3.6.10",
-    "josm": "^1.2.17"
+    "fast-decode-uri-component": "^1.0.1",
+    "image-web": "^1.2.2",
+    "josm": "^1.2.17",
+    "slugify": "^1.5.3"
   },
   "version": "1.0.0"
 }

@@ -1,0 +1,72 @@
+:host {
+  --background: var(--plain-background);
+  --border: var(--primary-text);
+  --border-radius: 15px;
+}
+
+a {
+  user-drag: none;
+  -webkit-user-drag: none;
+}
+
+:host {
+  border-radius: var(--border-radius);
+  transition: border .4s, color .4s;
+  display: inline-block;
+}
+
+button-container {
+  display: flex;
+  height: 100%;
+  transition: background-color .25s;
+  width: fit-content;
+}
+button-text {
+  display: block;
+  font-size: 1em;
+  margin: auto 0;
+  padding: 10px 50px;
+  text-align: center;
+}
+
+:host {
+  border: 1px solid rgba(var(--border), .25);
+  background: rgb(var(--background));
+  transition: .2s;
+}
+
+:host(:not(.enabled)) {
+  border: 1px solid rgba(var(--border), .15);
+  color: rgb(var(--text))
+}
+
+:host(:not(.enabled)) loading-spinner {
+  border-color: rgba(var(--text), .3);
+  border-top-color: transparent;
+}
+
+:host(:focus-within) {
+  border: 1px solid rgba(var(--border), .35);
+}
+
+:host(:focus-within) button-container {
+  background: rgba(var(--text), .075)
+}
+
+loading-spinner {
+  position: absolute;
+  height: 8px;
+  width: 8px;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%) translateX(-50%);
+  border-radius: 50%;
+
+  border: 1.5px solid rgba(var(--text), 1);
+  border-top-color: transparent;
+  box-sizing: border-box;
+  opacity: 1;
+  transition: .4s border-color;
+
+  opacity: 0;
+}

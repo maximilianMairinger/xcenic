@@ -1,14 +1,10 @@
 import { DataBase } from "josm"
-import ger from "./../res/lang/ger.json"
+import ger from "../res/lang/ger"
+import en from "../res/lang/en"
 
-interface Lang {
-  "xcenic": {
-    "longName": "Xcenic"
-  }
-}
+type Lang = typeof en
 
 
-
-export const lang = new DataBase<Lang>(ger as Lang)
+export const lang = new DataBase<Lang>(en as Lang)
 export default lang
 

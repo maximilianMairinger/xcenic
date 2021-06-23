@@ -1,0 +1,13 @@
+:host {
+  height: 80%;
+  background: linear-gradient(rgb(255, 255, 255), rgb(247, 255, 228));
+}
+
+h2 {
+  font-weight: normal;
+  display: block;
+  margin: 0;
+  position: relative;
+  float: left;
+  width: 100%;
+}
