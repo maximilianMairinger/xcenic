@@ -46,7 +46,7 @@ jobs:
 
 
   compressImages: 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps: 
     - name: "checkout"
@@ -60,10 +60,6 @@ jobs:
 
     - name: Installing runner dependencies
       run: npm i
-
-    - name: Sleep for 30 seconds
-      run: sleep 30s
-      shell: bash
 
 
     - name: "Compressing images"
