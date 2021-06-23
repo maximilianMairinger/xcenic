@@ -75,7 +75,7 @@ jobs:
         key: ${{ secrets.KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         source: "public/res/img/dist"
-        target: /var/www/html/xcenic/dev/public/res/img/dist
+        target: /var/www/html/xcenic/master/public/res/img/dist
         tar_tmp_path: true
 
   dependencies: 
