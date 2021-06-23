@@ -51,6 +51,7 @@ jobs:
     steps: 
     - name: "checkout"
       uses: actions/checkout@master
+      lfs: true
 
 
     - name: Setting up node
