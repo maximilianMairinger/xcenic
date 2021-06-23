@@ -1,13 +1,23 @@
 :host {
-  height: 95%;
+  height: 90%;
   width: 100%;
   min-height: 650px;
 }
 
+c-landing-circle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: auto;
+  height: 350px;
+  transition: .3s;
+}
+
+
 component-body {
   display: flex;
   flex-flow: row;
-  width:100%;
+  width: 100%;
   height: 100%;
   flex-direction: row-reverse;
 }
@@ -33,11 +43,13 @@ left-side {
   left: 0;
   top: 0;
   width: 35%;
+  max-width: 638px;
   
   padding: 0 calc(10% + -12px);
   padding-right: 0;
   box-sizing: border-box;
   height: 95%;
+  transition: .3s;
 }
 
 right-side {
@@ -57,6 +69,9 @@ right-side {
   right-side {
     transform: scale(1.1) translateX(-50px) translateY(70px)
   }
+  c-landing-circle {
+    transform: translateX(100px);
+  }
 }
 
 
@@ -64,11 +79,17 @@ right-side {
   right-side {
     transform: scale(1.1) translateX(-50px) translateY(60px)
   }
+  c-landing-circle {
+    height: 365px;
+  }
 }
 
 @media (max-width: 1300px) {
   right-side {
     transform: scale(1.05) translateX(-40px) translateY(50px)
+  }
+  c-landing-circle {
+    height: 375px;
   }
 }
 
@@ -83,11 +104,14 @@ c-big-video {
 @media (max-width: 1190px) {
   component-body {
     flex-wrap: wrap;
+    justify-content: center;
   }
   left-side {
     width: 100%;
     padding: 0 calc(10% + -12px);
     height: 40%;
+    max-width: 600px;
+    padding-left: 0;
   }
   right-side {
     width: 100%;
@@ -114,6 +138,9 @@ c-big-video {
   right-side {
     transform: scale(1.5) translateX(-70px) translateY(0);
   }
+  left-side {
+    padding-left: calc(10% + -12px);
+  }
 }
 
 @media (max-width: 700px) {
@@ -136,6 +163,7 @@ text-blob {
   display: inline-block;
   max-width: 100%;
   width: 100%;
+  z-index: 1;
 }
 
 h1 {
