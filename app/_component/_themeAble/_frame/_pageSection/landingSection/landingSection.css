@@ -1,6 +1,7 @@
 :host {
   height: 95%;
   width: 100%;
+  min-height: 650px;
 }
 
 component-body {
@@ -8,7 +9,6 @@ component-body {
   flex-flow: row;
   width:100%;
   height: 100%;
-  flex-wrap: wrap;
   flex-direction: row-reverse;
 }
 
@@ -32,7 +32,8 @@ left-side {
   position: relative;
   left: 0;
   top: 0;
-  width: calc(26% + 80px);
+  width: 35%;
+  
   padding: 0 calc(10% + -12px);
   padding-right: 0;
   box-sizing: border-box;
@@ -42,41 +43,47 @@ left-side {
 right-side {
   display: flex;
   align-items: center;
-  height: 100%;
   position: relative;
   flex-grow: 1;
   box-sizing: border-box;
   height: 95%;
   padding-top: 70px;
-  min-height: 900px;
-  transform: scale(1.2) translateX(-80px) translateY(100px);
+  transform: scale(1) translateX(-100px) translateY(100px);
   transition: .3s;
+  max-width: 65%;
 }
 
-@media (max-width: 1450px) {
+@media (max-width: 1600px) {
   right-side {
-    transform: scale(1.1) translateX(-100px) translateY(67px)
+    transform: scale(1.1) translateX(-50px) translateY(70px)
   }
 }
 
-@media (max-width: 1400px) {
-  right-side {
-    transform: scale(1.05) translateX(-100px) translateY(33px)
-  }
-}
 
 @media (max-width: 1350px) {
   right-side {
-    transform: scale(1) translateX(-100px) translateY(0px)
+    transform: scale(1.1) translateX(-50px) translateY(60px)
+  }
+}
+
+@media (max-width: 1300px) {
+  right-side {
+    transform: scale(1.05) translateX(-40px) translateY(50px)
   }
 }
 
 c-big-video {
   width: 100%;
   height: auto;
+  /* max-height: 100%; */
 }
 
-@media (max-width: 1250px) {
+
+
+@media (max-width: 1190px) {
+  component-body {
+    flex-wrap: wrap;
+  }
   left-side {
     width: 100%;
     padding: 0 calc(10% + -12px);
@@ -88,13 +95,15 @@ c-big-video {
     flex-grow: initial;
     padding: 0 calc(10% + -12px);
     transform: scale(1) translateX(0px) translateY(0);
-    min-height: unset;
     padding-top: 120px;
     padding-bottom: 40px;
-    margin-bottom: 20px
+    margin-bottom: 20px;
+    flex-grow: initial;
+    max-width: initial;
   }
   :host {
     height: initial;
+    min-height: fit-content;
   }
   text-blob {
     margin-bottom: 80px;
