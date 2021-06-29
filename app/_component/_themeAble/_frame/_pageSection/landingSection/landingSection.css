@@ -4,10 +4,19 @@
   min-height: 650px;
 }
 
-c-landing-circle {
+
+landing-circle-wrapper {
   position: absolute;
   bottom: 0;
   right: 0;
+  display: flex;
+  align-items: flex-start;
+  height: 35%;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+c-landing-circle {
   width: auto;
   height: 350px;
   transition: .3s;
@@ -68,9 +77,6 @@ right-side {
 @media (max-width: 1600px) {
   right-side {
     transform: scale(1.1) translateX(-50px) translateY(70px)
-  }
-  c-landing-circle {
-    transform: translateX(100px);
   }
 }
 
