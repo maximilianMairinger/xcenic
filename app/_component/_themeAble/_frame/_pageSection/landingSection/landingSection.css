@@ -18,7 +18,7 @@ landing-circle-wrapper {
 
 c-landing-circle {
   width: auto;
-  height: 350px;
+  height: 100%;
   transition: .3s;
 }
 
@@ -86,17 +86,11 @@ right-side {
   right-side {
     transform: scale(1.1) translateX(-50px) translateY(60px)
   }
-  c-landing-circle {
-    height: 365px;
-  }
 }
 
 @media (max-width: 1300px) {
   right-side {
     transform: scale(1.05) translateX(-40px) translateY(50px)
-  }
-  c-landing-circle {
-    height: 375px;
   }
 }
 
