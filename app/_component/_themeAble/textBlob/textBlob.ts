@@ -8,7 +8,7 @@ export default class TextBlob extends ThemeAble {
   constructor() {
     super(false)
   }
-  header(to: string) {
+  heading(to: string) {
     this.headerElem.txt(to)
   }
   note(to: string) {

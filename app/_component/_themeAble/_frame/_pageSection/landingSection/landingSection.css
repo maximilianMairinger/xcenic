@@ -22,6 +22,10 @@ c-landing-circle {
   transition: .3s;
 }
 
+c-text-blob {
+  --font-size: 20px;
+}
+
 
 component-body {
   display: flex;
@@ -36,6 +40,7 @@ c-line-accent {
   display: block;
   width: 41px;
   margin-left: -35px;
+  margin-top: -20px;
   transition: .25s margin-left;
 }
 
