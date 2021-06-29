@@ -65,7 +65,6 @@ left-side {
   box-sizing: border-box;
   height: 95%;
   transition: .3s;
-  z-index: 1;
 }
 
 right-side {
@@ -120,6 +119,7 @@ c-big-video {
     max-width: 600px;
     padding-left: 0;
     transform: translateY(-150px);
+    z-index: 1;
   }
   right-side {
     width: 100%;
