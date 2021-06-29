@@ -15,3 +15,8 @@ skew-background {
   margin-left: -10px;
   margin-top: -10px;
 }
+
+c-text-blob {
+  max-width: 670px;
+}
+

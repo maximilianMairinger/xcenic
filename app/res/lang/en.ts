@@ -18,6 +18,11 @@ export default {
       text: "We strive to elevate your brand. Our tailormade work ensures your business successfully markets itself digitally and positions itself as a future-proof actor in your industry.",
       callToAction: "Lets talk",
       viewWork: "View our work"
+    },
+    philosophy: {
+      note: "Why us?",
+      heading: "A holistic approach to digital brand building.",
+      text: "In need of a new website? Unique video advert? Or looking for that whole makeover of your online presence? We provide you with a tailor-made offer, irrespective of the scope of your project."
     }
   }
 }
