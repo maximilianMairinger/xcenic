@@ -9,6 +9,7 @@ import Button from "./../../../_button/button"
 import "./../../../link/link"
 import "./../../../_icon/bigVideo/bigVideo"
 import "./../../../_icon/landingCircle/landingCircle"
+import "./../../../textBlob/textBlob"
 
 export default class LandingSection extends PageSection {
 
