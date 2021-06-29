@@ -1,3 +1,5 @@
+import delay from "delay";
+import declareComponent from "../../../../lib/declareComponent";
 import Button from "../button";
 
 export default abstract class RippleButton extends Button {
@@ -23,11 +25,11 @@ export default abstract class RippleButton extends Button {
 
       let fadeAnim = async () => {
         try {
-          await r.anim({opacity: 0}, {duration: 400});  
+          await r.anim({opacity: 0}, 500);  
         } catch (error) {
           
         }
-        
+        await delay(500)
         r.remove();
       }
 
@@ -70,3 +72,5 @@ export default abstract class RippleButton extends Button {
       return super.pug() + require("./rippleButton.pug").default
     }
 }
+
+declareComponent("ripple-button", RippleButton)
