@@ -23,7 +23,8 @@ c-landing-circle {
 }
 
 c-text-blob {
-  --font-size: 20px;
+  --font-size: 20px; 
+  --body-size: 100%;
 }
 
 
@@ -59,7 +60,7 @@ left-side {
   width: 35%;
   max-width: 638px;
   
-  padding: 0 calc(10% - 12px);
+  padding: 0 calc(11.5% - 12px);
   padding-right: 0;
   box-sizing: border-box;
   height: 95%;
@@ -185,16 +186,6 @@ text-blob {
   max-width: 100%;
   width: 100%;
   z-index: 1;
-}
-
-h1 {
-  font-size: 50px;
-  margin-bottom: 8px
-}
-
-p {
-  margin-top: 0;
-  font-size: 20px;
 }
 
 c-block-button {
