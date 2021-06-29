@@ -65,6 +65,8 @@ left-side {
   box-sizing: border-box;
   height: 95%;
   transition: .3s;
+  z-index: 1;
+  pointer-events: none;
 }
 
 right-side {
@@ -114,18 +116,17 @@ c-big-video {
   }
   left-side {
     width: 100%;
-    padding: 0 calc(10% - 12px);
+    padding: 0 calc(11.5% - 12px);
     height: 40%;
     max-width: 600px;
     padding-left: 0;
     transform: translateY(-150px);
-    z-index: 1;
   }
   right-side {
     width: 100%;
     height: fit-content;
     flex-grow: initial;
-    padding: 0 calc(10% - 12px);
+    padding: 0 calc(11.5% - 12px);
     transform: scale(1) translateX(0px) translateY(0);
     padding-top: 120px;
     padding-bottom: 40px;
@@ -147,7 +148,7 @@ c-big-video {
     transform: scale(1.5) translateX(-70px) translateY(0);
   }
   left-side {
-    padding-left: calc(10% - 12px);
+    padding-left: calc(11.5% - 12px);
     transform: translateY(-130px);
   }
 }
@@ -186,6 +187,7 @@ text-blob {
   max-width: 100%;
   width: 100%;
   z-index: 1;
+  pointer-events: all;
 }
 
 c-block-button {
@@ -222,8 +224,8 @@ view-work-text {
 
 view-work {
   position: absolute;
-  bottom: 60px;
-  left: calc(10% - 12px);
+  bottom: 75px;
+  left: calc(11.5% - 72px);
   display: flex;
   align-items: center;
 }
@@ -232,7 +234,6 @@ view-work c-button {
   width: 100%;
   height: 100%;
   position: absolute;
-
   --drag: none;
 }
 
@@ -240,4 +241,14 @@ view-work c-ripple-button {
   width: 100%;
   height: 100%;
   position: absolute;
+}
+
+@media (max-width: 1190px) {
+  view-work {
+    position: absolute;
+    bottom: 75px;
+    left: calc(11.5% - 12px);
+    display: flex;
+    align-items: center;
+  }
 }
