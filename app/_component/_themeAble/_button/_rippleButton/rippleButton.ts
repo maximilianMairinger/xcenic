@@ -54,9 +54,10 @@ export default abstract class RippleButton extends Button {
         x = this.width() / 2 - r.width() / 2;
         y = this.height() / 2 - r.height() / 2;
 
-        //fadeOut
-        this.on("keyup", fadeisok, {once: true});
-        this.on("blur", fadeisok, {once: true});
+        if (e instanceof KeyboardEvent) {
+          this.on("keyup", fadeisok, {once: true});
+          this.on("blur", fadeisok, {once: true});
+        }
       }
       r.css({
          marginTop: y,
@@ -64,6 +65,7 @@ export default abstract class RippleButton extends Button {
       });
       let rdyToFade = false;
       r.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + (this.width() / 25 * 2.2) + ")"}], {duration: 350, easing: "linear"}).then(fadeisok);
+      return fadeisok
     }
     stl() {
       return super.stl() + require('./rippleButton.css').toString();

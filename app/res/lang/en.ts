@@ -16,7 +16,8 @@ export default {
     landing: {
       heading: "Our Mission",
       text: "We strive to elevate your brand. Our tailormade work ensures your business successfully markets itself digitally and positions itself as a future-proof actor in your industry.",
-      callToAction: "Lets talk"
+      callToAction: "Lets talk",
+      viewWork: "View our work"
     }
   }
 }

@@ -1,5 +1,6 @@
 :host {
-  --wave: rgba(var(--text), .07)
+  --wave: rgba(var(--text), .07);
+  --drag: none;
 }
 
 :host {

@@ -4,11 +4,6 @@
   --border-radius: 17px;
 }
 
-a {
-  user-drag: none;
-  -webkit-user-drag: none;
-}
-
 :host {
   border-radius: var(--border-radius);
   transition: border .4s, color .4s;

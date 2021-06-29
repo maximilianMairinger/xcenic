@@ -54,7 +54,7 @@ left-side {
   width: 35%;
   max-width: 638px;
   
-  padding: 0 calc(10% + -12px);
+  padding: 0 calc(10% - 12px);
   padding-right: 0;
   box-sizing: border-box;
   height: 95%;
@@ -114,7 +114,7 @@ c-big-video {
   }
   left-side {
     width: 100%;
-    padding: 0 calc(10% + -12px);
+    padding: 0 calc(10% - 12px);
     height: 40%;
     max-width: 600px;
     padding-left: 0;
@@ -123,7 +123,7 @@ c-big-video {
     width: 100%;
     height: fit-content;
     flex-grow: initial;
-    padding: 0 calc(10% + -12px);
+    padding: 0 calc(10% - 12px);
     transform: scale(1) translateX(0px) translateY(0);
     padding-top: 120px;
     padding-bottom: 40px;
@@ -145,7 +145,7 @@ c-big-video {
     transform: scale(1.5) translateX(-70px) translateY(0);
   }
   left-side {
-    padding-left: calc(10% + -12px);
+    padding-left: calc(10% - 12px);
   }
 }
 
@@ -186,4 +186,52 @@ c-block-button {
   --background: var(--primary-theme);
   --text: var(--plain-background);
   --border: unset;
+}
+
+arrow-circle {
+  background-color: white;
+  box-shadow: 0 0 30px 0 rgba(0,0,0,.06);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+}
+
+c-arrow-icon {
+  transform: rotate(90deg) translateX(2px);
+  height: 28px;
+  pointer-events: none;
+}
+
+view-work-text {
+  font-weight: bold;
+  font-size: 21px;
+  padding: 0 15px;
+  user-select: none;
+}
+
+view-work {
+  position: absolute;
+  bottom: 60px;
+  left: calc(10% - 12px);
+  display: flex;
+  align-items: center;
+}
+
+view-work c-button {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+
+  --drag: none;
+}
+
+view-work c-ripple-button {
+  width: 100%;
+  height: 100%;
+  position: absolute;
 }
