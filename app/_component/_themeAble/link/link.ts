@@ -22,6 +22,10 @@ export default class Link extends ThemeAble {
   private slidy = this.slidyWrapper.childs()
   private externalIcon = new ExternalLinkIcon()
 
+  public mouseOverAnimation?: () => void
+  public mouseOutAnimation?: () => void
+  public clickAnimation?: () => void
+
   constructor(content: string | Data<string>, link?: string, public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true, textChangeAnim = true) {
     super(false)
 
@@ -97,7 +101,7 @@ export default class Link extends ThemeAble {
       let wantToAnim = false
 
 
-      let mouseOver = () => {
+      let mouseOver = this.mouseOverAnimation = () => {
         if (inAnimation) {
           wantToAnim = true
           wannaCloose = false
@@ -147,7 +151,7 @@ export default class Link extends ThemeAble {
         this.slidy.anim({width: "100%"}, 300)
       }
 
-      let mouseOut = () => {
+      let mouseOut = this.mouseOutAnimation = () => {
         if (!click) {
           wantToAnim = false
         
@@ -202,7 +206,7 @@ export default class Link extends ThemeAble {
       })
 
 
-      onClickAnimationInit = () => {
+      this.clickAnimation = onClickAnimationInit = () => {
         
         if (!inAnimation) {
           inAnimation = true

@@ -18,13 +18,22 @@ export function declareComponent<Comp>(name: string, component: Comp){
     //@ts-ignore
     while (cur.prototype instanceof Component) {
       //@ts-ignore
-      attrbs.add(...Object.getOwnPropertyNames(cur.prototype))
+      let localAttrbs = Object.getOwnPropertyNames(cur.prototype)
+      for (let i = 0; i < localAttrbs.length; i++) {
+        if (!isLowerCase(localAttrbs[i])) {
+          let lower = localAttrbs[i].toLowerCase()
+          //@ts-ignore
+          cur.prototype[lower] = cur.prototype[localAttrbs[i]]
+          localAttrbs[i] = lower
+        }
+      }
+      attrbs.add(...localAttrbs)
       cur = Object.getPrototypeOf(cur)
+      
     }
 
 
     //@ts-ignore
-    
     component.observedAttributes = attrbs.rmV("constructor", "stl", "pug")
   }
 
@@ -34,5 +43,9 @@ export function declareComponent<Comp>(name: string, component: Comp){
 
   return component as Comp
 }
+
+function isLowerCase(myString) { 
+  return (myString == myString.toLowerCase()); 
+} 
 
 export default declareComponent

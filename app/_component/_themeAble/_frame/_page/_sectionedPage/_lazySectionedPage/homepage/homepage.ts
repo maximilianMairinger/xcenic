@@ -20,7 +20,7 @@ export default class HomePage extends LazySectionedPage {
         ), val: () => import(/* webpackChunkName: "philosophySection" */"../../../../_pageSection/philosophySection/philosophySection")
       },
       {
-        key: new Import("test1", 1, (testSection: typeof TestSection) =>
+        key: new Import("services", 1, (testSection: typeof TestSection) =>
           new testSection()
         ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
       },

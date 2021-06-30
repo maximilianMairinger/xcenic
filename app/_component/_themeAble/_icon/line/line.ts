@@ -4,15 +4,15 @@ import declareComponent from "../../../../lib/declareComponent";
 
 
 
-export default class Lines extends Icon {
+export default class Line extends Icon {
   constructor() {
     super()
 
   }
 
   pug() {
-    return require("./lines.pug").default
+    return require("./line.pug").default
   }
 }
 
-declareComponent("lines", Lines)
+declareComponent("line", Line)

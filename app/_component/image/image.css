@@ -2,6 +2,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+  display: inline-block;
 }
 
 picture {
@@ -14,5 +15,11 @@ img {
   object-fit: cover;
   width: inherit;
   height: inherit;
+  user-select: none;
+  user-drag: none; 
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 

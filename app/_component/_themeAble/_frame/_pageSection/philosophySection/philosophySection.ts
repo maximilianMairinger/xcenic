@@ -1,9 +1,8 @@
 import declareComponent from "../../../../../lib/declareComponent"
 import PageSection from "../pageSection"
-import "../../../_icon/lineAccent/lineAccent"
-import "../../../_button/_rippleButton/blockButton/blockButton"
-import "../../../link/link"
-import "../../../_icon/bigVideo/bigVideo"
+import "./../../../textBlob/textBlob"
+import "./../../../_icon/line/line"
+import "./../../../_icon/accentTag/accentTag"
 
 export default class PhilosophySection extends PageSection {
 

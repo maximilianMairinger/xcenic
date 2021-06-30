@@ -18,12 +18,12 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
   private _hotKey: string
   constructor(protected readonly enabled: boolean = false, focusOnHover: boolean = false, tabIndex: number = 0, public obtainDefault: boolean = false, public preventFocus = false, blurOnMouseOut: boolean = false, hotkey?: string) {
     super(ce("a") as any)
+    
 
     if (enabled) this.enableForce(true)
     else this.enableForce(true)
 
     this.preferedTabIndex = tabIndex
-    this.componentBody.tabIndex = tabIndex
 
     let alreadyPressed = false;
 
@@ -39,16 +39,18 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
     this.componentBody.on("mouseout", () => {
       this.removeClass(pressedClass);
     })
+    console.log("comp", this.componentBody)
     this.componentBody.on("keydown", (e) => {
       if (e.key === " ") if (!alreadyPressed) {
         alreadyPressed = true;
         this.click(e)
       }
     });
-    this.componentBody.on("keyup", ({key}) => {
-      if (key === " " || key === "Enter"){
+    this.componentBody.on("keyup", (e) => {
+      if (e.key === " " || e.key === "Enter"){
         alreadyPressed = false;
         this.removeClass(pressedClass);
+        e.preventDefault()
       }
     });
     this.componentBody.on("blur", () => {
@@ -67,6 +69,8 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
     this.focusOnHover(focusOnHover);
     this.blurOnMouseOut(blurOnMouseOut);
     this.hotkey(hotkey)
+
+    this.disable(true)
   }
   private enableForce(prevFocus: boolean) {
     //@ts-ignore
@@ -82,7 +86,7 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
   private disableForce(prevBlur: boolean) {
     //@ts-ignore
     this.enabled = false
-    this.componentBody.tabIndex = undefined
+    this.componentBody.tabIndex = -1
     this.removeClass("enabled");
     if (!prevBlur) this.blur()
   }
@@ -96,7 +100,6 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
   public link(): string
   public link(to: string, domainLevel?: number, push?: boolean, notify?: boolean): this
   public link(to?: string, domainLevel: number = 0, push = true, notify?: boolean) {
-
     if (to !== undefined) {
       if (to !== null) {
         this.obtainDefault = true

@@ -1,3 +1,5 @@
+import delay from "delay";
+import declareComponent from "../../../../lib/declareComponent";
 import Button from "../button";
 
 export default abstract class RippleButton extends Button {
@@ -23,11 +25,11 @@ export default abstract class RippleButton extends Button {
 
       let fadeAnim = async () => {
         try {
-          await r.anim({opacity: 0}, {duration: 400});  
+          await r.anim({opacity: 0}, 500);  
         } catch (error) {
           
         }
-        
+        await delay(500)
         r.remove();
       }
 
@@ -52,9 +54,10 @@ export default abstract class RippleButton extends Button {
         x = this.width() / 2 - r.width() / 2;
         y = this.height() / 2 - r.height() / 2;
 
-        //fadeOut
-        this.on("keyup", fadeisok, {once: true});
-        this.on("blur", fadeisok, {once: true});
+        if (e instanceof KeyboardEvent) {
+          this.on("keyup", fadeisok, {once: true});
+          this.on("blur", fadeisok, {once: true});
+        }
       }
       r.css({
          marginTop: y,
@@ -62,6 +65,7 @@ export default abstract class RippleButton extends Button {
       });
       let rdyToFade = false;
       r.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + (this.width() / 25 * 2.2) + ")"}], {duration: 350, easing: "linear"}).then(fadeisok);
+      return fadeisok
     }
     stl() {
       return super.stl() + require('./rippleButton.css').toString();
@@ -70,3 +74,5 @@ export default abstract class RippleButton extends Button {
       return super.pug() + require("./rippleButton.pug").default
     }
 }
+
+declareComponent("ripple-button", RippleButton)
