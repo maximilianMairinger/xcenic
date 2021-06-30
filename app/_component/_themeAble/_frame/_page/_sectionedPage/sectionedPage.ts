@@ -309,7 +309,7 @@ export default abstract class SectionedPage extends Page {
     if (active) {
       
       await scrollTo(elem, {
-        cancelOnUserAction: true,
+        cancelOnUserAction: false,
         verticalOffset: this.verticalOffset,
         speed: scrollAnimationSpeed,
         elementToScroll: this.componentBody,

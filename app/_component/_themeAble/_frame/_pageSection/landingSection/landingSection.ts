@@ -21,9 +21,9 @@ export default class LandingSection extends PageSection {
   constructor() {
     super("light")
 
-    this.link.tabIndex = undefined
-    new EventListener(this.coverButton, ["mouseover", "focus"], this.link.mouseOverAnimation)
-    new EventListener(this.coverButton, ["mouseleave", "blur"], this.link.mouseOutAnimation)
+    new EventListener(this.coverButton, ["mouseover", "focusin"], this.link.mouseOverAnimation)
+    new EventListener(this.coverButton, ["mouseleave", "focusout"], this.link.mouseOutAnimation)
+    this.coverButton.addActivationCallback(this.link.mouseOutAnimation)
     // this.coverButton.addActivationCallback(this.link.clickAnimation)
 
     this.coverButton.on("mousedown", () => {
