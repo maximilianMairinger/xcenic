@@ -98,7 +98,19 @@ phone-screens {
 phone-screens > * {
   margin: 20px;
   width: 220px;
-  height: auto;
+  height: 445px;
+  overflow: visible;
+}
+
+phone-screens > *:not(.placeholder)::after {
+  content: "";
+  width: 220px;
+  height: 445px;
+  border-radius: 28px;
+  position: absolute;
+  z-index: -1;
+  transform: translateX(-100%) scaleX(0.98);
+  box-shadow: 20px 20px 20px 0 rgba(var(--plain-text), .24);
 }
 
 phone-screens > *:nth-child(3n+2) {
