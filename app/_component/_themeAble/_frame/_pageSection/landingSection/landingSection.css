@@ -215,8 +215,7 @@ c-arrow-icon {
   pointer-events: none;
 }
 
-view-work-text {
-  font-weight: bold;
+view-work c-link {
   font-size: 21px;
   padding: 0 15px;
   user-select: none;
