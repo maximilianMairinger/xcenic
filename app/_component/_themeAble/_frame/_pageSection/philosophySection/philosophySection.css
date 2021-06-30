@@ -39,7 +39,7 @@ background-lines {
 }
 
 c-text-blob {
-  --body-size: calc(20vw - 20px)
+  --body-size: calc(19vw - 15px)
 }
 
 left-side {
