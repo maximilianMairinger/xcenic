@@ -1,6 +1,7 @@
 import declareComponent from "../../../../../lib/declareComponent"
 import PageSection from "../pageSection"
 import "./../../../textBlob/textBlob"
+import "./../../../_icon/line/line"
 
 export default class PhilosophySection extends PageSection {
 

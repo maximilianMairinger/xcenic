@@ -14,9 +14,80 @@ skew-background {
   display: flex;
   margin-left: -10px;
   margin-top: -10px;
+  padding: 10px;
+  box-sizing: border-box;
+  position: absolute;
+}
+
+c-line {
+  height: unset;
+  width: unset;
+}
+
+background-lines {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  position: absolute;
+  padding: 0 calc(11.5% - 27px);
+  box-sizing: border-box;
 }
 
 c-text-blob {
-  max-width: 670px;
+  --body-size: calc(20vw - 20px)
 }
 
+left-side {
+  padding-left: calc(11.5% - 12px);
+  display: inline-block;
+  padding-top: 200px;
+  width: 41%;
+  box-sizing: border-box;
+  position: relative;
+}
+
+right-side {
+  padding-right: calc(6.5% - 12px);
+  box-sizing: border-box;
+  width: 59%;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  top: 0
+}
+
+show-case {
+  position: absolute;
+  width: 550px;
+  height: 550px;
+  overflow: hidden;
+  background-color: rgb(var(--plain-background));
+  border-radius: 6%;
+  box-shadow: 0 0 20px 0 rgba(var(--plain-text), .14);
+}
+show-case-background-tint {
+  background: rgba(var(--primary-theme), .12);
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+}
+
+focus-screens {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  /* transform: rotate(30deg) */
+}
+
+focus-screens > * {
+  box-shadow: 0 0 20px 0 rgba(var(--plain-text), .1);
+}
+focus-screens > *.phone {
+  width: 220px;
+  height: auto;
+}
