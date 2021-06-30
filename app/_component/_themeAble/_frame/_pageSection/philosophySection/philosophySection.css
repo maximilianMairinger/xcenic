@@ -66,26 +66,42 @@ right-side {
 
 show-case {
   position: absolute;
-  width: 550px;
-  height: 550px;
-  overflow: hidden;
-  background-color: rgb(var(--plain-background));
-  border-radius: 6%;
-  box-shadow: 0 0 20px 0 rgba(var(--plain-text), .14);
+  width: calc(15vw + 350px);
+  height: calc(15vw + 350px);
+}
+
+phone-screens-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 6%;
 }
+
 show-case-background-tint {
   background: rgba(var(--primary-theme), .12);
   width: 100%;
   height: 100%;
   display: block;
   position: absolute;
+  border-radius: 6%;
+}
+
+show-case-background {
+  background: rgb(var(--plain-background));
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  border-radius: 6%;
+  box-shadow: 0 0 20px 0 rgba(var(--plain-text), .14);
 }
 
 phone-screens {
-  width: 150%;
+  width: 800px;
   height: auto;
   display: block;
   display: flex;
@@ -115,4 +131,12 @@ phone-screens > *:not(.placeholder)::after {
 
 phone-screens > *:nth-child(3n+2) {
   transform: translateY(-50%);
+}
+
+c-accent-tag {
+  position: absolute;
+  width: 250px;
+  height: auto;
+  bottom: 15px;
+  left: -240px;
 }

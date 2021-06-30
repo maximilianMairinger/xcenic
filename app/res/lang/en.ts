@@ -22,7 +22,9 @@ export default {
     philosophy: {
       note: "Why us?",
       heading: "A holistic approach to digital brand building.",
-      text: "In need of a new website? Unique video advert? Or looking for that whole makeover of your online presence? We provide you with a tailor-made offer, irrespective of the scope of your project."
+      text: "In need of a new website? Unique video advert? Or looking for that whole makeover of your online presence? We provide you with a tailor-made offer, irrespective of the scope of your project.",
+      tag: "Taskforce",
+      tagDesc: "Social media brand"
     }
   }
 }
