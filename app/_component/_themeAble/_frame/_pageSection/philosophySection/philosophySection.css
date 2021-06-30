@@ -19,9 +19,14 @@ skew-background {
   position: absolute;
 }
 
+component-body {
+  overflow: hidden;
+}
+
 c-line {
   height: unset;
   width: unset;
+  margin-top: -10px;
 }
 
 background-lines {
@@ -67,6 +72,9 @@ show-case {
   background-color: rgb(var(--plain-background));
   border-radius: 6%;
   box-shadow: 0 0 20px 0 rgba(var(--plain-text), .14);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 show-case-background-tint {
   background: rgba(var(--primary-theme), .12);
@@ -76,18 +84,23 @@ show-case-background-tint {
   position: absolute;
 }
 
-focus-screens {
-  width: 100%;
-  height: 100%;
+phone-screens {
+  width: 150%;
+  height: auto;
   display: block;
+  display: flex;
+  flex-wrap: wrap;
   position: absolute;
-  /* transform: rotate(30deg) */
+  /* 1/3/2 = 0.16666666666. 15.5% works better tho. Dunno where the lil offset comes from */
+  transform: rotate(25deg) translateY(15.5%)
 }
 
-focus-screens > * {
-  box-shadow: 0 0 20px 0 rgba(var(--plain-text), .1);
-}
-focus-screens > *.phone {
+phone-screens > * {
+  margin: 20px;
   width: 220px;
   height: auto;
+}
+
+phone-screens > *:nth-child(3n+2) {
+  transform: translateY(-50%);
 }
