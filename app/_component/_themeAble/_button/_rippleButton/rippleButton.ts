@@ -9,9 +9,19 @@ export default abstract class RippleButton extends Button {
       super(enabled, focusOnHover, tabIndex);
       this.draggable = false
 
+
       this.on("mousedown", (e) => {
-        this.initRipple(e);
+        if (!touched) this.initRipple(e);
       })
+      let touched = false
+      this.on("touchend", () => {
+        console.log("touch")
+        touched = true
+        delay(100).then(() => {
+          touched = false
+        })
+      })
+
       this.on("touchstart", (e) => {
         this.initRipple(e);
       })
@@ -22,7 +32,7 @@ export default abstract class RippleButton extends Button {
       this.ripples = ce("button-waves");
       this.apd(this.ripples);
     }
-    public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center") {
+    public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): Function {
       let r = this.wave.cloneNode() as Element;
       this.ripples.append(r);
 
@@ -48,13 +58,14 @@ export default abstract class RippleButton extends Button {
       if (e instanceof MouseEvent || e instanceof TouchEvent) {
         if (e instanceof TouchEvent) {
           //@ts-ignore
-          e.pageX = e.touches[0].pageX
+          e.pageX = e.touches[e.touches.length-1].pageX
           //@ts-ignore
-          e.pageY = e.touches[0].pageY
+          e.pageY = e.touches[e.touches.length-1].pageY
 
 
-          this.on("touchcancel", fadeisok, {once: true});
-          this.on("touchend", fadeisok, {once: true});
+          document.body.on("touchcancel", fadeisok, {once: true});
+          document.body.on("touchend", fadeisok, {once: true});
+          this.on("blur", fadeisok, {once: true});
         }
         else {
           this.on("mouseup", fadeisok, {once: true});
