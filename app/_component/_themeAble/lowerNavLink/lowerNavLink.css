@@ -19,7 +19,7 @@ icon-container > * {
   height: 100%;
   min-height: 20px;
   box-sizing: border-box;
-  
+  width: 40px;
 }
 
 :host(.highlight) text-container {
