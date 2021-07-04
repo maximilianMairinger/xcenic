@@ -1,35 +1,28 @@
 import ThemeAble, { Theme } from "../themeAble"
 import declareComponent from "../../../lib/declareComponent"
-import { ElementList } from "extended-dom"
 import "./../../_themeAble/_button/button"
+import "./../../_themeAble/_button/_rippleButton/rippleButton"
 import Button from "./../../_themeAble/_button/button"
-import Icon from "../_icon/icon"
+import HighlightAbleIcon from "../_icon/_highlightAbleIcon/highlightAbleIcon"
 import lang from "./../../../lib/lang"
 import { Data } from "josm"
 
-const navigationIconIndex = {
-  xcenic: () => import("../_icon/smallLogo/smallLogo"),
-  
-}
 
 const hightlightClassString = "highlight"
 
 
 export default class LowerNavLink extends ThemeAble {
-  private buttonElem = this.q("c-button") as Button
+  private buttonElem = this.q("c-ripple-button") as Button
   private textElem = this.q("text-container")
   private iconContainer = this.q("icon-container")
 
   /**
-   * @param link href; this will be used as pointer for the icon Index & language
+   * @param link href; this will be used to infer the content from the current lang
+   * @param icon Set icon explicitly
    * @param domainLevel domainLevel the link referes to
    * @param content override language interpolation from link
-   * @param icon override icon interpolation from link
    */
-  //@ts-ignore
-  constructor(link: keyof typeof navigationIconIndex, domainLevel?: number, content?: keyof typeof navigationIconIndex | Data<keyof typeof navigationIconIndex>, icon?: keyof typeof navigationIconIndex)
-  constructor(link: string, domainLevel?: number, content?: string | Data<string>, icon?: keyof typeof navigationIconIndex)
-  constructor(link: string, domainLevel?: number, content?: string | Data<string>, icon?: keyof typeof navigationIconIndex) {
+  constructor(link: string, icon: HighlightAbleIcon, domainLevel?: number, content?: string | Data<string>) {
     super()
 
     this.buttonElem.preventFocus = true
@@ -48,19 +41,13 @@ export default class LowerNavLink extends ThemeAble {
   }
 
 
-  public link(): string
-  public link(link: keyof typeof navigationIconIndex, domainLevel?: number): void
-  public link(link: string, domainLevel?: number): void
-  public link(link?: string, domainLevel?: number): any {
+  public link(link: string, domainLevel?: number): any {
     if (!this.content()) {
       let language = lang.links[link]
       if (language !== undefined) this.content(language)
       else this.content(link)
     }
 
-    if (!this.icon()) {
-      this.icon(link)
-    }
 
     this.href(link, domainLevel)
   }
@@ -79,50 +66,21 @@ export default class LowerNavLink extends ThemeAble {
   }
 
 
-  private currentIconName: string
-  private activeIconElem: Icon
+  private activeIconElem: HighlightAbleIcon
 
-  public icon(): string
-  public icon(icon: string): Promise<void>
-  public icon(icon?: string): any {
-    if (icon !== undefined) {
-      let ic = navigationIconIndex[icon]
-      if (ic === undefined) {
-        this.textElem.anim({top: "20%"})
-        console.warn("Unable to find icon for: \"" + icon + "\".")
-      }
-      else {
-        this.currentIconName = icon;
-
-        (async () => {
-          this.activeIconElem = new ((await navigationIconIndex[icon]()).default)
-          if (!this.currentlyActiveTheme) this.activeIconElem.passiveTheme()
-          this.iconContainer.html(this.activeIconElem)
-        })()
-      }
-
-    }
-    else return this.currentIconName
+  public icon(icon: HighlightAbleIcon): any {
+    this.activeIconElem = icon
+    this.iconContainer.html(this.activeIconElem)
   }
 
   public highlight() {
     this.addClass(hightlightClassString)
-    // if (this.activeIconElem) this.activeIconElem.highlight()
+    if (this.activeIconElem) this.activeIconElem.highlight()
   }
 
   public downlight() {
     this.removeClass(hightlightClassString)
-    // if (this.activeIconElem) this.activeIconElem.downlight()
-  }
-
-  public passiveTheme() {
-    if (this.activeIconElem) this.activeIconElem.passiveTheme()
-    return super.passiveTheme()
-  }
-
-  public activeTheme() {
-    if (this.activeIconElem) this.activeIconElem.activeTheme()
-    return super.activeTheme()
+    if (this.activeIconElem) this.activeIconElem.downlight()
   }
 
 

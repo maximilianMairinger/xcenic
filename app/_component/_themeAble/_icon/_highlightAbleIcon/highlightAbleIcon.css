@@ -1,0 +1,12 @@
+:host {
+  --highlight: var(--primary-theme)
+}
+
+:host > svg path {
+  transition: .4s fill;
+}
+
+:host(.highlight) svg > g, :host(.highlight) svg > path {
+  fill: rgb(var(--highlight)) !important
+}
+

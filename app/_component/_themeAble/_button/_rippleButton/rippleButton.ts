@@ -9,7 +9,20 @@ export default abstract class RippleButton extends Button {
       super(enabled, focusOnHover, tabIndex);
       this.draggable = false
 
+
       this.on("mousedown", (e) => {
+        if (!touched) this.initRipple(e);
+      })
+      let touched = false
+      this.on("touchend", () => {
+        console.log("touch")
+        touched = true
+        delay(100).then(() => {
+          touched = false
+        })
+      })
+
+      this.on("touchstart", (e) => {
         this.initRipple(e);
       })
       if (activationCallback) super.addActivationCallback(activationCallback);
@@ -19,7 +32,7 @@ export default abstract class RippleButton extends Button {
       this.ripples = ce("button-waves");
       this.apd(this.ripples);
     }
-    public initRipple(e?: MouseEvent | KeyboardEvent | "center") {
+    public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
       let r = this.wave.cloneNode() as Element;
       this.ripples.append(r);
 
@@ -42,13 +55,27 @@ export default abstract class RippleButton extends Button {
       let y: number;
 
 
-      if (e instanceof MouseEvent) {
-        let offset = this.absoluteOffset();
-        x = e.pageX - offset.left - r.width() / 2;
-        y = e.pageY - offset.top - r.height() / 2;
+      if (e instanceof MouseEvent || e instanceof TouchEvent) {
+        if (e instanceof TouchEvent) {
+          //@ts-ignore
+          e.pageX = e.touches[e.touches.length-1].pageX
+          //@ts-ignore
+          e.pageY = e.touches[e.touches.length-1].pageY
 
-        this.on("mouseup", fadeisok, {once: true});
-        this.on("mouseout", fadeisok, {once: true});
+
+          document.body.on("touchcancel", fadeisok, {once: true});
+          document.body.on("touchend", fadeisok, {once: true});
+          this.on("blur", fadeisok, {once: true});
+        }
+        else {
+          this.on("mouseup", fadeisok, {once: true});
+          this.on("mouseout", fadeisok, {once: true});
+        }
+        let offset = this.absoluteOffset();
+        x = (e as MouseEvent).pageX - offset.left - r.width() / 2;
+        y = (e as MouseEvent).pageY - offset.top - r.height() / 2;
+
+        
       }
       else {
         x = this.width() / 2 - r.width() / 2;

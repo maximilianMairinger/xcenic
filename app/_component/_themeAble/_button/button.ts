@@ -2,7 +2,6 @@ import ThemeAble from "../themeAble";
 import { EventListener } from "extended-dom";
 import declareComponent from "../../../lib/declareComponent";
 import * as domain from "./../../../lib/domain"
-import { openInNewTab } from "../link/link";
 
 
 const pressedClass = "pressed";
@@ -109,8 +108,7 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
         this.linkFn = this.addActivationCallback((e) => {
           if (e) e.preventDefault()
 
-          if (link.isOnOrigin) domain.set(to, domainLevel, push, notify)
-          else openInNewTab(to)
+          domain.set(to, domainLevel, push, notify)
         })
         let updateF = () => {
           let link = domain.linkMeta(to, domainLevel)

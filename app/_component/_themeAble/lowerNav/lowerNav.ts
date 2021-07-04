@@ -2,16 +2,14 @@ import ThemeAble, { Theme } from "../themeAble"
 import declareComponent from "../../../lib/declareComponent"
 import { ElementList } from "extended-dom"
 import LowerNavLink from "./../lowerNavLink/lowerNavLink"
-import delay from "delay"
+import HighlightAbleIcon from "../_icon/_highlightAbleIcon/highlightAbleIcon"
 
-let q = 1
 
 export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
   private currentLinkWrapperElems: ElementList
   private currentLinkElems: ElementList<LowerNavLink>
   private backgroundContainer = this.q("background-container")
-  private linkContainer = this.q("link-container")
-  private layers = this.backgroundContainer.childs(1, true).add(this.linkContainer) as any
+  private layers = this.backgroundContainer.childs(1, true).add(this.componentBody) as any
   private slidy: Element
 
   constructor(public linkPressedCb?: Function) { 
@@ -22,9 +20,8 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
 
   private enableToken: Symbol
   public async enable(init: boolean, func: "css" | "anim" = init ? "css" : "anim") {
-    this.enableToken = Symbol()
-    this.componentBody.show()
-    this.linkContainer.css({display: "flex"})
+    this.enableToken = Symbol();
+    (this.componentBody as HTMLElement).css({display: "flex"})
     await this.layers[func]({opacity: 1})
   }
   public async disable(init: boolean, func: "css" | "anim" = init ? "css" : "anim") {
@@ -34,31 +31,26 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
   }
 
 
-  public linkContents: string[]
-  public async updatePage(linkContents: string[], domainLevel?: number) {
-    if (linkContents.empty) return this.hide()
+  public elems: {[link: string]: HighlightAbleIcon}[]
+  public async updatePage(elems: {[link: string]: HighlightAbleIcon}[], domainLevel?: number) {
+    if (elems.empty) return this.hide()
     this.show()
     
-    this.linkContents = linkContents
+    this.elems = elems
     this.currentLinkWrapperElems = new ElementList()
     this.currentLinkElems = new ElementList()
-    linkContents.ea((e, i) => {
-      let link = new LowerNavLink(e as any, domainLevel)
-      link.addActivationCallback(() => {
+    for (const link in elems) {
+      let linkElem = new LowerNavLink(link, elems[link] as any as HighlightAbleIcon, domainLevel)
+      linkElem.addActivationCallback(() => {
         if (this.linkPressedCb) this.linkPressedCb()
-        this.maximize()
       })
-      link.passiveTheme()
-      this.currentLinkElems.add(link)
-      this.currentLinkWrapperElems.add(ce("link-container").apd(link))
-    })
-
-    this.currentLinkWrapperElems.first.prepend(this.slidy = ce("active-slidy"))
-    if (!this.initialUpdate) {
-      this.slidy.css({display: "block", opacity: 1})
+      linkElem.passiveTheme()
+      this.currentLinkElems.add(linkElem)
+      this.currentLinkWrapperElems.add(ce("link-container").apd(linkElem))
     }
 
-    this.linkContainer.html(this.currentLinkWrapperElems)
+
+    this.componentBody.html(this.currentLinkWrapperElems)
 
     if (this.callMeMaybe) {
       this.updateSelectedLink(this.callMeMaybe)
@@ -70,43 +62,34 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
   private initialUpdate = true
   private callMeMaybe: string
   public async updateSelectedLink(activeLink: string) {
-    if (!this.linkContents) {
+    if (!this.elems) {
       this.callMeMaybe = activeLink
       return
     }
-    let index = this.linkContents.indexOf(activeLink)
-    if (index === -1) return
-    let x = 100 * index
+    let index = Object.keys(this.elems).indexOf(activeLink)
+    if (index === -1) index = 0
+
     if (this.lastHighlightElem) this.lastHighlightElem.downlight()
     this.lastHighlightElem = this.currentLinkElems[index]
+    if (this.lastHighlightElem === undefined) return
     this.lastHighlightElem.highlight()
 
-    if (this.initialUpdate) {
-      this.slidy.css({translateX: x + "%", display: "block"})
-      this.slidy.anim({opacity: 1})
-      this.initialUpdate = false
-    }
-    else this.slidy.anim({translateX: x + "%"}, 600)
+
+    // if (index === -1) return
+    // let x = 100 * index
+    
+
+    // if (this.initialUpdate) {
+    //   this.slidy.css({translateX: x + "%", display: "block"})
+    //   this.slidy.anim({opacity: 1})
+    //   this.initialUpdate = false
+    // }
+    // else this.slidy.anim({translateX: x + "%"}, 600)
     
 
     
   }
 
-  private minimized = false
-  public minimize() {
-    if (!this.minimized) {
-      this.minimized = true
-      this.layers.anim({translateY: 22})
-    }
-  }
-
-  
-  public maximize() {
-    if (this.minimized) {
-      this.minimized = false
-      this.layers.anim({translateY: .1})
-    }
-  }
 
   stl() {
     return require("./lowerNav.css").toString()

@@ -6,6 +6,7 @@ import LowerNav from "../_themeAble/lowerNav/lowerNav"
 import Header from "../_themeAble/header/header"
 import { dirString } from "../../lib/domain"
 import { ElementList } from "extended-dom"
+import HighlightAbleIcon from "../_themeAble/_icon/_highlightAbleIcon/highlightAbleIcon"
 
 
 const topLimit = 0
@@ -54,7 +55,7 @@ export default class Site extends Component {
     let lastScrollProg = 0
 
     let currentDomainLevel = 0
-    let currentSectons: string[]
+    let currentSectons: {[link: string]: HighlightAbleIcon}[]
     let currentSection: string
 
     let scrollTrendUpCounter = 0
@@ -64,10 +65,12 @@ export default class Site extends Component {
       currentDomainLevel = domainLevel
       currentSectons = sections
 
+      const sectionNames = Object.keys(sections)
+
 
       let lastData: any
       let removeIndices = []
-      sections.ea((s, i) => {
+      sectionNames.ea((s, i) => {
         let data = lang.links[s]
 
         while (data === undefined) {
@@ -75,24 +78,27 @@ export default class Site extends Component {
             data = lastData
             break
           }
-          sections[i] = s = s.slice(0, s.lastIndexOf(dirString))
+          s = s.slice(0, s.lastIndexOf(dirString))
           data = lang.links[s]
         }
   
         if (data === lastData) removeIndices.add(i)
         else lastData = data
       })
-      sections.rmI(...removeIndices)
+      for (const i of removeIndices) {
+        delete sections[sectionNames[i]]
+      }
+      sectionNames.rmI(...removeIndices)
 
 
       if (currentlyShowingLowerNav) lowerNav.updatePage(sections, domainLevel)
-      header.updatePage(sections, domainLevel)
+      header.updatePage(sectionNames, domainLevel)
     }, (section) => {
       currentSection = section
       if (currentlyShowingLowerNav) lowerNav.updateSelectedLink(section)
       header.updateSelectedLink(section)
     }, (scrollBarWidth) => {
-      navs.css({width: `calc(100% - ${scrollBarWidth}px)`})
+      header.css({width: `calc(100% - ${scrollBarWidth}px)`})
     }, (prog, userInited) => {
       if (lastScrollProg > topLimit) {
         if (prog <= topLimit) {
@@ -101,27 +107,6 @@ export default class Site extends Component {
       }
       else if (prog > topLimit) {
         header.notTop()
-      }
-
-
-      if (userInited) {
-        if (currentlyShowingLowerNav) {
-          if (prog > lastScrollProg) {
-          
-            scrollTrendUpCounter = 0
-            scrollTrendDownCounter++
-            if (scrollTrendDownCounter >= scrollTrendActivationCount) {
-              lowerNav.minimize()
-            }
-          }
-          else {
-            scrollTrendDownCounter = 0
-            scrollTrendUpCounter++
-            if (scrollTrendUpCounter >= scrollTrendActivationCount) {
-              lowerNav.maximize()
-            }
-          }
-        }
       }
 
       lastScrollProg = prog

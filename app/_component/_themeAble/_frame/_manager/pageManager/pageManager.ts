@@ -3,11 +3,12 @@ import {ImportanceMap, Import} from "../../../../../lib/lazyLoad"
 import NotFoundPage from "../../_page/notFound/notFound"
 import HomePage from "../../_page/_sectionedPage/_lazySectionedPage/homepage/homepage";
 import { declareComponent } from "../../../../../lib/declareComponent"
+import HighlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon";
 
 
 
 export default class PageManager extends Manager {
-  constructor(pageChangeCallback?: (page: string, sectiones: string[], domainLevel: number) => void, sectionChangeCallback?: (section: string) => void, onScrollBarWidthChange?: (scrollBarWidth: number) => void, onUserScroll?: (scrollProgress: number, userInited: boolean) => void, onScroll?: (scrollProgress: number) => void) {
+  constructor(pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, sectionChangeCallback?: (section: string) => void, onScrollBarWidthChange?: (scrollBarWidth: number) => void, onUserScroll?: (scrollProgress: number, userInited: boolean) => void, onScroll?: (scrollProgress: number) => void) {
 
     super(new ImportanceMap<() => Promise<any>, any>(
       
