@@ -307,14 +307,21 @@ export default abstract class SectionedPage extends Page {
 
     this.userInitedScrollEvent = false
     if (active) {
+
+      let ls = this.componentBody.on("keydown", (e) => {
+        e.stopImmediatePropagation()
+      })
       
       await scrollTo(elem, {
-        cancelOnUserAction: false,
+        cancelOnUserAction: true,
         verticalOffset: this.verticalOffset,
         speed: scrollAnimationSpeed,
         elementToScroll: this.componentBody,
         easing
       })
+
+      ls.deactivate()
+
     }
     else {
       this.componentBody.scrollTop = this.verticalOffset + elem.offsetTop
