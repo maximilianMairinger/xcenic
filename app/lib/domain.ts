@@ -13,6 +13,25 @@ const toMuchSubtitlesTruncate = "..."
 const argData = "internal";
 
 
+/**
+ * Open a link in a new tab
+ * The browser may deny this call if it is not originating from a user input
+ * @param externalizedHref Link to open. Must be prefixed with "http://" or "https://"
+ */
+export function openInNewTab(externalizedHref: string) {
+  window.open(externalizedHref, "_blank");
+}
+
+/**
+ * Open a link in current tab
+ * The browser may deny this call if it is not originating from a user input
+ * @param externalizedHref Link to open. Must be prefixed with "http://" or "https://"
+ */
+export function openInSameTab(externalizedHref: string) {
+  window.location.href = externalizedHref
+}
+
+
 const titleElement = document.querySelector("title")
 
 const httpString = "http://"
@@ -113,11 +132,40 @@ export function parseDomainToDomainIndex(domainIndex: string[], domain: string, 
 
 let currentDomainSet: Promise<void>
 let inDomainSet = false
-export async function set(subdomain: string, level: number = 0, push: boolean = true, notify = push) {
+/**
+ * Set the path or the current domain at runtime. Control the pathLevel, weather or not to push to the history stack or not and event propergation as seperate parameters.
+ * Or redirect to an entirely external page.
+ * 
+ * Warning this is non standard! A path **without** a preceding "/" will still be interpreted as beeing origin level. Relative subdomians must be explicitly set
+ * by prefixing the path with a "./" or "..". Additionally the second function argument level can be used to set a url index from which path should be interpreted from.
+ */
+export async function set(path: string, level: number = 0, push: boolean = true, notify = push) {
   if (level < 0) level = domainIndex.length - level
   initialGet = false
-  if (subdomain.startsWith("/")) subdomain = subdomain.splice(0, 1)
-  else if (subdomain.startsWith("./")) console.warn("Please use the domain level to set relative domains")
+  if (path.startsWith(dirString)) path = path.slice(1)
+  else if (path.startsWith("./") || path.startsWith("..")) {
+    let pathname = document.location.pathname
+    if (pathname.startsWith(dirString)) pathname = pathname.slice(1)
+    if (pathname.endsWith(dirString)) pathname = pathname.slice(0, -1)
+    let currentUrlLvl = pathname.split(dirString).length - 1
+    level = level + currentUrlLvl
+    if (path.startsWith("./")) path = path.slice(2)
+    while(path.startsWith("../")) {
+      level--
+      path = path.slice(3)
+    }
+  }
+  else {
+    let meta = linkMeta(path, level)
+    if (!meta.isOnOrigin) {
+      if (push) openInNewTab(meta.href)
+      else openInSameTab(meta.href)
+      return
+    }
+
+  }
+  
+
   
   while (inDomainSet) {
     await currentDomainSet
@@ -132,7 +180,7 @@ export async function set(subdomain: string, level: number = 0, push: boolean = 
     res = r
   })
 
-  let anyChange = parseDomainToDomainIndex(domIndex, subdomain, level)
+  let anyChange = parseDomainToDomainIndex(domIndex, path, level)
   if (!anyChange) {
     inDomainSet = false
     res()

@@ -6,14 +6,6 @@ import delay from "delay"
 import ExternalLinkIcon from "../_icon/externalLink/externalLink"
 import { Prim } from "extended-dom";
 
-export function openInNewTab(href: string) {
-  if (!(href.startsWith("https://") || href.startsWith("http://"))) href = "https://" + href
-  Object.assign(document.createElement('a'), {
-    target: '_blank',
-    href,
-  }).click();
-}
-
 
 export default class Link extends ThemeAble {
   private aElem = this.q("a") as unknown as HTMLAnchorElement
@@ -55,8 +47,7 @@ export default class Link extends ThemeAble {
       if (link) {
         
         if (!dontSetLocation) {
-          if (meta.isOnOrigin) domain.set(link, this.domainLevel, this.push, this.notify)
-          else openInNewTab(link)
+          domain.set(link, this.domainLevel, this.push, this.notify)
         }
       }
     }
