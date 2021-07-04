@@ -12,6 +12,9 @@ export default abstract class RippleButton extends Button {
       this.on("mousedown", (e) => {
         this.initRipple(e);
       })
+      this.on("touchstart", (e) => {
+        this.initRipple(e);
+      })
       if (activationCallback) super.addActivationCallback(activationCallback);
 
       this.wave = ce("button-wave");
@@ -19,7 +22,7 @@ export default abstract class RippleButton extends Button {
       this.ripples = ce("button-waves");
       this.apd(this.ripples);
     }
-    public initRipple(e?: MouseEvent | KeyboardEvent | "center") {
+    public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center") {
       let r = this.wave.cloneNode() as Element;
       this.ripples.append(r);
 
@@ -42,13 +45,26 @@ export default abstract class RippleButton extends Button {
       let y: number;
 
 
-      if (e instanceof MouseEvent) {
-        let offset = this.absoluteOffset();
-        x = e.pageX - offset.left - r.width() / 2;
-        y = e.pageY - offset.top - r.height() / 2;
+      if (e instanceof MouseEvent || e instanceof TouchEvent) {
+        if (e instanceof TouchEvent) {
+          //@ts-ignore
+          e.pageX = e.touches[0].pageX
+          //@ts-ignore
+          e.pageY = e.touches[0].pageY
 
-        this.on("mouseup", fadeisok, {once: true});
-        this.on("mouseout", fadeisok, {once: true});
+
+          this.on("touchcancel", fadeisok, {once: true});
+          this.on("touchend", fadeisok, {once: true});
+        }
+        else {
+          this.on("mouseup", fadeisok, {once: true});
+          this.on("mouseout", fadeisok, {once: true});
+        }
+        let offset = this.absoluteOffset();
+        x = (e as MouseEvent).pageX - offset.left - r.width() / 2;
+        y = (e as MouseEvent).pageY - offset.top - r.height() / 2;
+
+        
       }
       else {
         x = this.width() / 2 - r.width() / 2;
