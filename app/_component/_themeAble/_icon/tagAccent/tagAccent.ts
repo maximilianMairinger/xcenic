@@ -4,7 +4,7 @@ import declareComponent from "../../../../lib/declareComponent";
 
 
 
-export default class AccentTag extends Icon {
+export default class TagAccent extends Icon {
   private tagElem = this.q("#tag > tspan")
   private tagDescElem = this.q("#tagDesc > tspan")
   constructor() {
@@ -22,8 +22,8 @@ export default class AccentTag extends Icon {
 
 
   pug() {
-    return require("./accentTag.pug").default
+    return require("./tagAccent.pug").default
   }
 }
 
-declareComponent("accent-tag", AccentTag)
+declareComponent("tag-accent", TagAccent)
