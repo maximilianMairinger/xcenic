@@ -9,8 +9,7 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
   private currentLinkWrapperElems: ElementList
   private currentLinkElems: ElementList<LowerNavLink>
   private backgroundContainer = this.q("background-container")
-  private linkContainer = this.q("link-container")
-  private layers = this.backgroundContainer.childs(1, true).add(this.linkContainer) as any
+  private layers = this.backgroundContainer.childs(1, true).add(this.componentBody) as any
   private slidy: Element
 
   constructor(public linkPressedCb?: Function) { 
@@ -21,9 +20,8 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
 
   private enableToken: Symbol
   public async enable(init: boolean, func: "css" | "anim" = init ? "css" : "anim") {
-    this.enableToken = Symbol()
-    this.componentBody.show()
-    this.linkContainer.css({display: "flex"})
+    this.enableToken = Symbol();
+    (this.componentBody as HTMLElement).css({display: "flex"})
     await this.layers[func]({opacity: 1})
   }
   public async disable(init: boolean, func: "css" | "anim" = init ? "css" : "anim") {
@@ -45,19 +43,14 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
       let linkElem = new LowerNavLink(link, elems[link] as any as HighlightAbleIcon, domainLevel)
       linkElem.addActivationCallback(() => {
         if (this.linkPressedCb) this.linkPressedCb()
-        this.maximize()
       })
       linkElem.passiveTheme()
       this.currentLinkElems.add(linkElem)
       this.currentLinkWrapperElems.add(ce("link-container").apd(linkElem))
     }
 
-    this.currentLinkWrapperElems.first.prepend(this.slidy = ce("active-slidy"))
-    if (!this.initialUpdate) {
-      this.slidy.css({display: "block", opacity: 1})
-    }
 
-    this.linkContainer.html(this.currentLinkWrapperElems)
+    this.componentBody.html(this.currentLinkWrapperElems)
 
     if (this.callMeMaybe) {
       this.updateSelectedLink(this.callMeMaybe)
@@ -97,21 +90,6 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
     
   }
 
-  private minimized = false
-  public minimize() {
-    if (!this.minimized) {
-      this.minimized = true
-      this.layers.anim({translateY: 22})
-    }
-  }
-
-  
-  public maximize() {
-    if (this.minimized) {
-      this.minimized = false
-      this.layers.anim({translateY: .1})
-    }
-  }
 
   stl() {
     return require("./lowerNav.css").toString()

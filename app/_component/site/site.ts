@@ -98,7 +98,7 @@ export default class Site extends Component {
       if (currentlyShowingLowerNav) lowerNav.updateSelectedLink(section)
       header.updateSelectedLink(section)
     }, (scrollBarWidth) => {
-      navs.css({width: `calc(100% - ${scrollBarWidth}px)`})
+      header.css({width: `calc(100% - ${scrollBarWidth}px)`})
     }, (prog, userInited) => {
       if (lastScrollProg > topLimit) {
         if (prog <= topLimit) {
@@ -107,27 +107,6 @@ export default class Site extends Component {
       }
       else if (prog > topLimit) {
         header.notTop()
-      }
-
-
-      if (userInited) {
-        if (currentlyShowingLowerNav) {
-          if (prog > lastScrollProg) {
-          
-            scrollTrendUpCounter = 0
-            scrollTrendDownCounter++
-            if (scrollTrendDownCounter >= scrollTrendActivationCount) {
-              lowerNav.minimize()
-            }
-          }
-          else {
-            scrollTrendDownCounter = 0
-            scrollTrendUpCounter++
-            if (scrollTrendUpCounter >= scrollTrendActivationCount) {
-              lowerNav.maximize()
-            }
-          }
-        }
       }
 
       lastScrollProg = prog

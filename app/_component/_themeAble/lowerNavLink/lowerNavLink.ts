@@ -1,6 +1,7 @@
 import ThemeAble, { Theme } from "../themeAble"
 import declareComponent from "../../../lib/declareComponent"
 import "./../../_themeAble/_button/button"
+import "./../../_themeAble/_button/_rippleButton/rippleButton"
 import Button from "./../../_themeAble/_button/button"
 import HighlightAbleIcon from "../_icon/_highlightAbleIcon/highlightAbleIcon"
 import lang from "./../../../lib/lang"
@@ -11,7 +12,7 @@ const hightlightClassString = "highlight"
 
 
 export default class LowerNavLink extends ThemeAble {
-  private buttonElem = this.q("c-button") as Button
+  private buttonElem = this.q("c-ripple-button") as Button
   private textElem = this.q("text-container")
   private iconContainer = this.q("icon-container")
 
