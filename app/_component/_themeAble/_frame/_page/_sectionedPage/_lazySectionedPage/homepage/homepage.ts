@@ -4,8 +4,15 @@ import PhilosophySection from "../../../../_pageSection/philosophySection/philos
 import LandingSection from "../../../../_pageSection/landingSection/landingSection"
 import TestSection from "../../../../_pageSection/testSection/testSection"
 import LazySectionedPage from "../lazySectionedPage"
+import HightlightAbleIcon from "../../../../../_icon/_highlightAbleIcon/highlightAbleIcon"
+import ThoughtBubble from "../../../../../_icon/_highlightAbleIcon/thoughtBubble/thoughtBubble"
+
 
 export default class HomePage extends LazySectionedPage {
+
+  public iconIndex: {[key: string]: HightlightAbleIcon} = {
+    philosophy: new ThoughtBubble()
+  }
 
   constructor(sectionChangeCallback?: (section: string) => void) {
     super(new ImportanceMap<() => Promise<any>, any>(

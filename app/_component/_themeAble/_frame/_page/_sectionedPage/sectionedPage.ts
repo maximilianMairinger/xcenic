@@ -7,6 +7,7 @@ import PageSection from "../../_pageSection/pageSection";
 import { EventListener, ScrollData } from "extended-dom";
 import { Data, DataCollection, DataSubscription } from "josm";
 import { constructIndex } from "key-index"
+import HightlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon"
 
 export const scrollToPadding = -70
 
@@ -169,6 +170,8 @@ export default abstract class SectionedPage extends Page {
 
   protected scrollToSection: (to?: number, speed?: number, force?: boolean) => Promise<void>
   private scrollToSectionFunctionIndex = constructIndex((section: PageSection) => this.constructScrollTo(section))
+
+  public abstract iconIndex: {[key: string]: HightlightAbleIcon}
 
   constructor(sectionIndex: FullSectionIndex, protected sectionChangeCallback?: (section: string) => void, protected readonly sectionAliasList: AliasList = new AliasList(), protected readonly mergeIndex: {[part in string]: string} = {}) {
     super()

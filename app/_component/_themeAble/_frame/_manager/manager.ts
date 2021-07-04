@@ -9,6 +9,7 @@ import PageSection from "../_pageSection/pageSection";
 import { EventListener } from "extended-dom";
 import Page from "../_page/page";
 import { record } from "../../../image/image";
+import HighlightAbleIcon from "../../_icon/_highlightAbleIcon/highlightAbleIcon";
 
 
 
@@ -63,7 +64,7 @@ export default abstract class Manager extends Frame {
 
   private resourcesMap: ResourcesMap
 
-  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: string, sectiones: string[], domainLevel: number) => void, private pushDomainDefault: boolean = true, public onScrollBarWidthChange?: (scrollBarWidth: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void, private onScroll?: (scrollProgress: number) => void, public blurCallback?: Function, public preserveFocus?: boolean) {
+  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, private pushDomainDefault: boolean = true, public onScrollBarWidthChange?: (scrollBarWidth: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void, private onScroll?: (scrollProgress: number) => void, public blurCallback?: Function, public preserveFocus?: boolean) {
     super(null);
 
     this.body = ce("manager-body");
@@ -347,7 +348,11 @@ export default abstract class Manager extends Frame {
             try {
               if ((page as SectionedPage).sectionList) {
                 (page as SectionedPage).sectionList.tunnel(e => e.filter(s => s !== "")).get((sectionListNested) => {
-                  this.pageChangeCallback(to, sectionListNested, page.domainLevel)
+                  let ob = {} as any
+                  for (const e of sectionListNested) {
+                    ob[e] = (page as SectionedPage).iconIndex[e]
+                  }
+                  this.pageChangeCallback(to, ob, page.domainLevel)
                 })
               }
               else this.pageChangeCallback(to, [], page.domainLevel)
