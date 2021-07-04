@@ -85,7 +85,8 @@
     "fast-decode-uri-component": "^1.0.1",
     "image-web": "^1.2.2",
     "josm": "^1.2.17",
-    "slugify": "^1.5.3"
+    "slugify": "^1.5.3",
+    "tween-svg-path": "^2.0.6"
   },
   "version": "1.0.0"
 }
