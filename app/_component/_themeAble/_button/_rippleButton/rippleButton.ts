@@ -32,7 +32,7 @@ export default abstract class RippleButton extends Button {
       this.ripples = ce("button-waves");
       this.apd(this.ripples);
     }
-    public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): Function {
+    public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
       let r = this.wave.cloneNode() as Element;
       this.ripples.append(r);
 
