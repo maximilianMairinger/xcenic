@@ -2,6 +2,7 @@ import declareComponent from "../../../../../../../lib/declareComponent"
 import { Import, ImportanceMap } from "../../../../../../../lib/lazyLoad"
 import PhilosophySection from "../../../../_pageSection/philosophySection/philosophySection"
 import LandingSection from "../../../../_pageSection/landingSection/landingSection"
+import WorkSection from "../../../../_pageSection/workSection/workSection"
 import TestSection from "../../../../_pageSection/testSection/testSection"
 import LazySectionedPage from "../lazySectionedPage"
 import HightlightAbleIcon from "../../../../../_icon/_highlightAbleIcon/highlightAbleIcon"
@@ -34,9 +35,9 @@ export default class HomePage extends LazySectionedPage {
         ), val: () => import(/* webpackChunkName: "philosophySection" */"../../../../_pageSection/philosophySection/philosophySection")
       },
       {
-        key: new Import("services", 1, (testSection: typeof TestSection) =>
-          new testSection()
-        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+        key: new Import("services", 1, (workSection: typeof WorkSection) =>
+          new workSection()
+        ), val: () => import(/* webpackChunkName: "workSection" */"../../../../_pageSection/workSection/workSection")
       },
       {
         key: new Import("team", 1, (testSection: typeof TestSection) =>

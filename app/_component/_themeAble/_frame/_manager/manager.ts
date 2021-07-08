@@ -84,7 +84,7 @@ export default abstract class Manager extends Frame {
     if (onUserScroll && onScroll) {
       this.scrollEventListener = new EventListener(this, "scroll", () => {
         //@ts-ignore
-        let y = this.currentPage.componentBody.scrollTop
+        let y = this.currentPage.scrollTop
         onUserScroll(y, this.currentPage.userInitedScrollEvent)
         onScroll(y)
       }, false)
@@ -92,11 +92,11 @@ export default abstract class Manager extends Frame {
     else {
       if (onUserScroll) this.scrollEventListener = new EventListener(this, "scroll", () => {
         //@ts-ignore
-        onUserScroll(this.currentPage.componentBody.scrollTop, this.currentPage.userInitedScrollEvent)
+        onUserScroll(this.currentPage.scrollTop, this.currentPage.userInitedScrollEvent)
       }, false)
       else if (onScroll) this.scrollEventListener = new EventListener(this, "scroll", () => {
         //@ts-ignore
-        onScroll(this.currentPage.componentBody.scrollTop)
+        onScroll(this.currentPage.scrollTop)
       }, false)
     }
 
@@ -212,7 +212,7 @@ export default abstract class Manager extends Frame {
 
     if (this.onScrollBarWidthChange) {
       //@ts-ignore
-      let scrollBarWidth = this.componentBody.clientWidth - to.componentBody.clientWidth
+      let scrollBarWidth = this.clientWidth - to.clientWidth
       
       if (scrollBarWidth !== this.lastScrollbarWidth) {
         this.onScrollBarWidthChange(scrollBarWidth)
@@ -220,20 +220,20 @@ export default abstract class Manager extends Frame {
       }
     }
     
-    this.scrollEventListener.target((to as any).componentBody).activate()
+    this.scrollEventListener.target((to as any)).activate()
 
     if (this.onUserScroll && this.onScroll) {
       
-      let y = (this.currentPage as any).componentBody.scrollTop
+      let y = (this.currentPage as any).scrollTop
       this.onUserScroll(y, this.currentPage.userInitedScrollEvent)
       this.onScroll(y)
     }
     else {
 
       if (this.onUserScroll) {
-        this.onUserScroll((this.currentPage as any).componentBody.scrollTop, this.currentPage.userInitedScrollEvent)
+        this.onUserScroll((this.currentPage as any).scrollTop, this.currentPage.userInitedScrollEvent)
       }
-      else if (this.onScroll) this.onScroll((this.currentPage as any).componentBody.scrollTop)
+      else if (this.onScroll) this.onScroll((this.currentPage as any).scrollTop)
     }
 
     if (from !== undefined) if (from.removeIntersectionListener) {

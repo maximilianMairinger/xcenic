@@ -1,6 +1,14 @@
-component-body {
+:host {
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+component-body {
+  display: inline-block;
+  width: 100%;
+  position: relative;
+  height: fit-content;
+  overflow: hidden;
 }
 
 component-body > * {
@@ -9,3 +17,4 @@ component-body > * {
   position: relative;
   float: left;
 }
+
