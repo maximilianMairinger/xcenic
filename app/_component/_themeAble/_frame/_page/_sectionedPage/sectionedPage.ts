@@ -9,10 +9,8 @@ import { Data, DataCollection, DataSubscription } from "josm";
 import { constructIndex } from "key-index"
 import HightlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon"
 
-export const scrollToPadding = -70
+export const scrollToPadding = -120
 
-const windowMargi = -0.33334
-const windowMargin = (windowMargi * 100) + "%"
 
 const scrollAnimationSpeed = 1150
 
@@ -311,15 +309,15 @@ export default abstract class SectionedPage extends Page {
     this.userInitedScrollEvent = false
     if (active) {
 
-      let ls = this.componentBody.on("keydown", (e) => {
+      let ls = this.on("keydown", (e) => {
         e.stopImmediatePropagation()
       })
-      
-      await scrollTo(elem, {
+
+      await scrollTo(elem.offsetTop, {
         cancelOnUserAction: true,
         verticalOffset: this.verticalOffset,
         speed: scrollAnimationSpeed,
-        elementToScroll: this.componentBody,
+        elementToScroll: this,
         easing
       })
 
@@ -327,7 +325,7 @@ export default abstract class SectionedPage extends Page {
 
     }
     else {
-      this.componentBody.scrollTop = this.verticalOffset + elem.offsetTop
+      this.scrollTop = this.verticalOffset + elem.offsetTop
     }
 
     
@@ -352,7 +350,7 @@ export default abstract class SectionedPage extends Page {
 
     let globalToken: Symbol
     let aliasSubscriptions: DataSubscription<unknown[]>[] = []
-    let localSegmentScrollDataIndex = constructIndex((pageSectionElement: PageSection) => this.componentBody.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop))
+    let localSegmentScrollDataIndex = constructIndex((pageSectionElement: PageSection) => this.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop))
 
     // ----------->
 
@@ -478,8 +476,9 @@ export default abstract class SectionedPage extends Page {
       }
     }, {
       threshold: 0,
-      rootMargin: windowMargin
+      rootMargin: "-50%"
     })
+    // debugger
 
     this.sectionIndex.forEach(async (section: Promise<PageSection>) => {
       let sec = await section
@@ -525,7 +524,7 @@ export default abstract class SectionedPage extends Page {
         }
       })
     }
-    this.customIntersectionObserver.set(obsElem, new EventListener(this.componentBody, ["scroll", "resize"], f, this.active))
+    this.customIntersectionObserver.set(obsElem, new EventListener(this, ["scroll", "resize"], f, this.active))
     f()
   }
 
@@ -566,11 +565,11 @@ export default abstract class SectionedPage extends Page {
       this.currentlyActiveSectionElem = section
       this.currentlyActiveSectionElem.activate()
 
-      await scrollTo(section, {
+      await scrollTo(section.offsetTop, {
         cancelOnUserAction: true,
         verticalOffset,
         speed,
-        elementToScroll: this.componentBody,
+        elementToScroll: this,
         easing
       })
 
