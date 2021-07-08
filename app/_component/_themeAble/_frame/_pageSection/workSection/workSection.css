@@ -1,0 +1,66 @@
+:host {
+  min-height: 100vh;
+}
+
+:host {
+  --theme: var(--primary-theme)
+}
+
+component-body {
+  box-sizing: border-box;
+  padding: 75px calc(11.5% - 14px);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  column-gap: 28px;
+  grid-auto-rows: minmax(100px, auto);
+}
+div {
+  background-color: red;
+}
+
+.one {
+  grid-column: 1 / 4;
+  grid-row: 1 / 3;
+}
+
+text-container {
+
+}
+
+h1.chonker {
+  font-size: calc(var(--font-size) * var(--header-fontsize-factor));
+  font-size: 40px;
+  margin-bottom: 8px;
+  margin-top: 7px;
+  position: relative;
+  z-index: 0;
+  display: inline-block;
+}
+
+h1.chonker::after {
+  content: "";
+  z-index: -1;
+  background: rgba(var(--theme), .64);
+  position: absolute;
+  width: 100%;
+  padding-right: 6px;
+  height: 50%;
+  top: 50%;
+  left: 0px;
+}
+
+h1.chonker::before {
+  content: "";
+  background: rgb(var(--theme));
+  position: absolute;
+  width: 3px;
+  height: 50%;
+  top: 50%;
+  left: -14px;
+}
+
+p {
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
