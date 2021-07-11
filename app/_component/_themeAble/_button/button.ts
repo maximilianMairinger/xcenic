@@ -38,7 +38,6 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
     this.componentBody.on("mouseout", () => {
       this.removeClass(pressedClass);
     })
-    console.log("comp", this.componentBody)
     this.componentBody.on("keydown", (e) => {
       if (e.key === " ") if (!alreadyPressed) {
         alreadyPressed = true;

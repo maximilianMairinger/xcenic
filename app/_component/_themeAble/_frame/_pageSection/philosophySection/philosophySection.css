@@ -178,6 +178,21 @@ c-text-blob {
   margin: 0
 }
 
+@media (max-width: 1430px) {
+  left-side {
+    width: calc(41% + 50px);
+  }
+}
+
+
+@media (max-width: 1400px) {
+  background-lines > c-line:last-child {
+    display: none;
+  }
+  c-text-blob {
+    --body-size: calc(81% - 41px);
+  }
+}
 
 
 
@@ -230,13 +245,15 @@ c-text-blob {
     height: auto;
     flex-wrap: wrap;
   }
+
+  left-side {
+    padding-left: calc(11.5% - 12px);
+    padding-right: calc(39% - 12px)
+  }
 }
 
 @media (max-width: 990px) {
-  left-side {
-    padding-left: calc(11.5% - 12px);
-    padding-right: calc(32% - 12px)
-  }
+  
   c-text-blob {
     --body-size: 65%
   }
