@@ -29,3 +29,7 @@ note-header {
   position: relative;
   display: block
 }
+
+note-header::selection {
+  background: rgba(var(--theme), 0.15);
+}

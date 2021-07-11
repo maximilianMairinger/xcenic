@@ -29,7 +29,23 @@ export default {
           heading: "Websites",
           text: "In our digital age businesses rely on their websites to differentiate themselves from competitors and to acquire customers. We develop webpages that are beautifully designed, rich in content and lightning fast. Our expertise also extends to mobile application development."
         },
-        tabletHeader: "Web Development"
+        tablet: {
+          heading: "Web Development"
+        },
+        step: {
+          one: {
+            heading: "Design",
+            text: "Our iterative process starts with designing mockups that incorporate your brand identity and combine it with modern technology and breathtaking design."
+          },
+          two: {
+            heading: "Develop",
+            text: "Throughout development we take special care, to provide future users with a seamless experience, both on mobile and desktop devices."
+          },
+          three: {
+            heading: "Maintain",
+            text: "After completing your product, we offer optional maintenance services, keeping your website up to date and your customers informed of your latest business developments."
+          }
+        }
       }
     }
   }
