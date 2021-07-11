@@ -8,10 +8,10 @@
 
 component-body {
   box-sizing: border-box;
-  padding: 75px calc(11.5% - 14px);
+  padding: 75px calc(11.5% - 9px);
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  column-gap: 28px;
+  column-gap: 38px;
   grid-auto-rows: minmax(100px, auto);
 }
 div {
@@ -55,8 +55,16 @@ h1.chonker::before {
   width: 3px;
   height: 50%;
   top: 50%; 
-  left: -14px;
+  left: -19px;
 }
+
+h1.lil {
+  color: rgb(var(--theme));
+  font-size: 19px;
+  margin-top: 3px;
+  margin-bottom: 10px;
+}
+
 
 p {
   font-size: 16px;
@@ -66,6 +74,7 @@ p {
 
 grid-element {
   position: relative;
+  z-index: 0;
 }
 
 grid-element > * {
@@ -79,6 +88,21 @@ grid-element > * {
 
 .tablet > c-image {
   height: auto;
+  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 40px;
+  margin-top: 14px;
+  
+}
+
+.tablet > c-image::after {
+  content: "";
+  position: absolute;
+  width: calc(100% - 40px);
+  height: 100%;
+  box-shadow: 20px 20px 20px 0 rgba(var(--plain-text), .24);
+  left: 0;
 }
 
 @media (max-width: 1400px) {
@@ -89,8 +113,10 @@ grid-element > * {
 
 c-tgm-logo-dots {
   position: absolute;
-  width: 300px;
-  height: 300px;
-  top: 0;
-  right: 0;
+  width: 250px;
+  height: 250px;
+  z-index: -1;
+  top: 15px;
+  right: 0px;
 }
+
