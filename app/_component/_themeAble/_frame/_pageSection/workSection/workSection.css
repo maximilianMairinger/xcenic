@@ -18,14 +18,11 @@ div {
   background-color: red;
 }
 
-.one {
-  grid-column: 1 / 4;
-  grid-row: 1 / 3;
+.hero {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
 }
 
-text-container {
-
-}
 
 h1.chonker {
   font-size: calc(var(--font-size) * var(--header-fontsize-factor));
@@ -35,6 +32,8 @@ h1.chonker {
   position: relative;
   z-index: 0;
   display: inline-block;
+  white-space: nowrap;
+  position: absolute;
 }
 
 h1.chonker::after {
@@ -55,12 +54,43 @@ h1.chonker::before {
   position: absolute;
   width: 3px;
   height: 50%;
-  top: 50%;
+  top: 50%; 
   left: -14px;
 }
 
 p {
   font-size: 16px;
-  margin-top: 0;
+  margin-top: 68px;
   margin-bottom: 0;
+}
+
+grid-element {
+  position: relative;
+}
+
+grid-element > * {
+  max-width: 100%;
+}
+
+.tablet {
+  grid-column: 2 / 4;
+  grid-row: 1 / 3;
+}
+
+.tablet > c-image {
+  height: auto;
+}
+
+@media (max-width: 1400px) {
+  component-body {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+c-tgm-logo-dots {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  top: 0;
+  right: 0;
 }

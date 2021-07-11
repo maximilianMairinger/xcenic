@@ -22,6 +22,15 @@ export default {
       text: "In need of a new website? Unique video advert? Or looking for that whole makeover of your online presence? We provide you with a tailor-made offer, irrespective of the scope of your project.",
       tag: "Taskforce",
       tagDesc: "Social media brand"
+    },
+    work: {
+      webApp: {
+        hero: {
+          heading: "Websites",
+          text: "In our digital age businesses rely on their websites to differentiate themselves from competitors and to acquire customers. We develop webpages that are beautifully designed, rich in content and lightning fast. Our expertise also extends to mobile application development."
+        },
+        tabletHeader: "Web Development"
+      }
     }
   }
 }

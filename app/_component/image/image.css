@@ -6,6 +6,7 @@
 }
 
 picture {
+  display: inline-block;
   width: inherit;
   height: inherit;
 }
