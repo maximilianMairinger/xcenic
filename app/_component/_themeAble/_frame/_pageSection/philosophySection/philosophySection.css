@@ -9,7 +9,7 @@ skew-lines-wrapper {
   width: 100%;
   display: inline-block;
   position: absolute;
-  transform: rotate(1deg);
+  transform: translateX(-60px) rotate(1deg);
   pointer-events: none;
   overflow: hidden;
   top: -10px;
@@ -22,13 +22,22 @@ background-lines {
   padding: 0 calc(11.5% - 27px);
   box-sizing: border-box;
   transition: .3s;
-  transform: rotate(-1deg);
+  transform: rotate(-1deg) translateX(60px);
 }
 
 c-line {
   height: unset;
   width: unset;
   margin-top: -13px;
+}
+
+skew-background-wrapper {
+  width: 100%;
+  display: inline-block;
+  position: absolute;
+  pointer-events: none;
+  overflow: hidden;
+  height: 100%;
 }
 
 skew-background {
@@ -194,6 +203,17 @@ c-text-blob {
   }
 }
 
+@media (max-width: 1100px) {
+  background-lines > c-line:nth-last-child(2) {
+    display: none;
+  }
+  c-text-blob {
+    width: 74%;
+    --header-fontsize-factor: 2.4;
+    --body-size: calc(81% - 41px);
+  }
+}
+
 
 
 @media (max-width: 1250px) {
@@ -253,12 +273,19 @@ c-text-blob {
 }
 
 @media (max-width: 990px) {
-  
-  c-text-blob {
-    --body-size: 65%
-  }
   c-dot-accent.a {
     opacity: 0;
+  }
+  
+}
+
+@media (max-width: 950px) {
+  left-side {
+    padding-left: calc(11.5% - 12px);
+    padding-right: calc(11.5% + 12px);
+  }
+  c-text-blob {
+    --body-size: 74%;
   }
 }
 
@@ -268,7 +295,7 @@ c-text-blob {
     padding-right: calc(11.5% + 12px);
   }
   c-text-blob {
-    --body-size: 74%
+    width: 100%
   }
   background-lines {
     opacity: 0;

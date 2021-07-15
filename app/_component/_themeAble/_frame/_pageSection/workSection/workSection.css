@@ -270,8 +270,47 @@ c-tgm-logo-dots {
 
 @media (max-width: 1100px) {
   component-body {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hero {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+
+  .tablet {
+    display: none;
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+    margin-top: 35px;
+    margin-bottom: 35px;
+  }
+
+  .smartphone {
+    margin-top: 25px;
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
+  }
+
+  .step.one {
+    display: none;
+
+    grid-column: 1 / 2;
+    grid-row: 7 / 8;
+  }
+  
+  .step.two {
+    display: none;
+
+    grid-column: 1 / 2;
+    grid-row: 8 / 9;
+  }
+  
+  .step.three {
+    display: none;
+
+    grid-column: 1 / 2;
+    grid-row: 9 / 10;
   }
 
   c-tgm-logo-dots {
@@ -290,6 +329,17 @@ c-tgm-logo-dots {
 }
 
 @media (max-width: 730px) {
+
+  component-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  
+
+
+
   big-thing {
     display: inline-block;
     padding: 15px 2%;
