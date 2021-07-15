@@ -7,6 +7,7 @@ import { Data } from "josm";
 
 export default class TgmLogoDots extends Icon {
   private main = this.q("g#body") as SVGElement
+  private svgElem = this.q("svg") as SVGElement
   constructor() {
     super()
 
@@ -18,20 +19,21 @@ export default class TgmLogoDots extends Icon {
       count.set(Math.round(e.width * 0.09))
     })
 
-    
 
   }
 
-  generate(pointsPerSide: number) {
+  private generate(pointsPerSide: number) {
     const offset = 26 / pointsPerSide
     const pointsMargin = offset * 11
-    const pointsDiameter = (offset * 2.5) + ""
+    const pointsDiameter = (offset * 2.5)
+    const pointsDiameterStr = pointsDiameter + ""
+
+    
     this.main.emptyNodes()
     this.main.apd(require("./oneDot.pug").default)
     const template = this.main.childs() as HTMLElement
-    template.setAttribute("cx", pointsDiameter)
-    template.setAttribute("cy", pointsDiameter)
-    template.setAttribute("r", pointsDiameter)
+    template.setAttribute("cy", pointsDiameterStr)
+    template.setAttribute("r", pointsDiameterStr)
     template.css("transform", "translate(0 0)")
     let outer = 0
     let inner = 1
@@ -44,7 +46,7 @@ export default class TgmLogoDots extends Icon {
       }
       inner = outer + 1
     }
-    
+
     template.cloneNode()
   }
 
