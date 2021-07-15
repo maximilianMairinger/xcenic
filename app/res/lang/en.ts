@@ -45,6 +45,9 @@ export default {
             heading: "Maintain",
             text: "After completing your product, we offer optional maintenance services, keeping your website up to date and your customers informed of your latest business developments."
           }
+        },
+        smartphone: {
+          heading: "App Development"
         }
       }
     }
