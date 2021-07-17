@@ -297,8 +297,8 @@ c-text-blob {
   c-text-blob {
     width: 100%
   }
-  background-lines {
-    opacity: 0;
+  background-lines > c-line:nth-last-child(3) {
+    display: none;
   }
 }
 

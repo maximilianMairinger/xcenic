@@ -6,6 +6,7 @@ import "../../../_icon/tagAccent/tagAccent"
 import "../../../_icon/dotAccent/dotAccent"
 import "../../../../image/image"
 import "../../../_icon/tgmLogoDots/tgmLogoDots"
+import "../../../_icon/versionControl/versionControl"
 
 export default class PhilosophySection extends PageSection {
 

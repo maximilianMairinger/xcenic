@@ -235,6 +235,17 @@ big-thing {
   grid-row: 4 / 5;
 }
 
+.versionControl {
+  grid-column: 3 / 4;
+  grid-row: 4 / 5;
+}
+
+.versionControl c-version-control {
+  width: 100%;
+  height: 190px;
+}
+
+
 
 
 c-tgm-logo-dots {
@@ -321,6 +332,10 @@ c-tgm-logo-dots {
     grid-row: 5 / 8;
   }
 
+  .versionControl {
+    display: none;
+  }
+
   
 
   c-tgm-logo-dots {
@@ -357,6 +372,12 @@ c-tgm-logo-dots {
   .step.three {
     grid-column: 2 / 3;
     grid-row: 4 / 5;
+  }
+
+  .versionControl {
+    display: block;
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
   }
 }
 
