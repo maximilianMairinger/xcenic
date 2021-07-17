@@ -181,7 +181,7 @@ c-image::after {
 
 
 .tablet c-image::after {
-  border-radius: calc(4.8vw / 4);
+  border-radius: calc(4.2vw / 4);
   top: 3px;
   left: 3px;
   width: calc(100% - 4px);
@@ -278,20 +278,19 @@ c-tgm-logo-dots {
     grid-template-columns: 1fr 1fr 1fr;
   }
 
-  /* .tablet > c-image::after {
-    width: calc(100% - 21px);
-    height: calc(35vw - 21px);
-  }
-
-  .smartphone > c-image::after {
-    border-radius: 2.5vw;
-    width: calc(100% - 21px);
-    height: calc(46.1vw - 21px);
-  } */
 
   c-tgm-logo-dots {
     width: calc(50vw / 3);
     height: calc(50vw / 3);
+  }
+
+  .smartphone c-image::after {
+    border-radius: calc(8.8vw / 3);
+  }
+
+
+  .tablet c-image::after {
+    border-radius: calc(4.2vw / 3);
   }
 
 }
@@ -343,14 +342,14 @@ c-tgm-logo-dots {
     height: 24vw;
   }
 
-  .tablet > c-image::after {
-    border-radius: 5vw
+  .smartphone c-image::after {
+    border-radius: calc(8.8vw / 2);
   }
 
-  .smartphone > c-image::after {
-    border-radius: 5vw
-  }
 
+  .tablet c-image::after {
+    border-radius: calc(4.2vw / 2);
+  }
 }
 
 @media (max-width: 850px) {
