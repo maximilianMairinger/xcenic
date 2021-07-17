@@ -390,7 +390,14 @@ c-tgm-logo-dots {
   }
 
 
-  
+  .smartphone c-image::after {
+    border-radius: 8.8vw;
+  }
+
+
+  .tablet c-image::after {
+    border-radius: 4.2vw;
+  }
 
 
 
