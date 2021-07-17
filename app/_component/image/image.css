@@ -3,16 +3,17 @@
   height: 100%;
   overflow: hidden;
   display: inline-block;
+  --display: block;
 }
 
 picture {
-  display: block;
+  display: var(--display);
   width: inherit;
   height: inherit;
 }
 
 img {
-  display: block;
+  display: var(--display);
   opacity: 0;
   object-fit: cover;
   width: inherit;

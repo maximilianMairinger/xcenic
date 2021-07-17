@@ -5,6 +5,10 @@
   z-index: 1;
 }
 
+c-image {
+  --display: inline-block;
+}
+
 skew-lines-wrapper {
   width: 100%;
   display: inline-block;
