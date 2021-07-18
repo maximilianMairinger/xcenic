@@ -54,7 +54,8 @@ export default {
         hero: {
           heading: "Content",
           text: "An amazing online presence doesn’t just take good design and cutting edge technology. Creating relevant and engaging multi-media content is just as important. We therefore offer video-creation and photography in tandem with webdesign and social-media management, but also as a standalone product. "
-        }
+        },
+        photoShoot: "Photography"
       }
     }
   }

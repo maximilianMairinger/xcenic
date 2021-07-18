@@ -73,14 +73,14 @@ h1.chonker::before {
   left: -19px;
 }
 
-h1.lil {
+h2.lil {
   color: rgb(var(--theme));
   font-size: 19px;
   margin-top: 4px;
   margin-bottom: 3px;
 }
 
-h1.lil::before {
+h2.lil::before {
   content: "";
   background: rgb(var(--theme));
   position: absolute;
@@ -89,7 +89,7 @@ h1.lil::before {
   left: -19px;
 }
 
-h1.lil::selection {
+h2.lil::selection {
   background: rgba(var(--theme), 0.15);
 }
 
@@ -257,9 +257,11 @@ big-thing {
   grid-row: 4 / 5;
 }
 
-.versionControl c-version-control {
+.illustration {
   width: 100%;
   height: 190px;
+  margin-top: 15px;
+  margin-bottom: 15px;
 } 
 
 
