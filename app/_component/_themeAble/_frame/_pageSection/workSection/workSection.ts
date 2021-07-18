@@ -35,11 +35,11 @@ export default class PhilosophySection extends PageSection {
         const scrollTrigger = scrollData.scrollTrigger(height)
 
         scrollTrigger.on("forward", () => {
-          console.log("forward", service)
+          this.css("backgroundColor", "#FFFAFA")
         })
   
         scrollTrigger.on("backward", () => {
-          console.log("backward", service)
+          this.css("backgroundColor", "#F9FAFE")
         })
       })
 
