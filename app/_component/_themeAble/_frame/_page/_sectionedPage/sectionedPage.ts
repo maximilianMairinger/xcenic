@@ -383,7 +383,6 @@ export default abstract class SectionedPage extends Page {
       })
 
       let elem = this.intersectingIndex.first as PageSection
-      debugger
 
 
       if (!this.inScrollAnimation.get()) {
@@ -408,7 +407,6 @@ export default abstract class SectionedPage extends Page {
 
             root = this.merge(root)
             let alias = this.sectionAliasList.getAllAliasesByRoot(root)
-            debugger
             if (alias) {
 
               if (alias instanceof SimpleAlias) {
@@ -456,7 +454,6 @@ export default abstract class SectionedPage extends Page {
                       wantedProgress = -Infinity
                     }
                     
-                    debugger
                     if (wantedProgress <= currentProgress && nextProg > currentProgress) {
                       lastActiveName.set(name)
                       this.activateSectionNameWithDomain(name)
@@ -487,7 +484,6 @@ export default abstract class SectionedPage extends Page {
       threshold: 0,
       rootMargin: "-50%"
     })
-    // debugger
 
     this.sectionIndex.forEach(async (section: Promise<PageSection>) => {
       let sec = await section

@@ -14,7 +14,6 @@ export default abstract class LazySectionedPage extends SectionedPage {
 
   constructor(sectionIndex: ImportanceMap<() => Promise<any>, any>, sectionChangeCallback?: (section: string) => void, sectionAliasList?: AliasList, mergeIndex?: {[part in string]: string}) {
     const { resourcesMap, importanceMap } = lazyLoad(sectionIndex, (e, ind) => {
-      // debugger
       let priorElem: HTMLElement
       let i = ind
       do {

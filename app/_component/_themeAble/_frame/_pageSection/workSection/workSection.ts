@@ -30,9 +30,6 @@ export default class PhilosophySection extends PageSection {
         height.set(prevHeight + localHeight)
       })
 
-      this.localScrollProgressData(.4).then((scrollData) => {
-        scrollData.get(console.log)
-      })
 
       this.localScrollProgressData(.4).then((scrollData) => {
         const scrollTrigger = scrollData.scrollTrigger(height)
