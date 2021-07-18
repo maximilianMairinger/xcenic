@@ -58,8 +58,8 @@ export default {
           heading: "Content",
           text: "An amazing online presence doesn’t just take good design and cutting edge technology. Creating relevant and engaging multi-media content is just as important. We therefore offer video-creation and photography in tandem with webdesign and social-media management, but also as a standalone product. "
         },
-        photoShoot: "Photography",
-        video: {
+        photography: "Photography",
+        videography: {
           heading: "Video Creation",
           text1: "Throughout our video making process we involve you during conception, production and post-production.",
           text2: "We strive to create content that captures your brand identity and engages your customers with your business and product.",

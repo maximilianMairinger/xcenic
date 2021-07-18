@@ -23,7 +23,7 @@ service-showcase {
   padding-top: 75px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  column-gap: 38px;
+  column-gap: 35px;
   grid-auto-rows: minmax(100px, auto);
 }
 
@@ -270,12 +270,33 @@ big-thing {
   margin-bottom: 15px;
 } 
 
-.photoShoot {
+.photography {
   grid-column: 2 / 3;
   grid-row: 1 / 2;
 }
 
+.videography {
+  grid-column: 3 / 4;
+  grid-row: 1 / 3;
+}
 
+c-image.standalone {
+  border-radius: 40px;
+  overflow: hidden;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+c-image::after {
+  border-radius: 40px;
+}
+
+@media (min-width: 1500px) {
+  c-image.standalone {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
 
 
 c-tgm-logo-dots {
@@ -285,6 +306,15 @@ c-tgm-logo-dots {
   z-index: -1;
   top: 15px;
   right: 0px;
+}
+
+@media (min-width: 1600px) {
+  p {
+    font-size: 17px;
+  }
+  h2.lil {
+    font-size: 20px;
+  }
 }
 
 @media (max-width: 1400px) {
