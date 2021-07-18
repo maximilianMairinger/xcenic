@@ -6,6 +6,10 @@ const fs = require("fs")
 const open = require("open")
 const waitOn = require("wait-on")
 const del = require("del")
+const chokidar = require("chokidar")
+const imageWeb = require("image-web")
+const delay = require("delay")
+
 
 // configureable
 const serverEntryFileName = "server.js"
@@ -59,6 +63,27 @@ let appEntryPath = path.join(appDir, appEntryFileName);
     console.error(e)
     return
   }
+  
+
+  const compressImages = imageWeb.constrImageWeb(["jpg", "webp", "avif"], ["3K"])
+  const imgDistPath = "public/res/img/dist" 
+  const imgChangeF = async (path, override = false) => {
+    console.log("Compressing images: " + path)
+    await delay(1000)
+    await compressImages(path, imgDistPath, { override, silent: false })
+  }
+  
+
+  const imgSrcPath = "app/res/img"
+  imgChangeF(imgSrcPath, false)
+  chokidar.watch(imgSrcPath, { ignoreInitial: true }).on("change", (path) => imgChangeF(path, true))
+
+  
+  
+
+
+  
+
   
   let server = nodemon({
     watch: serverDir,
