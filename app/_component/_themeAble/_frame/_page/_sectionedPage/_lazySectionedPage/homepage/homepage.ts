@@ -39,7 +39,7 @@ export default class HomePage extends LazySectionedPage {
           for (let i = 0; i < sec.serviceSection.length -1; i++) {
             const subSec = sec.serviceSection[i];
             const heightData = subSec.resizeData().tunnel((rec) => rec.height)
-            heightData.get(subsectionHeight[i].set.bind(subsectionHeight[i]))
+            heightData.get(subsectionHeight[i].set.bind(subsectionHeight[i]), false)
           }
 
           return sec

@@ -61,18 +61,21 @@ export class ScrollProgressAliasIndex<Root extends string = string> {
     for (let alias of this.scrollProgressAliases) {
       
       let aliasesLength = 0
-
       //@ts-ignore
       new DataCollection(alias.progress, alias.aliases, this.root).get((progress, aliases: string[], root) => {
         if (aliasesLength !== aliases.length)  {
           aliases.ea((alias) => {
-            aliasReverses[alias] = new ScrollProgressAliasIndex.Reverse(progress, root)
+            if (aliasReverses[alias] !== undefined) {
+              (aliasReverses[alias] as any).progress.set(progress);
+              (aliasReverses[alias] as any).root.set(root);
+            }
+            else aliasReverses[alias] = new ScrollProgressAliasIndex.Reverse(new Data(progress), new Data(root as string))
           })
         }
         else {
           aliases.ea((alias) => {
-            (aliasReverses[alias] as any).progress = progress;
-            (aliasReverses[alias] as any).root = root;
+            (aliasReverses[alias] as any).progress.set(progress);
+            (aliasReverses[alias] as any).root.set(root);
           })
         }
       })
@@ -81,7 +84,7 @@ export class ScrollProgressAliasIndex<Root extends string = string> {
   }
 
   public static Reverse = class {
-    constructor(public readonly progress: number, public readonly root: string) {}
+    constructor(public readonly progress: Data<number>, public readonly root: Data<string>) {}
   }
 }
 
@@ -255,10 +258,8 @@ export default abstract class SectionedPage extends Page {
     } = {}
 
 
-    let justInTimeFunc: Function
 
     this.verticalOffset = scrollToPadding
-
     if (this.sectionAliasList.reverseIndex[domainFragment] !== undefined) {
       let reverseAlias = this.sectionAliasList.reverseIndex[domainFragment]
       let originalDomain = domainFragment
@@ -266,23 +267,25 @@ export default abstract class SectionedPage extends Page {
         domainFragment = reverseAlias.root
       }
       else if (reverseAlias instanceof ScrollProgressAliasIndex.Reverse) {
-        domainFragment = reverseAlias.root
+        domainFragment = reverseAlias.root.get()
         // this.verticalOffset += reverseAlias.progress - scrollToPadding + .5
-        //@ts-ignore
-        justInTimeFunc = () => {this.verticalOffset += reverseAlias.progress - scrollToPadding + .5}
+        reverseAlias.progress.get((p) => {
+          this.verticalOffset = scrollToPadding + p
+        })
       }
       fragments.closeUp = originalDomain
       fragments.rootElem = domainFragment
     }
     else {
-      fragments.rootElem = this.sectionAliasList.getRootOfAlias(domainFragment)
+      let rootElem = this.sectionAliasList.getRootOfAlias(domainFragment)
+      if (rootElem instanceof Data) rootElem = rootElem.get()
+      fragments.rootElem = rootElem
       fragments.closeUp = this.sectionAliasList.aliasify(domainFragment).get().first
     }
 
     const m = this.sectionIndex.get(this.currentDomainFragment = domainFragment)
     this.curSectionProm = new Promise((res) => {
       if (m) m.then((pageSection) => {
-        if (justInTimeFunc) justInTimeFunc()
         res({pageSection, fragments})
       })
       
@@ -314,7 +317,7 @@ export default abstract class SectionedPage extends Page {
       let ls = this.on("keydown", (e) => {
         e.stopImmediatePropagation()
       })
-
+      debugger
       await scrollTo(elem.offsetTop, {
         cancelOnUserAction: true,
         verticalOffset: this.verticalOffset,
@@ -327,7 +330,9 @@ export default abstract class SectionedPage extends Page {
 
     }
     else {
-      this.scrollTop = this.verticalOffset + elem.offsetTop
+      setTimeout(() => {
+        this.scrollTop = this.verticalOffset + elem.offsetTop
+      })
     }
 
     
@@ -564,6 +569,8 @@ export default abstract class SectionedPage extends Page {
       if (this.currentlyActiveSectionElem) this.currentlyActiveSectionElem.deactivate()
       this.currentlyActiveSectionElem = section
       this.currentlyActiveSectionElem.activate()
+
+      debugger
 
       await scrollTo(section.offsetTop, {
         cancelOnUserAction: true,
