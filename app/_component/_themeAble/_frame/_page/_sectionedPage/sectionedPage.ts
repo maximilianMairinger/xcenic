@@ -8,6 +8,7 @@ import { EventListener, ScrollData } from "extended-dom";
 import { Data, DataCollection, DataSubscription } from "josm";
 import { constructIndex } from "key-index"
 import HightlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon"
+import { constructAttatchToPrototype } from "attatch-to-prototype"
 
 export const scrollToPadding = -120
 
@@ -350,7 +351,12 @@ export default abstract class SectionedPage extends Page {
 
     let globalToken: Symbol
     let aliasSubscriptions: DataSubscription<unknown[]>[] = []
-    let localSegmentScrollDataIndex = constructIndex((pageSectionElement: PageSection) => this.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop))
+    let localSegmentScrollDataIndex = constructIndex((pageSectionElement: PageSection) => constructIndex((endOfPage: "start" | "end" | "center" | number) => {
+      if (endOfPage === "start") return this.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop) as ScrollData 
+      if (endOfPage === "end") return this.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop + this.innerHeight()) as ScrollData
+      if (endOfPage === "center") return this.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop + this.innerHeight() / 2) as ScrollData
+      if (typeof endOfPage === "number") return this.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop + this.innerHeight() * endOfPage) as ScrollData
+    }))
 
     // ----------->
 
@@ -443,7 +449,7 @@ export default abstract class SectionedPage extends Page {
                   
                   let nameData = q.aliases.tunnel(aliases => aliases.first)
 
-                  let sub = new DataSubscription(new DataCollection(nameData, q.progress, nextProg, localSegmentScrollDataIndex(elem) as Data<number>) as any, (name: string, wantedProgress, nextProg, currentProgress) => {
+                  let sub = new DataSubscription(new DataCollection(nameData, q.progress, nextProg, localSegmentScrollDataIndex(elem) as any as Data<number>) as any, (name: string, wantedProgress, nextProg, currentProgress) => {
                     if (isSmallest) {
                       wantedProgress = -Infinity
                     }
@@ -483,18 +489,13 @@ export default abstract class SectionedPage extends Page {
     this.sectionIndex.forEach(async (section: Promise<PageSection>) => {
       let sec = await section
       
-      let localScrollProgressData = sec.localScrollProgressData
+      sec._localScrollProgressData.forEach((prom, key) => {
+        prom.res(localSegmentScrollDataIndex(sec)(key))
+      })
       
-      if (localScrollProgressData) {
-        sec.getLocalScrollProgressData = () => localScrollProgressData
-        localSegmentScrollDataIndex(sec).get(localScrollProgressData.set.bind(localScrollProgressData))
-      }
-      else {
-        sec.getLocalScrollProgressData = () => {
-          sec.getLocalScrollProgressData = () => localScrollProgressData
-          return localScrollProgressData = localSegmentScrollDataIndex(sec)
-        }
 
+      sec.localScrollProgressData = (endOfPage: "start" | "end" | "center" | number) => {
+        return Promise.resolve(localSegmentScrollDataIndex(sec)(endOfPage))
       }
     })
   }
