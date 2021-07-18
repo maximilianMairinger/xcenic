@@ -383,6 +383,7 @@ export default abstract class SectionedPage extends Page {
       })
 
       let elem = this.intersectingIndex.first as PageSection
+      debugger
 
 
       if (!this.inScrollAnimation.get()) {
@@ -391,7 +392,7 @@ export default abstract class SectionedPage extends Page {
         // TODO: Optimize look into new methods of sectionIndex; 
         this.sectionIndex.forEach(async (val, root) => {
           if ((await val) === elem) {
-            if (myToken !== globalToken || this.currentlyActiveSectionRootName === root) return
+            if (myToken !== globalToken) return
             this.currentlyActiveSectionRootName = root
 
 
@@ -407,6 +408,7 @@ export default abstract class SectionedPage extends Page {
 
             root = this.merge(root)
             let alias = this.sectionAliasList.getAllAliasesByRoot(root)
+            debugger
             if (alias) {
 
               if (alias instanceof SimpleAlias) {
@@ -449,11 +451,12 @@ export default abstract class SectionedPage extends Page {
                   
                   let nameData = q.aliases.tunnel(aliases => aliases.first)
 
-                  let sub = new DataSubscription(new DataCollection(nameData, q.progress, nextProg, localSegmentScrollDataIndex(elem)("start") as any as Data<number>) as any, (name: string, wantedProgress, nextProg, currentProgress) => {
+                  let sub = new DataSubscription(new DataCollection(nameData, q.progress, nextProg, localSegmentScrollDataIndex(elem)(.4) as any as Data<number>) as any, (name: string, wantedProgress, nextProg, currentProgress) => {
                     if (isSmallest) {
                       wantedProgress = -Infinity
                     }
                     
+                    debugger
                     if (wantedProgress <= currentProgress && nextProg > currentProgress) {
                       lastActiveName.set(name)
                       this.activateSectionNameWithDomain(name)

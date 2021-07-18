@@ -11,19 +11,17 @@ import RocketIcon from "../../../../../_icon/_highlightAbleIcon/rocket/rocket"
 import TeamIcon from "../../../../../_icon/_highlightAbleIcon/team/team"
 import ContactIcon from "../../../../../_icon/_highlightAbleIcon/contact/contact"
 import { AliasList, ScrollProgressAlias, ScrollProgressAliasIndex } from "../../sectionedPage"
+import { Data } from "josm"
 
 
 
 export default class HomePage extends LazySectionedPage {
 
-  public iconIndex: {[key: string]: HightlightAbleIcon} = {
-    philosophy: new ThoughtBubbleIcon(),
-    services: new RocketIcon(),
-    team: new TeamIcon(),
-    contact: new ContactIcon()
-  }
+  public iconIndex: {[key: string]: HightlightAbleIcon}
 
   constructor(sectionChangeCallback?: (section: string) => void) {
+    const subsectionHeight = [new Data(300)]
+
     super(new ImportanceMap<() => Promise<any>, any>(
       {
         key: new Import("", 1, (landingSection: typeof LandingSection) =>
@@ -36,9 +34,18 @@ export default class HomePage extends LazySectionedPage {
         ), val: () => import(/* webpackChunkName: "philosophySection" */"../../../../_pageSection/philosophySection/philosophySection")
       },
       {
-        key: new Import("services", 1, (workSection: typeof WorkSection) =>
-          new workSection()
-        ), val: () => import(/* webpackChunkName: "workSection" */"../../../../_pageSection/workSection/workSection")
+        key: new Import("services", 1, (workSection: typeof WorkSection) => {
+          const sec = new workSection()
+          for (let i = 0; i < sec.serviceSection.length -1; i++) {
+            const subSec = sec.serviceSection[i];
+            const heightData = subSec.resizeData().tunnel((rec) => rec.height)
+            heightData.get((e) => {console.log("Height", e)})
+            heightData.get(subsectionHeight[i].set.bind(subsectionHeight[i]))
+            
+          }
+
+          return sec
+        }), val: () => import(/* webpackChunkName: "workSection" */"../../../../_pageSection/workSection/workSection")
       },
       {
         key: new Import("team", 1, (testSection: typeof TestSection) =>
@@ -54,11 +61,18 @@ export default class HomePage extends LazySectionedPage {
       //@ts-ignore
       new ScrollProgressAliasIndex("services", [
         new ScrollProgressAlias(0, "services/websites"),
-        new ScrollProgressAlias(400, "services/contentCreation")
+        new ScrollProgressAlias(subsectionHeight[0], "services/contentCreation")
       ])
     ))
 
 
+
+    this.iconIndex = {
+      philosophy: new ThoughtBubbleIcon(),
+      services: new RocketIcon(),
+      team: new TeamIcon(),
+      contact: new ContactIcon()
+    }
   }
 
   stl() {

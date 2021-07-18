@@ -12,7 +12,7 @@ import { ElementList } from "extended-dom"
 import { Data, DataCollection } from "josm"
 
 export default class PhilosophySection extends PageSection {
-  private serviceSection = this.q("service-showcase") as ElementList<HTMLElement>
+  public serviceSection = this.q("service-showcase") as ElementList<HTMLElement>
   constructor() {
     super("light")
 
@@ -30,7 +30,11 @@ export default class PhilosophySection extends PageSection {
         height.set(prevHeight + localHeight)
       })
 
-      this.localScrollProgressData("center").then((scrollData) => {
+      this.localScrollProgressData(.4).then((scrollData) => {
+        scrollData.get(console.log)
+      })
+
+      this.localScrollProgressData(.4).then((scrollData) => {
         const scrollTrigger = scrollData.scrollTrigger(height)
 
         scrollTrigger.on("forward", () => {
