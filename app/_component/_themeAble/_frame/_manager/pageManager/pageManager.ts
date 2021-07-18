@@ -14,7 +14,7 @@ export default class PageManager extends Manager {
       
       {
         key: new Import("", 10, (homepage: typeof HomePage) =>
-            new homepage(sectionChangeCallback)
+            new homepage("", sectionChangeCallback)
         ), val: () => import(/* webpackChunkName: "homepage" */"../../_page/_sectionedPage/_lazySectionedPage/homepage/homepage")
       },
       {

@@ -12,7 +12,7 @@ export default abstract class LazySectionedPage extends SectionedPage {
   private loadingIndecatorTop: HTMLElement
   private importanceMap: ImportanceMap<any, any>
 
-  constructor(sectionIndex: ImportanceMap<() => Promise<any>, any>, sectionChangeCallback?: (section: string) => void, sectionAliasList?: AliasList, mergeIndex?: {[part in string]: string}) {
+  constructor(sectionIndex: ImportanceMap<() => Promise<any>, any>, baselink: string, sectionChangeCallback?: (section: string) => void, sectionAliasList?: AliasList, mergeIndex?: {[part in string]: string}) {
     const { resourcesMap, importanceMap } = lazyLoad(sectionIndex, (e, ind) => {
       let priorElem: HTMLElement
       let i = ind
@@ -26,7 +26,7 @@ export default abstract class LazySectionedPage extends SectionedPage {
       loadedElementsIndex[ind] = e
       e.anim({opacity: 1})
     })
-    super(resourcesMap, sectionChangeCallback, sectionAliasList, mergeIndex)
+    super(resourcesMap, baselink, sectionChangeCallback, sectionAliasList, mergeIndex)
 
 
     

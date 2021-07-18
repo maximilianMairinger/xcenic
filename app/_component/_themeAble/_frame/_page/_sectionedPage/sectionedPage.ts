@@ -8,7 +8,10 @@ import { EventListener, ScrollData } from "extended-dom";
 import { Data, DataCollection, DataSubscription } from "josm";
 import { constructIndex } from "key-index"
 import HightlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon"
-import { constructAttatchToPrototype } from "attatch-to-prototype"
+import localSettings from "./../../../../../lib/localSettings"
+
+
+
 
 export const scrollToPadding = -120
 
@@ -165,6 +168,10 @@ type SectionIndex = {[name in Name]: HTMLElement | QuerySelector}
 type Name = string
 type FullSectionIndex = ResourcesMap | SectionIndex
 export type QuerySelector = string
+
+
+
+
 export default abstract class SectionedPage extends Page {
   protected readonly sectionIndex: ResourcesMap
   public readonly sectionList: Data<string[]>
@@ -175,7 +182,10 @@ export default abstract class SectionedPage extends Page {
 
   public abstract iconIndex: {[key: string]: HightlightAbleIcon}
 
-  constructor(sectionIndex: FullSectionIndex, protected sectionChangeCallback?: (section: string) => void, protected readonly sectionAliasList: AliasList = new AliasList(), protected readonly mergeIndex: {[part in string]: string} = {}) {
+  private relScrollPosStorage = localSettings<number>("scrollPos@" + this.baselink, 0)
+  private activeSectionIdStorage = localSettings<string>("activeSectionId@" + this.baselink, "") // TODO: use first section id as default
+
+  constructor(sectionIndex: FullSectionIndex, private baselink: string, protected sectionChangeCallback?: (section: string) => void, protected readonly sectionAliasList: AliasList = new AliasList(), protected readonly mergeIndex: {[part in string]: string} = {}) {
     super()
     
     let that = this
@@ -183,6 +193,8 @@ export default abstract class SectionedPage extends Page {
       if (!(this instanceof PageSection)) console.warn("Unable to scrollTo this. This is not instanceof PageSection.")
       return that.scrollToSectionFunctionIndex(this)(to, speed)
     }
+
+    this.relScrollPosStorage.get(console.log)
 
 
     let r = this.prepSectionIndex(sectionIndex)
@@ -295,11 +307,16 @@ export default abstract class SectionedPage extends Page {
     return !!m
   }
 
+  private lastLocalScrollProgressStoreSubstription: DataSubscription<[number]>
+
   async navigationCallback() {
+    let resFunc: Function
+    const funcProm = new Promise<void>((r) => {resFunc = r})
     let active = this.active
     let scrollAnimation: any
 
     this.inScrollAnimation.set(scrollAnimation = Symbol())
+
 
 
     let { pageSection: elem, fragments } = await this.curSectionProm
@@ -312,36 +329,58 @@ export default abstract class SectionedPage extends Page {
     this.currentlyActiveSectionElem.activate()
 
     this.userInitedScrollEvent = false
-    if (active) {
 
-      let ls = this.on("keydown", (e) => {
-        e.stopImmediatePropagation()
-      })
+    let lastScrollProg = this.scrollData().get()
+    
+    let scrollToPos = elem.offsetTop
+
+    if (lastScrollProg === 0) lastScrollProg = -1000000;
+
+
+
+    setTimeout(async () => {
+      if (lastScrollProg < scrollToPos + this.verticalOffset || lastScrollProg > scrollToPos + elem.offsetHeight + this.verticalOffset) {
+        if (lastScrollProg === -1000000) {
+          
+          if (fragments.rootElem === this.activeSectionIdStorage.get()) {
+            let wantedScrollToPos = this.relScrollPosStorage.get() + scrollToPos
+            if (!(wantedScrollToPos < scrollToPos + this.verticalOffset || wantedScrollToPos > scrollToPos + elem.offsetHeight + this.verticalOffset)) scrollToPos = wantedScrollToPos - this.verticalOffset
+          }
+        }
+  
+        if (active) {
+  
+          let ls = this.on("keydown", (e) => {
+            e.stopImmediatePropagation()
+          })
+          
+          await scrollTo(scrollToPos, {
+            cancelOnUserAction: true,
+            verticalOffset: this.verticalOffset,
+            speed: scrollAnimationSpeed,
+            elementToScroll: this,
+            easing
+          })
+    
+          ls.deactivate()
+    
+        }
+        else {
+          this.scrollTop = this.verticalOffset + scrollToPos
+        }
+      }
+  
       
-      await scrollTo(elem.offsetTop, {
-        cancelOnUserAction: true,
-        verticalOffset: this.verticalOffset,
-        speed: scrollAnimationSpeed,
-        elementToScroll: this,
-        easing
-      })
+      
+      
+      if (scrollAnimation === this.inScrollAnimation.get()) {
+        this.inScrollAnimation.set(undefined)
+        this.userInitedScrollEvent = true
+      }
 
-      ls.deactivate()
-
-    }
-    else {
-      setTimeout(() => {
-        this.scrollTop = this.verticalOffset + elem.offsetTop
-      })
-    }
-
-    
-    
-    
-    if (scrollAnimation === this.inScrollAnimation.get()) {
-      this.inScrollAnimation.set(undefined)
-      this.userInitedScrollEvent = true
-    }
+      resFunc()
+    })
+    return funcProm
   }
 
 
@@ -352,7 +391,7 @@ export default abstract class SectionedPage extends Page {
   private intersectingIndex: Element[] = []
   private currentlyActiveSectionElem: PageSection
   initialActivationCallback() {
-
+    
 
 
     let globalToken: Symbol
@@ -480,6 +519,17 @@ export default abstract class SectionedPage extends Page {
             }
             else this.activateSectionNameWithDomain(root)
 
+            if (this.lastLocalScrollProgressStoreSubstription) {
+              this.lastLocalScrollProgressStoreSubstription.deactivate()
+              this.lastLocalScrollProgressStoreSubstription = undefined
+            }
+
+            elem.localScrollProgressData("start").then((e) => {
+              this.lastLocalScrollProgressStoreSubstription = e.get(this.relScrollPosStorage.set.bind(this.relScrollPosStorage), false)
+            })
+
+            this.activeSectionIdStorage.set(this.currentlyActiveSectionRootName)
+
             
             
           }
@@ -543,7 +593,6 @@ export default abstract class SectionedPage extends Page {
     sectionRootName = this.sectionIndex.getLoadedKeyOfResource(section)
     let whileWaitingQueue = []
     
-
 
     const go = async (verticalOffset: number, speed: number, force: boolean) => {
       if (this.inScrollAnimation.get() && !force) return

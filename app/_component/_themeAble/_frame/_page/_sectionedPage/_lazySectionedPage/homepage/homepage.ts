@@ -19,7 +19,7 @@ export default class HomePage extends LazySectionedPage {
 
   public iconIndex: {[key: string]: HightlightAbleIcon}
 
-  constructor(sectionChangeCallback?: (section: string) => void) {
+  constructor(baselink: string, sectionChangeCallback?: (section: string) => void) {
     const subsectionHeight = [new Data(300)]
 
     super(new ImportanceMap<() => Promise<any>, any>(
@@ -55,7 +55,7 @@ export default class HomePage extends LazySectionedPage {
           new testSection()
         ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
       }
-    ), sectionChangeCallback, new AliasList(
+    ), baselink, sectionChangeCallback, new AliasList(
       //@ts-ignore
       new ScrollProgressAliasIndex("services", [
         new ScrollProgressAlias(0, "services/websites"),
