@@ -258,6 +258,7 @@ export default abstract class SectionedPage extends Page {
     let justInTimeFunc: Function
 
     this.verticalOffset = scrollToPadding
+
     if (this.sectionAliasList.reverseIndex[domainFragment] !== undefined) {
       let reverseAlias = this.sectionAliasList.reverseIndex[domainFragment]
       let originalDomain = domainFragment
@@ -405,7 +406,6 @@ export default abstract class SectionedPage extends Page {
 
 
             root = this.merge(root)
-
             let alias = this.sectionAliasList.getAllAliasesByRoot(root)
             if (alias) {
 
@@ -449,7 +449,7 @@ export default abstract class SectionedPage extends Page {
                   
                   let nameData = q.aliases.tunnel(aliases => aliases.first)
 
-                  let sub = new DataSubscription(new DataCollection(nameData, q.progress, nextProg, localSegmentScrollDataIndex(elem) as any as Data<number>) as any, (name: string, wantedProgress, nextProg, currentProgress) => {
+                  let sub = new DataSubscription(new DataCollection(nameData, q.progress, nextProg, localSegmentScrollDataIndex(elem)("start") as any as Data<number>) as any, (name: string, wantedProgress, nextProg, currentProgress) => {
                     if (isSmallest) {
                       wantedProgress = -Infinity
                     }

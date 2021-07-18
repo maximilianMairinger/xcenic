@@ -349,9 +349,16 @@ export default abstract class Manager extends Frame {
               if ((page as SectionedPage).sectionList) {
                 (page as SectionedPage).sectionList.tunnel(e => e.filter(s => s !== "")).get((sectionListNested) => {
                   let ob = {} as any
-                  for (const e of sectionListNested) {
-                    ob[e] = (page as SectionedPage).iconIndex[e]
+                  for (let e of sectionListNested) {
+                    let ic = (page as SectionedPage).iconIndex[e]
+                    while (!ic) {
+                      if (e === "") break
+                      e = e.substr(0, e.lastIndexOf("/"))
+                      ic = (page as SectionedPage).iconIndex[e]
+                    }
+                    ob[e] = ic
                   }
+                  
                   this.pageChangeCallback(to, ob, page.domainLevel)
                 })
               }

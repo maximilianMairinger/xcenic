@@ -66,8 +66,16 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
       this.callMeMaybe = activeLink
       return
     }
-    let index = Object.keys(this.elems).indexOf(activeLink)
-    if (index === -1) index = 0
+    const validKeys = Object.keys(this.elems)
+    let index = validKeys.indexOf(activeLink)
+    while (index === -1) {
+      if (activeLink === "") {
+        index = 0
+        break
+      } 
+      activeLink = activeLink.substr(0, activeLink.lastIndexOf("/"))
+      index = validKeys.indexOf(activeLink)
+    }
 
     if (this.lastHighlightElem) this.lastHighlightElem.downlight()
     this.lastHighlightElem = this.currentLinkElems[index]

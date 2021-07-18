@@ -10,6 +10,7 @@ import ThoughtBubbleIcon from "../../../../../_icon/_highlightAbleIcon/thoughtBu
 import RocketIcon from "../../../../../_icon/_highlightAbleIcon/rocket/rocket"
 import TeamIcon from "../../../../../_icon/_highlightAbleIcon/team/team"
 import ContactIcon from "../../../../../_icon/_highlightAbleIcon/contact/contact"
+import { AliasList, ScrollProgressAlias, ScrollProgressAliasIndex } from "../../sectionedPage"
 
 
 
@@ -49,7 +50,13 @@ export default class HomePage extends LazySectionedPage {
           new testSection()
         ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
       }
-    ), sectionChangeCallback)
+    ), sectionChangeCallback, new AliasList(
+      //@ts-ignore
+      new ScrollProgressAliasIndex("services", [
+        new ScrollProgressAlias(0, "services/websites"),
+        new ScrollProgressAlias(400, "services/contentCreation")
+      ])
+    ))
 
 
   }

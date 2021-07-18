@@ -3,11 +3,14 @@ export default {
     longName: "Xcenic"
   },
   links: {
-    subPage: "Sub Page",
     philosophy: "Philosophy",
     services: "Services",
     team: "Team",
-    contact: "Contact"
+    contact: "Contact",
+    websites: "Websites",
+    contentCreation: "Content creation",
+
+
   },
   home: {
     landing: {

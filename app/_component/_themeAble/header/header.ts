@@ -417,7 +417,15 @@ export default class Header extends ThemeAble {
       return
     }
     let index = this.currentLinkContents.indexOf(newSelected)
-    if (index === -1) index = 0
+    while (index === -1) {
+      if (newSelected === "") {
+        index = 0
+        break
+      }
+      newSelected = newSelected.substr(0, newSelected.lastIndexOf("/"))
+      index = this.currentLinkContents.indexOf(newSelected)
+    }
+
     let elem = this.currentLinkElems[index]
     if (this.lastSelectedElem === elem) return
     
