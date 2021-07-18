@@ -38,7 +38,7 @@ export default function init(indexUrl: string = "*", wsUrl: string = "/") {
 
   const app = ex as typeof ex & { ws: (route: string, fn: (ws: WebSocket & {on: WebSocket["addEventListener"], off: WebSocket["removeEventListener"]}, req: any) => void) => void }
   
-  
+
   chokidar.watch(publicPath, { ignoreInitial: true }).on("all", (event, path) => {
     path = formatPath(path)
 

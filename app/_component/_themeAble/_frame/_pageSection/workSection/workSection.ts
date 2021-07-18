@@ -36,10 +36,12 @@ export default class PhilosophySection extends PageSection {
 
         scrollTrigger.on("forward", () => {
           this.css("backgroundColor", "#FFFAFA")
+          this.style.setProperty("--theme", "var(--secondary-theme)")
         })
   
         scrollTrigger.on("backward", () => {
           this.css("backgroundColor", "#F9FAFE")
+          this.style.setProperty("--theme", "var(--primary-theme)")
         })
       })
 

@@ -2,14 +2,15 @@
   min-height: 100vh;
   background-color: #F9FAFE;
   transition: .3s background-color;
-}
-
-service-showcase.webapp {
   --theme: var(--primary-theme)
 }
 
+service-showcase.webapp {
+  
+}
+
 service-showcase.contentCreation {
-  --theme: var(--secondary-theme)
+  
 }
 
 
@@ -53,6 +54,7 @@ h1.chonker::after {
   content: "";
   z-index: -1;
   background: rgba(var(--theme), .64);
+  transition: .3s background-color;
   position: absolute;
   width: 100%;
   padding-right: 6px;
@@ -64,6 +66,7 @@ h1.chonker::after {
 h1.chonker::before {
   content: "";
   background: rgb(var(--theme));
+  transition: .3s background-color;
   position: absolute;
   width: 3px;
   height: 50%;
@@ -73,6 +76,7 @@ h1.chonker::before {
 
 h2.lil {
   color: rgb(var(--theme));
+  transition: .3s background-color;
   font-size: 19px;
   margin-top: 4px;
   margin-bottom: 3px;
@@ -81,6 +85,7 @@ h2.lil {
 h2.lil::before {
   content: "";
   background: rgb(var(--theme));
+  transition: .3s background-color;
   position: absolute;
   width: 3px;
   height: 27px;
@@ -89,6 +94,7 @@ h2.lil::before {
 
 h2.lil::selection {
   background: rgba(var(--theme), 0.15);
+  transition: .3s background-color;
 }
 
 h1.count {
@@ -101,11 +107,13 @@ h1.count {
 
 h1.count::selection {
   background: rgba(var(--theme), 0.15);
+  transition: .3s background-color;
 }
 
 h1.count::before {
   content: "";
   background: rgba(var(--theme), .15);
+  transition: .3s background-color;
   position: absolute;
   width: 26px;
   height: 26px;
@@ -261,6 +269,11 @@ big-thing {
   margin-top: 15px;
   margin-bottom: 15px;
 } 
+
+.photoShoot {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
 
 
 
