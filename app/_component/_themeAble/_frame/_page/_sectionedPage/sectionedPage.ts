@@ -270,7 +270,7 @@ export default abstract class SectionedPage extends Page {
         domainFragment = reverseAlias.root.get()
         // this.verticalOffset += reverseAlias.progress - scrollToPadding + .5
         reverseAlias.progress.get((p) => {
-          this.verticalOffset = scrollToPadding + p
+          this.verticalOffset = p
         })
       }
       fragments.closeUp = originalDomain
@@ -317,7 +317,7 @@ export default abstract class SectionedPage extends Page {
       let ls = this.on("keydown", (e) => {
         e.stopImmediatePropagation()
       })
-      debugger
+      
       await scrollTo(elem.offsetTop, {
         cancelOnUserAction: true,
         verticalOffset: this.verticalOffset,
@@ -570,7 +570,6 @@ export default abstract class SectionedPage extends Page {
       this.currentlyActiveSectionElem = section
       this.currentlyActiveSectionElem.activate()
 
-      debugger
 
       await scrollTo(section.offsetTop, {
         cancelOnUserAction: true,

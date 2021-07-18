@@ -5,13 +5,11 @@
   --theme: var(--primary-theme)
 }
 
-service-showcase.webapp {
-  
+component-body {
+  z-index: 1;
 }
 
-service-showcase.contentCreation {
-  
-}
+
 
 
 service-showcase {
@@ -212,13 +210,13 @@ c-image::after {
 }
 
 
-big-thing {
-  display: inline-block;
+big-showcase {
+  display: block;
   padding: 25px 5%;
   position: relative;
 }
 
-.tablet big-thing {
+.tablet big-showcase {
   padding-right: 10%;
   padding-left: 2.5%;
   box-sizing: border-box;
@@ -280,19 +278,51 @@ big-thing {
   grid-row: 1 / 3;
 }
 
-c-image.standalone {
-  border-radius: 40px;
-  overflow: hidden;
-  margin-top: 20px;
-  margin-bottom: 20px;
+.photographyImage {
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
 }
 
-c-image::after {
-  border-radius: 40px;
+.photographyImage c-image {
+
 }
+
+big-image {
+  margin-bottom: 20px;
+  margin-top: 20px;
+  display: block;
+}
+
+big-image c-image {
+  border-radius: calc(11vw / 4);
+  overflow: hidden;
+}
+
+big-image c-image::after {
+  border-radius: calc(11vw / 4);
+}
+
+background-accent {
+  background-color: rgb(var(--plain-background));
+  box-shadow: var(--soft-shadow);
+  border-radius: calc(8vw / 4);
+  position: absolute;
+  bottom: 0;
+  right: 10%;
+  width: 55%;
+  height: 65%;
+}
+
+background-accent + big-image {
+  box-sizing: border-box;
+  padding-right: 20%;
+  padding-bottom: 5%
+}
+
+
 
 @media (min-width: 1500px) {
-  c-image.standalone {
+  big-image {
     margin-top: 30px;
     margin-bottom: 30px;
   }
@@ -342,6 +372,18 @@ c-tgm-logo-dots {
   c-tgm-logo-dots {
     width: calc(50vw / 3);
     height: calc(50vw / 3);
+  }
+
+  big-image c-image {
+    border-radius: calc(11vw / 3);
+  }
+
+  big-image c-image::after {
+    border-radius: calc(11vw / 3);
+  }
+
+  background-accent {
+    border-radius: calc(8vw / 3);
   }
 
   .smartphone c-image::after {
@@ -402,6 +444,19 @@ c-tgm-logo-dots {
     height: 24vw;
   }
 
+  big-image c-image {
+    border-radius: calc(11vw / 2);
+  }
+
+  big-image c-image::after {
+    border-radius: calc(11vw / 2);
+  }
+
+  background-accent {
+    border-radius: calc(8vw / 2);
+  }
+
+
   .smartphone c-image::after {
     border-radius: calc(8.8vw / 2);
   }
@@ -448,8 +503,20 @@ c-tgm-logo-dots {
   }
 
 
+  
+
   .smartphone c-image::after {
     border-radius: 8.8vw;
+  }
+
+  big-image c-image {
+    border-radius: 11vw;
+  }
+  big-image c-image::after {
+    border-radius: 11vw;
+  }
+  background-accent {
+    border-radius: 8vw;
   }
 
 
@@ -457,14 +524,12 @@ c-tgm-logo-dots {
     border-radius: 4.2vw;
   }
 
-
-
-  big-thing {
+  big-showcase {
     display: inline-block;
     padding: 15px 2%;
     position: relative;
   }
-  .tablet big-thing {
+  .tablet big-showcase {
     padding-right: 10%;
     padding-left: 2%;
     box-sizing: border-box;

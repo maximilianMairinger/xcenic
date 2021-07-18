@@ -6,7 +6,7 @@ service-showcase.webapp.blue
   grid-element.tablet
     h2.lil $[ home.work.webApp.tablet.heading ]
     c-tgm-logo-dots
-    big-thing 
+    big-showcase 
       c-image(src="tgmWebsiteTablet")
 
   grid-element.step.one
@@ -27,7 +27,7 @@ service-showcase.webapp.blue
 
   grid-element.smartphone 
     h2.lil $[ home.work.webApp.smartphone.heading ]
-    big-thing 
+    big-showcase
       c-image(src="taskforceJoin")
 
 service-showcase.contentCreation.red
@@ -35,14 +35,20 @@ service-showcase.contentCreation.red
     h1.chonker $[ home.work.contentCreation.hero.heading ]
     p $[ home.work.contentCreation.hero.text ]
   
-  grid-element.photoShoot
+  grid-element.photography
     c-photo-shoot.illustration
     h2.lil $[ home.work.contentCreation.photography ]
 
   grid-element.videography
     h2.lil $[ home.work.contentCreation.videography.heading ]
     p $[ home.work.contentCreation.videography.text1 ]
-    c-image(src="cameraMan").standalone
+    big-image
+      c-image(src="cameraMan")
     p $[ home.work.contentCreation.videography.text2 ]
+
+  grid-element.photographyImage
+    background-accent
+    big-image
+      c-image(src="photography")
 
 
