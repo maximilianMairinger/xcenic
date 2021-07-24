@@ -1,7 +1,7 @@
 const loadStates = ["minimalContentPaint", "fullContentPaint", "completePaint"]
 const defaultPreloadToLoadStatus = loadStates[1]
 
-const loadedSymbol = Symbol("loaded")
+export const loadedSymbol = Symbol("loaded")
 
 export default function init<Func extends () => Promise<any>>(resources: ImportanceMap<any, any>, globalInitFunc?: (instance: any, index: number) => void | Promise<void>) {
   const resolvements = new Map<Import<any, any>, (load: () => Promise<{default: {new(): any}}>, index: number, state: (typeof loadStates)[number]) => void>();
@@ -17,7 +17,6 @@ export default function init<Func extends () => Promise<any>>(resources: Importa
           const loadState = async (load: () => Promise<{default: {new(): any}}>, index: number, state?) => {
             if (state) {
               await instanceProm
-              await initStage(state)
               const stage = instance[loadedSymbol][state]
               if (!stage.started) {
                 stage.started = true
@@ -31,16 +30,15 @@ export default function init<Func extends () => Promise<any>>(resources: Importa
           let instanceProm = ((async () => imp.initer((await load()).default)))();
 
 
-          async function initStage(state) {
-            if (!instance[loadedSymbol][state]) {
-              let r: Function
-              const p = instance[loadedSymbol][state] = new Promise((res) => {r = res}) as any
-              p.started = false
-              p.res = () => {
-                p.yet = true
-                r()
-              }
+          function initStageProm() {
+            let r: Function
+            const p = new Promise((res) => {r = res}) as any
+            p.started = false
+            p.res = () => {
+              p.yet = true
+              r()
             }
+            return p
           }
 
 
@@ -50,7 +48,10 @@ export default function init<Func extends () => Promise<any>>(resources: Importa
           
           let instance = await instanceProm
 
-          instance[loadedSymbol] = {}
+          const stageOb = instance[loadedSymbol] = {}
+          for (const stage of loadStates) {
+            stageOb[stage] = initStageProm()
+          }
           
           
           if (globalInitFunc !== undefined) await globalInitFunc(instance, index);
