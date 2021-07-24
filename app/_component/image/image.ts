@@ -14,6 +14,12 @@ const formats = [
 ]
 
 const res = "3K"
+const prev = "PREV"
+
+const reses = [
+  prev,
+  res
+]
 
 
 const whenPossibleFormats = formats.slice(0, -1)
@@ -28,65 +34,84 @@ function isExplicitLocation(location: string) {
 }
 
 export default class Image extends Component {
-  public readonly loaded: Promise<void>
-  private elems = new ElementList<HTMLElement & {setSource: (to: string) => string}>()
-  private img: HTMLImageElement & {setSource: (to: string) => string}
+  public readonly loaded: {[key in typeof reses[number]]: Promise<void>} = {}
+  private elems: {[key in typeof reses[number]]: {sources: {setSource: (src: string) => void}[], img: HTMLImageElement &  {setSource: (src: string) => void}}} = {}
   constructor(src?: string, forceLoad?: boolean) {
-    super(ce("picture"))
+    //@ts-ignore
+    super(false)
 
-    for (let format of whenPossibleFormats) {
-      const elem = ce("source") as HTMLSourceElement & {setSource: (to: string) => string}
-      elem.type = typePrefix + format
-      elem.setSource = (to: string) => elem.srcset = to + format
-      this.elems.add(elem)
+    for (const res of reses) {
+      const sources = []
+      const img = ce("img") as HTMLImageElement & {setSource: (to: string) => string}
+      //@ts-ignore
+      img.crossorigin = "anonymous"
+      img.setSource = (to) => img.src = to + fallbackFormat
+      
+
+      this.elems[res] = {sources, img}
+      
+
+      for (let format of whenPossibleFormats) {
+        const source = ce("source") as HTMLSourceElement & {setSource: (to: string) => string}
+        source.type = typePrefix + format
+        source.setSource = (to: string) => source.srcset = to + format
+        sources.add(source)
+      }
+
+      sources.add(img as any)
+
+      const bod = ce("picture")
+      bod.setAttribute("name", res)
+      bod.apd(...sources)
+      this.apd(bod)
+
+      this.newLoadedPromise(res)
+      
+      
     }
 
-    this.img = ce("img") as HTMLImageElement & {setSource: (to: string) => string}
-    //@ts-ignore
-    this.img.crossorigin = "anonymous"
-    this.img.setSource = (to) => this.img.src = to + fallbackFormat
-    this.elems.add(this.img as any)
-
-    this.componentBody.apd(...this.elems)
-
-
-    
-    this.loaded = new Promise((res) => {
-      (this.img as any as HTMLImageElement).onload = () => {
-        this.img.anim({opacity: 1})
-        res()
-      }
-    })
     
     if (src) this.src(src, forceLoad)
   }
 
+  private newLoadedPromise(resolution: typeof reses[number]) {
+    this.loaded[resolution] = new Promise((res) => {
+      this.elems[resolution].img.onload = () => {
+        res(); 
+        //@ts-ignore
+        this.loaded[resolution].done = true
+        this.elems[resolution].img.anim({opacity: 1}, 150).then(() => {
+          const resIndex = reses.indexOf(resolution)
+          if (resIndex !== 0) {
+            this.elems[reses[resIndex - 1]].img.anim({opacity: 0}, 150)
+            this.elems[resolution].img.anim({filter: "blur(0px)"}, 800)
+          }
+        })
+      }
+    })
+  }
 
-  src(): Promise<string>
-  src(src: string, forceLoad?: boolean): this
-  src(src?: string, forceLoad: boolean = false) {
-    if (src !== undefined) {
-      if (forceLoad) {
+  src(src?: string, forceLoad: boolean = false): this {
+    if (forceLoad) {
+      for (const res of reses) {
+        const { img, sources } = this.elems[res]
+        if ((this.loaded[res] as any).done) this.newLoadedPromise(res)
         if (isExplicitLocation(src)) {
-          this.img.src = src
+          img.setSource(src)
         }
         else {
           const pointIndex = src.lastIndexOf(".")
           if (pointIndex !== -1) src = src.slice(0, pointIndex)
-          this.elems.Inner("setSource", ["/res/img/dist/" + src + unionSymbol + res + "."])
+          sources.Inner("setSource", ["/res/img/dist/" + src + unionSymbol + res + "."])
         }
-        
-        
-        
       }
-      else {
-        _record.add(() => {
-          this.src(src, true)
-        })
-      }
-      return this
     }
-    else return this.loaded.then(() => this.img.currentSrc !== undefined ? this.img.currentSrc : this.img.src)
+    else {
+      _record.add(() => {
+        this.src(src, true)
+      })
+    }
+    return this
   }
 
 

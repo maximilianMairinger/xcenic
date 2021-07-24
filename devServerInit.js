@@ -65,12 +65,12 @@ let appEntryPath = path.join(appDir, appEntryFileName);
   }
   
 
-  const compressImages = imageWeb.constrImageWeb(["jpg", "webp", "avif"], ["3K"])
+  const compressImages = imageWeb.constrImageWeb(["jpg", "webp", "avif"], ["3K", "PREV"])
   const imgDistPath = "public/res/img/dist" 
   const imgChangeF = async (path, override = false) => {
-    console.log("Compressing images: " + path)
+    console.log("Compressing images")
     await delay(1000)
-    await compressImages(path, imgDistPath, { override, silent: false })
+    await compressImages(imgDistPath, imgDistPath, { override, silent: false })
   }
   
 
