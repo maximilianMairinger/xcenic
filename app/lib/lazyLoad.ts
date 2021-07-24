@@ -1,5 +1,7 @@
 const loadStates = ["minimalContentPaint", "fullContentPaint", "completePaint"]
-const preloadToLoadStatusAtIndex = 1
+const defaultPreloadToLoadStatus = loadStates[1]
+
+const loadedSymbol = Symbol("loaded")
 
 export default function init<Func extends () => Promise<any>>(resources: ImportanceMap<any, any>, globalInitFunc?: (instance: any, index: number) => void | Promise<void>) {
   const resolvements = new Map<Import<any, any>, (load: () => Promise<{default: {new(): any}}>, index: number, state: (typeof loadStates)[number]) => void>();
@@ -12,56 +14,43 @@ export default function init<Func extends () => Promise<any>>(resources: Importa
       let resProm: any
       let prom = new Promise((res) => {
         resolvements.set(imp, async (load: () => Promise<{default: {new(): any}}>, index: number, state?) => {
-          let loadState = async (load: () => Promise<{default: {new(): any}}>, index: number, state?) => {
+          const loadState = async (load: () => Promise<{default: {new(): any}}>, index: number, state?) => {
             if (state) {
-              if (!instance[state].done.started) {
-                instance[state].done.started = true
+              await instanceProm
+              await initStage(state)
+              const stage = instance[loadedSymbol][state]
+              if (!stage.started) {
+                stage.started = true
                 await instance[state]()
-                instance[state].done.res()
+                stage.res()
               }
             }
             
           }
 
           let instanceProm = ((async () => imp.initer((await load()).default)))();
-          (async () => {
-            async function loado(state) {
-              let instance = await instanceProm
-              if (!instance[state]) {
-                instance[state] = () => {}
-                const p = instance[state].done = Promise.resolve() as any
-                p.yet = p.started = true
-              }
-              else {
-                let r: Function
-                const p = instance[state].done = new Promise((res) => {r = res}) as any
-                p.started = false
-                p.res = () => {
-                  p.yet = true
-                  r()
-                }
-              }
-            }
-            if (state) {
-              await loado(state)
-            }
-            else {
-              const oldLoad = loadState
-              loadState = async (load: () => Promise<{default: {new(): any}}>, index: number, state?) => {
-                if (state) {                
-                  await loado(state)
-                  await oldLoad(load, index, state)
-                }
-              }
 
+
+          async function initStage(state) {
+            if (!instance[loadedSymbol][state]) {
+              let r: Function
+              const p = instance[loadedSymbol][state] = new Promise((res) => {r = res}) as any
+              p.started = false
+              p.res = () => {
+                p.yet = true
+                r()
+              }
             }
-          })()
+          }
+
 
 
           resolvements.set(imp, loadState)
 
           
           let instance = await instanceProm
+
+          instance[loadedSymbol] = {}
           
           
           if (globalInitFunc !== undefined) await globalInitFunc(instance, index);
@@ -223,11 +212,12 @@ export class ImportanceMap<Func extends () => Promise<{default: {new(): Mod}}>, 
     }
   }
 
-  private async startResolvement() {
+  private async startResolvement(toStage: string = defaultPreloadToLoadStatus) {
     if (!this.resolver) return
+    const toStageIndex = loadStates.indexOf(toStage) + 1
     const whiteList = this.whiteListedImports
     whiteList.sort((a, b) => b.importance - a.importance)
-    for (let j = 0; j < preloadToLoadStatusAtIndex; j++) {
+    for (let j = 0; j < toStageIndex; j++) {
       const state = loadStates[j];
       for (let i = 0; i < whiteList.length; i++) {
         if (whiteList !== this.whiteListedImports) return
@@ -254,12 +244,12 @@ export class ImportanceMap<Func extends () => Promise<{default: {new(): Mod}}>, 
     return this;
   }
 
-  public whiteList(...imp: Import<string, Mod>[]) {
+  public whiteList(imp: Import<string, Mod>[], toStage?: string) {
     this.whiteListedImports = imp
-    this.startResolvement()
+    this.startResolvement(toStage)
   }
-  public whiteListAll() {
-    this.whiteList(...this.importanceList)
+  public whiteListAll(toStage?: string) {
+    this.whiteList(this.importanceList, toStage)
   }
 
   private superWhiteListCache: {imp: Import<string, Mod>, deepLoad: boolean}

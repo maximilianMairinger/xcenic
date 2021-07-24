@@ -2,19 +2,19 @@ import Frame from "../frame";
 import { ScrollData } from "extended-dom"
 import { Theme } from "../../themeAble";
 import delay from "delay";
-import { record as imageRecord } from "../../../image/image"
-
+import { prevRecord as prevImageRecord, fullRecord as fullImageRecord } from "../../../image/image"
 type ResablePromise<T> = Promise<T> & {res(t: T): Promise<T>}
 
 export default abstract class PageSection extends Frame {
-  private collectRecord: () => () => Promise<any>
+  private loadFullResImages: () => () => Promise<any>
+  private loadPrevResImages: () => () => Promise<any>
   constructor(theme?: Theme) {
-    debugger
-    const done = imageRecord.record()
+    const prevResDone = prevImageRecord.record()
+    const fullResDone = fullImageRecord.record()
     super(theme)
-    debugger
     this._localScrollProgressData = new Map
-    this.collectRecord = done
+    this.loadPrevResImages = prevResDone
+    this.loadFullResImages = fullResDone
   }
   public _localScrollProgressData?: Map<"end" | "start" | "center" | number, ResablePromise<ScrollData>>
   public localScrollProgressData(endOfPage: "end" | "start" | "center" | number = "start"): Promise<ScrollData> {
@@ -29,9 +29,20 @@ export default abstract class PageSection extends Frame {
   }
 
   async minimalContentPaint() {
-    debugger
-    await this.collectRecord()()
+    await this.loadPrevResImages()()
+    console.log("min", this)
   }
+
+  async fullContentPaint() {
+    await this.loadFullResImages()()
+    console.log("full", this)
+  }
+
+  async completePaint() {
+    // await this.loadFullResImages()()
+    // console.log("full", this)
+  }
+
   
 
   stl() {

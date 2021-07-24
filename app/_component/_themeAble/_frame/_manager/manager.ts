@@ -8,7 +8,7 @@ import { Theme } from "../../../_themeAble/themeAble";
 import PageSection from "../_pageSection/pageSection";
 import { EventListener } from "extended-dom";
 import Page from "../_page/page";
-import { record } from "../../../image/image";
+
 import HighlightAbleIcon from "../../_icon/_highlightAbleIcon/highlightAbleIcon";
 
 
@@ -114,7 +114,6 @@ export default abstract class Manager extends Frame {
   private scrollEventListener: EventListener
   private domainSubscription: domain.DomainSubscription
   private loadImages: Function
-  private doneRec: ReturnType<typeof record["record"]>
   async minimalContentPaint() {
     // this.doneRec = record.record()
     await this.setDomain(this.domainSubscription.domain)

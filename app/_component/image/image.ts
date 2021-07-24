@@ -2,8 +2,10 @@ import Component from "../component"
 import declareComponent from "./../../lib/declareComponent"
 import { InstanceRecord } from "../../lib/record"
 import { ElementList } from "extended-dom"
-const _record = new InstanceRecord(() => console.warn("img load without init proxy"))
-export const record = _record as Omit<typeof _record, "add">
+const _fullRecord = new InstanceRecord(() => console.warn("img load without init proxy"))
+export const fullRecord = _fullRecord as Omit<typeof _fullRecord, "add">
+const _prevRecord = new InstanceRecord(() => console.warn("img load without init proxy"))
+export const prevRecord = _prevRecord as Omit<typeof _prevRecord, "add">
 const unionSymbol = "@"
 const typePrefix = "image/"
 
@@ -15,12 +17,12 @@ const formats = [
   "jpg"
 ]
 
-const res = "3K"
-const prev = "PREV"
+const fullRes = "3K"
+const prevRes = "PREV"
 
 const reses = [
-  prev,
-  res
+  prevRes,
+  fullRes
 ]
 
 
@@ -93,25 +95,36 @@ export default class Image extends Component {
     })
   }
 
+
+  private setSource(src: string, res: typeof reses[number]) {
+    const { img, sources } = this.elems[res]
+    if ((this.loaded[res] as any).done) this.newLoadedPromise(res)
+    if (isExplicitLocation(src)) {
+      img.setSource(src)
+    }
+    else {
+      const pointIndex = src.lastIndexOf(".")
+      if (pointIndex !== -1) src = src.slice(0, pointIndex)
+      sources.Inner("setSource", ["/res/img/dist/" + src + unionSymbol + res + "."])
+    }
+  }
+    
+
+
+
+
   src(src?: string, forceLoad: boolean = false): this {
     if (forceLoad) {
       for (const res of reses) {
-        const { img, sources } = this.elems[res]
-        if ((this.loaded[res] as any).done) this.newLoadedPromise(res)
-        if (isExplicitLocation(src)) {
-          img.setSource(src)
-        }
-        else {
-          const pointIndex = src.lastIndexOf(".")
-          if (pointIndex !== -1) src = src.slice(0, pointIndex)
-          sources.Inner("setSource", ["/res/img/dist/" + src + unionSymbol + res + "."])
-        }
+        this.setSource(src, res)
       }
     }
     else {
-      debugger
-      _record.add(() => {
-        this.src(src, true)
+      _prevRecord.add(() => {
+        this.setSource(src, prevRes)
+      })
+      _fullRecord.add(() => {
+        this.setSource(src, fullRes)
       })
     }
     return this

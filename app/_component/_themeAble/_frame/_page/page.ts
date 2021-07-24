@@ -22,6 +22,15 @@ export default abstract class Page extends Frame {
   public navigate() {
     if (this.navigationCallback) this.navigationCallback()
   }
+  async minimalContentPaint() {
+
+  }
+  async fullContentPaint() {
+
+  }
+  async completePaint() {
+    
+  }
 
   /**
    * @return resolve Promise as soon as you know if the navigation will be successful or not. Dont wait for swap animation etc

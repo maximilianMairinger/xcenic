@@ -85,10 +85,11 @@ export default abstract class LazySectionedPage extends SectionedPage {
 
 
   async fullContentPaint() {
-    console.log("fully")
     this.importanceMap.whiteListAll()
     await this.resourceMap.fullyLoaded  
   }
+
+  
 
   stl() {
     return super.stl() + require("./lazySectionedPage.css").toString()
