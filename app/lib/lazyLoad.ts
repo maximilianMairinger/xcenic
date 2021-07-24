@@ -212,7 +212,7 @@ export class ImportanceMap<Func extends () => Promise<{default: {new(): Mod}}>, 
     }
   }
 
-  private async startResolvement(toStage: string = defaultPreloadToLoadStatus) {
+  private async startResolvement(toStage: typeof loadStates[number] = defaultPreloadToLoadStatus) {
     if (!this.resolver) return
     const toStageIndex = loadStates.indexOf(toStage) + 1
     const whiteList = this.whiteListedImports
@@ -244,11 +244,11 @@ export class ImportanceMap<Func extends () => Promise<{default: {new(): Mod}}>, 
     return this;
   }
 
-  public whiteList(imp: Import<string, Mod>[], toStage?: string) {
+  public whiteList(imp: Import<string, Mod>[], toStage?: typeof loadStates[number]) {
     this.whiteListedImports = imp
     this.startResolvement(toStage)
   }
-  public whiteListAll(toStage?: string) {
+  public whiteListAll(toStage?: typeof loadStates[number]) {
     this.whiteList(this.importanceList, toStage)
   }
 

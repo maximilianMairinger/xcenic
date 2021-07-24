@@ -9,7 +9,6 @@ export const prevRecord = _prevRecord as Omit<typeof _prevRecord, "add">
 const unionSymbol = "@"
 const typePrefix = "image/"
 
-// differentiate between minimal content load record and full content load record and return load time promsie in record
 
 const formats = [
   "avif",

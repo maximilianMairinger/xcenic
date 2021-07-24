@@ -194,7 +194,6 @@ export default abstract class SectionedPage extends Page {
       return that.scrollToSectionFunctionIndex(this)(to, speed)
     }
 
-    this.relScrollPosStorage.get(console.log)
 
 
     let r = this.prepSectionIndex(sectionIndex)

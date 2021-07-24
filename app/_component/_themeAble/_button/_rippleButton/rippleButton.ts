@@ -15,7 +15,6 @@ export default abstract class RippleButton extends Button {
       })
       let touched = false
       this.on("touchend", () => {
-        console.log("touch")
         touched = true
         delay(100).then(() => {
           touched = false
