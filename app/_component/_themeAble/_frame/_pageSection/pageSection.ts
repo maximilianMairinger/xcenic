@@ -34,11 +34,15 @@ export default abstract class PageSection extends Frame {
   }
 
   async fullContentPaint() {
+    //@ts-ignore
+    if (fullImageRecord.recordLs) console.log("full", this, fullImageRecord.recordLs.length)
+    else console.log("full", this)
     await this.loadFullResImages()()
-    console.log("full", this)
+    
   }
 
   async completePaint() {
+    console.log("COMPLETEEEEEEEEEEEEE")
     // await this.loadFullResImages()()
     // console.log("full", this)
   }

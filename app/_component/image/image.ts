@@ -4,7 +4,7 @@ import { InstanceRecord } from "../../lib/record"
 import { ElementList } from "extended-dom"
 const _fullRecord = new InstanceRecord(() => console.warn("img load without init proxy"))
 export const fullRecord = _fullRecord as Omit<typeof _fullRecord, "add">
-const _prevRecord = new InstanceRecord(() => console.warn("img load without init proxy"))
+const _prevRecord = new InstanceRecord(() => {})
 export const prevRecord = _prevRecord as Omit<typeof _prevRecord, "add">
 const unionSymbol = "@"
 const typePrefix = "image/"
