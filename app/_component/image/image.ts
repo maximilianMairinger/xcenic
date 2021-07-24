@@ -7,6 +7,8 @@ export const record = _record as Omit<typeof _record, "add">
 const unionSymbol = "@"
 const typePrefix = "image/"
 
+// differentiate between minimal content load record and full content load record and return load time promsie in record
+
 const formats = [
   "avif",
   "webp",
@@ -107,6 +109,7 @@ export default class Image extends Component {
       }
     }
     else {
+      debugger
       _record.add(() => {
         this.src(src, true)
       })

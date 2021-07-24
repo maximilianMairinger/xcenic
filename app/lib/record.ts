@@ -6,10 +6,11 @@ export abstract class Record<T, R> {
   protected _record(f: (record: T[]) => R) {
     const old = this.recordLs
     const record = this.recordLs = [] as T[]
-    return function doneRecording() {
+    const doneRecording = () => {
       this.recordLs = old
       return f(record)
     }
+    return doneRecording
   }
   add(...e: T[]) {
     this.recordLs.add(...e)

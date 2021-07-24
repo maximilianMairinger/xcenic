@@ -79,7 +79,6 @@ export default abstract class LazySectionedPage extends SectionedPage {
   }
   
   async minimalContentPaint() {
-    console.log("min")
     await this.resourceMap.get(this.currentDomainFragment).priorityThen()
   }
   
