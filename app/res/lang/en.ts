@@ -27,6 +27,7 @@ export default {
       tagDesc: "Social media brand"
     },
     work: {
+      viewWork: "View portfolio",
       webApp: {
         hero: {
           heading: "Websites",
@@ -51,7 +52,8 @@ export default {
         },
         smartphone: {
           heading: "App Development"
-        }
+        },
+        sideText: "Developing unique webpages and mobile applications tailored to your brand identity and business needs."
       },
       contentCreation: {
         hero: {
@@ -63,8 +65,39 @@ export default {
           heading: "Video Creation",
           text1: "Throughout our video making process we involve you during conception, production and post-production.",
           text2: "We strive to create content that captures your brand identity and engages your customers with your business and product.",
-        }
+        },
+        sideText: "Our experience in video-making ranges from short films to product adverts and interviews. Our mission is to create videos and photographs that convey the right emotions to your customers."
+      },
+      socialMedia: {
+        hero: {
+          heading: "Social Media",
+          text: "Throughout the last decade social media has transformed into a medium that heavily influences consumer choices. Businesses that want to be successful with the younger generations oftentimes rely on a stellar social media presence to promote their brand."
+        },
+        yourBrand: {
+          heading: "Your Brand on social media",
+          text: "We design beautiful social media accounts, assist with content creation and interact with your customers. Through our social management design and management we engage with your customers and put your brand into the limelight."
+        },
+        process: {
+          heading: "Our process",
+          text: "Whether you want to up your social media game on Instagram, Facebook, Twitter or Youtube, we provide you with a tailor-made design and management solution.",
+          steps: {
+            one: {
+              heading: "Create",
+              text: "Before starting your social media campaign, we’ll present you with a comprehensive design concept."
+            },
+            two: {
+              heading: "Manage",
+              text: "We’ll take care that regular, relevant and engaging content will be posted on your social media pages."
+            },
+            three: {
+              heading: "Engage",
+              text: "We will engage with your fans and respond to customer requests without delay."
+            }
+          }
+        },
+        sideText: "We develop a unique and engaging social media presence for your business."
       }
+
     }
   }
 }
