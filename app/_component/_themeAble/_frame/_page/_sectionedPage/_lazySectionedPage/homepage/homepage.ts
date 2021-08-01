@@ -20,7 +20,7 @@ export default class HomePage extends LazySectionedPage {
   public iconIndex: {[key: string]: HightlightAbleIcon}
 
   constructor(baselink: string, changeNavTheme: (theme: string) => void, sectionChangeCallback?: (section: string) => void) {
-    const subsectionHeight = [new Data(300)]
+    const subsectionHeight = [new Data(300), new Data(1600)]
 
     super(new ImportanceMap<() => Promise<any>, any>(
       {
@@ -59,7 +59,8 @@ export default class HomePage extends LazySectionedPage {
       //@ts-ignore
       new ScrollProgressAliasIndex("services", [
         new ScrollProgressAlias(0, "services/websites"),
-        new ScrollProgressAlias(subsectionHeight[0], "services/contentCreation")
+        new ScrollProgressAlias(subsectionHeight[0], "services/contentCreation"),
+        new ScrollProgressAlias(subsectionHeight[1], "services/socialMedia")
       ])
     ))
 

@@ -80,7 +80,7 @@ export default {
         process: {
           heading: "Our process",
           text: "Whether you want to up your social media game on Instagram, Facebook, Twitter or Youtube, we provide you with a tailor-made design and management solution.",
-          steps: {
+          step: {
             one: {
               heading: "Create",
               text: "Before starting your social media campaign, we’ll present you with a comprehensive design concept."
