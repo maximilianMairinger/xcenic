@@ -1,5 +1,6 @@
 :host {
-  --highlight: var(--primary-theme)
+  --highlight: var(--primary-theme);
+  --highlight: var(--theme)
 }
 
 :host > svg path {

@@ -27,7 +27,7 @@ icon-container > * {
 }
 
 :host(.highlight) text-container {
-  color: rgb(var(--primary-theme))
+  color: rgb(var(--theme))
 }
 
 component-body {

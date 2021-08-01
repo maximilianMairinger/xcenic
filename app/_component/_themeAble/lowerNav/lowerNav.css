@@ -1,6 +1,6 @@
 :host {
   pointer-events: none;
-
+  --theme: var(--primary-theme)
 }
 
 

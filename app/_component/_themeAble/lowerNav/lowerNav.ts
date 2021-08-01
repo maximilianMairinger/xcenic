@@ -16,6 +16,10 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
     super()
 
   }
+
+  public setHighlightColor(theme: string) {
+    this.style.setProperty("--theme", theme)
+  }
   
 
   private enableToken: Symbol

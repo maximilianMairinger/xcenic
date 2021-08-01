@@ -8,13 +8,13 @@ import HighlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIc
 
 
 export default class PageManager extends Manager {
-  constructor(pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, sectionChangeCallback?: (section: string) => void, onScrollBarWidthChange?: (scrollBarWidth: number) => void, onUserScroll?: (scrollProgress: number, userInited: boolean) => void, onScroll?: (scrollProgress: number) => void) {
+  constructor(changeNavTheme: (theme: string) => void, pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, sectionChangeCallback?: (section: string) => void, onScrollBarWidthChange?: (scrollBarWidth: number) => void, onUserScroll?: (scrollProgress: number, userInited: boolean) => void, onScroll?: (scrollProgress: number) => void) {
 
     super(new ImportanceMap<() => Promise<any>, any>(
       
       {
         key: new Import("", 10, (homepage: typeof HomePage) =>
-            new homepage("", sectionChangeCallback)
+            new homepage("", changeNavTheme, sectionChangeCallback)
         ), val: () => import(/* webpackChunkName: "homepage" */"../../_page/_sectionedPage/_lazySectionedPage/homepage/homepage")
       },
       {

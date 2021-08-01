@@ -61,7 +61,9 @@ export default class Site extends Component {
     let scrollTrendUpCounter = 0
     let scrollTrendDownCounter = 0
 
-    let pageManager = new PageManager((page, sections, domainLevel) => {
+    let pageManager = new PageManager((theme: string) => {
+      lowerNav.setHighlightColor(theme)
+    }, (page, sections, domainLevel) => {
       currentDomainLevel = domainLevel
       currentSectons = sections
 
