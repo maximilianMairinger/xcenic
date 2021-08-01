@@ -18,6 +18,7 @@ export default class PhilosophySection extends PageSection {
 
 
     let prevHeight = new Data<number>(0)
+    let toggleBool = true
 
     for(let i = 0; i < this.serviceSection.length - 1; i++) {
       const service = this.serviceSection[i]
@@ -30,17 +31,17 @@ export default class PhilosophySection extends PageSection {
         height.set(prevHeight + localHeight)
       })
 
-
+      const localToggleBool = toggleBool
       this.localScrollProgressData(.4).then((scrollData) => {
         const scrollTrigger = scrollData.scrollTrigger(height)
 
-        scrollTrigger.on("forward", () => {
+        scrollTrigger.on(localToggleBool ? "forward" : "backward", () => {
           this.css("backgroundColor", "#FFFAFA")
           this.style.setProperty("--theme", "var(--secondary-theme)")
           changeNavTheme("var(--secondary-theme)")
         })
   
-        scrollTrigger.on("backward", () => {
+        scrollTrigger.on(!localToggleBool ? "forward" : "backward", () => {
           this.css("backgroundColor", "#F9FAFE")
           this.style.setProperty("--theme", "var(--primary-theme)")
           changeNavTheme("var(--primary-theme)")
@@ -49,7 +50,7 @@ export default class PhilosophySection extends PageSection {
 
 
       
-
+      toggleBool = !toggleBool
       prevHeight = height
     }
 
