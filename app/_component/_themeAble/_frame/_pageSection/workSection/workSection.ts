@@ -8,6 +8,7 @@ import "../../../../image/image"
 import "../../../_icon/tgmLogoDots/tgmLogoDots"
 import "../../../_icon/versionControl/versionControl"
 import "../../../_icon/photoShoot/photoShoot"
+import "../../../_icon/socialMedia/socialMedia"
 import { ElementList } from "extended-dom"
 import { Data, DataCollection } from "josm"
 

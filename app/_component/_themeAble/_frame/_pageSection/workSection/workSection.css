@@ -229,7 +229,7 @@ big-showcase {
 }
 
 
-.smartphone {
+.webapp .smartphone {
   grid-column: 1 / 2;
   grid-row: 2 / 5;
 }
@@ -256,7 +256,7 @@ big-showcase {
   grid-row: 4 / 5;
 }
 
-.versionControl {
+.webapp .countIllustration {
   grid-column: 3 / 4;
   grid-row: 4 / 5;
 }
@@ -402,7 +402,8 @@ c-tgm-logo-dots {
     grid-row: 1 / 2;
   }
 
-  .smartphone {
+
+  .webapp .smartphone {
     margin-top: 25px;
     grid-column: 2 / 3;
     grid-row: 1 / 5;
@@ -428,7 +429,7 @@ c-tgm-logo-dots {
     grid-row: 5 / 8;
   }
 
-  .versionControl {
+  .webapp .countIllustration {
     display: none;
   }
 
@@ -498,7 +499,7 @@ c-tgm-logo-dots {
     grid-row: 4 / 5;
   }
 
-  .webapp .versionControl {
+  .webapp .countIllustration {
     display: block;
     grid-column: 1 / 2;
     grid-row: 2 / 3;
@@ -533,7 +534,7 @@ c-tgm-logo-dots {
 
   
 
-  .webapp .smartphone c-image::after {
+  .smartphone c-image::after {
     border-radius: 9.5vw;
   }
 
