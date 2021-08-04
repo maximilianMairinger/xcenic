@@ -67,14 +67,15 @@ let appEntryPath = path.join(appDir, appEntryFileName);
 
   const compressImages = imageWeb.constrImageWeb(["jpg", "webp", "avif"], ["3K", "PREV"])
   const imgDistPath = "public/res/img/dist" 
+  const imgSrcPath = "app/res/img"
   const imgChangeF = async (path, override = false) => {
     console.log("Compressing images")
     await delay(1000)
-    await compressImages(imgDistPath, imgDistPath, { override, silent: false })
+    await compressImages(imgSrcPath, imgDistPath, { override, silent: false })
   }
   
 
-  const imgSrcPath = "app/res/img"
+  
   imgChangeF(imgSrcPath, false)
   chokidar.watch(imgSrcPath, { ignoreInitial: true }).on("change", (path) => imgChangeF(path, true))
 
