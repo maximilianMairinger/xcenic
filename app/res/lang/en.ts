@@ -65,6 +65,7 @@ export default {
           heading: "Video Creation",
           text1: "Throughout our video making process we involve you during conception, production and post-production.",
           text2: "We strive to create content that captures your brand identity and engages your customers with your business and product.",
+          text3: "We employ state of the art lighting, camera and audio equipment to produce stunning footage. Our experience ranges from aerial videography to studio and product photography."
         },
         sideText: "Our experience in video-making ranges from short films to product adverts and interviews. Our mission is to create videos and photographs that convey the right emotions to your customers."
       },

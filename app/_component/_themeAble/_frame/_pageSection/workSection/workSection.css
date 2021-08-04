@@ -307,6 +307,13 @@ big-showcase {
   grid-row: 4 / 5;
 }
 
+.videographyTail .long {
+  display: inline;
+}
+.videographyTail .short {
+  display: none;
+}
+
 .photographyImage {
   grid-column: 1 / 3;
   grid-row: 3 / 6;
@@ -514,6 +521,7 @@ c-tgm-logo-dots {
   .photography {
     grid-column: 1 / 2;
     grid-row: 3 / 4;
+    margin-bottom: 8px;
   }
 
   .photographyImage {
@@ -527,13 +535,20 @@ c-tgm-logo-dots {
   }
 
   .videographyImg {
-    grid-row: 2 / 5;
+    grid-row: 2 / 6;
     grid-column: 2 / 3;
   }
 
   .videographyTail {
     grid-row: 4 / 5;
     grid-column: 1 / 2;
+  }
+
+  .videographyTail .long {
+    display: none;
+  }
+  .videographyTail .short {
+    display: inline;
   }
 
   
@@ -614,6 +629,25 @@ c-tgm-logo-dots {
     grid-row: 5 / 6;
   }
 
+}
+
+@media (max-width: 900px) {
+  .videographyTail .long {
+    display: inline;
+  }
+  .videographyTail .short {
+    display: none;
+  }
+  .videographyTail {
+    grid-row: 4 / 5;
+    grid-column: 1 / 3;
+  }
+
+  .videographyImg {
+    grid-row: 2 / 5;
+    grid-column: 2 / 3;
+  }
+  
 }
 
 @media (max-width: 850px) {
