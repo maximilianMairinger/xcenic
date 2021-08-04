@@ -270,17 +270,46 @@ big-showcase {
 
 .photography {
   grid-column: 2 / 3;
+  grid-row: 1 / 3;
+}
+
+.photography {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.photography .illustration {
+  flex-grow: 1;
+  align-items: center;
+  display: flex;
+}
+
+
+
+
+
+.contentCreation .hero {
+  grid-row: 1 / 3;
+}
+
+.videographyHead {
+  grid-column: 3 / 4;
   grid-row: 1 / 2;
 }
 
-.videography {
+.videographyImg {
   grid-column: 3 / 4;
-  grid-row: 1 / 3;
+  grid-row: 2 / 4;
+}
+
+.videographyTail {
+  grid-column: 3 / 4;
+  grid-row: 4 / 5;
 }
 
 .photographyImage {
   grid-column: 1 / 3;
-  grid-row: 2 / 3;
+  grid-row: 3 / 6;
 }
 
 .socialMedia .hero {
@@ -333,9 +362,12 @@ big-showcase {
 
 }
 
-big-image {
+big-image:not(.noMargin) {
   margin-bottom: 20px;
   margin-top: 20px;
+}
+
+big-image {
   display: block;
 }
 
@@ -368,7 +400,7 @@ big-image c-image::after:not(.noShadow) {
 
 
 @media (min-width: 1500px) {
-  big-image {
+  big-image:not(.noMargin) {
     margin-top: 30px;
     margin-bottom: 30px;
   }
@@ -481,17 +513,27 @@ c-tgm-logo-dots {
 
   .photography {
     grid-column: 1 / 2;
-    grid-row: 2 / 3;
+    grid-row: 3 / 4;
   }
 
   .photographyImage {
     grid-column: 1 / 3;
-    grid-row: 3 / 4;
+    grid-row: 5 / 6;
   }
 
-  .videography {
+  .videographyHead {
+    margin-top: 25px;
     grid-column: 2 / 3;
-    grid-row: 1 / 3;
+  }
+
+  .videographyImg {
+    grid-row: 2 / 5;
+    grid-column: 2 / 3;
+  }
+
+  .videographyTail {
+    grid-row: 4 / 5;
+    grid-column: 1 / 2;
   }
 
   
@@ -522,6 +564,56 @@ c-tgm-logo-dots {
   .tablet c-image::after:not(.noShadow) {
     border-radius: 2.2vw;
   }
+
+
+
+  .socialMedia .hero {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+  
+  .socialMedia .headerIllustration {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+  }
+  
+  .socialMedia .yourBrand {
+    margin-top: 25px;
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+  }
+  
+  .socialMedia .smartphone {
+    grid-column: 1 / 2;
+    grid-row: 2 / 7;
+  }
+  
+  .socialMedia .processHeading {
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
+  }
+  
+  .socialMedia .step.one {
+    grid-column: 2 / 3;
+    grid-row: 4 / 5;
+  }
+  
+  .socialMedia .step.two {
+    grid-column: 2 / 3;
+    grid-row: 5 / 6;
+  }
+  
+  .socialMedia .step.three {
+    grid-column: 2 / 3;
+    grid-row: 6 / 7;
+  }
+  
+  .socialMedia .posts {
+    display: none;
+    grid-column: 2 / 4;
+    grid-row: 5 / 6;
+  }
+
 }
 
 @media (max-width: 850px) {
