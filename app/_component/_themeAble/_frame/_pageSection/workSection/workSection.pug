@@ -99,12 +99,15 @@ service-showcase.socialMedia.blue
 
 view-more-side-panel
   showcase-wrapper
-    showcase-section.webapp.blue.inactive
+    showcase-section.webapp.blue
       h1.chonker $[ home.work.webApp.hero.heading ]
       p $[ home.work.webApp.sideText ]
+      c-button(link="services/websites")
     showcase-section.contentCreation.red.inactive
       h1.chonker $[ home.work.contentCreation.hero.heading ]
       p $[ home.work.contentCreation.sideText ]
+      c-button(link="services/contentCreation")
     showcase-section.socialMedia.blue.inactive
       h1.chonker $[ home.work.socialMedia.hero.heading ]
       p $[ home.work.socialMedia.sideText ]
+      c-button(link="services/socialMedia")

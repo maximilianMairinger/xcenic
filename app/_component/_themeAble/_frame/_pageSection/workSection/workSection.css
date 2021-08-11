@@ -796,9 +796,9 @@ view-more-side-panel showcase-section:not(.inactive) {
 
 view-more-side-panel showcase-section.inactive {
   background-color: hsl(210, 11%, 97%);
-  cursor: pointer;
   height: 125px;
-  padding:16px 35px;
+  padding: 17px 35px;
+  user-select: none;
 }
 
 view-more-side-panel showcase-section.inactive:first-child {
@@ -806,7 +806,18 @@ view-more-side-panel showcase-section.inactive:first-child {
   margin-bottom: -35px;
 }
 
+view-more-side-panel showcase-section c-button {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
 
+view-more-side-panel showcase-section.inactive c-button {
+  display: block;
+}
 
 
 view-more-side-panel showcase-section:not(:last-child).inactive:hover {

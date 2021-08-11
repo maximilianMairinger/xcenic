@@ -9,6 +9,7 @@ import "../../../_icon/tgmLogoDots/tgmLogoDots"
 import "../../../_icon/versionControl/versionControl"
 import "../../../_icon/photoShoot/photoShoot"
 import "../../../_icon/socialMedia/socialMedia"
+import "../../../_button/button"
 import { ElementList, ScrollData, ScrollTrigger } from "extended-dom"
 import { Data, DataCollection } from "josm"
 
