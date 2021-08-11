@@ -27,7 +27,7 @@ export default class PhilosophySection extends PageSection {
     let prevHeight = new Data<number>(0)
     let toggleBool = true
 
-    const sidePanelElems = this.q(`view-more-side-panel > showcase-section`) as ElementList<HTMLElement>
+    const sidePanelElems = this.q(`view-more-side-panel showcase-section`) as ElementList<HTMLElement>
 
 
     function deactivateSidePanel(atIndex: number) {

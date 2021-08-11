@@ -48,7 +48,7 @@ h1.chonker {
   position: absolute;
 }
 
-:not(.inactive) h1.chonker::after {
+h1.chonker::after {
   content: "";
   z-index: -1;
   background: rgba(var(--theme), .64);
@@ -59,6 +59,13 @@ h1.chonker {
   height: 50%;
   top: 50%;
   left: 0px;
+  transition: .3s;
+}
+
+.inactive h1.chonker::after {
+  opacity: 0;
+  height: 0;
+  top: 50%;
 }
 
 service-showcase h1.chonker::before {
@@ -755,36 +762,64 @@ view-more-side-panel {
 }
 
 
+showcase-wrapper {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 
 view-more-side-panel showcase-section {
   background-color: white;
   border-top-left-radius: 25px;
   border-bottom-left-radius: 25px;
   box-shadow: 10px 0px 15px 0px rgba(0,0,0,0.1);
-  position: absolute;
-  left: 0;
+  position: relative;
   width: 100%;
-  bottom: 0;
-  padding: 20px 35px;
+  padding: 25px 35px;
   box-sizing: border-box;
   overflow: hidden;
+  transition: .4s;
+  float: left;
+  display: block;
+}
+
+
+view-more-side-panel showcase-section:not(:first-child) {
+  margin-top: -35px;
+}
+
+view-more-side-panel showcase-section:not(.inactive) {
+  flex-grow: 1;
 }
 
 view-more-side-panel showcase-section.inactive {
   background-color: hsl(210, 11%, 97%);
+  cursor: pointer;
+  height: 125px;
+  padding:16px 35px;
 }
 
-view-more-side-panel showcase-section:nth-child(1) {
-  top: 0;
+view-more-side-panel showcase-section.inactive:first-child {
+  height: 160px;
+  margin-bottom: -35px;
 }
 
-view-more-side-panel showcase-section:nth-child(2) {
-  top: 100px;
+
+
+
+view-more-side-panel showcase-section:not(:last-child).inactive:hover {
+  transform: translateY(-20px);
 }
 
-view-more-side-panel showcase-section:nth-child(3) {
-  top: 200px;
-  
+view-more-side-panel showcase-section.inactive:last-child {
+  height: 90px;
+}
+
+view-more-side-panel showcase-section:last-child.inactive:hover {
+  margin-top: -55px;
+  height: 110px;
 }
 
 
