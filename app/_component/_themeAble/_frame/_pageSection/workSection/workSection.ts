@@ -9,8 +9,12 @@ import "../../../_icon/tgmLogoDots/tgmLogoDots"
 import "../../../_icon/versionControl/versionControl"
 import "../../../_icon/photoShoot/photoShoot"
 import "../../../_icon/socialMedia/socialMedia"
-import { ElementList } from "extended-dom"
+import { ElementList, ScrollData, ScrollTrigger } from "extended-dom"
 import { Data, DataCollection } from "josm"
+
+
+
+const inactiveClass = "inactive"
 
 export default class PhilosophySection extends PageSection {
   public serviceSection = this.q("service-showcase") as ElementList<HTMLElement>
@@ -18,10 +22,27 @@ export default class PhilosophySection extends PageSection {
     super("light")
 
 
+    
+    let scrollTriggers: Promise<ScrollTrigger>[] = []
     let prevHeight = new Data<number>(0)
     let toggleBool = true
 
-    for(let i = 0; i < this.serviceSection.length - 1; i++) {
+    const sidePanelElems = this.q(`view-more-side-panel > showcase-section`) as ElementList<HTMLElement>
+
+
+    function deactivateSidePanel(atIndex: number) {
+      const panel = sidePanelElems[atIndex]
+      panel.addClass(inactiveClass)
+    }
+
+    function activateSidePanel(atIndex: number) {
+      const panel = sidePanelElems[atIndex]
+      panel.removeClass(inactiveClass)
+    }
+
+
+    for(let ii = 0; ii < this.serviceSection.length - 1; ii++) {
+      const i = ii
       const service = this.serviceSection[i]
       const height = new Data<number>()
       const localHeight = new Data(0)
@@ -32,9 +53,31 @@ export default class PhilosophySection extends PageSection {
         height.set(prevHeight + localHeight)
       })
 
-      const localToggleBool = toggleBool
-      this.localScrollProgressData(.4).then((scrollData) => {
-        const scrollTrigger = scrollData.scrollTrigger(height)
+      scrollTriggers.add(new Promise(async (res) => {
+        const scrollData = await this.localScrollProgressData(.4)
+        res(scrollData.scrollTrigger(height))
+      }))
+      prevHeight = height
+    }
+
+    
+    
+    Promise.all(scrollTriggers).then((scrollTriggers) => {
+
+      
+
+
+      for (let ii = 0; ii < scrollTriggers.length; ii++) {
+        const i = ii
+        const scrollTrigger = scrollTriggers[i]
+
+        
+
+
+        const localToggleBool = toggleBool
+
+
+        
 
         scrollTrigger.on(localToggleBool ? "forward" : "backward", () => {
           this.css("backgroundColor", "#FFFAFA")
@@ -47,13 +90,36 @@ export default class PhilosophySection extends PageSection {
           this.style.setProperty("--theme", "var(--primary-theme)")
           changeNavTheme("var(--primary-theme)")
         })
-      })
 
+
+        
+
+
+        const nextI = i + 1
+        scrollTrigger.on("backward", () => {
+          deactivateSidePanel(nextI)
+        })
+
+        
+        scrollTrigger.on("forward", () => {
+          deactivateSidePanel(i)
+        })
+          
+        scrollTrigger.on("backward", () => {
+          activateSidePanel(i)
+        })
+
+        scrollTrigger.on("forward", () => {
+          activateSidePanel(nextI)
+        })
+   
+  
+        toggleBool = !toggleBool
+      }
 
       
-      toggleBool = !toggleBool
-      prevHeight = height
-    }
+
+    })
 
 
   }
@@ -67,3 +133,6 @@ export default class PhilosophySection extends PageSection {
 }
 
 declareComponent("work-section", PhilosophySection)
+
+
+

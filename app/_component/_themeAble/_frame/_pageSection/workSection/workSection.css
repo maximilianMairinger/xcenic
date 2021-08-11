@@ -48,7 +48,7 @@ h1.chonker {
   position: absolute;
 }
 
-h1.chonker::after {
+:not(.inactive) h1.chonker::after {
   content: "";
   z-index: -1;
   background: rgba(var(--theme), .64);
@@ -61,7 +61,7 @@ h1.chonker::after {
   left: 0px;
 }
 
-h1.chonker::before {
+service-showcase h1.chonker::before {
   content: "";
   background: rgb(var(--theme));
   transition: .3s background-color;
@@ -229,7 +229,7 @@ big-showcase {
 }
 
 
-.webapp .smartphone {
+service-showcase.webapp .smartphone {
   grid-column: 1 / 2;
   grid-row: 2 / 5;
 }
@@ -241,22 +241,22 @@ big-showcase {
 }
 
 
-.webapp .step.one {
+service-showcase.webapp .step.one {
   grid-column: 2 / 3;
   grid-row: 3 / 4;
 }
 
-.webapp .step.two {
+service-showcase.webapp .step.two {
   grid-column: 3 / 4;
   grid-row: 3 / 4;
 }
 
-.webapp .step.three {
+service-showcase.webapp .step.three {
   grid-column: 2 / 3;
   grid-row: 4 / 5;
 }
 
-.webapp .countIllustration {
+service-showcase.webapp .countIllustration {
   grid-column: 3 / 4;
   grid-row: 4 / 5;
 }
@@ -288,7 +288,7 @@ big-showcase {
 
 
 
-.contentCreation .hero {
+service-showcase.contentCreation .hero {
   grid-row: 1 / 3;
 }
 
@@ -319,47 +319,47 @@ big-showcase {
   grid-row: 3 / 6;
 }
 
-.socialMedia .hero {
+service-showcase.socialMedia .hero {
   grid-column: 1 / 2;
   grid-row: 1 / 3;
 }
 
-.socialMedia .headerIllustration {
+service-showcase.socialMedia .headerIllustration {
   grid-column: 1 / 2;
   grid-row: 3 / 5;
 }
 
-.socialMedia .yourBrand {
+service-showcase.socialMedia .yourBrand {
   grid-column: 1 / 2;
   grid-row: 5 / 6;
 }
 
-.socialMedia .smartphone {
+service-showcase.socialMedia .smartphone {
   grid-column: 2 / 3;
   grid-row: 1 / 5;
 }
 
-.socialMedia .processHeading {
+service-showcase.socialMedia .processHeading {
   grid-column: 3 / 4;
   grid-row: 1 / 2;
 }
 
-.socialMedia .step.one {
+service-showcase.socialMedia .step.one {
   grid-column: 3 / 4;
   grid-row: 2 / 3;
 }
 
-.socialMedia .step.two {
+service-showcase.socialMedia .step.two {
   grid-column: 3 / 4;
   grid-row: 3 / 4;
 }
 
-.socialMedia .step.three {
+service-showcase.socialMedia .step.three {
   grid-column: 3 / 4;
   grid-row: 4 / 5;
 }
 
-.socialMedia .posts {
+service-showcase.socialMedia .posts {
   grid-column: 2 / 4;
   grid-row: 5 / 6;
 }
@@ -488,23 +488,23 @@ c-tgm-logo-dots {
   }
 
 
-  .webapp .smartphone {
+  service-showcase.webapp .smartphone {
     margin-top: 25px;
     grid-column: 2 / 3;
     grid-row: 1 / 5;
   }
 
-  .webapp .step.one {
+  service-showcase.webapp .step.one {
     grid-column: 1 / 2;
     grid-row: 2 / 3;
   }
   
-  .webapp .step.two {
+  service-showcase.webapp .step.two {
     grid-column: 1 / 2;
     grid-row: 3 / 4;
   }
   
-  .webapp .step.three {
+  service-showcase.webapp .step.three {
     grid-column: 1 / 2;
     grid-row: 4 / 5;
   }
@@ -514,7 +514,7 @@ c-tgm-logo-dots {
     grid-row: 5 / 8;
   }
 
-  .webapp .countIllustration {
+  service-showcase.webapp .countIllustration {
     display: none;
   }
 
@@ -582,51 +582,50 @@ c-tgm-logo-dots {
 
 
 
-  .socialMedia .hero {
+  service-showcase.socialMedia .hero {
     grid-column: 1 / 2;
     grid-row: 1 / 2;
   }
   
-  .socialMedia .headerIllustration {
+  service-showcase.socialMedia .headerIllustration {
     grid-column: 2 / 3;
     grid-row: 2 / 3;
   }
   
-  .socialMedia .yourBrand {
+  service-showcase.socialMedia .yourBrand {
     margin-top: 25px;
     grid-column: 2 / 3;
     grid-row: 1 / 2;
   }
   
-  .socialMedia .smartphone {
+  service-showcase.socialMedia .smartphone {
     grid-column: 1 / 2;
     grid-row: 2 / 7;
   }
   
-  .socialMedia .processHeading {
+  service-showcase.socialMedia .processHeading {
     grid-column: 2 / 3;
     grid-row: 3 / 4;
   }
   
-  .socialMedia .step.one {
+  service-showcase.socialMedia .step.one {
     grid-column: 2 / 3;
     grid-row: 4 / 5;
   }
   
-  .socialMedia .step.two {
+  service-showcase.socialMedia .step.two {
     grid-column: 2 / 3;
     grid-row: 5 / 6;
   }
   
-  .socialMedia .step.three {
+  service-showcase.socialMedia .step.three {
     grid-column: 2 / 3;
     grid-row: 6 / 7;
   }
   
-  .socialMedia .posts {
-    display: none;
-    grid-column: 2 / 4;
-    grid-row: 5 / 6;
+  service-showcase.socialMedia .posts {
+    grid-column: 1 / 3;
+    grid-row: 7 / 8;
   }
 
 }
@@ -651,27 +650,27 @@ c-tgm-logo-dots {
 }
 
 @media (max-width: 850px) {
-  .webapp .smartphone {
+  service-showcase.webapp .smartphone {
     grid-column: 2 / 3;
     grid-row: 1 / 4;
   }
 
-  .webapp .step.one {
+  service-showcase.webapp .step.one {
     grid-column: 1 / 2;
     grid-row: 3 / 4;
   }
   
-  .webapp .step.two {
+  service-showcase.webapp .step.two {
     grid-column: 1 / 2;
     grid-row: 4 / 5;
   }
   
-  .webapp .step.three {
+  service-showcase.webapp .step.three {
     grid-column: 2 / 3;
     grid-row: 4 / 5;
   }
 
-  .webapp .countIllustration {
+  service-showcase.webapp .countIllustration {
     display: block;
     grid-column: 1 / 2;
     grid-row: 2 / 3;
@@ -722,7 +721,7 @@ c-tgm-logo-dots {
 
 
   big-showcase {
-    display: inline-block;
+    display: block;
     padding: 15px 2%;
     position: relative;
   }
@@ -738,7 +737,56 @@ c-tgm-logo-dots {
   }
 }
 
-/* @media (max-width: ) {
+
+/* side bar */
+view-more-side-panel {
+  display: block;
+  position: sticky;
+  margin-top: 10vh;
+  top: 10vh;
+  margin-bottom: 10vh;
+  bottom: 10vh;
+  left: calc(70% + 40px);
+  width: calc(30% - 40px);
+  height: 80vh;
+  box-shadow: var(--soft-shadow);
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+}
+
+
+
+view-more-side-panel showcase-section {
+  background-color: white;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  box-shadow: 10px 0px 15px 0px rgba(0,0,0,0.1);
+  position: absolute;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  padding: 20px 35px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+view-more-side-panel showcase-section.inactive {
+  background-color: hsl(210, 11%, 97%);
+}
+
+view-more-side-panel showcase-section:nth-child(1) {
+  top: 0;
+}
+
+view-more-side-panel showcase-section:nth-child(2) {
+  top: 100px;
+}
+
+view-more-side-panel showcase-section:nth-child(3) {
+  top: 200px;
   
-} */
+}
+
+
+
 
