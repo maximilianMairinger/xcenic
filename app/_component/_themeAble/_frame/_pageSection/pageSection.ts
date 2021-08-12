@@ -26,10 +26,13 @@ export default abstract class PageSection extends Frame {
       this._localScrollProgressData.set(endOfPage, p)
       return p
     }
+    
   }
 
   async minimalContentPaint() {
+    debugger
     await this.loadPrevResImages()()
+    debugger
   }
 
   async fullContentPaint() {

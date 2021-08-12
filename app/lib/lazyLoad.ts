@@ -166,7 +166,7 @@ export class ResourcesMap extends MultiKeyMap<string, PriorityPromise> {
     }
     super(...toBeAdded)
     this.loadedIndex = new BidirectionalMap
-  }
+  } 
 
   public getLoadedKeyOfResource(resource: any) {
     return this.loadedIndex.reverse.get(resource)
@@ -247,10 +247,10 @@ export class ImportanceMap<Func extends () => Promise<{default: {new(): Mod}}>, 
 
   public whiteList(imp: Import<string, Mod>[], toStage?: typeof loadStates[number]) {
     this.whiteListedImports = imp
-    this.startResolvement(toStage)
+    return this.startResolvement(toStage)
   }
   public whiteListAll(toStage?: typeof loadStates[number]) {
-    this.whiteList(this.importanceList, toStage)
+    return this.whiteList(this.importanceList, toStage)
   }
 
   private superWhiteListCache: {imp: Import<string, Mod>, deepLoad: boolean}

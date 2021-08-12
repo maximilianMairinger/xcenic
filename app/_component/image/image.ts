@@ -38,7 +38,7 @@ function isExplicitLocation(location: string) {
 
 export default class Image extends Component {
   public readonly loaded: {[key in typeof reses[number]]: Promise<void>} = {}
-  private elems: {[key in typeof reses[number]]: {sources: {setSource: (src: string) => void}[], img: HTMLImageElement &  {setSource: (src: string) => void}}} = {}
+  private elems: {[key in typeof reses[number]]: {picture: HTMLPictureElement, sources: {setSource: (src: string) => void}[], img: HTMLImageElement &  {setSource: (src: string) => void}}} = {}
   constructor(src?: string, forceLoad?: boolean) {
     //@ts-ignore
     super(false)
@@ -50,8 +50,9 @@ export default class Image extends Component {
       img.crossorigin = "anonymous"
       img.setSource = (to) => img.src = to + fallbackFormat
       
+      const picture = ce("picture")
 
-      this.elems[res] = {sources, img}
+      this.elems[res] = {sources, img, picture}
       
 
       for (let format of whenPossibleFormats) {
@@ -63,10 +64,10 @@ export default class Image extends Component {
 
       sources.add(img as any)
 
-      const bod = ce("picture")
-      bod.setAttribute("name", res)
-      bod.apd(...sources)
-      this.apd(bod)
+      
+      picture.setAttribute("name", res)
+      picture.apd(...sources)
+      this.apd(picture)
 
       this.newLoadedPromise(res)
       
@@ -80,24 +81,34 @@ export default class Image extends Component {
   private newLoadedPromise(resolution: typeof reses[number]) {
     this.loaded[resolution] = new Promise((res) => {
       this.elems[resolution].img.onload = () => {
-        res(); 
         //@ts-ignore
         this.loaded[resolution].done = true
-        this.elems[resolution].img.anim({opacity: 1}, 150).then(() => {
-          const resIndex = reses.indexOf(resolution)
-          if (resIndex !== 0) {
-            this.elems[reses[resIndex - 1]].img.anim({opacity: 0}, 150)
-            this.elems[resolution].img.anim({filter: "blur(0px)"}, 800)
-          }
-        })
+        res();
       }
     })
   }
 
 
-  private setSource(src: string, res: typeof reses[number]) {
+  private loadSrc(src: string, res: typeof reses[number]): Promise<void> {
     const { img, sources } = this.elems[res]
+    
+    
     if ((this.loaded[res] as any).done) this.newLoadedPromise(res)
+    this.loaded[res].then(() => {
+      
+
+      const resIndex = reses.indexOf(res)
+      if (resIndex === 0) {
+        this.elems[res].img.css({opacity: 1})
+      }
+      else {
+        this.elems[res].img.anim({opacity: 1}, 150).then(() => { 
+          this.elems[reses[resIndex - 1]].img.anim({opacity: 0}, 150)
+          this.elems[res].img.anim({filter: "blur(0px)"}, 800)
+        })
+      }
+    })
+
     if (isExplicitLocation(src)) {
       img.setSource(src)
     }
@@ -106,6 +117,8 @@ export default class Image extends Component {
       if (pointIndex !== -1) src = src.slice(0, pointIndex)
       sources.Inner("setSource", ["/res/img/dist/" + src + unionSymbol + res + "."])
     }
+
+    return this.loaded[res]
   }
     
 
@@ -115,15 +128,15 @@ export default class Image extends Component {
   src(src?: string, forceLoad: boolean = false): this {
     if (forceLoad) {
       for (const res of reses) {
-        this.setSource(src, res)
+        this.loadSrc(src, res)
       }
     }
     else {
       _prevRecord.add(() => {
-        this.setSource(src, prevRes)
+        return this.loadSrc(src, prevRes)
       })
       _fullRecord.add(() => {
-        this.setSource(src, fullRes)
+        return this.loadSrc(src, fullRes)
       })
     }
     return this

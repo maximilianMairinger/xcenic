@@ -4,6 +4,7 @@
   overflow: hidden;
   display: inline-block;
   --display: block;
+  position: relative;
 }
 
 picture {
@@ -11,8 +12,12 @@ picture {
   width: inherit;
   height: inherit;
   position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
-picture:last-child {
+picture:first-of-type {
   position: relative;
 }
 

@@ -24,7 +24,6 @@ export default abstract class LazySectionedPage extends SectionedPage {
 
       this.componentBody.insertAfter(e, priorElem)
       loadedElementsIndex[ind] = e
-      e.anim({opacity: 1})
     })
     super(resourcesMap, baselink, sectionChangeCallback, sectionAliasList, mergeIndex)
 
@@ -79,7 +78,11 @@ export default abstract class LazySectionedPage extends SectionedPage {
   }
   
   async minimalContentPaint() {
-    await this.resourceMap.get(this.currentDomainFragment).priorityThen()
+    debugger
+    const e = await this.resourceMap.get(this.currentDomainFragment).priorityThen()
+    e.css({opacity: 1})
+    // e.anim({opacity: 1})
+    debugger
   }
   
 
