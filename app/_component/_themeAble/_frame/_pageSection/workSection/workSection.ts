@@ -9,9 +9,11 @@ import "../../../_icon/tgmLogoDots/tgmLogoDots"
 import "../../../_icon/versionControl/versionControl"
 import "../../../_icon/photoShoot/photoShoot"
 import "../../../_icon/socialMedia/socialMedia"
+import "../../../_icon/laptopWalkIllustration/laptopWalkIllustration"
 import "../../../_button/button"
 import { ElementList, ScrollData, ScrollTrigger } from "extended-dom"
 import { Data, DataCollection } from "josm"
+import delay from "delay"
 
 
 
@@ -36,7 +38,7 @@ export default class PhilosophySection extends PageSection {
       panel.addClass(inactiveClass)
     }
 
-    function activateSidePanel(atIndex: number) {
+    async function activateSidePanel(atIndex: number) {
       const panel = sidePanelElems[atIndex]
       panel.removeClass(inactiveClass)
     }

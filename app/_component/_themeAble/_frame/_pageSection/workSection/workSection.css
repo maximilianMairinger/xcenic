@@ -270,10 +270,16 @@ service-showcase.webapp .countIllustration {
 
 .illustration {
   width: 100%;
-  height: 190px;
+  height: auto;
+  margin-top: 25px;
+  margin-bottom: 25px;
+} 
+
+.illustration.standalone {
   margin-top: 15px;
   margin-bottom: 15px;
-} 
+}
+
 
 .photography {
   grid-column: 2 / 3;
@@ -780,9 +786,10 @@ view-more-side-panel showcase-section {
   padding: 25px 35px;
   box-sizing: border-box;
   overflow: hidden;
-  transition: .4s;
+  transition: .4s ease-in-out;
   float: left;
   display: block;
+  height: 125px;
 }
 
 
@@ -796,12 +803,13 @@ view-more-side-panel showcase-section:not(.inactive) {
 
 view-more-side-panel showcase-section.inactive {
   background-color: hsl(210, 11%, 97%);
-  height: 125px;
+  min-height: 125px;
   padding: 17px 35px;
   user-select: none;
 }
 
 view-more-side-panel showcase-section.inactive:first-child {
+  min-height: 160px;
   height: 160px;
   margin-bottom: -35px;
 }
@@ -825,14 +833,14 @@ view-more-side-panel showcase-section:not(:last-child).inactive:hover {
 }
 
 view-more-side-panel showcase-section.inactive:last-child {
+  min-height: 90px;
   height: 90px;
 }
 
 view-more-side-panel showcase-section:last-child.inactive:hover {
   margin-top: -55px;
+  min-height: 110px;
   height: 110px;
 }
-
-
 
 
