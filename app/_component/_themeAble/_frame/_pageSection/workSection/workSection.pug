@@ -26,7 +26,7 @@ service-showcase.webapp.blue
     p $[ home.work.webApp.step.three.text ]
 
   grid-element.countIllustration
-    c-version-control.illustration.standalone
+    c-version-control.illustration 
 
 
   grid-element.smartphone 
@@ -41,7 +41,7 @@ service-showcase.contentCreation.red
   
   grid-element.photography
     h2.lil $[ home.work.contentCreation.photography ]
-    c-photo-shoot.illustration.standalone
+    c-photo-shoot.illustration 
 
   grid-element.photographyImage
     background-accent
@@ -66,7 +66,7 @@ service-showcase.socialMedia.blue
     p $[ home.work.socialMedia.hero.text ]
 
   gird-element.headerIllustration
-    c-social-media-illustration.illustration.standalone
+    c-social-media-illustration.illustration 
 
   grid-element.yourBrand
     h2.lil $[ home.work.socialMedia.yourBrand.heading ]
@@ -100,15 +100,23 @@ service-showcase.socialMedia.blue
 view-more-side-panel
   showcase-wrapper
     showcase-section.webapp.blue
+      c-ripple-button(link="services/websites")
       h1.chonker $[ home.work.webApp.hero.heading ]
       p $[ home.work.webApp.sideText ]
-      c-laptop-walk-illustration.illustration
-      c-button(link="services/websites")
+      c-laptop-walk-illustration.illustration 
+      c-block-button(content="$[ home.work.viewWork ]" link="services/websites/portfolio")
+      
     showcase-section.contentCreation.red.inactive
+      c-ripple-button(link="services/contentCreation")
       h1.chonker $[ home.work.contentCreation.hero.heading ]
+      c-youtube-illustration.illustration
       p $[ home.work.contentCreation.sideText ]
-      c-button(link="services/contentCreation")
-    showcase-section.socialMedia.blue.inactive
+      c-block-button(content="$[ home.work.viewWork ]" link="services/contentCreation/portfolio")
+      
+    showcase-section.socialMedia.blue.inactive.animdone
+      c-ripple-button(link="services/socialMedia")
       h1.chonker $[ home.work.socialMedia.hero.heading ]
+      c-laptop-notification-illustration.illustration
       p $[ home.work.socialMedia.sideText ]
-      c-button(link="services/socialMedia")
+      c-block-button(content="$[ home.work.viewWork ]" link="services/socialMedia/portfolio")
+      
