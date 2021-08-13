@@ -336,7 +336,7 @@ service-showcase.contentCreation .hero {
 
 .photographyImage {
   grid-column: 1 / 3;
-  grid-row: 3 / 6;
+  grid-row: 3 / 5;
 }
 
 service-showcase.socialMedia .hero {
