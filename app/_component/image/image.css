@@ -1,7 +1,7 @@
 :host {
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  
   display: inline-block;
   --display: block;
 }
@@ -11,6 +11,8 @@ picture {
   width: inherit;
   height: inherit;
   position: absolute;
+  overflow: hidden;
+  border-radius: inherit;
 }
 picture:last-child {
   position: relative;

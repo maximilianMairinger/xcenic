@@ -57,7 +57,6 @@ export default class PhilosophySection extends PageSection {
       panel.removeClass(inactiveClass)
       
       const locToken = curTokenAc = Symbol()
-                                                                      // why is this 13 here?
       panel.anim([{height: atIndex === sidePanelElems.length-1 ? 65 : 90, offset: 0}, {height: panel.childs(":last-child").offsetBottom() - 13}], {duration: 500, fill: true}).then(() => {
         if (curTokenAc !== locToken) return 
         panel.css({height: "fit-content"})

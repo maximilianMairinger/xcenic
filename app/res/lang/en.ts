@@ -96,7 +96,7 @@ export default {
             }
           }
         },
-        sideText: "We develop a unique and engaging social media presence for your business."
+        sideText: "We develop a unique and engaging social media presence for your business. Combining our creative skill, design experience and unique ideas to deliver a state of the art social media page."
       }
 
     }

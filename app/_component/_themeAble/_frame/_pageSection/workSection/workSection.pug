@@ -44,8 +44,7 @@ service-showcase.contentCreation.red
     c-photo-shoot.illustration 
 
   grid-element.photographyImage
-    background-accent
-    big-image
+    big-image.accent
       c-image(src="photography")
 
   grid-element.videographyHead
@@ -98,25 +97,26 @@ service-showcase.socialMedia.blue
 
 
 view-more-side-panel
-  showcase-wrapper
-    showcase-section.webapp.blue
-      c-ripple-button(link="services/websites")
-      h1.chonker $[ home.work.webApp.hero.heading ]
-      p $[ home.work.webApp.sideText ]
-      c-laptop-walk-illustration.illustration 
-      c-block-button(content="$[ home.work.viewWork ]" link="services/websites/portfolio")
-      
-    showcase-section.contentCreation.red.inactive
-      c-ripple-button(link="services/contentCreation")
-      h1.chonker $[ home.work.contentCreation.hero.heading ]
-      c-youtube-illustration.illustration
-      p $[ home.work.contentCreation.sideText ]
-      c-block-button(content="$[ home.work.viewWork ]" link="services/contentCreation/portfolio")
-      
-    showcase-section.socialMedia.blue.inactive.animdone
-      c-ripple-button(link="services/socialMedia")
-      h1.chonker $[ home.work.socialMedia.hero.heading ]
-      c-laptop-notification-illustration.illustration
-      p $[ home.work.socialMedia.sideText ]
-      c-block-button(content="$[ home.work.viewWork ]" link="services/socialMedia/portfolio")
-      
+  showcase-center
+    showcase-wrapper
+      showcase-section.webapp.blue
+        c-ripple-button(link="services/websites")
+        h1.chonker $[ home.work.webApp.hero.heading ]
+        p $[ home.work.webApp.sideText ]
+        c-laptop-walk-illustration.illustration 
+        c-block-button(content="$[ home.work.viewWork ]" link="services/websites/portfolio")
+        
+      showcase-section.contentCreation.red.inactive
+        c-ripple-button(link="services/contentCreation")
+        h1.chonker $[ home.work.contentCreation.hero.heading ]
+        c-youtube-illustration.illustration
+        p $[ home.work.contentCreation.sideText ]
+        c-block-button(content="$[ home.work.viewWork ]" link="services/contentCreation/portfolio")
+        
+      showcase-section.socialMedia.blue.inactive.animdone
+        c-ripple-button(link="services/socialMedia")
+        h1.chonker $[ home.work.socialMedia.hero.heading ]
+        c-laptop-notification-illustration.illustration
+        p $[ home.work.socialMedia.sideText ]
+        c-block-button(content="$[ home.work.viewWork ]" link="services/socialMedia/portfolio")
+        
