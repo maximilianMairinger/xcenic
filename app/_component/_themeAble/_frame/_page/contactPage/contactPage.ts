@@ -3,6 +3,7 @@ import Page from "../page";
 
 import "./../../../../image/image"
 import "./../../../textBlob/textBlob"
+import "./../../../_button/_rippleButton/blockButton/blockButton"
 
 
 
@@ -10,6 +11,10 @@ export default class ContactPage extends Page {
 
   constructor() {
     super("dark")
+
+    this.resizeData().tunnel((e) => e.width <= 700).get((isMobile) => {
+      this.theme.set(isMobile ? "light" : "dark")
+    }, false)
   }
 
   pug() {

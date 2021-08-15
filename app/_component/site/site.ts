@@ -7,6 +7,7 @@ import Header from "../_themeAble/header/header"
 import { dirString } from "../../lib/domain"
 import { ElementList } from "extended-dom"
 import HighlightAbleIcon from "../_themeAble/_icon/_highlightAbleIcon/highlightAbleIcon"
+import { Data, DataSubscription } from "josm"
 
 
 const topLimit = 0
@@ -119,12 +120,12 @@ export default class Site extends Component {
     this.apd(pageManager)
     pageManager.activate()
     pageManager.minimalContentPaint().then(() => {
-      pageManager.addThemeIntersectionListener(header, (themeUnderneath) => {
-        header.theme(themeUnderneath)
-      })    
-      pageManager.addThemeIntersectionListener(lowerNav, (themeUnderneath) => {
-        lowerNav.theme(themeUnderneath)
-      })
+      let themeSub = new DataSubscription(new Data(undefined), (theme) => {
+        header.theme.set(theme)
+        lowerNav.theme.set(theme)
+      }, true, false)
+      pageManager.addThemeIntersectionListener(header, themeSub.data.bind(themeSub))    
+      pageManager.addThemeIntersectionListener(lowerNav, themeSub.data.bind(themeSub))
       pageManager.fullContentPaint().then(() => {
         pageManager.completePaint().then(() => {
 

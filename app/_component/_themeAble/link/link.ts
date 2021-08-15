@@ -21,7 +21,9 @@ export default class Link extends ThemeAble {
   constructor(content: string | Data<string>, link?: string, public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true, textChangeAnim = true) {
     super(false)
 
-
+    this.theme.get((to) => {
+      this.externalIcon.theme.set(to)
+    })
 
     
     this.content(content, textChangeAnim)
@@ -212,13 +214,6 @@ export default class Link extends ThemeAble {
       }
     }
 
-  }
-
-  theme(): Theme
-  theme(to: Theme): this
-  theme(to?: Theme): any {
-    this.externalIcon.theme(to)
-    return super.theme(to)
   }
 
   private updateHref() {

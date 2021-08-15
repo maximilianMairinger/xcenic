@@ -83,6 +83,16 @@ export default class Header extends ThemeAble {
     
     
 
+    this.theme.get((to) => {
+      this.logoIcon.theme.set(to)
+
+      if (!this.dontChangeDisplayTheme) this.updateThemeOfPathDisplay(to)
+      if (!this.dontChangeLinksTheme) {
+        this.updateThemeOfLinks(to)
+        this.updateUnderlineTheme(to)
+    }
+    })
+
 
     
     setTimeout(() => {
@@ -121,33 +131,18 @@ export default class Header extends ThemeAble {
 
 
 
-
-  theme(): Theme
-  theme(to: Theme): this
-  theme(to?: Theme): any {
-    this.logoIcon.theme(to)
-
-    if (!this.dontChangeDisplayTheme) this.updateThemeOfPathDisplay(to)
-    if (!this.dontChangeLinksTheme) {
-      this.updateThemeOfLinks(to)
-      this.updateUnderlineTheme(to)
-    }
-
-    return super.theme(to)
-  }
-
   private updateThemeOfPathDisplay(to: Theme) {
     this.pathDisplayLinkIndex.forEach((v) => {
-      v.Inner("theme", [to])
+      v.Inner("theme").inner("set", [to])
     })
   }
 
   private updateUnderlineTheme(to: Theme) {
-    this.underlineElem.theme(to)
+    this.underlineElem.theme.set(to)
   }
 
   private updateThemeOfLinks(to: Theme) {
-    if (this.currentLinkElems) this.currentLinkElems.Inner("theme", [to])
+    if (this.currentLinkElems) this.currentLinkElems.Inner("theme").Inner("set", [to])
   }
 
 
@@ -265,7 +260,7 @@ export default class Header extends ThemeAble {
 
     this.lastDomainIndex = [...curDomainIndex]
 
-    this.updateThemeOfPathDisplay(super.theme())
+    this.updateThemeOfPathDisplay(this.theme.get())
     this.dontChangeDisplayTheme = false
 
   }
@@ -374,7 +369,7 @@ export default class Header extends ThemeAble {
       underlineFadeAnim,
       fadoutProm,
       delay(fadoutProm ? (400 + (((lastLength * linkAnimationOffset) / 2) - currentLength * linkAnimationOffset)) : 0).then(async () => {
-        this.updateThemeOfLinks(super.theme())
+        this.updateThemeOfLinks(this.theme.get())
         this.dontChangeLinksTheme = false
 
         if (fadeReq !== this.latestFadeRequest) {
@@ -448,7 +443,7 @@ export default class Header extends ThemeAble {
       this.underlineElem.css({translateX: bounds.left, width: bounds.width})
       window.on("resize", this.resizeFn)
 
-      this.updateUnderlineTheme(super.theme())
+      this.updateUnderlineTheme(this.theme.get())
       await this.underlineElem.anim({opacity: 1}, 700)
 
     }

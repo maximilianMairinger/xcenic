@@ -10,6 +10,7 @@ import { EventListener } from "extended-dom";
 import Page from "../_page/page";
 
 import HighlightAbleIcon from "../../_icon/_highlightAbleIcon/highlightAbleIcon";
+import { Data } from "josm";
 
 
 
@@ -147,15 +148,9 @@ export default abstract class Manager extends Frame {
     }
   }
 
-  private lastThemeIntersection: Map<HTMLElement, Theme> = new Map
-  public addThemeIntersectionListener(root: HTMLElement, cb: (theme: Theme) => void) {
+  public addThemeIntersectionListener(root: HTMLElement, cb: (theme: Data<Theme>) => void) {
     this.addIntersectionListener(root, (q) => {
-      let theme: Theme = q.theme()
-      if (!theme) theme = "light"
-      if (theme !== this.lastThemeIntersection.get(root)) {
-        cb(theme)
-        this.lastThemeIntersection.set(root, theme)
-      }
+      cb(q.theme)
     })
   }
 
