@@ -2,8 +2,21 @@ image-container
   c-image(src="contactForm")
   image-darken
 
+
 ui-container-box
-  ui-container-content
-    c-text-blob(heading="$[ contact.heading ]", note="$[ contact.note ]")
-    h3.request $[ contact.requestQuery ]
-    h3.details $[ contact.detailsQuery ]
+  ui-container-box-scroll
+    ui-container-content
+      initial-view
+        c-text-blob(heading="$[ contact.heading ]", note="$[ contact.note ]")
+        h3.request $[ contact.requestQuery ]
+        h3.details $[ contact.detailsQuery ]
+        textarea.details
+
+
+
+  c-block-button(content="$[ contact.continue ]")
+        
+
+
+      
+      

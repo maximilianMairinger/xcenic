@@ -22,32 +22,89 @@ image-darken {
 ui-container-box {
   display: block;
   width: 35%;
-  min-width: 10px;
+  min-width: 315px;
   height: 100%;
-  
+  position: relative;
+}
+
+ui-container-box-scroll {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  position: relative;
 }
 
 ui-container-content {
   display: block;
   background-color: white;
   padding: 90px calc(16.5% - 12px);
+  padding-bottom: 130px;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
 }
 
-@media (max-width: 1400px) {
-  ui-container-content {
-    padding: calc(11.5% - 12px) calc(11.5% - 12px);
-  }
-}
+
 
 c-text-blob {
   --font-size: 20px
 }
 
 h3 {
-  margin-bottom: .2em;
   margin-top: .15em;
+  margin-bottom: .7em;
   line-height: 1.13em;
+}
+
+textarea {
+  border-radius: 20px;
+  border: 1px solid rgba(var(--plain-text), .2);
+  border: 1px solid rgba(0, 0, 0, .2);
+  box-sizing: border-box;
+  resize: none;
+  padding: 10px;
+  font-size: 14px;
+}
+
+textarea.details {
+  width: 100%;
+  flex-grow: 1;
+}
+
+initial-view {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 220px);
+  width: 100%;
+}
+
+c-block-button {
+  --background: var(--primary-theme);
+  --text: var(--plain-background);
+  --border: unset;
+
+  position: absolute;
+  bottom: 40px;
+  right: calc(16.5% - 12px);
+}
+
+ui-container-box-scroll::-webkit-scrollbar { 
+  display: none;  /* Chrome Safari */
+}
+
+ui-container-box-scroll {
+  scrollbar-width: none; /* Firefox */
+}
+
+@media (max-width: 700px) {
+  ui-container-content {
+    padding-left: calc(11.5% - 12px);
+    padding-right: calc(11.5% - 12px);
+  }
+
+  ui-container-box {
+    width: 100%;
+    position: absolute;
+  }
 }
