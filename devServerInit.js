@@ -77,7 +77,7 @@ let appEntryPath = path.join(appDir, appEntryFileName);
 
   
   imgChangeF(imgSrcPath, false)
-  chokidar.watch(imgSrcPath, { ignoreInitial: true }).on("change", (path) => imgChangeF(path, true))
+  chokidar.watch(imgSrcPath, { ignoreInitial: true }).on("change", (path) => imgChangeF(path))
 
   
   
