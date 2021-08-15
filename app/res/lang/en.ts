@@ -12,6 +12,15 @@ export default {
 
 
   },
+  contact: {
+    note: "Got an Idea?",
+    heading: "Tell us all about it",
+
+    requestQuery: "What are you looking for",
+    detailsQuery: "Tell us about the details",
+    
+    continue: "Continue"
+  },
   home: {
     landing: {
       heading: "Our Mission",

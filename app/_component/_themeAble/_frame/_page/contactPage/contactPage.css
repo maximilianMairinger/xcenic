@@ -1,0 +1,53 @@
+component-body {
+  display: flex;
+
+}
+
+image-container {
+  display: block;
+  width: 100%;
+  flex-grow: 1;
+  position: relative;
+}
+
+image-darken {
+  display: block;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+ui-container-box {
+  display: block;
+  width: 35%;
+  min-width: 10px;
+  height: 100%;
+  
+}
+
+ui-container-content {
+  display: block;
+  background-color: white;
+  padding: 90px calc(16.5% - 12px);
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1400px) {
+  ui-container-content {
+    padding: calc(11.5% - 12px) calc(11.5% - 12px);
+  }
+}
+
+c-text-blob {
+  --font-size: 20px
+}
+
+h3 {
+  margin-bottom: .2em;
+  margin-top: .15em;
+  line-height: 1.13em;
+}
