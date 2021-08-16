@@ -19,6 +19,7 @@ export default {
     requestQuery: "What are you looking for",
     requestOptions: ["Web/App-development", "UI Design", "Video Production", "Photography", "Social Media", "Other"],
     detailsQuery: "Tell us about the details",
+    lastThingQuery: "One more thing...",
     
     continue: "Continue"
   },
