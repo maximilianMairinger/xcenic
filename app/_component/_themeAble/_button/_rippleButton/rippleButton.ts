@@ -139,9 +139,18 @@ export default abstract class RippleButton extends Button {
          marginLeft: x
       });
       let rdyToFade = false;
-      r.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + (this.width() / 25 * 2.2) + ")"}], {duration: 350, easing: "linear"}).then(fadeisok);
+      let biggerMetric = this.width() > this.height() ? this.width() : this.height();
+
+      
+      
+      this.rippleAnimProm = r.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + (this.width() / 25 * 2.2) + ")"}], {duration: biggerMetric * 4, easing: "linear"}).then(fadeisok);
+      
+      
+
       return fadeisok
     }
+
+    protected rippleAnimProm: Promise<any>
 
 
     

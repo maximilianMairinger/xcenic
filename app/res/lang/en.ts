@@ -17,6 +17,7 @@ export default {
     heading: "Tell us all about it",
 
     requestQuery: "What are you looking for",
+    requestOptions: ["Web/App-development", "UI Design", "Video Production", "Photography", "Social Media", "Other"],
     detailsQuery: "Tell us about the details",
     
     continue: "Continue"

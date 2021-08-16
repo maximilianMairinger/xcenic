@@ -1,7 +1,10 @@
 :host {
-  --wave: rgba(var(--text), .07);
+  --wave: var(--text);
+  --wave-opacity: .07;
   --drag: none;
-  z-index: 0;
+  
+  /* private */
+  --wave-color: rgba(var(--wave), var(--wave-opacity));
 }
 
 :host {
@@ -33,9 +36,8 @@ button-wave {
   position: absolute;
   -webkit-transform: scale(0);
   transform: scale(0);
-  z-index: -1;
 }
 
 button-wave {
-  background: var(--wave);
+  background: var(--wave-color);
 }

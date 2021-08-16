@@ -10,12 +10,12 @@ ui-container-box
         c-text-blob(heading="$[ contact.heading ]", note="$[ contact.note ]")
         h3.request $[ contact.requestQuery ]
         selection-body
-          c-select-button(content="hello")
-          c-select-button(content="hello")
-          c-select-button(content="hello")
-          c-select-button(content="hello")
-          c-select-button(content="hello")
-          c-select-button(content="hello")
+          c-select-button(content="$[ contact.requestOptions.0 ]")
+          c-select-button(content="$[ contact.requestOptions.1 ]")
+          c-select-button(content="$[ contact.requestOptions.2 ]")
+          c-select-button(content="$[ contact.requestOptions.3 ]")
+          c-select-button(content="$[ contact.requestOptions.4 ]")
+          c-select-button(content="$[ contact.requestOptions.5 ]")
         h3.details $[ contact.detailsQuery ]
         textarea.details
         c-line-accent
