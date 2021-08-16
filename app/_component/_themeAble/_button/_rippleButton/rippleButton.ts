@@ -116,8 +116,8 @@ export default abstract class RippleButton extends Button {
           this.on("blur", uiOut, {once: true});
         }
         else {
-          this.on("mouseup", uiOut, {once: true});
-          this.on("mouseout", uiOut, {once: true});
+          document.body.on("mouseup", uiOut, {once: true});
+
         }
         let offset = this.absoluteOffset();
         x = (e as MouseEvent).pageX - offset.left - r.width() / 2;
