@@ -4,6 +4,7 @@ import Page from "../page";
 import "./../../../../image/image"
 import "./../../../textBlob/textBlob"
 import "./../../../_button/_rippleButton/blockButton/blockButton"
+import "./../../../_button/_rippleButton/selectButton/selectButton"
 
 
 

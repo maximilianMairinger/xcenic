@@ -48,7 +48,19 @@ ui-container-content {
 
 
 c-text-blob {
+  padding-right: 10px;
   --font-size: 20px
+}
+
+@media (max-width: 530px) {
+  c-text-blob {
+    padding-right: 150px;
+  } 
+}
+@media (max-width: 450px) {
+  c-text-blob {
+    padding-right: 10px;
+  } 
 }
 
 h3 {
@@ -63,7 +75,7 @@ textarea {
   border: 1px solid rgba(0, 0, 0, .2);
   box-sizing: border-box;
   resize: none;
-  padding: 10px;
+  padding: 15px;
   font-size: 14px;
 }
 

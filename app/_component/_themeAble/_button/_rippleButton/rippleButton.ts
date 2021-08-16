@@ -5,6 +5,10 @@ import Button from "../button";
 export default abstract class RippleButton extends Button {
   private ripples: HTMLElement;
   private wave: HTMLElement;
+
+  protected rippleStartIsOk = true
+  protected rippleFadeIsOk = false
+
     constructor(activationCallback?: (e?: MouseEvent | KeyboardEvent) => void, enabled?: boolean, focusOnHover?: boolean, tabIndex?: number) {
       super(enabled, focusOnHover, tabIndex);
       this.draggable = false
@@ -31,11 +35,18 @@ export default abstract class RippleButton extends Button {
       this.ripples = ce("button-waves");
       this.apd(this.ripples);
     }
+
+    protected fadeRipple: (() => void)[] = []
+
     public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
+      if (!this.rippleStartIsOk) return
+
       let r = this.wave.cloneNode() as Element;
       this.ripples.append(r);
 
       let fadeAnim = async () => {
+        if (!this.rippleFadeIsOk) return
+        if (this.fadeRipple.includes(fadeAnim)) this.fadeRipple.rmV(fadeAnim)
         try {
           await r.anim({opacity: 0}, 500);  
         } catch (error) {
@@ -44,6 +55,8 @@ export default abstract class RippleButton extends Button {
         await delay(500)
         r.remove();
       }
+
+      this.fadeRipple.add(fadeAnim)
 
       let fadeisok = () => {
         if (rdyToFade) fadeAnim();
@@ -93,6 +106,11 @@ export default abstract class RippleButton extends Button {
       r.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + (this.width() / 25 * 2.2) + ")"}], {duration: 350, easing: "linear"}).then(fadeisok);
       return fadeisok
     }
+
+
+    
+
+
     stl() {
       return super.stl() + require('./rippleButton.css').toString();
     }

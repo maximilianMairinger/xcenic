@@ -1,0 +1,57 @@
+:host {
+  --background: var(--plain-background);
+  --border: var(--primary-text);
+  border-radius: 25px;
+  --ripple-color: var(--primary-text);
+
+  --wave: rgb(var(--primary-text));
+  --counter-wave: rgb(var(--plain-background));
+}
+
+:host {
+  display: block;
+  width: fit-content;
+
+  background: rgb(var(--background));
+}
+
+a {
+  transition: border .3s, color .3s;
+  border: 1px solid rgba(var(--border), .25);
+  
+}
+
+
+
+
+
+button-text {
+  display: block;
+  font-size: 1em;
+  margin: auto 0;
+  padding: 11px 20px;
+  text-align: center;
+}
+
+button-wave:nth-child(2n) {
+  background: var(--counter-wave);
+}
+
+
+
+/* :host(:not(.enabled)) {
+  border: 1px solid rgba(var(--border), .15);
+  color: rgb(var(--text))
+}
+
+
+:host(:focus-within) {
+  border: 1px solid rgba(var(--border), .35);
+}
+
+:host(:focus-within) component-body {
+  background: rgba(var(--text), .075)
+} */
+
+
+
