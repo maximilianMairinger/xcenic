@@ -5,6 +5,7 @@ import "./../../../../image/image"
 import "./../../../textBlob/textBlob"
 import "./../../../_button/_rippleButton/blockButton/blockButton"
 import "./../../../_button/_rippleButton/selectButton/selectButton"
+import "./../../../_icon/lineAccent/lineAccent"
 
 
 

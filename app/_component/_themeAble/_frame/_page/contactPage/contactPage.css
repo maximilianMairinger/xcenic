@@ -25,6 +25,8 @@ ui-container-box {
   min-width: 315px;
   height: 100%;
   position: relative;
+  background-color: white;
+
 }
 
 ui-container-box-scroll {
@@ -37,7 +39,6 @@ ui-container-box-scroll {
 
 ui-container-content {
   display: block;
-  background-color: white;
   padding: 90px calc(16.5% - 12px);
   padding-bottom: 130px;
   width: 100%;
@@ -45,6 +46,18 @@ ui-container-content {
   box-sizing: border-box;
 }
 
+c-image {
+  --object-position: 5% center;
+}
+
+c-line-accent {
+  position: absolute;
+  bottom: 45px;
+
+  height: 40px;
+  width: 40px;
+  transform: scaleY(-1);
+}
 
 
 c-text-blob {
@@ -119,4 +132,18 @@ ui-container-box-scroll {
     width: 100%;
     position: absolute;
   }
+}
+
+selection-body {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-left: -5px;
+  margin-top: -5px;
+  margin-bottom: 10px
+
+}
+
+selection-body > * {
+  margin: 5px;
 }

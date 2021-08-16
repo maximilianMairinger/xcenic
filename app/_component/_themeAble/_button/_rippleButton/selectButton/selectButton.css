@@ -6,6 +6,9 @@
 
   --wave: rgb(var(--primary-text));
   --counter-wave: rgb(var(--plain-background));
+
+  --text-color: rgb(var(--primary-text));
+  --counter-text-color: rgb(var(--plain-background));
 }
 
 :host {
@@ -31,11 +34,33 @@ button-text {
   margin: auto 0;
   padding: 11px 20px;
   text-align: center;
+  font-weight: bold;
+
+  transition: color .2s;
 }
+
+button-text {
+  color: var(--text-color);
+}
+
+:host(.selected) button-text {
+  color: var(--counter-text-color);
+}
+
 
 button-wave:nth-child(2n) {
   background: var(--counter-wave);
 }
+
+button-wave:last-child {
+  opacity: .1;
+  transition: opacity .1s;
+}
+
+.confirmed button-wave:last-child {
+  opacity: 1;
+}
+
 
 
 

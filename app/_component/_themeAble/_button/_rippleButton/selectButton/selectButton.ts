@@ -14,23 +14,37 @@ export default class SelectButton extends RippleButton {
 
     if (selectedCallback) this.selected.get(selectedCallback)
 
+    this.preActive.get((yes) => {
+      if (yes) {
+        this.componentBody.removeClass("confirmed")
+        this.rippleElems.last.fade.auto = true
+      }
+    })
+
     this.addActivationCallback(() => {
       this.selected.set(!this.selected.get())
     })
 
-    this.selected.get((selected) => {
-      console.log(selected)
-      // this.rippleFadeIsOk = !selected
-    })
-    this.rippleFadeIsOk = false
+    
 
     this.selected.get((selected) => {
-      // if (!selected && this.fadeRipple.first !== undefined) this.fadeRipple.first()
+      this.rippleElems.last.fade.auto = false
+      this.componentBody.addClass("confirmed")
+
+      if (selected) this.addClass("selected")
+      else this.removeClass("selected")
+
+
+      if (!selected && this.fadeRipple.first !== undefined) delay(1000).then(() => {
+        this.rippleElems.first.fade(false)
+        this.rippleElems.first.fade(false)
+      })
     }, false)
 
     this.content(content);
     this.apd(this.textElem)
   }
+  
 
   content(to: string) {
     this.textElem.text(to)

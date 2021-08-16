@@ -129,12 +129,12 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
   public blurOnMouseOut(to: boolean) {
     this.mouseOutListener.active(to)
   }
-  public addActivationCallback<CB extends (e?: MouseEvent | KeyboardEvent) => void>(cb: CB): CB {
+  public addActivationCallback<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB {
     this.callbacks.add(cb);
     if (!this.enabled) this.enable()
     return cb
   }
-  public removeActivationCallback<CB extends (e?: MouseEvent | KeyboardEvent) => void>(cb: CB): CB {
+  public removeActivationCallback<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB {
     this.callbacks.removeV(cb);
     if (this.callbacks.empty && this.enabled) this.disable()
     return cb
