@@ -4,6 +4,7 @@
   
   display: inline-block;
   --display: block;
+  --object-postion: 50% 50%;
 }
 
 picture {
@@ -22,6 +23,7 @@ img {
   display: var(--display);
   opacity: 0;
   object-fit: cover;
+  object-position: var(--object-position);
   width: inherit;
   height: inherit;
   user-select: none;
