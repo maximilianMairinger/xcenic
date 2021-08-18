@@ -1,13 +1,10 @@
-:host {
-  overflow: auto;
-}
+
 
 component-body {
   display: inline-block;
   width: 100%;
   position: relative;
   height: fit-content;
-  overflow: initial;
   min-width: 365px;
 }
 

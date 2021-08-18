@@ -1,13 +1,15 @@
 component-body {
   display: flex;
-
+  height: fit-content;
 }
 
 image-container {
   display: block;
   width: 100%;
+  height: 100vh;
   flex-grow: 1;
-  position: relative;
+  position: sticky;
+  top: 0;
 }
 
 image-darken {
@@ -23,26 +25,18 @@ ui-container-box {
   display: block;
   width: 40%;
   min-width: 415px;
-  height: 100%;
+  height: fit-content;
   position: relative;
   background-color: white;
 }
 
-ui-container-box-scroll {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  scroll-margin-bottom: 100px;
-  position: relative;
-}
 
 ui-container-content {
   display: block;
   padding: 90px calc(16.5% - 12px);
   padding-bottom: 0;
   width: 100%;
-  height: 100%;
+  height: fit-content;
   box-sizing: border-box;
 }
 
@@ -65,16 +59,9 @@ c-text-blob {
   --font-size: 20px
 }
 
-@media (max-width: 530px) {
-  c-text-blob {
-    padding-right: 150px;
-  } 
-}
-@media (max-width: 450px) {
-  c-text-blob {
-    padding-right: 10px;
-  } 
-}
+
+
+
 
 h3 {
   margin-top: .15em;
@@ -105,6 +92,8 @@ initial-view {
   width: 100%;
 }
 
+
+
 #continue {
   --background: var(--primary-theme);
   --text: var(--plain-background);
@@ -132,6 +121,7 @@ ui-container-box-scroll {
   ui-container-box {
     width: 100%;
     position: absolute;
+    min-width: 345px;
   }
 }
 
@@ -169,4 +159,23 @@ scroll-margin {
   height: 100px;
 }
 
+@media (max-height: 820px) {
+  initial-view {
+    min-height: 600px;
+  }
+  c-line-accent, .lastThing {
+    bottom: initial;
+    top: 735px
+  }
+}
 
+@media (max-width: 580px) {
+  c-text-blob {
+    padding-right: 150px;
+  } 
+}
+@media (max-width: 450px) {
+  c-text-blob {
+    padding-right: 10px;
+  } 
+}

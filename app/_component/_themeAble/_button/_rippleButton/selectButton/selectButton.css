@@ -4,7 +4,7 @@
   
   --ripple-color: var(--primary-text);
 
-  --wave: var(--primary-text);
+  --wave: 0, 0, 0;
   --counter-wave: var(--plain-background);
 
   /* private */
@@ -37,7 +37,7 @@ button-text {
   font-weight: bold;
   
 
-  color: #E1D2E1;
+  color: white;
   mix-blend-mode: difference;
 }
 
@@ -51,7 +51,7 @@ button-text {
 
 
 button-wave {
-  transition: background-color .1s;
+  
 }
 
 button-wave:nth-child(2n) {
@@ -61,6 +61,7 @@ button-wave:nth-child(2n) {
 
 button-wave:nth-child(2n):last-child {
   background: rgba(var(--counter-wave), .1);
+  transition: background-color .1s;
 }
 
 .confirmed button-wave:nth-child(2n):last-child {

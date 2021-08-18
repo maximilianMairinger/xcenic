@@ -100,8 +100,6 @@ export default class Site extends Component {
       currentSection = section
       if (currentlyShowingLowerNav) lowerNav.updateSelectedLink(section)
       header.updateSelectedLink(section)
-    }, (scrollBarWidth) => {
-      header.css({width: `calc(100% - ${scrollBarWidth}px)`})
     }, (prog, userInited) => {
       if (lastScrollProg > topLimit) {
         if (prog <= topLimit) {

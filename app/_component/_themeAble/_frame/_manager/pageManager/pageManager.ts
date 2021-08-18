@@ -9,7 +9,7 @@ import HighlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIc
 
 
 export default class PageManager extends Manager {
-  constructor(changeNavTheme: (theme: string) => void, pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, sectionChangeCallback?: (section: string) => void, onScrollBarWidthChange?: (scrollBarWidth: number) => void, onUserScroll?: (scrollProgress: number, userInited: boolean) => void, onScroll?: (scrollProgress: number) => void) {
+  constructor(changeNavTheme: (theme: string) => void, pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, sectionChangeCallback?: (section: string) => void, onUserScroll?: (scrollProgress: number, userInited: boolean) => void, onScroll?: (scrollProgress: number) => void) {
 
     super(new ImportanceMap<() => Promise<any>, any>(
       
@@ -28,7 +28,7 @@ export default class PageManager extends Manager {
           new notFoundPage()
         ), val: () => import(/* webpackChunkName: "notFoundPage" */"../../_page/notFound/notFound")
       }
-    ), 0, pageChangeCallback, true, onScrollBarWidthChange, onUserScroll, onScroll)
+    ), 0, pageChangeCallback, true, onUserScroll, onScroll)
   }
 
 

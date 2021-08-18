@@ -1,4 +1,7 @@
 component-body {
-  overflow: auto;
   background: #F9FAFE;
+}
+
+:host {
+  overflow: auto;
 }
