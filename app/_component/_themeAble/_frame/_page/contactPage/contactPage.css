@@ -193,6 +193,7 @@ scroll-margin {
   position: relative;
   display: block;
   height: 100px;
+  width: 100%;
 }
 
 @media (max-height: 840px) {
@@ -211,4 +212,33 @@ scroll-margin {
   c-text-blob {
     padding-right: 10px;
   } 
+}
+
+after-initial-view {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0;
+  transform: translateY(0px);
+  margin-top: -20px;
+  
+}
+
+c-input {
+  margin-bottom: 10px;
+}
+
+
+c-input:last-child {
+  margin-bottom: 0;
+}
+
+ui-container-content > * {
+  position: relative;
+  float: left;
+}
+
+after-initial-view > * {
+  position: relative;
+  float: left;
 }

@@ -9,6 +9,7 @@ import "./../../../_button/_rippleButton/blockButton/blockButton"
 import BlockButton from  "./../../../_button/_rippleButton/blockButton/blockButton"
 import "./../../../_button/_rippleButton/selectButton/selectButton"
 import "./../../../_icon/lineAccent/lineAccent"
+import "./../../../input/input"
 
 
 
@@ -17,6 +18,8 @@ export default class ContactPage extends Page {
   private lastThingElem = this.initialViewElem.childs("h3.lastThing")
   
   private continueButton = this.q("#continue") as BlockButton
+
+  private afterInitialViewElem = this.q("after-initial-view")
 
   constructor() {
     super("dark")
@@ -54,6 +57,15 @@ export default class ContactPage extends Page {
       .on("backward", () => {
         let token = lastThingAnimSym = Symbol()
         this.lastThingElem.anim({translateY: 5, opacity: 0, scale: .95}, 400).then(() => {if (token === lastThingAnimSym) this.lastThingElem.hide().css({translateY: -20})})
+      })
+
+    const afterInitViewElemFadeInScrollPos = lastThingShowPos.tunnel(e => e + 150)
+    scrollData.scrollTrigger(afterInitViewElemFadeInScrollPos)
+      .on("forward", () => {
+        this.afterInitialViewElem.anim({opacity: 1, translateY: -20}, 550)
+      })
+      .on("backward", () => {
+        this.afterInitialViewElem.anim({opacity: 0, translateY: .1}, 400)
       })
 
 

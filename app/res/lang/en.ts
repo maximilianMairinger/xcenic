@@ -21,7 +21,10 @@ export default {
     detailsQuery: "Tell us about the details",
     lastThingQuery: "One more thing...",
     
-    continue: "Continue"
+    continue: "Continue",
+
+    yourName: "Name",
+    email: "Email"
   },
   home: {
     landing: {
