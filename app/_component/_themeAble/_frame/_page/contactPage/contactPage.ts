@@ -39,9 +39,10 @@ export default class ContactPage extends Page {
     const currentScollBody = isMobile.tunnel((isMobile) => isMobile ? this : this.componentBody)
 
     currentScollBody.get((currentScollBody) => {
-      scrollDataSub.data(currentScollBody.scrollData())
+      scrollDataSub.data(currentScollBody.scrollData() as Data<number>)
     })
 
+    
 
     const lastThingShowPos = new Data(50)
 
