@@ -100,7 +100,7 @@ export default class Site extends Component {
       currentSection = section
       if (currentlyShowingLowerNav) lowerNav.updateSelectedLink(section)
       header.updateSelectedLink(section)
-    }, (prog, userInited) => {
+    }, (prog) => {
       if (lastScrollProg > topLimit) {
         if (prog <= topLimit) {
           header.onTop()
@@ -111,7 +111,7 @@ export default class Site extends Component {
       }
 
       lastScrollProg = prog
-    });
+    },);
 
     
 

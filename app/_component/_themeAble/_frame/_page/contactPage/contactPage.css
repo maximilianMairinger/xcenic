@@ -44,13 +44,35 @@ c-image {
   --object-position: 5% center;
 }
 
-c-line-accent {
-  position: absolute;
-  bottom: 45px;
+seperator-row {
+  margin-top: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
 
+
+c-line-accent, .lastThing {
+  position: absolute;
+}
+
+c-line-accent {
   height: 40px;
   width: 40px;
   transform: scaleY(-1);
+}
+
+
+
+.lastThing {
+  margin-left: 60px;
+
+  opacity: 0; 
+  transform: translateY(-5px) scale(.95);
+  display: none;
+  margin-top: 0;
+  margin-bottom: 0;
+
 }
 
 
@@ -87,8 +109,8 @@ textarea.details {
 initial-view {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 220px);
-  margin-bottom: 130px;
+  height: calc(100vh - 135px);
+  margin-bottom: 65px;
   width: 100%;
 }
 
@@ -99,10 +121,18 @@ initial-view {
   --text: var(--plain-background);
   --border: unset;
 
-  position: absolute;
+  position: fixed;
   bottom: 40px;
-  right: calc(16.5% - 12px);
+  right: calc(5% - 12px);
 }
+
+@media (max-width: 1475px) {
+  #continue {
+    right: 62px;
+  }
+}
+
+
 
 ui-container-box-scroll::-webkit-scrollbar { 
   display: none;  
@@ -118,12 +148,25 @@ ui-container-box-scroll {
     padding-right: calc(11.5% - 12px);
   }
 
+  #continue {
+    right: calc(11.5% - 3px);
+  }
+
   ui-container-box {
     width: 100%;
     position: absolute;
     min-width: 345px;
   }
+  
 }
+
+@media (min-width: 700px) {
+  component-body {
+    overflow: auto;
+    height: 100vh;
+  }
+}
+
 
 selection-body {
   display: flex;
@@ -143,15 +186,7 @@ c-select-button {
   font-size: 14px;
 }
 
-.lastThing {
-  position: absolute;
-  bottom: 45px;
-  margin-left: 60px;
 
-  opacity: 0; 
-  transform: translateY(-5px) scale(.95);
-  display: none;
-}
 
 scroll-margin {
   position: relative;
@@ -159,14 +194,11 @@ scroll-margin {
   height: 100px;
 }
 
-@media (max-height: 820px) {
+@media (max-height: 840px) {
   initial-view {
-    min-height: 600px;
+    min-height: 705px;
   }
-  c-line-accent, .lastThing {
-    bottom: initial;
-    top: 735px
-  }
+
 }
 
 @media (max-width: 580px) {

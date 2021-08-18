@@ -65,7 +65,7 @@ export default abstract class Manager extends Frame {
 
   private resourcesMap: ResourcesMap
 
-  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, private pushDomainDefault: boolean = true, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void, private onScroll?: (scrollProgress: number) => void, public blurCallback?: Function, public preserveFocus?: boolean) {
+  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void, public blurCallback?: Function, public preserveFocus?: boolean) {
     super(null);
 
     this.body = ce("manager-body");
@@ -88,17 +88,17 @@ export default abstract class Manager extends Frame {
         let y = this.currentPage.scrollTop
         onUserScroll(y, this.currentPage.userInitedScrollEvent)
         onScroll(y)
-      }, false)
+      }, true, {passive: true, notifyOnAllChanges: true})
     }
     else {
       if (onUserScroll) this.scrollEventListener = new EventListener(this, "scroll", () => {
         //@ts-ignore
         onUserScroll(this.currentPage.scrollTop, this.currentPage.userInitedScrollEvent)
-      }, false)
+      }, false, {passive: true, notifyOnAllChanges: true})
       else if (onScroll) this.scrollEventListener = new EventListener(this, "scroll", () => {
         //@ts-ignore
         onScroll(this.currentPage.scrollTop)
-      }, false)
+      }, false, {passive: true, notifyOnAllChanges: true})
     }
 
     const { resourcesMap } = lazyLoad(this.importanceMap, e => {
