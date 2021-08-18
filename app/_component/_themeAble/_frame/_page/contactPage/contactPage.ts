@@ -42,7 +42,7 @@ export default class ContactPage extends Page {
       scrollDataSub.data(currentScollBody.scrollData() as Data<number>)
     })
 
-    
+
 
     const lastThingShowPos = new Data(50)
 
@@ -58,7 +58,7 @@ export default class ContactPage extends Page {
 
 
     this.continueButton.addActivationCallback(() => {
-      currentScollBody.get().scroll(this.scrollHeight - this.height(), {speed: 500})
+      currentScollBody.get().scroll(currentScollBody.get().scrollHeight - currentScollBody.get().height(), {speed: 500}, false)
     })
 
   
@@ -72,9 +72,6 @@ export default class ContactPage extends Page {
     new DataCollection(this.initialViewElem.resizeData() as any as Data<DOMRectReadOnly>, this.resizeData() as any as Data<DOMRectReadOnly>).get((initialView, self) => {
       lastThingShowPos.set((initialView.height + totalAdd) - self.height)
     })
-    // .get(({bottom}) => {
-    //   lastThingShowPos.set(bottom - 200)
-    // })
 
   }
 

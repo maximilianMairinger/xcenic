@@ -88,17 +88,17 @@ export default abstract class Manager extends Frame {
         let y = this.currentPage.scrollTop
         onUserScroll(y, this.currentPage.userInitedScrollEvent)
         onScroll(y)
-      }, true, {passive: true, notifyOnAllChanges: true})
+      }, true, {passive: true})
     }
     else {
       if (onUserScroll) this.scrollEventListener = new EventListener(this, "scroll", () => {
         //@ts-ignore
         onUserScroll(this.currentPage.scrollTop, this.currentPage.userInitedScrollEvent)
-      }, false, {passive: true, notifyOnAllChanges: true})
+      }, false, {passive: true})
       else if (onScroll) this.scrollEventListener = new EventListener(this, "scroll", () => {
         //@ts-ignore
         onScroll(this.currentPage.scrollTop)
-      }, false, {passive: true, notifyOnAllChanges: true})
+      }, false, {passive: true})
     }
 
     const { resourcesMap } = lazyLoad(this.importanceMap, e => {
