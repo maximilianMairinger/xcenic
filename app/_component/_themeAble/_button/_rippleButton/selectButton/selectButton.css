@@ -11,6 +11,7 @@
   --wave-opacity: 1;
 }
 
+
 :host {
   display: block;
   width: fit-content;
@@ -24,7 +25,10 @@ a {
   border: 1px solid rgba(var(--border), .25);
 }
 
-
+a {
+  height: auto;
+  width: auto;
+}
 
 
 

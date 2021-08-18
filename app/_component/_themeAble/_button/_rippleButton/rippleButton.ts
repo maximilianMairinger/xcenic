@@ -4,6 +4,9 @@ import { Data } from "josm";
 import declareComponent from "../../../../lib/declareComponent";
 import Button from "../button";
 
+
+if (window.TouchEvent === undefined) window.TouchEvent = class SurelyNotTouchEvent {} as any
+
 export default abstract class RippleButton extends Button {
   private ripples: HTMLElement;
   private wave: HTMLElement;
