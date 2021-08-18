@@ -99,6 +99,7 @@ textarea {
   resize: none;
   padding: 15px;
   font-size: 14px;
+  font-family: inherit;
 }
 
 textarea.details {
