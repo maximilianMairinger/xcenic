@@ -16,8 +16,6 @@
 
 a {
   overflow: hidden;
-  height: fit-content;
-  width: fit-content;
   border-radius: inherit;
   display: block;
   margin-left: -.5px;

@@ -25,14 +25,14 @@ ui-container-box {
   display: block;
   width: 40%;
   min-width: 415px;
-  height: fit-content;
+  height: min-content;
   position: relative;
   background-color: white;
 }
 
 
 ui-container-content {
-  display: block;
+  display: inline-block;
   padding: 90px calc(16.5% - 12px);
   padding-bottom: 0;
   width: 100%;
@@ -220,7 +220,8 @@ after-initial-view {
   height: auto;
   opacity: 0;
   transform: translateY(0px);
-  margin-top: -20px;
+  margin-top: -60px;
+  margin-bottom: 60px;
   
 }
 

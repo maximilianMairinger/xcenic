@@ -62,7 +62,7 @@ export default class ContactPage extends Page {
     const afterInitViewElemFadeInScrollPos = lastThingShowPos.tunnel(e => e + 150)
     scrollData.scrollTrigger(afterInitViewElemFadeInScrollPos)
       .on("forward", () => {
-        this.afterInitialViewElem.anim({opacity: 1, translateY: -20}, 550)
+        this.afterInitialViewElem.anim({opacity: 1, translateY: 20}, 550)
       })
       .on("backward", () => {
         this.afterInitialViewElem.anim({opacity: 0, translateY: .1}, 400)

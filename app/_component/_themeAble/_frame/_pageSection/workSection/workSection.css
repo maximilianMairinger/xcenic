@@ -802,7 +802,7 @@ showcase-wrapper {
   position: relative;
   display: inline-block;
   top: 0;
-  height: fit-content;
+  height: min-content;
   box-shadow: var(--soft-shadow);
   border-top-left-radius: 25px;
   border-bottom-left-radius: 25px;
@@ -833,7 +833,7 @@ view-more-side-panel showcase-section:last-child {
 }
 
 view-more-side-panel showcase-section:not(.inactive) {
-  height: fit-content;
+  height: min-content;
 }
 
 

@@ -7,6 +7,7 @@ component-body {
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -14,6 +15,7 @@ icon-container {
   pointer-events: none;
   display: flex;
   height: auto;
+  flex-grow: 1;
 
   top: var(--padding);
   height: calc(67% - calc(var(--padding) * 2))
@@ -32,7 +34,9 @@ icon-container > * {
 
 component-body {
   padding: 10px;
+  box-sizing: border-box;
 }
+
 
 text-container {
   pointer-events: none;
