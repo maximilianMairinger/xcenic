@@ -3,6 +3,8 @@
   width: 100%;
   min-height: 650px;
   z-index: 1;
+
+  content-visibility: visible !important;
 }
 
 c-image {

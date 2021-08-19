@@ -13,5 +13,8 @@ component-body > * {
   width: 100%;
   position: relative;
   float: left;
+
+  content-visibility: auto;
+  contain-intrinsic-size: 100vh;
 }
 
