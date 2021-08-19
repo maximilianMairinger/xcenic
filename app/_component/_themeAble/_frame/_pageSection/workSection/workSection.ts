@@ -15,7 +15,7 @@ import "../../../_icon/laptopNotificationIllustration/laptopNotificationIllustra
 import "../../../_button/_rippleButton/rippleButton"
 import "../../../_button/_rippleButton/blockButton/blockButton"
 import { ElementList, ScrollData, ScrollTrigger } from "extended-dom"
-import { Data, DataCollection } from "josm"
+import { Data, DataCollection, DataSubscription } from "josm"
 import delay from "delay"
 
 
@@ -64,6 +64,7 @@ export default class PhilosophySection extends PageSection {
     }
 
 
+
     for(let ii = 0; ii < this.serviceSection.length - 1; ii++) {
       const i = ii
       const service = this.serviceSection[i]
@@ -83,6 +84,7 @@ export default class PhilosophySection extends PageSection {
       prevHeight = height
     }
 
+    
     
     
     Promise.all(scrollTriggers).then((scrollTriggers) => {
@@ -119,22 +121,38 @@ export default class PhilosophySection extends PageSection {
 
 
         const nextI = i + 1
-        scrollTrigger.on("backward", () => {
+
+        const stbn = () => {
           deactivateSidePanel(nextI)
-        })
+        }
+        const stfc = () => {
+          deactivateSidePanel(i)
+        }
+        const stbc = () => {
+          activateSidePanel(i)
+        }
+        const stfn = () => {
+          activateSidePanel(nextI)
+        }
+
+        const showSidePanel = new Data(false)
+
+        showSidePanel.get((showSidePanel) => {
+          const func = showSidePanel ? "on" : "off"
+          scrollTrigger[func]("backward", stbn)
+          scrollTrigger[func]("forward", stfc)
+          scrollTrigger[func]("backward", stbc)
+          scrollTrigger[func]("forward", stfn)
+        }, false)
+
+        this.resizeData().get(({width}) => {showSidePanel.set(width > 1400)})
 
         
-        scrollTrigger.on("forward", () => {
-          deactivateSidePanel(i)
-        })
+        
           
-        scrollTrigger.on("backward", () => {
-          activateSidePanel(i)
-        })
+        
 
-        scrollTrigger.on("forward", () => {
-          activateSidePanel(nextI)
-        })
+        
    
   
         toggleBool = !toggleBool
