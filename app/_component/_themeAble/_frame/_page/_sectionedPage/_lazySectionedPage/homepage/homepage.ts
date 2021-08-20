@@ -54,6 +54,36 @@ export default class HomePage extends LazySectionedPage {
         key: new Import("contact", 1, (testSection: typeof TestSection) =>
           new testSection()
         ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      },
+      {
+        key: new Import("team2", 1, (testSection: typeof TestSection) =>
+          new testSection()
+        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      },
+      {
+        key: new Import("contact2", 1, (testSection: typeof TestSection) =>
+          new testSection()
+        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      },
+      {
+        key: new Import("team3", 1, (testSection: typeof TestSection) =>
+          new testSection()
+        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      },
+      {
+        key: new Import("contact3", 1, (testSection: typeof TestSection) =>
+          new testSection()
+        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      },
+      {
+        key: new Import("team4", 1, (testSection: typeof TestSection) =>
+          new testSection()
+        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      },
+      {
+        key: new Import("contact5", 1, (testSection: typeof TestSection) =>
+          new testSection()
+        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
       }
     ), baselink, sectionChangeCallback, new AliasList(
       //@ts-ignore

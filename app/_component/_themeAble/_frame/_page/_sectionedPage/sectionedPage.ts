@@ -4,7 +4,7 @@ import scrollTo from "animated-scroll-to";
 import WaapiEasing from "waapi-easing";
 import { PriorityPromise, ResourcesMap } from "../../../../../lib/lazyLoad";
 import PageSection from "../../_pageSection/pageSection";
-import { EventListener, ScrollData } from "extended-dom";
+import { ElementList, EventListener, ScrollData } from "extended-dom";
 import { Data, DataCollection, DataSubscription } from "josm";
 import { constructIndex } from "key-index"
 import HightlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon"
@@ -382,7 +382,57 @@ export default abstract class SectionedPage extends Page {
     return funcProm
   }
 
+  private renderingSections: {dimensions: {top: number, bot: number}, rendered: Data<boolean>, section: HTMLElement}[] = []
+  protected newSectionArrived(section: HTMLElement) {
 
+
+    
+
+    const rendered = new Data(true) as Data<boolean>
+    const top = section.offsetTop
+    this.renderingSections.add({rendered, dimensions: {top, bot: top + section.offsetHeight}, section})
+    rendered.get((rendered) => {
+
+      if (!rendered) {
+        debugger
+        section.css("containIntrinsicSize" as any, section.height() + "px")
+        
+        let last = this.scrollData().get()
+        let c = 0
+        const sub = this.scrollData().get((prog) => {
+          console.log(last - prog)
+          c++
+          // this.scroll({top: last})
+          if (c === 3) sub.deactivate()
+          last = prog
+        }, false)
+
+      }
+      
+      section.css("contentVisibility" as any, rendered ? "visible" : "hidden")
+      
+    }, false)
+
+    this.calculateSectionRenderingStatus(this.scrollData().get())
+
+    section.on("resize", () => {
+      this.renderingSections.forEach(({section}, i) => {
+        const top = section.offsetTop
+        this.renderingSections[i].dimensions = {top, bot: top + section.offsetHeight}
+      })
+      this.calculateSectionRenderingStatus(this.scrollData().get())
+    })
+
+  }
+
+  private sectionRenderingMargin = 0
+  private calculateSectionRenderingStatus(scrollPos: number) {
+    const posTop = scrollPos - this.sectionRenderingMargin
+    const posBot = scrollPos + this.sectionRenderingMargin + window.innerHeight
+    for (const { rendered, dimensions } of this.renderingSections) {
+      rendered.set(dimensions.top <= posBot && dimensions.bot >= posTop)
+    }
+  }
 
   private firstDomain: string
   private mainIntersectionObserver: IntersectionObserver
@@ -390,6 +440,23 @@ export default abstract class SectionedPage extends Page {
   private intersectingIndex: Element[] = []
   private currentlyActiveSectionElem: PageSection
   initialActivationCallback() {
+
+
+    (() => {
+      
+      let childs = (this.componentBody.childs(1, true) as ElementList<HTMLElement>)
+      
+      for (const section of childs) {
+        this.newSectionArrived(section)
+      }
+
+      
+      
+      
+      
+      
+      this.scrollData().get(this.calculateSectionRenderingStatus.bind(this))
+    })()
     
 
 

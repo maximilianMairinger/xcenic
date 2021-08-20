@@ -3,8 +3,6 @@
   background-color: #F9FAFE;
   transition: .3s background-color;
   --theme: var(--primary-theme);
-
-  contain-intrinsic-size: 300vh !important;
 }
 
 component-body {

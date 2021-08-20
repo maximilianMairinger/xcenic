@@ -6,6 +6,7 @@ component-body {
   position: relative;
   height: fit-content;
   min-width: 365px;
+  overflow: hidden;
 }
 
 component-body > * {
@@ -14,7 +15,7 @@ component-body > * {
   position: relative;
   float: left;
 
-  content-visibility: auto;
+  /* content-visibility: auto; */
   contain-intrinsic-size: 100vh;
 }
 
