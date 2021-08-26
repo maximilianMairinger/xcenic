@@ -387,7 +387,7 @@ export default abstract class SectionedPage extends Page {
   protected newSectionArrived(section: HTMLElement) {
 
 
-    
+    let lastDiff = 0
 
     const rendered = new Data(true) as Data<boolean>
     const top = section.offsetTop
@@ -398,61 +398,40 @@ export default abstract class SectionedPage extends Page {
       }
       else {
         let lastHeight = section.height()
-        // console.log("sub", section)
+        
         const sub = section.on("resize", ({height}) => {
           const diff = height - lastHeight
-          if (diff > 0) {
+          //              only compensate diff when scrolling up
+          if (diff > 0 && Math.abs(section.offsetTop - this.scrollTop) > Math.abs(section.offsetTop + section.offsetHeight - this.scrollTop)) {
 
+            // This is a little hacky. For some reason you cant change scrollTop while to compensate for offset while scrolling. 
+            // This is why this first resolves the diff with a negative margingTop on the scrollElementParent. And later when scroll
+            // is idle resolve the diff back to the scroll position.
             
-            // console.log("a")
-            // const where = this.scrollTop + diff
-     
-            // console.log("4 real")
-            // this.scrollTop = where
-            section.css("marginTop", section.css("marginTop") - diff)
-            // this.on("scroll", () => {
-            //   section.css("marginTop", 0)
-            //   this.scrollTop += diff
-            // }, {once: true})
+            lastDiff -= diff
+            console.log("lol", lastDiff)
+            this.componentBody.css("marginTop", lastDiff)
 
+            const cleanUp = () => {
+              lastDiff += diff
+              this.componentBody.css("marginTop", lastDiff)
+              this.scrollTop += diff
+              console.log("clean")
+              sub.deactivate()
+            }
 
-            // const sub = this.on("scroll", () => {
-            //   const scrollDiff = this.scrollTop - lastScrollPos
-            //   console.log("scrollDiff", scrollDiff)
-            //   const where = this.scrollTop + diff
-     
-            //     console.log("4 real")
-            //     this.scrollTop = where
+            let id = setTimeout(cleanUp, 100)
+            const sub = this.on("scroll", () => {
+              
                 
      
 
-            //   if (id !== undefined) clearTimeout(id)
-            //   id = setTimeout(() => {
-            //     console.log("clear in")
-            //     sub.deactivate()
-            //   }, 30)
+              if (id !== undefined) clearTimeout(id)
+              id = setTimeout(cleanUp, 100)
               
-            // }, {passive: false})
+            }, {passive: false})
 
 
-            // const sub = this.on("scroll", (e) => {
-            //   this.scrollTop = where
-            // }, {passive: false})
-
-            // setTimeout(() => {
-            //   console.log("clear")
-            //   sub.deactivate()
-            // }, 5000)
-            
-            // let lastScrollPos = this.scrollTop
-            // const sub = this.on("scroll", () => {
-            //   const scrollDiff = this.scrollTop - lastScrollPos
-            //   if (Math.abs(scrollDiff) >=  Math.abs(diff)) {
-                
-            //     sub.deactivate()
-            //   }
-              
-            // }, {passive: false})
             
           }
           lastHeight = height

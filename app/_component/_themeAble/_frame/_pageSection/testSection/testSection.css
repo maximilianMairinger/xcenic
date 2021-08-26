@@ -1,6 +1,6 @@
 :host {
   /* height: 80vh; */
-  background: linear-gradient(rgb(255, 255, 255), rgb(255, 199, 199));
+  background: linear-gradient(rgb(149, 255, 99), rgb(255, 199, 199));
   contain-intrinsic-size: 600px !important;
 }
 
