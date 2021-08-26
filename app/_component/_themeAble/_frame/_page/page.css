@@ -1,5 +1,6 @@
 component-body {
   background: #F9FAFE;
+  height: max-content;
 }
 
 :host {

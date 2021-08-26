@@ -4,9 +4,9 @@ component-body {
   display: inline-block;
   width: 100%;
   position: relative;
-  height: fit-content;
   min-width: 365px;
-  overflow: hidden;
+  /* todo bug */
+  /* overflow: hidden; */
 }
 
 component-body > * {

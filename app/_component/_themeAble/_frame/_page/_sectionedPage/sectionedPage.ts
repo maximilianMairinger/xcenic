@@ -9,6 +9,7 @@ import { Data, DataCollection, DataSubscription } from "josm";
 import { constructIndex } from "key-index"
 import HightlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon"
 import localSettings from "./../../../../../lib/localSettings"
+import delay from "delay";
 
 
 
@@ -392,21 +393,75 @@ export default abstract class SectionedPage extends Page {
     const top = section.offsetTop
     this.renderingSections.add({rendered, dimensions: {top, bot: top + section.offsetHeight}, section})
     rendered.get((rendered) => {
-
       if (!rendered) {
-        debugger
         section.css("containIntrinsicSize" as any, section.height() + "px")
-        
-        let last = this.scrollData().get()
-        let c = 0
-        const sub = this.scrollData().get((prog) => {
-          console.log(last - prog)
-          c++
-          // this.scroll({top: last})
-          if (c === 3) sub.deactivate()
-          last = prog
-        }, false)
+      }
+      else {
+        let lastHeight = section.height()
+        // console.log("sub", section)
+        const sub = section.on("resize", ({height}) => {
+          const diff = height - lastHeight
+          if (diff > 0) {
 
+            
+            // console.log("a")
+            // const where = this.scrollTop + diff
+     
+            // console.log("4 real")
+            // this.scrollTop = where
+            section.css("marginTop", section.css("marginTop") - diff)
+            // this.on("scroll", () => {
+            //   section.css("marginTop", 0)
+            //   this.scrollTop += diff
+            // }, {once: true})
+
+
+            // const sub = this.on("scroll", () => {
+            //   const scrollDiff = this.scrollTop - lastScrollPos
+            //   console.log("scrollDiff", scrollDiff)
+            //   const where = this.scrollTop + diff
+     
+            //     console.log("4 real")
+            //     this.scrollTop = where
+                
+     
+
+            //   if (id !== undefined) clearTimeout(id)
+            //   id = setTimeout(() => {
+            //     console.log("clear in")
+            //     sub.deactivate()
+            //   }, 30)
+              
+            // }, {passive: false})
+
+
+            // const sub = this.on("scroll", (e) => {
+            //   this.scrollTop = where
+            // }, {passive: false})
+
+            // setTimeout(() => {
+            //   console.log("clear")
+            //   sub.deactivate()
+            // }, 5000)
+            
+            // let lastScrollPos = this.scrollTop
+            // const sub = this.on("scroll", () => {
+            //   const scrollDiff = this.scrollTop - lastScrollPos
+            //   if (Math.abs(scrollDiff) >=  Math.abs(diff)) {
+                
+            //     sub.deactivate()
+            //   }
+              
+            // }, {passive: false})
+            
+          }
+          lastHeight = height
+        }, {passive: false})
+
+        delay(0).then(() => {
+          sub.deactivate()
+          // console.log("over", section)
+        })
       }
       
       section.css("contentVisibility" as any, rendered ? "visible" : "hidden")
@@ -421,7 +476,7 @@ export default abstract class SectionedPage extends Page {
         this.renderingSections[i].dimensions = {top, bot: top + section.offsetHeight}
       })
       this.calculateSectionRenderingStatus(this.scrollData().get())
-    })
+    }, false)
 
   }
 
@@ -442,21 +497,18 @@ export default abstract class SectionedPage extends Page {
   initialActivationCallback() {
 
 
-    (() => {
-      
+
+    (() => {  
       let childs = (this.componentBody.childs(1, true) as ElementList<HTMLElement>)
       
       for (const section of childs) {
         this.newSectionArrived(section)
       }
 
-      
-      
-      
-      
-      
       this.scrollData().get(this.calculateSectionRenderingStatus.bind(this))
-    })()
+    })();
+
+
     
 
 
