@@ -13,3 +13,7 @@ h2 {
   width: 100%;
   opacity: 0;
 }
+
+h2:first-child {
+  opacity: 1;
+}
