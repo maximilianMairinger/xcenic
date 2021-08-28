@@ -1,16 +1,24 @@
+import { Data } from "josm";
 import Component from "../component";
 
 export default abstract class ThemeAble<T extends false | HTMLElement | HTMLAnchorElement = false | HTMLElement> extends Component<T> {
   private themeStyleElement: HTMLStyleElement = ce("style")
+  public theme: Data<Theme>
 
   constructor(componentBodyExtension?: HTMLElement | false, theme?: Theme | null) {
     super(componentBodyExtension as any)
 
     this._childThemeAbles = this.childThemeAbles ? this.q(this.childThemeAbles().join(","), true) as any as ThemeAble[] : []
 
-    if (theme === undefined) theme = "light"
-    if (theme) this.setTheme(theme)
-    this._childThemeAbles.Inner("theme", [theme])
+
+    this.theme = new Data(theme, "light")
+
+    this.theme.get((theme) => {
+
+      this._childThemeAbles.Inner("theme").inner("set", [theme])
+      this.setTheme(theme)
+    })
+
     
     
     
@@ -22,25 +30,14 @@ export default abstract class ThemeAble<T extends false | HTMLElement | HTMLAnch
   private _theme: Theme
 
   private setTheme(to: Theme) {
-    if (this._theme !== to) {
-      if (this.currentlyActiveTheme) this.themeStyleElement.html(themeIndex[to])
-      this._theme = to
-    }
-    return this
+    if (this.currentlyActiveTheme) this.themeStyleElement.html(themeIndex[to])
+    this._theme = to
   }
 
   private _childThemeAbles: ThemeAble[]
   protected childThemeAbles?(): string[]
   
-  theme(): Theme
-  theme(to: Theme): this
-  theme(to?: Theme): any {
-    if (to) {
-      this._childThemeAbles.Inner("theme", [to])
-      return this.setTheme(to)
-    }
-    else return this._theme
-  }
+
 
   public passiveTheme() {
     if (this.currentlyActiveTheme) {
@@ -64,7 +61,8 @@ export default abstract class ThemeAble<T extends false | HTMLElement | HTMLAnch
 export type Theme = keyof typeof themeIndex
 
 const themeIndex = {
-  light: require("./light-theme.css")  
+  light: require("./light-theme.css"),
+  dark: require("./dark-theme.css")
 }
 
 

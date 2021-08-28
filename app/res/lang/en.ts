@@ -12,6 +12,20 @@ export default {
 
 
   },
+  contact: {
+    note: "Got an Idea?",
+    heading: "Tell us all about it",
+
+    requestQuery: "What are you looking for",
+    requestOptions: ["Web/App-development", "UI Design", "Video Production", "Photography", "Social Media", "Other"],
+    detailsQuery: "Tell us about the details",
+    lastThingQuery: "One more thing...",
+    
+    continue: "Continue",
+
+    yourName: "Name",
+    email: "Email"
+  },
   home: {
     landing: {
       heading: "Our Mission",
@@ -96,7 +110,7 @@ export default {
             }
           }
         },
-        sideText: "We develop a unique and engaging social media presence for your business."
+        sideText: "We develop a unique and engaging social media presence for your business. Combining our creative skill, design experience and unique ideas to deliver a state of the art social media page."
       }
 
     }

@@ -1,17 +1,30 @@
 import delay from "delay";
+import { ElementList } from "extended-dom";
+import { Data } from "josm";
 import declareComponent from "../../../../lib/declareComponent";
 import Button from "../button";
+
+
+if (window.TouchEvent === undefined) window.TouchEvent = class SurelyNotTouchEvent {} as any
 
 export default abstract class RippleButton extends Button {
   private ripples: HTMLElement;
   private wave: HTMLElement;
+
+
+
+  public preActive: Data<boolean> = new Data(false) as any
+
     constructor(activationCallback?: (e?: MouseEvent | KeyboardEvent) => void, enabled?: boolean, focusOnHover?: boolean, tabIndex?: number) {
       super(enabled, focusOnHover, tabIndex);
       this.draggable = false
 
 
       this.on("mousedown", (e) => {
-        if (!touched) this.initRipple(e);
+        if (!touched) {
+          this.initRipple(e);
+          this.preActive.set(true)
+        }
       })
       let touched = false
       this.on("touchend", () => {
@@ -23,7 +36,11 @@ export default abstract class RippleButton extends Button {
 
       this.on("touchstart", (e) => {
         this.initRipple(e);
+        this.preActive.set(true)
       })
+      
+      
+
       if (activationCallback) super.addActivationCallback(activationCallback);
 
       this.wave = ce("button-wave");
@@ -31,23 +48,58 @@ export default abstract class RippleButton extends Button {
       this.ripples = ce("button-waves");
       this.apd(this.ripples);
     }
+
+
+    protected fadeRipple: ((anim?: boolean) => void)[] = []
+    protected rippleElems: ElementList<Element & {fade?: ((animation?: boolean) => void) & {auto?: boolean}}> = new ElementList
+
     public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
+
       let r = this.wave.cloneNode() as Element;
       this.ripples.append(r);
 
-      let fadeAnim = async () => {
-        try {
-          await r.anim({opacity: 0}, 500);  
-        } catch (error) {
-          
-        }
-        await delay(500)
-        r.remove();
+      const fadeAnimIfPossible: Function & {auto?: boolean} = () => {
+        setTimeout(() => {
+          if (!fadeAnim.auto) return
+          return fadeAnim()
+        })
       }
+      
+      
+
+      const fadeAnim = async (anim = true) => {
+        this.rippleElems.rmV(r)
+
+        if (anim) {
+          try {
+            await r.anim({opacity: 0}, 500);  
+          } catch (error) {
+            
+          }
+          await delay(500)
+        }
+        
+        r.remove()
+      }
+      fadeAnim.auto = true;
+
+      (r as any).fade = fadeAnim
+      this.rippleElems.add(r)
+
+      this.fadeRipple.add(fadeAnim)
 
       let fadeisok = () => {
-        if (rdyToFade) fadeAnim();
+        if (rdyToFade) fadeAnimIfPossible();
         else rdyToFade = true;
+      }
+
+      let once = true
+      const uiOut = (e) => {
+        if (once) {
+          once = false;
+          fadeisok()
+          this.preActive.set(false)
+        }
       }
 
       let x: number;
@@ -62,13 +114,13 @@ export default abstract class RippleButton extends Button {
           e.pageY = e.touches[e.touches.length-1].pageY
 
 
-          document.body.on("touchcancel", fadeisok, {once: true});
-          document.body.on("touchend", fadeisok, {once: true});
-          this.on("blur", fadeisok, {once: true});
+          document.body.on("touchcancel", uiOut, {once: true});
+          document.body.on("touchend", uiOut, {once: true});
+          this.on("blur", uiOut, {once: true});
         }
         else {
-          this.on("mouseup", fadeisok, {once: true});
-          this.on("mouseout", fadeisok, {once: true});
+          document.body.on("mouseup", uiOut, {once: true});
+
         }
         let offset = this.absoluteOffset();
         x = (e as MouseEvent).pageX - offset.left - r.width() / 2;
@@ -81,8 +133,8 @@ export default abstract class RippleButton extends Button {
         y = this.height() / 2 - r.height() / 2;
 
         if (e instanceof KeyboardEvent) {
-          this.on("keyup", fadeisok, {once: true});
-          this.on("blur", fadeisok, {once: true});
+          this.on("keyup", uiOut, {once: true});
+          this.on("blur", uiOut, {once: true});
         }
       }
       r.css({
@@ -90,9 +142,23 @@ export default abstract class RippleButton extends Button {
          marginLeft: x
       });
       let rdyToFade = false;
-      r.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + (this.width() / 25 * 2.2) + ")"}], {duration: 350, easing: "linear"}).then(fadeisok);
+      let biggerMetric = this.width() > this.height() ? this.width() : this.height();
+
+      
+      
+      this.rippleAnimProm = r.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + (this.width() / 25 * 2.2) + ")"}], {duration: biggerMetric * 4, easing: "linear"}).then(fadeisok);
+      
+      
+
       return fadeisok
     }
+
+    protected rippleAnimProm: Promise<any>
+
+
+    
+
+
     stl() {
       return super.stl() + require('./rippleButton.css').toString();
     }

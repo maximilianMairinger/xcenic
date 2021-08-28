@@ -4,11 +4,14 @@ import scrollTo from "animated-scroll-to";
 import WaapiEasing from "waapi-easing";
 import { PriorityPromise, ResourcesMap } from "../../../../../lib/lazyLoad";
 import PageSection from "../../_pageSection/pageSection";
-import { EventListener, ScrollData } from "extended-dom";
+import { ElementList, EventListener, ScrollData } from "extended-dom";
 import { Data, DataCollection, DataSubscription } from "josm";
 import { constructIndex } from "key-index"
 import HightlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon"
 import localSettings from "./../../../../../lib/localSettings"
+import delay from "delay";
+const SyncProm = require("sync-p")
+const syncPromAll = require("sync-p/all")
 
 
 
@@ -182,8 +185,8 @@ export default abstract class SectionedPage extends Page {
 
   public abstract iconIndex: {[key: string]: HightlightAbleIcon}
 
-  private relScrollPosStorage = localSettings<number>("scrollPos@" + this.baselink, 0)
-  private activeSectionIdStorage = localSettings<string>("activeSectionId@" + this.baselink, "") // TODO: use first section id as default
+  private localScrollPosStore = localSettings<number>("localScrollPos@" + this.baselink, 0)
+  private currentSectionIdStore = localSettings<string>("currentSectionId@" + this.baselink, "") // TODO: use first section id as default?
 
   constructor(sectionIndex: FullSectionIndex, private baselink: string, protected sectionChangeCallback?: (section: string) => void, protected readonly sectionAliasList: AliasList = new AliasList(), protected readonly mergeIndex: {[part in string]: string} = {}) {
     super()
@@ -318,56 +321,52 @@ export default abstract class SectionedPage extends Page {
 
 
 
-    let { pageSection: elem, fragments } = await this.curSectionProm
+    let { pageSection: section, fragments } = await this.curSectionProm
 
     this.activateSectionName(fragments.closeUp)
     this.currentlyActiveSectionRootName = fragments.rootElem
     
     if (this.currentlyActiveSectionElem) this.currentlyActiveSectionElem.deactivate()
-    this.currentlyActiveSectionElem = elem
+    this.currentlyActiveSectionElem = section
     this.currentlyActiveSectionElem.activate()
 
     this.userInitedScrollEvent = false
 
-    let lastScrollProg = this.scrollData().get()
     
-    let scrollToPos = elem.offsetTop
+    let scrollToPos = section.offsetTop
 
-    if (lastScrollProg === 0) lastScrollProg = -1000000;
 
 
 
     setTimeout(async () => {
-      if (lastScrollProg < scrollToPos + this.verticalOffset || lastScrollProg > scrollToPos + elem.offsetHeight + this.verticalOffset) {
-        if (lastScrollProg === -1000000) {
-          
-          if (fragments.rootElem === this.activeSectionIdStorage.get()) {
-            let wantedScrollToPos = this.relScrollPosStorage.get() + scrollToPos
-            if (!(wantedScrollToPos < scrollToPos + this.verticalOffset || wantedScrollToPos > scrollToPos + elem.offsetHeight + this.verticalOffset)) scrollToPos = wantedScrollToPos - this.verticalOffset
-          }
-        }
-  
-        if (active) {
-  
-          let ls = this.on("keydown", (e) => {
-            e.stopImmediatePropagation()
-          })
-          
-          await scrollTo(scrollToPos, {
-            cancelOnUserAction: true,
-            verticalOffset: this.verticalOffset,
-            speed: scrollAnimationSpeed,
-            elementToScroll: this,
-            easing
-          })
-    
-          ls.deactivate()
-    
-        }
-        else {
-          this.scrollTop = this.verticalOffset + scrollToPos
-        }
+      if (this.currentSectionIdStore.get() === fragments.rootElem) {
+        scrollToPos += this.localScrollPosStore.get() - this.verticalOffset
       }
+
+      
+
+      if (active) {
+
+        let ls = this.on("keydown", (e) => {
+          e.stopImmediatePropagation()
+        })
+        
+        await scrollTo(scrollToPos, {
+          cancelOnUserAction: true,
+          verticalOffset: this.verticalOffset,
+          speed: scrollAnimationSpeed,
+          elementToScroll: this,
+          easing
+        })
+  
+        ls.deactivate()
+  
+      }
+      else {
+        this.ignoreIncScrollEventForInitialScrollDetection = true
+        this.scrollTop = this.verticalOffset + scrollToPos
+      }
+
   
       
       
@@ -382,14 +381,201 @@ export default abstract class SectionedPage extends Page {
     return funcProm
   }
 
+  private renderingSections: {dimensions: {top: number, bot: number}, rendered: Data<boolean>, section: HTMLElement}[] = []
+  private sectionIsInPos: {initElemIndex?: number} & {isInPos: Data<number>, wantedPos: number}[] = []
+  protected newSectionArrived(section: PageSection, wantedPos: number) {
+    const rendered = new Data(false) as Data<boolean>
+    const top = section.offsetTop
 
 
-  private firstDomain: string
+    const isInPos = new Data() as Data<number>
+    const isInWantedPos = new SyncProm((res) => {
+      
+      const s = isInPos.get((i) => {
+        if (i === wantedPos) {
+          res(); 
+          s.deactivate()
+        }
+      }, false)
+    })
+    
+    const sec = {rendered, dimensions: {top, bot: top + section.offsetHeight}, section, isInIndex: isInPos}
+    this.renderingSections.inject(sec, wantedPos)
+    if (this.sectionIsInPos.empty) {
+      this.sectionIsInPos[wantedPos] = {isInPos, wantedPos}
+      this.sectionIsInPos.initElemIndex = wantedPos
+      isInPos.set(wantedPos)
+    }
+    else {
+      let last = {
+        index: this.sectionIsInPos.initElemIndex,
+        el: this.sectionIsInPos[this.sectionIsInPos.initElemIndex]
+      }
+      if (wantedPos < last.index) {
+        while (true) {
+          last.index--
+          const el = last.el = this.sectionIsInPos[last.index]
+
+          if (!el) {
+            isInPos.set(last.index)
+            this.sectionIsInPos[last.index] = {isInPos, wantedPos}
+            break
+          }
+          else {
+            if (wantedPos < el.wantedPos) continue
+            else {
+              for (let i = 1; i <= last.index; i++) {
+                if (!this.sectionIsInPos[i]) continue
+                const e = this.sectionIsInPos[i-1] = this.sectionIsInPos[i]
+                e.isInPos.set(i-1)
+              }
+              isInPos.set(last.index)
+              this.sectionIsInPos[last.index] = {isInPos, wantedPos}
+              break
+            }
+          }
+        }
+      }
+      else {
+        while (true) {
+          last.index++
+          const el = last.el = this.sectionIsInPos[last.index]
+
+          if (!el) {
+            isInPos.set(last.index)
+            this.sectionIsInPos[last.index] = {isInPos, wantedPos}
+            break
+          }
+          else {
+            if (wantedPos > el.wantedPos) continue
+            else {
+              for (let i = this.sectionIsInPos.length-2; i >= last.index; i--) {
+                if (!this.sectionIsInPos[i]) continue
+                const e = this.sectionIsInPos[i+1] = this.sectionIsInPos[i]
+                e.isInPos.set(i+1)
+              }
+              isInPos.set(last.index)
+              this.sectionIsInPos[last.index] = {isInPos, wantedPos}
+              break
+            }
+          }
+        }
+      }
+    }
+
+
+    this.ignoreIncScrollEventForInitialScrollDetection = true
+
+
+
+    let lastDiff = 0
+    rendered.get((rendered) => {
+      if (!rendered) {
+        section.css("containIntrinsicSize" as any, section.height() + "px")
+      }
+      
+      isInWantedPos.then(() => {
+        console.log(rendered ? "visible" : "hidden", section)
+        section.css("contentVisibility" as any, rendered ? "visible" : "hidden")
+      })
+    }, false)
+
+    this.calculateSectionRenderingStatus(this.scrollData().get())
+
+    let lastHeight = section.height()
+    section.on("resize", ({height}) => {
+      let resClean: Function
+      const clean = new SyncProm((r) => {
+        resClean = r
+      })
+
+      const diff = Math.round(height - lastHeight)
+      // only compensate diff when scrolling up and the scroll event was at least once fired by the user before
+      if (!this.neverScrolled && Math.abs(section.offsetTop - this.scrollTop) > Math.abs(section.offsetTop + section.offsetHeight - this.scrollTop)) {
+        
+        // This is a little hacky. For some reason you cant change scrollTop while to compensate for offset while scrolling. 
+        // This is why this first resolves the diff with a negative margingTop on the scrollElementParent. And later when scroll
+        // is idle resolve the diff back to the scroll position.
+        
+        
+        lastDiff -= diff
+        this.componentBody.css("marginTop", lastDiff)
+
+        const cleanUp = () => {
+          lastDiff += diff
+          this.componentBody.css("marginTop", lastDiff)
+          this.scrollTop += diff
+          sub.deactivate()
+          resClean()
+        }
+
+        let id = setTimeout(cleanUp, 50)
+        const sub = this.on("scroll", () => {
+          if (id !== undefined) clearTimeout(id)
+          id = setTimeout(cleanUp, 50)
+        }, {passive: false})
+
+
+        
+      }
+      else resClean()
+
+      lastHeight = height
+
+
+      clean.then(() => {
+        this.renderingSections.forEach(({section}, i) => {
+          const top = section.offsetTop
+          this.renderingSections[i].dimensions = {top, bot: top + section.offsetHeight}
+        })
+        this.calculateSectionRenderingStatus(this.scrollData().get())
+      })
+      
+    }, {passive: true})
+
+  }
+
+  private sectionRenderingMargin = 500
+  private calculateSectionRenderingStatus(scrollPos: number) {
+    const posTop = scrollPos - this.sectionRenderingMargin
+    const posBot = scrollPos + this.sectionRenderingMargin + window.innerHeight
+    for (const { rendered, dimensions } of this.renderingSections) {
+      rendered.set(dimensions.top <= posBot && dimensions.bot >= posTop)
+    }
+  }
+
   private mainIntersectionObserver: IntersectionObserver
   private currentlyActiveSectionRootName: string
   private intersectingIndex: Element[] = []
   private currentlyActiveSectionElem: PageSection
+  private neverScrolled = true
+  private ignoreIncScrollEventForInitialScrollDetection = false
+  private initialChilds = (this.componentBody.childs(1, true) as ElementList<PageSection>)
   initialActivationCallback() {
+
+
+
+    (() => {  
+
+      const sub = this.on("scroll", () => {
+        if (!this.ignoreIncScrollEventForInitialScrollDetection) {
+          this.neverScrolled = false
+          sub.deactivate()
+        }
+        else this.ignoreIncScrollEventForInitialScrollDetection = false
+        
+      })
+
+
+      
+      for (let i = 0; i < this.initialChilds.length; i++) {
+        this.newSectionArrived(this.initialChilds[i], i)
+      }
+
+      this.scrollData().get(this.calculateSectionRenderingStatus.bind(this))
+    })();
+
+
     
 
 
@@ -524,10 +710,12 @@ export default abstract class SectionedPage extends Page {
             }
 
             elem.localScrollProgressData("start").then((e) => {
-              this.lastLocalScrollProgressStoreSubstription = e.get(this.relScrollPosStorage.set.bind(this.relScrollPosStorage), false)
+              this.lastLocalScrollProgressStoreSubstription = e.get(this.localScrollPosStore.set.bind(this.localScrollPosStore), false)
             })
 
-            this.activeSectionIdStorage.set(this.currentlyActiveSectionRootName)
+            
+
+            this.currentSectionIdStore.set(this.currentlyActiveSectionRootName)
 
             
             

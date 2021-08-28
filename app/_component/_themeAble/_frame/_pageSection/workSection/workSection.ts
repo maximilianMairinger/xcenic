@@ -10,9 +10,12 @@ import "../../../_icon/versionControl/versionControl"
 import "../../../_icon/photoShoot/photoShoot"
 import "../../../_icon/socialMedia/socialMedia"
 import "../../../_icon/laptopWalkIllustration/laptopWalkIllustration"
-import "../../../_button/button"
+import "../../../_icon/youtubeIllustration/youtubeIllustration"
+import "../../../_icon/laptopNotificationIllustration/laptopNotificationIllustration"
+import "../../../_button/_rippleButton/rippleButton"
+import "../../../_button/_rippleButton/blockButton/blockButton"
 import { ElementList, ScrollData, ScrollTrigger } from "extended-dom"
-import { Data, DataCollection } from "josm"
+import { Data, DataCollection, DataSubscription } from "josm"
 import delay from "delay"
 
 
@@ -33,15 +36,33 @@ export default class PhilosophySection extends PageSection {
     const sidePanelElems = this.q(`view-more-side-panel showcase-section`) as ElementList<HTMLElement>
 
 
+    
+    let curTokenDac: Symbol
     function deactivateSidePanel(atIndex: number) {
       const panel = sidePanelElems[atIndex]
+      const locToken = curTokenDac = Symbol()
+      panel.removeClass("animdone")
+      panel.anim({height: atIndex === sidePanelElems.length-1 ? 65 : 90}, 500).then(() => {
+        if (locToken !== curTokenDac) return
+        panel.addClass("animdone")
+      })
       panel.addClass(inactiveClass)
+      
     }
 
+    let curTokenAc: Symbol
+    
     async function activateSidePanel(atIndex: number) {
       const panel = sidePanelElems[atIndex]
       panel.removeClass(inactiveClass)
+      
+      const locToken = curTokenAc = Symbol()
+      panel.anim([{height: atIndex === sidePanelElems.length-1 ? 65 : 90, offset: 0}, {height: panel.childs(":last-child").offsetBottom() - 13}], {duration: 500, fill: true}).then(() => {
+        if (curTokenAc !== locToken) return 
+        panel.css({height: "fit-content"})
+      })
     }
+
 
 
     for(let ii = 0; ii < this.serviceSection.length - 1; ii++) {
@@ -63,6 +84,7 @@ export default class PhilosophySection extends PageSection {
       prevHeight = height
     }
 
+    
     
     
     Promise.all(scrollTriggers).then((scrollTriggers) => {
@@ -99,22 +121,38 @@ export default class PhilosophySection extends PageSection {
 
 
         const nextI = i + 1
-        scrollTrigger.on("backward", () => {
+
+        const stbn = () => {
           deactivateSidePanel(nextI)
-        })
+        }
+        const stfc = () => {
+          deactivateSidePanel(i)
+        }
+        const stbc = () => {
+          activateSidePanel(i)
+        }
+        const stfn = () => {
+          activateSidePanel(nextI)
+        }
+
+        const showSidePanel = new Data(false)
+
+        showSidePanel.get((showSidePanel) => {
+          const func = showSidePanel ? "on" : "off"
+          scrollTrigger[func]("backward", stbn)
+          scrollTrigger[func]("forward", stfc)
+          scrollTrigger[func]("backward", stbc)
+          scrollTrigger[func]("forward", stfn)
+        }, false)
+
+        this.resizeData().get(({width}) => {showSidePanel.set(width > 1400)})
 
         
-        scrollTrigger.on("forward", () => {
-          deactivateSidePanel(i)
-        })
+        
           
-        scrollTrigger.on("backward", () => {
-          activateSidePanel(i)
-        })
+        
 
-        scrollTrigger.on("forward", () => {
-          activateSidePanel(nextI)
-        })
+        
    
   
         toggleBool = !toggleBool

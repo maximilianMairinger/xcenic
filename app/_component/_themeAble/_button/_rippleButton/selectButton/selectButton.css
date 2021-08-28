@@ -1,0 +1,102 @@
+:host {
+  --background: var(--plain-background);
+  --border: var(--primary-text);
+  
+  --ripple-color: var(--primary-text);
+
+  --wave: 0, 0, 0;
+  --counter-wave: var(--plain-background);
+
+  /* private */
+  --wave-opacity: 1;
+}
+
+
+:host {
+  display: block;
+  width: fit-content;
+
+  background: rgb(var(--background));
+  border-radius: 25px;
+}
+
+a {
+  transition: border .3s, color .3s;
+  border: 1px solid rgba(var(--border), .25);
+}
+
+a {
+  height: min-content;
+  width: max-content;
+}
+
+
+
+button-text {
+  display: block;
+  font-size: 1em;
+  margin: auto 0;
+  padding: 11px 20px;
+  text-align: center;
+  font-weight: bold;
+  
+
+  color: white;
+  mix-blend-mode: difference;
+}
+
+/* button-text {
+  color: var(--text-color);
+}
+
+:host(.selected) button-text {
+  color: var(--counter-text-color);
+} */
+
+
+button-wave {
+  
+}
+
+button-wave:nth-child(2n) {
+  background: rgb(var(--counter-wave));
+}
+
+
+button-wave:nth-child(2n):last-child {
+  background: rgba(var(--counter-wave), .1);
+  transition: background-color .1s;
+}
+
+.confirmed button-wave:nth-child(2n):last-child {
+  background: rgba(var(--counter-wave), 1);
+}
+
+button-wave:nth-child(2n+1):last-child {
+  background: rgba(var(--wave), .1);
+}
+
+.confirmed button-wave:nth-child(2n+1):last-child {
+  background: rgba(var(--wave), 1);
+}
+
+
+
+
+
+/* :host(:not(.enabled)) {
+  border: 1px solid rgba(var(--border), .15);
+  color: rgb(var(--text))
+}
+
+
+:host(:focus-within) {
+  border: 1px solid rgba(var(--border), .35);
+}
+
+:host(:focus-within) component-body {
+  background: rgba(var(--text), .075)
+} */
+
+
+

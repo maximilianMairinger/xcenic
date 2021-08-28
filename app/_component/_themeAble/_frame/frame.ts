@@ -4,7 +4,7 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
   public readonly active: boolean = false;
   public readonly initiallyActivated = false
   constructor(theme: Theme) {
-    super(undefined)
+    super(undefined, theme)
   }
   public activate() {
     return this.vate(true)

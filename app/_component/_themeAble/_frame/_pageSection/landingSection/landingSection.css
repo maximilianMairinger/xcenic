@@ -150,7 +150,7 @@ c-big-video {
   }
   left-side {
     padding-left: calc(11.5% - 12px);
-    transform: translateY(-130px);
+    transform: translateY(-110px);
   }
 }
 
@@ -171,17 +171,16 @@ c-big-video {
   right-side {
     transform: scale(1.5) translateX(-40px) translateY(0);
   }
-}
-@media (max-width: 460px) {
-  left-side {
-    transform: translateY(-90px);
-  }
-}
-@media (max-width: 420px) {
   left-side {
     transform: translateY(-80px);
   }
 }
+@media (max-width: 500px) {
+  left-side {
+    transform: translateY(-70px);
+  }
+}
+
 
 text-blob {
   display: inline-block;
@@ -195,6 +194,8 @@ c-block-button {
   --background: var(--primary-theme);
   --text: var(--plain-background);
   --border: unset;
+  --padding: 15px 50px;
+  font-size: 18px;
 }
 
 arrow-circle {
@@ -224,8 +225,9 @@ view-work c-link {
 
 view-work {
   position: absolute;
-  bottom: 75px;
-  left: calc(11.5% - 72px);
+  bottom: calc(3vw + 20px);
+  /* bottom: 75px; */
+  left: calc(11.5% - 12px);
   display: flex;
   align-items: center;
 }
@@ -243,12 +245,11 @@ view-work c-ripple-button {
   position: absolute;
 }
 
-@media (max-width: 1190px) {
-  view-work {
-    position: absolute;
-    bottom: 75px;
-    left: calc(11.5% - 12px);
-    display: flex;
-    align-items: center;
+@media (max-width: 500px) {
+  view-work, landing-circle-wrapper {
+    display: none;
+  }
+  component-body {
+    margin-bottom: -90px;
   }
 }

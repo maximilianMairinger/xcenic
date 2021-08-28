@@ -1,12 +1,29 @@
 :host {
-  --wave: rgba(var(--text), .07);
+  --wave: var(--text);
+  --wave-opacity: .07;
   --drag: none;
+  
+  /* private */
+  --wave-color: rgba(var(--wave), var(--wave-opacity));
 }
 
 :host {
   position: relative;
-  overflow: hidden;
+  height: fit-content;
+  width: fit-content;
+  box-sizing: border-box;
 }
+
+a {
+  overflow: hidden;
+  border-radius: inherit;
+  display: block;
+  margin-left: -.5px;
+  margin-top: -.5px;
+  padding-bottom: 1px;
+  position: relative;
+}
+
 button-wave {
   top: 0;
   left: 0;
@@ -20,5 +37,5 @@ button-wave {
 }
 
 button-wave {
-  background: var(--wave);
+  background: var(--wave-color);
 }

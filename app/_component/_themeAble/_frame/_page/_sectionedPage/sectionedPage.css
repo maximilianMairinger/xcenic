@@ -1,14 +1,12 @@
-:host {
-  overflow: auto;
-}
+
 
 component-body {
   display: inline-block;
   width: 100%;
   position: relative;
-  height: fit-content;
-  overflow: initial;
   min-width: 365px;
+  /* todo bug */
+  /* overflow: hidden; */
 }
 
 component-body > * {
@@ -16,5 +14,8 @@ component-body > * {
   width: 100%;
   position: relative;
   float: left;
+
+  content-visibility: hidden;
+  contain-intrinsic-size: 100vh;
 }
 

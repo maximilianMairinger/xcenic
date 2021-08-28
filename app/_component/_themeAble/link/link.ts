@@ -18,13 +18,15 @@ export default class Link extends ThemeAble {
   public mouseOutAnimation?: () => void
   public clickAnimation?: () => void
 
-  constructor(content: string | Data<string>, link?: string, public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true, textChangeAnim = true) {
+  constructor(content: string | Data<string>, link?: string, public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true) {
     super(false)
 
-
+    this.theme.get((to) => {
+      this.externalIcon.theme.set(to)
+    })
 
     
-    this.content(content, textChangeAnim)
+    this.content(content)
     if (link) this.link(link)
 
 
@@ -214,13 +216,6 @@ export default class Link extends ThemeAble {
 
   }
 
-  theme(): Theme
-  theme(to: Theme): this
-  theme(to?: Theme): any {
-    this.externalIcon.theme(to)
-    return super.theme(to)
-  }
-
   private updateHref() {
     if (!this.link()) return
     let meta = domain.linkMeta(this.link(), this.domainLevel)
@@ -265,9 +260,9 @@ export default class Link extends ThemeAble {
   }
 
   content(): string
-  content(to?: string | Data<string>, textChangeAnim?: boolean): void
-  content(to?: string | Data<string>, textChangeAnim?: boolean): any {
-    return this.slotElem.text(to as any, textChangeAnim)
+  content(to?: string | Data<string>): void
+  content(to?: string | Data<string>): any {
+    return this.slotElem.text(to as any, true, false)
   }
 
   stl() {

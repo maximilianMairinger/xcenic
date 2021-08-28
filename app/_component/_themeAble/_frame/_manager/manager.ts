@@ -10,6 +10,7 @@ import { EventListener } from "extended-dom";
 import Page from "../_page/page";
 
 import HighlightAbleIcon from "../../_icon/_highlightAbleIcon/highlightAbleIcon";
+import { Data } from "josm";
 
 
 
@@ -64,7 +65,7 @@ export default abstract class Manager extends Frame {
 
   private resourcesMap: ResourcesMap
 
-  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, private pushDomainDefault: boolean = true, public onScrollBarWidthChange?: (scrollBarWidth: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void, private onScroll?: (scrollProgress: number) => void, public blurCallback?: Function, public preserveFocus?: boolean) {
+  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void, public blurCallback?: Function, public preserveFocus?: boolean) {
     super(null);
 
     this.body = ce("manager-body");
@@ -87,17 +88,17 @@ export default abstract class Manager extends Frame {
         let y = this.currentPage.scrollTop
         onUserScroll(y, this.currentPage.userInitedScrollEvent)
         onScroll(y)
-      }, false)
+      }, true, {passive: true})
     }
     else {
       if (onUserScroll) this.scrollEventListener = new EventListener(this, "scroll", () => {
         //@ts-ignore
         onUserScroll(this.currentPage.scrollTop, this.currentPage.userInitedScrollEvent)
-      }, false)
+      }, false, {passive: true})
       else if (onScroll) this.scrollEventListener = new EventListener(this, "scroll", () => {
         //@ts-ignore
         onScroll(this.currentPage.scrollTop)
-      }, false)
+      }, false, {passive: true})
     }
 
     const { resourcesMap } = lazyLoad(this.importanceMap, e => {
@@ -147,15 +148,9 @@ export default abstract class Manager extends Frame {
     }
   }
 
-  private lastThemeIntersection: Map<HTMLElement, Theme> = new Map
-  public addThemeIntersectionListener(root: HTMLElement, cb: (theme: Theme) => void) {
+  public addThemeIntersectionListener(root: HTMLElement, cb: (theme: Data<Theme>) => void) {
     this.addIntersectionListener(root, (q) => {
-      let theme: Theme = q.theme()
-      if (!theme) theme = "light"
-      if (theme !== this.lastThemeIntersection.get(root)) {
-        cb(theme)
-        this.lastThemeIntersection.set(root, theme)
-      }
+      cb(q.theme)
     })
   }
 
@@ -209,15 +204,7 @@ export default abstract class Manager extends Frame {
   
     this.currentPage = to;
 
-    if (this.onScrollBarWidthChange) {
-      //@ts-ignore
-      let scrollBarWidth = this.clientWidth - to.clientWidth
-      
-      if (scrollBarWidth !== this.lastScrollbarWidth) {
-        this.onScrollBarWidthChange(scrollBarWidth)
-        this.lastScrollbarWidth = scrollBarWidth
-      }
-    }
+
     
     this.scrollEventListener.target((to as any)).activate()
 

@@ -2,37 +2,6 @@
   height: 90vh;
   width: 100%;
   min-height: 650px;
-  z-index: 1;
-}
-
-c-image {
-  --display: inline-block;
-}
-
-skew-lines-wrapper {
-  width: 100%;
-  display: inline-block;
-  position: absolute;
-  transform: translateX(-60px) rotate(1deg);
-  pointer-events: none;
-  overflow: hidden;
-  top: -10px;
-}
-
-background-lines {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  padding: 0 calc(11.5% - 27px);
-  box-sizing: border-box;
-  transition: .3s;
-  transform: rotate(-1deg) translateX(60px);
-}
-
-c-line {
-  height: unset;
-  width: unset;
-  margin-top: -13px;
 }
 
 skew-background-wrapper {
@@ -42,6 +11,9 @@ skew-background-wrapper {
   pointer-events: none;
   overflow: hidden;
   height: 100%;
+  padding-top: 100px;
+  margin-top: -100px;
+  z-index: 1;
 }
 
 skew-background {
@@ -58,6 +30,10 @@ skew-background {
   position: absolute;
 }
 
+c-image {
+  --display: inline-block;
+}
+
 component-body {
   display: flex;
   flex-direction: row-reverse;
@@ -70,6 +46,7 @@ c-text-blob {
 }
 
 left-side {
+  z-index: 2;
   padding-left: calc(11.5% - 12px);
   display: inline-block;
   padding-top: 200px;
@@ -80,6 +57,7 @@ left-side {
 }
 
 right-side {
+  z-index: 2;
   padding-right: calc(6.5% - 12px);
   box-sizing: border-box;
   width: 59%;

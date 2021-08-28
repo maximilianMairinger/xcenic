@@ -9,9 +9,10 @@
 
 h1 {
   font-size: calc(var(--font-size) * var(--header-fontsize-factor));
-  margin-bottom: 8px;
   position: relative;
-  margin-top: 7px;
+  margin-bottom: .2em;
+  margin-top: .15em;
+  line-height: 1.13em;
 }
 
 p {

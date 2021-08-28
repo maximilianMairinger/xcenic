@@ -1,6 +1,6 @@
 :host {
-  height: 80vh;
-  background: linear-gradient(rgb(255, 255, 255), rgb(247, 255, 228));
+  /* height: 80vh; */
+  background: linear-gradient(rgb(149, 255, 99), rgb(255, 199, 199));
 }
 
 h2 {
@@ -10,4 +10,9 @@ h2 {
   position: relative;
   float: left;
   width: 100%;
+  opacity: 0;
+}
+
+h2:first-child {
+  opacity: 1;
 }

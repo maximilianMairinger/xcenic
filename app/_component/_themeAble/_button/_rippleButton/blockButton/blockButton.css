@@ -1,26 +1,33 @@
 :host {
   --background: var(--plain-background);
   --border: var(--primary-text);
-  --border-radius: 17px;
+  --padding: 15px 35px;
+  border-radius: 25px;
 }
 
 :host {
-  border-radius: var(--border-radius);
-  transition: border .4s, color .4s;
+
+  transition: border .3s, color .3s;
   display: inline-block;
+  width: fit-content;
+}
+a {
+  height: min-content;
+  width: max-content;
+  
 }
 
 button-container {
   display: flex;
   height: 100%;
-  transition: background-color .25s;
+  transition: background-color .3s;
   width: fit-content;
 }
 button-text {
   display: block;
   font-size: 1em;
   margin: auto 0;
-  padding: 13px 50px;
+  padding: var(--padding);
   text-align: center;
 }
 
