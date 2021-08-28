@@ -36,4 +36,5 @@ img {
 
 picture img {
   filter: blur(8px);
+  transform: scale(1.03);
 }
