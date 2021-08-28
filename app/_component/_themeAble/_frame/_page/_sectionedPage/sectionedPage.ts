@@ -392,7 +392,6 @@ export default abstract class SectionedPage extends Page {
     const isInWantedPos = new SyncProm((res) => {
       
       const s = isInPos.get((i) => {
-        if (section.tagName.toLowerCase() === "c-landing-section") debugger
         if (i === wantedPos) {
           res(); 
           s.deactivate()
