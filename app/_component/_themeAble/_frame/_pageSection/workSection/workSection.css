@@ -76,8 +76,10 @@ service-showcase h1.chonker::before {
   width: 3px;
   height: 50%;
   top: 50%; 
-  left: -18px;
+  left: -19px;
 }
+
+
 
 h2.lil {
   color: rgb(var(--theme));
@@ -94,8 +96,10 @@ h2.lil::before {
   position: absolute;
   width: 3px;
   height: 27px;
-  left: -18px;
+  left: -19px;
 }
+
+
 
 h2.lil::selection {
   background: rgba(var(--theme), 0.15);
@@ -104,10 +108,12 @@ h2.lil::selection {
 
 h2.count {
   color: rgb(var(--theme));
-  font-size: 18px;
+  font-size: 19px;
   margin-top: 3px;
   margin-bottom: 4px;
 }
+
+
 
 
 h2.count::selection {
@@ -128,6 +134,8 @@ h2.count::before {
   transform: translateX(-50%);
 }
 
+
+
 h2.count::after {
   content: "/";
   display: flex;
@@ -141,7 +149,6 @@ h2.count::after {
   top: 3px;
   transform: translateX(-50%) translateY(-1px);
 }
-
 
 h2.count.one::after {
   content: "1";
@@ -159,6 +166,19 @@ h2.count.three::after {
 h2.count.four::after {
   content: "4";
 }
+
+
+
+/* @media (max-width: 700px) {
+  service-showcase h1.chonker::before, h2.lil::before, h2.count::before, h2.count::after {
+    left: -18px;
+  }
+
+} */
+
+
+
+
 
 p {
   font-size: 16px;
