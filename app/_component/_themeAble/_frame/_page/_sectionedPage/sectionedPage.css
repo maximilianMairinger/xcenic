@@ -4,8 +4,9 @@ component-body {
   display: inline-block;
   width: 100%;
   position: relative;
-  height: fit-content;
   min-width: 365px;
+  /* todo bug */
+  /* overflow: hidden; */
 }
 
 component-body > * {
@@ -14,7 +15,7 @@ component-body > * {
   position: relative;
   float: left;
 
-  content-visibility: auto;
+  content-visibility: hidden;
   contain-intrinsic-size: 100vh;
 }
 
