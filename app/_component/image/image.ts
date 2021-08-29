@@ -84,6 +84,13 @@ export default class Image extends Component {
         //@ts-ignore
         this.loaded[resolution].done = true
         res();
+        this.elems[resolution].img.anim({opacity: 1}, 150).then(() => {
+          const resIndex = reses.indexOf(resolution)
+          if (resIndex !== 0) {
+            // this.elems[reses[resIndex - 1]].img.anim({opacity: 0}, 150)
+            this.elems[resolution].img.anim({filter: "blur(0px)", scale: 1}, 800)
+          }
+        })
       }
     })
   }
