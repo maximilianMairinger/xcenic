@@ -535,7 +535,8 @@ export default abstract class SectionedPage extends Page {
 
   }
 
-  private sectionRenderingMargin = 500
+
+  private sectionRenderingMargin = 300
   private calculateSectionRenderingStatus(scrollPos: number) {
     const posTop = scrollPos - this.sectionRenderingMargin
     const posBot = scrollPos + this.sectionRenderingMargin + window.innerHeight
