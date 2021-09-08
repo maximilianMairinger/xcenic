@@ -106,7 +106,7 @@ jobs:
         script: |
           cd /var/www/html/xcenic/master
           source ~/.nvm/nvm.sh
-          nvm use 15.11.0
+          nvm use default
           npm i
 
   deploy: 
@@ -124,6 +124,6 @@ jobs:
         script: |
           cd /var/www/html/xcenic/master
           source ~/.nvm/nvm.sh
-          nvm use 15.11.0
+          nvm use default
           wait-on ecosystem.config.js
           node pm2Reload.js
