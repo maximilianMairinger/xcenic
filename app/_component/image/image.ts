@@ -74,6 +74,9 @@ export default class Image extends Component {
       
     }
 
+    debugger
+    this.elems[reses.first].img.setAttribute("importance", "high")
+
     
     if (src) this.src(src, forceLoad)
   }
