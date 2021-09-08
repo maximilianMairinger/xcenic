@@ -312,7 +312,7 @@ export default abstract class Manager extends Frame {
             return await this.canSwap(page, domainFragment)
           }
           return false
-        });
+        }, false)
   
         if (suc) {
           sucDomainFrag = domainFragment

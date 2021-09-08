@@ -29,8 +29,8 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
     return require("./frame.css").toString()
   }
   protected abstract minimalContentPaint(): void | Promise<void>
-  protected abstract fullContentPaint?(): void | Promise<void>
-  protected abstract completePaint?(): void | Promise<void>
+  protected abstract fullContentPaint(): void | Promise<void>
+  protected abstract completePaint(): void | Promise<void>
 
   protected activationCallback?(active: boolean): void
   protected initialActivationCallback?(): void

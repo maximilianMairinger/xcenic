@@ -29,11 +29,11 @@ export default class HomePage extends LazySectionedPage {
           new landingSection()
         ), val: () => import(/* webpackChunkName: "landingSection" */"../../../../_pageSection/landingSection/landingSection")
       },
-      {
-        key: new Import("lines", 1, (linesSection: typeof LinesSection) => 
-          new linesSection()
-        ), val: () => import(/* webpackChunkName: "linesSection" */"../../../../_pageSection/linesSection/linesSection")
-      },
+      // {
+      //   key: new Import("lines", 1, (linesSection: typeof LinesSection) => 
+      //     new linesSection()
+      //   ), val: () => import(/* webpackChunkName: "linesSection" */"../../../../_pageSection/linesSection/linesSection")
+      // },
       {
         key: new Import("philosophy", 1, (philosophySection: typeof PhilosophySection) =>
           new philosophySection()
@@ -51,36 +51,36 @@ export default class HomePage extends LazySectionedPage {
           return sec
         }), val: () => import(/* webpackChunkName: "workSection" */"../../../../_pageSection/workSection/workSection")
       },
-      {
-        key: new Import("team", 1, (testSection: typeof TestSection) =>
-          new testSection()
-        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
-      },
-      {
-        key: new Import("contact", 1, (testSection: typeof TestSection) =>
-          new testSection()
-        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
-      },
-      {
-        key: new Import("team2", 1, (testSection: typeof TestSection) =>
-          new testSection()
-        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
-      },
-      {
-        key: new Import("team3", 1, (testSection: typeof TestSection) =>
-          new testSection()
-        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
-      },
-      {
-        key: new Import("team4", 1, (testSection: typeof TestSection) =>
-          new testSection()
-        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
-      },
-      {
-        key: new Import("team5", 1, (testSection: typeof TestSection) =>
-          new testSection()
-        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
-      },
+      // {
+      //   key: new Import("team", 1, (testSection: typeof TestSection) =>
+      //     new testSection()
+      //   ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      // },
+      // {
+      //   key: new Import("contact", 1, (testSection: typeof TestSection) =>
+      //     new testSection()
+      //   ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      // },
+      // {
+      //   key: new Import("team2", 1, (testSection: typeof TestSection) =>
+      //     new testSection()
+      //   ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      // },
+      // {
+      //   key: new Import("team3", 1, (testSection: typeof TestSection) =>
+      //     new testSection()
+      //   ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      // },
+      // {
+      //   key: new Import("team4", 1, (testSection: typeof TestSection) =>
+      //     new testSection()
+      //   ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      // },
+      // {
+      //   key: new Import("team5", 1, (testSection: typeof TestSection) =>
+      //     new testSection()
+      //   ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      // },
     ), baselink, sectionChangeCallback, new AliasList(
       //@ts-ignore
       new ScrollProgressAliasIndex("services", [

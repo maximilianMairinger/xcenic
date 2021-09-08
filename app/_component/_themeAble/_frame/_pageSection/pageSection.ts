@@ -1,7 +1,6 @@
 import Frame from "../frame";
 import { ScrollData } from "extended-dom"
 import { Theme } from "../../themeAble";
-import delay from "delay";
 import { prevRecord as prevImageRecord, fullRecord as fullImageRecord } from "../../../image/image"
 type ResablePromise<T> = Promise<T> & {res(t: T): Promise<T>}
 
@@ -32,6 +31,7 @@ export default abstract class PageSection extends Frame {
   async minimalContentPaint() {
     debugger
     await this.loadPrevResImages()()
+    this.anim({opacity: 1})
     debugger
   }
 

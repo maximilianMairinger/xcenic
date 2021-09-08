@@ -9,13 +9,11 @@ import { Data, DataCollection, DataSubscription } from "josm";
 import { constructIndex } from "key-index"
 import HightlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon"
 import localSettings from "./../../../../../lib/localSettings"
-import delay from "delay";
 const SyncProm = require("sync-p")
 const syncPromAll = require("sync-p/all")
 
 
 
-// FIXME: https://pasteboard.co/Ki9fbXt.png
 
 
 const sectionResizeAlreadyRenderedSym = Symbol()
@@ -493,7 +491,6 @@ export default abstract class SectionedPage extends Page {
 
     let lastDiff = 0
     rendered.get((rendered) => {
-      if (rendered && section.tagName.toLowerCase() === "c-philosophy-section") debugger
       if (!rendered) section.css("containIntrinsicSize" as any, section.height() + "px")
       console.log(rendered ? "visible" : "hidden", section)
       section.css("contentVisibility" as any, rendered ? "visible" : "hidden")
@@ -803,7 +800,6 @@ export default abstract class SectionedPage extends Page {
 
     this.sectionIndex.forEach(async (section: Promise<PageSection>) => {
       let sec = await section
-      
       sec._localScrollProgressData.forEach((prom, key) => {
         prom.res(localSegmentScrollDataIndex(sec)(key))
       })
