@@ -405,7 +405,7 @@ export default abstract class SectionedPage extends Page {
         if (i === wantedPos) {
           setTimeout(() => {
             this.unreadySectionCount.set(this.unreadySectionCount.get() - 1)
-            console.log("isConfirmed", section);
+            // console.log("isConfirmed", section);
             res(); 
           })
           
@@ -492,7 +492,7 @@ export default abstract class SectionedPage extends Page {
     let lastDiff = 0
     rendered.get((rendered) => {
       if (!rendered) section.css("containIntrinsicSize" as any, section.height() + "px")
-      console.log(rendered ? "visible" : "hidden", section)
+      // console.log(rendered ? "visible" : "hidden", section)
       section.css("contentVisibility" as any, rendered ? "visible" : "hidden")
     }, false)
 
@@ -514,13 +514,13 @@ export default abstract class SectionedPage extends Page {
           
           lastDiff -= diff
           
-          console.log("compensating", diff)
+          // console.log("compensating", diff)
           this.componentBody.css("marginTop", lastDiff)
 
           const cleanUp = () => {
             lastDiff += diff
             this.componentBody.css("marginTop", lastDiff)
-            console.log("cleaning compensation", diff)
+            // console.log("cleaning compensation", diff)
             this.scrollTop += diff
             sub.deactivate()
             resClean()
@@ -562,7 +562,7 @@ export default abstract class SectionedPage extends Page {
 
       
 
-      console.log("resize", section)
+      // console.log("resize", section)
       let localToken = globalToken = Symbol();
       
       if (section[sectionResizeAlreadyRenderedSym]) {

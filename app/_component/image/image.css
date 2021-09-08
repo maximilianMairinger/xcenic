@@ -13,11 +13,15 @@ picture {
   width: inherit;
   height: inherit;
   position: absolute;
+  top: 0;
+  left: 0;
   overflow: hidden;
   border-radius: inherit;
 }
 picture:first-of-type {
   position: relative;
+  top: initial;
+  left: initial;
 }
 
 img {

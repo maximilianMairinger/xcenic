@@ -29,10 +29,8 @@ export default abstract class PageSection extends Frame {
   }
 
   async minimalContentPaint() {
-    debugger
     await this.loadPrevResImages()()
     this.anim({opacity: 1})
-    debugger
   }
 
   async fullContentPaint() {
