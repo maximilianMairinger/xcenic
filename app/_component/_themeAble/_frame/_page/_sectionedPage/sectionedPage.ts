@@ -389,10 +389,14 @@ export default abstract class SectionedPage extends Page {
     return funcProm
   }
 
+  private unreadySectionCount = new Data(0)
+  private allSectionsReady = this.unreadySectionCount.tunnel((count) => count === 0)
   private renderingSections: RenderSections = []
   protected newSectionArrived(section: PageSection, wantedPos: number) {
     const rendered = new Data(false) as Data<boolean>
     const top = section.offsetTop
+
+    this.unreadySectionCount.set(this.unreadySectionCount.get() + 1)
 
 
     const isInPos = new Data() as Data<number>
@@ -402,6 +406,7 @@ export default abstract class SectionedPage extends Page {
         
         if (i === wantedPos) {
           setTimeout(() => {
+            this.unreadySectionCount.set(this.unreadySectionCount.get() - 1)
             console.log("isConfirmed", section);
             res(); 
           })
@@ -488,6 +493,7 @@ export default abstract class SectionedPage extends Page {
 
     let lastDiff = 0
     rendered.get((rendered) => {
+      if (rendered && section.tagName.toLowerCase() === "c-philosophy-section") debugger
       if (!rendered) section.css("containIntrinsicSize" as any, section.height() + "px")
       console.log(rendered ? "visible" : "hidden", section)
       section.css("contentVisibility" as any, rendered ? "visible" : "hidden")
@@ -625,9 +631,22 @@ export default abstract class SectionedPage extends Page {
         this.newSectionArrived(this.initialChilds[i], i)
       }
 
-      this.scrollData().get((p) => {
+
+
+
+
+
+      const subScrollUpdate = this.scrollData().get((p) => {
         this.calculateSectionRenderingStatus(p)
       }, false)
+      subScrollUpdate.deactivate()
+      setTimeout(() => {
+        this.allSectionsReady.get((rdy) => {
+          if (rdy) subScrollUpdate.activate()
+          else subScrollUpdate.deactivate()
+        })
+      })
+      
     })();
 
 
