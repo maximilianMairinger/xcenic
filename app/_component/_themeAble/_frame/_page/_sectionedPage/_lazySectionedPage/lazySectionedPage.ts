@@ -85,11 +85,13 @@ export default abstract class LazySectionedPage extends SectionedPage {
 
 
   async fullContentPaint() {
+    await this.resourceMap.get(this.currentDomainFragment).priorityThen(() => {}, "fullContentPaint")
     await this.importanceMap.whiteListAll()
     await this.resourceMap.fullyLoaded  
   }
 
   async completePaint() {
+    await this.resourceMap.get(this.currentDomainFragment).priorityThen(() => {}, "completePaint")
     await this.importanceMap.whiteListAll("completePaint")
   }
 
