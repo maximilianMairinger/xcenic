@@ -38,6 +38,10 @@ export default abstract class RippleButton extends Button {
         this.initRipple(e);
         this.preActive.set(true)
       })
+
+      this.on("keydown", (e) => {
+        if (e.key === " " || e.key === "Enter") this.initRipple(e)
+      })
       
       
 

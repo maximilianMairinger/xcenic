@@ -105,7 +105,7 @@ export default class Link extends ThemeAble {
         let handled = false
         delay(250).then(() => {
           if (wannaCloose && !click) {
-            this.slidyWrapper.anim({width: "0%", left: "100%"}).then(() => {
+            this.slidyWrapper.anim({width: "0%", left: "100%"}, dur).then(() => {
               this.slidyWrapper.css({left: "0%", width: "100%"})
               this.slidy.css({width: 0})
             }).then(() => {
@@ -124,7 +124,7 @@ export default class Link extends ThemeAble {
           if (!click) {
             if (!handled) {
               if (wannaCloose) {
-                this.slidy.anim({width: "0%", left: "100%"}).then(() => this.slidy.css({left: "0%"})).then(() => {
+                this.slidy.anim({width: "0%", left: "100%"}, dur).then(() => this.slidy.css({left: "0%"})).then(() => {
                   inAnimation = false
                   if (wantToAnim) {
                     wantToAnim = false
@@ -141,7 +141,8 @@ export default class Link extends ThemeAble {
             clickF().then(click)
           }
         })
-        this.slidy.anim({width: "100%"}, 300)
+        const dur = this.width() * 3.5
+        this.slidy.anim({width: "100%"}, dur)
       }
 
       let mouseOut = this.mouseOutAnimation = () => {

@@ -8,9 +8,17 @@ left-side
 
 right-side
   quote-box 
-    quote-heading $[ home.team.quote.0.heading ]
-    c-block-button(content="$[ home.team.viewWork ]")
+    quote-heading 
+      heading-line
+        heading-text  $[ home.team.quote.0.author ]
+        heading-seperator / 
+      heading-subtext $[ home.team.quote.0.authorTitle ]
+    
     quote-text $[ home.team.quote.0.text ]
-    quote-author $[ home.team.quote.0.author ]
+    c-link(content="$[ home.team.view ] $[ home.team.quote.0.projectName ]" link="team")
+    
     c-quotation-mark.top
     c-quotation-mark.bot 
+
+c-designer-woman
+floor-line
