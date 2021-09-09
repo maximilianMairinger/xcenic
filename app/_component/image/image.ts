@@ -74,7 +74,6 @@ export default class Image extends Component {
       
     }
 
-    debugger
     this.elems[reses.first].img.setAttribute("importance", "high")
 
     
