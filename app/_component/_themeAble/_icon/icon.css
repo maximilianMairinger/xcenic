@@ -3,19 +3,17 @@
 :host {
   display: inline-block;
   width: 32px;
-  height: 32px
+  height: 32px;
+  fill: rgb(var(--primary-text))
 }
 
 svg {
   width: inherit;
-  height: inherit;
+  height: inherit;  
 }
+
 
 :host svg *:not(tspan) {
   transition: inherit
 }
 
-
-svg > g, svg > path {
-  fill: rgb(var(--primary-text))
-}

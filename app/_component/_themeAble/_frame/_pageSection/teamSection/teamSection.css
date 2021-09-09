@@ -1,0 +1,104 @@
+:host {
+  height: 700px;
+  z-index: 5;
+}
+
+tilt-background {
+  background-color: #f2f2fa;
+  box-shadow: var(--soft-shadow);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform: rotate(0deg);
+  top: -10px;
+  left: -10px;
+  padding-bottom: 20px;
+  padding-right: 20px;
+}
+
+component-body {
+  display: flex;
+}
+
+left-side {
+  display: block;
+  height: max-content;
+  margin-left: calc(11.5% - 12px);
+  margin-top: 100px;
+}
+
+left-side c-text-blob {
+  width: 430px;
+  --font-size: 18px;
+}
+
+right-side {
+  flex-grow: 1;
+  width: 100%;
+  z-index: 1;
+  margin-left: 50px;
+  margin-right: calc(11.5% - 12px);
+  margin-top: 135px;
+}
+
+
+
+quote-box  {
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: var(--soft-shadow);
+  width: 100%;
+  height: max-content;
+  display: block;
+  box-sizing: border-box;
+  padding: 40px 50px;
+  font-size: 18px;
+  position: relative;
+  max-width: 575px;
+  float: right;
+}
+quote-text {
+  display: block;
+}
+
+quote-author {
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
+}
+
+big-circle {
+  width: 1200px;
+  height: 1200px;
+  position: absolute;
+  top: 155px;
+  left: -500px;
+  background-color: #f7f7ff;
+  box-shadow: var(--soft-shadow);
+  border-radius: 50%;
+}
+
+c-quotation-mark {
+  fill: rgb(var(--primary-theme));
+  width: 75px;
+  height: 75px;
+  position: absolute;
+  
+}
+
+c-quotation-mark.top {
+  top: 0;
+  left: 0;
+  transform: translate(-30%, -30%);
+}
+
+c-quotation-mark.bot {
+  bottom: 0;
+  right: 0;
+  transform: translate(30%, 30%);
+}
+
+@media (max-width: 1150px) {
+  
+}
+
