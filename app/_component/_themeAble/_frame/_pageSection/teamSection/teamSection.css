@@ -18,12 +18,13 @@ tilt-background {
 
 component-body {
   display: flex;
+  align-content: flex-start;
 }
 
 left-side {
   display: block;
   height: max-content;
-  margin-left: calc(11.5% - 12px);
+  padding-left: calc(11.5% - 12px);
   margin-top: 100px;
 }
 
@@ -36,8 +37,8 @@ right-side {
   flex-grow: 1;
   width: 100%;
   z-index: 1;
-  margin-left: 50px;
-  margin-right: calc(11.5% - 12px);
+  padding-left: 50px;
+  padding-right: calc(11.5% - 12px);
   margin-top: 135px;
 }
 
@@ -99,6 +100,22 @@ c-quotation-mark.bot {
 }
 
 @media (max-width: 1150px) {
-  
+  component-body {
+    flex-wrap: wrap;
+  }
+  component-body > * {
+    width: 100%;
+    padding-left: calc(11.5% - 12px);
+    padding-right: calc(11.5% - 12px);
+    box-sizing: border-box;
+  }
+  right-side {
+    margin-top: 50px;
+  }
+  quote-box {
+    float: left;
+    max-width: 430px;
+  }
+  c-d
 }
 
