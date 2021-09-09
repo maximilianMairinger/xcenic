@@ -117,8 +117,10 @@ export default {
     team: {
       note: "Who are we?",
       heading: "A bunch of creative professionals having fun",
+      viewWork: "View Project",
       quote: [
         {
+          heading: "TGM Website",
           text: "Very good work. Its super beautiful, I like it alot. In fact it is superb, I would probably bye again if I had enough money. Yes I am sure it is super nice, the collaboration and everything, just nice!",
           author: "Gottfried Koppensteiner"
         }

@@ -58,8 +58,27 @@ quote-box  {
   max-width: 575px;
   float: right;
 }
+
+quote-heading {
+  display: block;
+  font-weight: bold;
+  font-size: 32px;
+}
+
+quote-box c-block-button {
+  --background: 243, 243, 243;
+  --text: var(--primary-text);
+  --border: unset;
+
+  position: absolute;
+  right: 30px;
+  top: 20px;
+}
+
+
 quote-text {
   display: block;
+  margin-top: 3px;
 }
 
 quote-author {
@@ -118,4 +137,5 @@ c-quotation-mark.bot {
   }
   /* c-d */
 }
+
 

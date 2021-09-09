@@ -1,6 +1,7 @@
 import declareComponent from "../../../../../lib/declareComponent"
 import PageSection from "../pageSection"
 import "../../../textBlob/textBlob"
+import "../../../_button/_rippleButton/blockButton/blockButton"
 import "../../../_icon/landingCircle/landingCircle"
 import "../../../_icon/quotationMark/quotationMark"
 
