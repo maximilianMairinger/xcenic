@@ -42,6 +42,7 @@ ui-container-content {
 
 c-image {
   --object-position: 5% center;
+  background-color: black;
 }
 
 seperator-row {

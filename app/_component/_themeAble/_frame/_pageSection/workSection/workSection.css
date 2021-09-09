@@ -3,12 +3,10 @@
   background-color: #F9FAFE;
   transition: .3s background-color;
   --theme: var(--primary-theme);
-
-  contain-intrinsic-size: 300vh !important;
 }
 
 component-body {
-  z-index: 1;
+  z-index: 2;
 }
 
 
@@ -81,6 +79,8 @@ service-showcase h1.chonker::before {
   left: -19px;
 }
 
+
+
 h2.lil {
   color: rgb(var(--theme));
   transition: .3s background-color;
@@ -99,6 +99,8 @@ h2.lil::before {
   left: -19px;
 }
 
+
+
 h2.lil::selection {
   background: rgba(var(--theme), 0.15);
   transition: .3s background-color;
@@ -110,6 +112,8 @@ h2.count {
   margin-top: 3px;
   margin-bottom: 4px;
 }
+
+
 
 
 h2.count::selection {
@@ -124,11 +128,13 @@ h2.count::before {
   position: absolute;
   width: 26px;
   height: 26px;
-  left: -19px;
+  left: -18px;
   top: 3px;
   border-radius: 50%;
   transform: translateX(-50%);
 }
+
+
 
 h2.count::after {
   content: "/";
@@ -139,11 +145,10 @@ h2.count::after {
   position: absolute;
   width: 26px;
   height: 26px;
-  left: -19px;
+  left: -18px;
   top: 3px;
   transform: translateX(-50%) translateY(-1px);
 }
-
 
 h2.count.one::after {
   content: "1";
@@ -161,6 +166,19 @@ h2.count.three::after {
 h2.count.four::after {
   content: "4";
 }
+
+
+
+/* @media (max-width: 700px) {
+  service-showcase h1.chonker::before, h2.lil::before, h2.count::before, h2.count::after {
+    left: -18px;
+  }
+
+} */
+
+
+
+
 
 p {
   font-size: 16px;

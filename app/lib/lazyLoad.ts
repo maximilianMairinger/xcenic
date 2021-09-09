@@ -105,7 +105,7 @@ import { dirString } from "./domain";
 export const slugifyUrl = (url: string) => url.split(dirString).replace((s) => slugify(s)).join(dirString)
 
 
-export type PriorityPromise<T = any> = Promise<T> & {priorityThen: (cb?: (instance: any) => void, deepLoad?: boolean) => any}
+export type PriorityPromise<T = any> = Promise<T> & {priorityThen: (cb?: (instance: any) => void, deepLoad_loadToStage?: boolean | typeof loadStates[number]) => any}
 
 export class BidirectionalMap<K, V> extends Map<K, V> {
   public reverse: Map<V, K> = new Map
@@ -166,7 +166,7 @@ export class ResourcesMap extends MultiKeyMap<string, PriorityPromise> {
     }
     super(...toBeAdded)
     this.loadedIndex = new BidirectionalMap
-  }
+  } 
 
   public getLoadedKeyOfResource(resource: any) {
     return this.loadedIndex.reverse.get(resource)
@@ -247,22 +247,32 @@ export class ImportanceMap<Func extends () => Promise<{default: {new(): Mod}}>, 
 
   public whiteList(imp: Import<string, Mod>[], toStage?: typeof loadStates[number]) {
     this.whiteListedImports = imp
-    this.startResolvement(toStage)
+    return this.startResolvement(toStage)
   }
   public whiteListAll(toStage?: typeof loadStates[number]) {
-    this.whiteList(this.importanceList, toStage)
+    return this.whiteList(this.importanceList, toStage)
   }
 
-  private superWhiteListCache: {imp: Import<string, Mod>, deepLoad: boolean}
-  public superWhiteList(imp: Import<string, Mod>, deepLoad: boolean = false) {
-    this.superWhiteListCache = {imp, deepLoad}
+  private superWhiteListCache: {imp: Import<string, Mod>, deepLoad: boolean | typeof loadStates[number]}
+  public superWhiteList(imp: Import<string, Mod>, deepLoad?: false): Promise<any>
+  public superWhiteList(imp: Import<string, Mod>, deepLoad: true): Promise<any>
+  public superWhiteList(imp: Import<string, Mod>, loadToStage: typeof loadStates[number]): Promise<any>
+  public superWhiteList(imp: Import<string, Mod>, loadToStage_deepLoad: boolean | typeof loadStates[number]): Promise<any>
+  public superWhiteList(imp: Import<string, Mod>, loadToStage_deepLoad: boolean | typeof loadStates[number] = loadStates.first) {
+    this.superWhiteListCache = {imp, deepLoad: loadToStage_deepLoad}
     if (!this.resolver) return
     let minimalReqLoaded: Promise<void> = new Promise((res) => {
       let mySuperWhiteListDone = this.superWhiteListDone = new Promise(async (next) => {
         const v = this.get(imp)
-        if (deepLoad) {
+        if (loadToStage_deepLoad) {
           if (this.whiteListedImports.includes(imp)) this.whiteListedImports.rmV(imp)
-          for (let state of loadStates) {
+
+
+          const toStage = loadToStage_deepLoad === true ? loadStates.last : loadToStage_deepLoad
+          const toStageIndex = loadStates.indexOf(toStage) + 1
+          for (let i = 0; i < toStageIndex; i++) {
+            const state = loadStates[i]
+
             await this.resolver(v, imp, this.importanceList.indexOf(imp), state)
             res()
             if (mySuperWhiteListDone !== this.superWhiteListDone) {

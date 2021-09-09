@@ -4,6 +4,7 @@ import PhilosophySection from "../../../../_pageSection/philosophySection/philos
 import LandingSection from "../../../../_pageSection/landingSection/landingSection"
 import WorkSection from "../../../../_pageSection/workSection/workSection"
 import TeamSection from "../../../../_pageSection/teamSection/teamSection"
+import LinesSection from "../../../../_pageSection/linesSection/linesSection"
 import TestSection from "../../../../_pageSection/testSection/testSection"
 import LazySectionedPage from "../lazySectionedPage"
 import HightlightAbleIcon from "../../../../../_icon/_highlightAbleIcon/highlightAbleIcon"
@@ -28,6 +29,11 @@ export default class HomePage extends LazySectionedPage {
       //   key: new Import("", 1, (landingSection: typeof LandingSection) =>
       //     new landingSection()
       //   ), val: () => import(/* webpackChunkName: "landingSection" */"../../../../_pageSection/landingSection/landingSection")
+      // },
+      // {
+      //   key: new Import("lines", 1, (linesSection: typeof LinesSection) => 
+      //     new linesSection()
+      //   ), val: () => import(/* webpackChunkName: "linesSection" */"../../../../_pageSection/linesSection/linesSection")
       // },
       // {
       //   key: new Import("philosophy", 1, (philosophySection: typeof PhilosophySection) =>
@@ -55,7 +61,27 @@ export default class HomePage extends LazySectionedPage {
         key: new Import("contact", 1, (testSection: typeof TestSection) =>
           new testSection()
         ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
-      }
+      },
+      // {
+      //   key: new Import("team2", 1, (testSection: typeof TestSection) =>
+      //     new testSection()
+      //   ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      // },
+      // {
+      //   key: new Import("team3", 1, (testSection: typeof TestSection) =>
+      //     new testSection()
+      //   ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      // },
+      // {
+      //   key: new Import("team4", 1, (testSection: typeof TestSection) =>
+      //     new testSection()
+      //   ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      // },
+      // {
+      //   key: new Import("team5", 1, (testSection: typeof TestSection) =>
+      //     new testSection()
+      //   ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+      // },
     ), baselink, sectionChangeCallback, new AliasList(
       //@ts-ignore
       new ScrollProgressAliasIndex("services", [

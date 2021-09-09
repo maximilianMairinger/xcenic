@@ -4,12 +4,19 @@ import scrollTo from "animated-scroll-to";
 import WaapiEasing from "waapi-easing";
 import { PriorityPromise, ResourcesMap } from "../../../../../lib/lazyLoad";
 import PageSection from "../../_pageSection/pageSection";
-import { EventListener, ScrollData } from "extended-dom";
+import { ElementList, EventListener, ScrollData } from "extended-dom";
 import { Data, DataCollection, DataSubscription } from "josm";
 import { constructIndex } from "key-index"
 import HightlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon"
 import localSettings from "./../../../../../lib/localSettings"
+const SyncProm = require("sync-p")
+const syncPromAll = require("sync-p/all")
 
+
+
+
+
+const sectionResizeAlreadyRenderedSym = Symbol()
 
 
 
@@ -172,6 +179,8 @@ export type QuerySelector = string
 
 
 
+
+type RenderSections = {initElemIndex?: number} & {isInPos: Data<number>, wantedPos: number, dimensions: {top: number, bot: number}, rendered: Data<boolean>, section: HTMLElement, isInWantedPos: Promise<void>}[]
 export default abstract class SectionedPage extends Page {
   protected readonly sectionIndex: ResourcesMap
   public readonly sectionList: Data<string[]>
@@ -182,8 +191,8 @@ export default abstract class SectionedPage extends Page {
 
   public abstract iconIndex: {[key: string]: HightlightAbleIcon}
 
-  private relScrollPosStorage = localSettings<number>("scrollPos@" + this.baselink, 0)
-  private activeSectionIdStorage = localSettings<string>("activeSectionId@" + this.baselink, "") // TODO: use first section id as default
+  private localScrollPosStore = localSettings<number>("localScrollPos@" + this.baselink, 0)
+  private currentSectionIdStore = localSettings<string>("currentSectionId@" + this.baselink, "") // TODO: use first section id as default?
 
   constructor(sectionIndex: FullSectionIndex, private baselink: string, protected sectionChangeCallback?: (section: string) => void, protected readonly sectionAliasList: AliasList = new AliasList(), protected readonly mergeIndex: {[part in string]: string} = {}) {
     super()
@@ -318,56 +327,52 @@ export default abstract class SectionedPage extends Page {
 
 
 
-    let { pageSection: elem, fragments } = await this.curSectionProm
+    let { pageSection: section, fragments } = await this.curSectionProm
 
     this.activateSectionName(fragments.closeUp)
     this.currentlyActiveSectionRootName = fragments.rootElem
     
     if (this.currentlyActiveSectionElem) this.currentlyActiveSectionElem.deactivate()
-    this.currentlyActiveSectionElem = elem
+    this.currentlyActiveSectionElem = section
     this.currentlyActiveSectionElem.activate()
 
     this.userInitedScrollEvent = false
 
-    let lastScrollProg = this.scrollData().get()
     
-    let scrollToPos = elem.offsetTop
+    let scrollToPos = section.offsetTop
 
-    if (lastScrollProg === 0) lastScrollProg = -1000000;
 
 
 
     setTimeout(async () => {
-      if (lastScrollProg < scrollToPos + this.verticalOffset || lastScrollProg > scrollToPos + elem.offsetHeight + this.verticalOffset) {
-        if (lastScrollProg === -1000000) {
-          
-          if (fragments.rootElem === this.activeSectionIdStorage.get()) {
-            let wantedScrollToPos = this.relScrollPosStorage.get() + scrollToPos
-            if (!(wantedScrollToPos < scrollToPos + this.verticalOffset || wantedScrollToPos > scrollToPos + elem.offsetHeight + this.verticalOffset)) scrollToPos = wantedScrollToPos - this.verticalOffset
-          }
-        }
-  
-        if (active) {
-  
-          let ls = this.on("keydown", (e) => {
-            e.stopImmediatePropagation()
-          })
-          
-          await scrollTo(scrollToPos, {
-            cancelOnUserAction: true,
-            verticalOffset: this.verticalOffset,
-            speed: scrollAnimationSpeed,
-            elementToScroll: this,
-            easing
-          })
-    
-          ls.deactivate()
-    
-        }
-        else {
-          this.scrollTop = this.verticalOffset + scrollToPos
-        }
+      if (this.currentSectionIdStore.get() === fragments.rootElem) {
+        scrollToPos += this.localScrollPosStore.get() - this.verticalOffset
       }
+
+      
+
+      if (active) {
+
+        let ls = this.on("keydown", (e) => {
+          e.stopImmediatePropagation()
+        })
+        
+        await scrollTo(scrollToPos, {
+          cancelOnUserAction: true,
+          verticalOffset: this.verticalOffset,
+          speed: scrollAnimationSpeed,
+          elementToScroll: this,
+          easing
+        })
+  
+        ls.deactivate()
+  
+      }
+      else {
+        this.ignoreIncScrollEventForInitialScrollDetection = true
+        this.scrollTop = this.verticalOffset + scrollToPos
+      }
+
   
       
       
@@ -382,14 +387,266 @@ export default abstract class SectionedPage extends Page {
     return funcProm
   }
 
+  private unreadySectionCount = new Data(0)
+  private allSectionsReady = this.unreadySectionCount.tunnel((count) => count === 0)
+  private renderingSections: RenderSections = []
+  protected newSectionArrived(section: PageSection, wantedPos: number) {
+    const rendered = new Data(false) as Data<boolean>
+    const top = section.offsetTop
+
+    this.unreadySectionCount.set(this.unreadySectionCount.get() + 1)
 
 
-  private firstDomain: string
+    const isInPos = new Data() as Data<number>
+    const isInWantedPos = new SyncProm((res) => {
+      
+      const s = isInPos.get((i) => {
+        
+        if (i === wantedPos) {
+          setTimeout(() => {
+            this.unreadySectionCount.set(this.unreadySectionCount.get() - 1)
+            // console.log("isConfirmed", section);
+            res(); 
+          })
+          
+          s.deactivate()
+        }
+      }, false)
+    })
+    
+    const sec = {rendered, dimensions: {top, bot: top + section.offsetHeight}, section, isInWantedPos, isInPos, wantedPos}
+
+    if (this.renderingSections.empty) {
+      this.renderingSections[wantedPos] = sec
+      this.renderingSections.initElemIndex = wantedPos
+      isInPos.set(wantedPos)
+    }
+    else {
+      let last = {
+        index: this.renderingSections.initElemIndex,
+        el: this.renderingSections[this.renderingSections.initElemIndex]
+      }
+      if (wantedPos < last.index) {
+        while (true) {
+          last.index--
+          const el = last.el = this.renderingSections[last.index]
+
+          if (!el) {
+            isInPos.set(last.index)
+            this.renderingSections[last.index] = sec
+            break
+          }
+          else {
+            if (wantedPos < el.wantedPos) continue
+            else {
+              const reverseUpdateQueue = []
+              for (let i = 1; i <= last.index; i++) {
+                const prevI = i - 1
+                if (!this.renderingSections[i]) continue
+                const e = this.renderingSections[prevI] = this.renderingSections[i]
+                reverseUpdateQueue.add(() => {e.isInPos.set(prevI)})
+              }
+              isInPos.set(last.index)
+              this.renderingSections[last.index] = sec
+              reverseUpdateQueue.reverse().Call()
+              break
+            }
+          }
+        }
+      }
+      else {
+        while (true) {
+          last.index++
+          const el = last.el = this.renderingSections[last.index]
+
+          if (!el) {
+            isInPos.set(last.index)
+            this.renderingSections[last.index] = sec
+            break
+          }
+          else {
+            if (wantedPos > el.wantedPos) continue
+            else {
+              const reverseUpdateQueue = []
+              for (let i = this.renderingSections.length-2; i >= last.index; i--) {
+                const nextI = i + 1
+                if (!this.renderingSections[i]) continue
+                const e = this.renderingSections[nextI] = this.renderingSections[i]
+                reverseUpdateQueue.add(() => {e.isInPos.set(nextI)})
+              }
+              isInPos.set(last.index)
+              this.renderingSections[last.index] = sec
+              reverseUpdateQueue.reverse().Call()
+              break
+            }
+          }
+        }
+      }
+    }
+
+
+    this.ignoreIncScrollEventForInitialScrollDetection = true
+
+
+
+    let lastDiff = 0
+    rendered.get((rendered) => {
+      if (!rendered) section.css("containIntrinsicSize" as any, section.height() + "px")
+      // console.log(rendered ? "visible" : "hidden", section)
+      section.css("contentVisibility" as any, rendered ? "visible" : "hidden")
+    }, false)
+
+    // this.calculateSectionRenderingStatus()
+
+    let globalScrollToken: Symbol
+    let lastHeight = section.height()
+    const compensateResizeScrollDiff = (height: number): Promise<void> => {
+      return new SyncProm((resClean) => {
+        const diff = Math.round(height - lastHeight)
+        lastHeight = height
+        // only compensate diff when scrolling up and the scroll event was at least once fired by the user before
+        if (!this.neverScrolled && section.offsetTop - this.scrollTop < 0) {
+          
+          // This is a little hacky. For some reason you cant change scrollTop while to compensate for offset while scrolling. 
+          // This is why this first resolves the diff with a negative margingTop on the scrollElementParent. And later when scroll
+          // is idle resolve the diff back to the scroll position.
+          
+          
+          lastDiff -= diff
+          
+          // console.log("compensating", diff)
+          this.componentBody.css("marginTop", lastDiff)
+
+          const cleanUp = () => {
+            lastDiff += diff
+            this.componentBody.css("marginTop", lastDiff)
+            // console.log("cleaning compensation", diff)
+            this.scrollTop += diff
+            sub.deactivate()
+            resClean()
+          }
+
+          let id = setTimeout(cleanUp, 50)
+          const sub = this.on("scroll", () => {
+            if (id !== undefined) clearTimeout(id)
+            id = setTimeout(cleanUp, 50)
+          }, {passive: false})
+          
+  
+  
+          
+        }
+        else resClean()
+      })
+    }
+
+
+
+    let globalToken: Symbol
+
+    const calculateDimensionsAndRender = () => {
+      const releventRenderingSection = this.renderingSections.slice(this.renderingSections.indexOf(sec))
+      for (const sec of releventRenderingSection) {
+        if (sec === undefined) return
+        const { section } = sec
+        const top = section.offsetTop
+        sec.dimensions.top = top
+        sec.dimensions.bot = top + section.offsetHeight
+      }
+
+      this.calculateSectionRenderingStatus(this.scrollTop, releventRenderingSection)
+    }
+
+    section.on("resize", ({height}) => {
+      
+
+      
+
+      // console.log("resize", section)
+      let localToken = globalToken = Symbol();
+      
+      if (section[sectionResizeAlreadyRenderedSym]) {
+        compensateResizeScrollDiff(height).then(() => {
+          if (localToken !== globalToken) return
+          calculateDimensionsAndRender()
+        })
+      }
+      else {
+        isInWantedPos.then(() => {
+          if (localToken !== globalToken) return
+          section[sectionResizeAlreadyRenderedSym] = true
+          calculateDimensionsAndRender()
+          // compensateResizeScrollDiff(section.height())
+        })
+        
+        
+      }
+
+      
+    }, {passive: true})
+
+  }
+
+
+  private sectionRenderingMargin = 0
+  private calculateSectionRenderingStatus(scrollPos: number, renderingSections: RenderSections = this.renderingSections) {
+    const posTop = scrollPos - this.sectionRenderingMargin
+    const posBot = scrollPos + this.sectionRenderingMargin + window.innerHeight
+    
+    for (const s of renderingSections) {
+      if (s === undefined) continue
+      const { rendered, dimensions } = s
+      rendered.set(dimensions.top <= posBot && dimensions.bot >= posTop)
+    }
+  }
+
   private mainIntersectionObserver: IntersectionObserver
   private currentlyActiveSectionRootName: string
   private intersectingIndex: Element[] = []
   private currentlyActiveSectionElem: PageSection
+  private neverScrolled = true
+  private ignoreIncScrollEventForInitialScrollDetection = false
+  private initialChilds = (this.componentBody.childs(1, true) as ElementList<PageSection>)
   initialActivationCallback() {
+
+
+
+    (() => {  
+
+      const sub = this.on("scroll", () => {
+        if (!this.ignoreIncScrollEventForInitialScrollDetection) {
+          this.neverScrolled = false
+          sub.deactivate()
+        }
+        else this.ignoreIncScrollEventForInitialScrollDetection = false
+        
+      })
+
+
+      
+      for (let i = 0; i < this.initialChilds.length; i++) {
+        this.newSectionArrived(this.initialChilds[i], i)
+      }
+
+
+
+
+
+
+      const subScrollUpdate = this.scrollData().get((p) => {
+        this.calculateSectionRenderingStatus(p)
+      }, false)
+      subScrollUpdate.deactivate()
+      setTimeout(() => {
+        this.allSectionsReady.get((rdy) => {
+          if (rdy) subScrollUpdate.activate()
+          else subScrollUpdate.deactivate()
+        })
+      })
+      
+    })();
+
+
     
 
 
@@ -524,10 +781,12 @@ export default abstract class SectionedPage extends Page {
             }
 
             elem.localScrollProgressData("start").then((e) => {
-              this.lastLocalScrollProgressStoreSubstription = e.get(this.relScrollPosStorage.set.bind(this.relScrollPosStorage), false)
+              this.lastLocalScrollProgressStoreSubstription = e.get(this.localScrollPosStore.set.bind(this.localScrollPosStore), false)
             })
 
-            this.activeSectionIdStorage.set(this.currentlyActiveSectionRootName)
+            
+
+            this.currentSectionIdStore.set(this.currentlyActiveSectionRootName)
 
             
             
@@ -541,7 +800,6 @@ export default abstract class SectionedPage extends Page {
 
     this.sectionIndex.forEach(async (section: Promise<PageSection>) => {
       let sec = await section
-      
       sec._localScrollProgressData.forEach((prom, key) => {
         prom.res(localSegmentScrollDataIndex(sec)(key))
       })
