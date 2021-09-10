@@ -4,6 +4,7 @@ import PhilosophySection from "../../../../_pageSection/philosophySection/philos
 import LandingSection from "../../../../_pageSection/landingSection/landingSection"
 import WorkSection from "../../../../_pageSection/workSection/workSection"
 import TeamSection from "../../../../_pageSection/teamSection/teamSection"
+import ContactSection from "../../../../_pageSection/contactSection/contactSection"
 import LinesSection from "../../../../_pageSection/linesSection/linesSection"
 import TestSection from "../../../../_pageSection/testSection/testSection"
 import LazySectionedPage from "../lazySectionedPage"
@@ -58,9 +59,9 @@ export default class HomePage extends LazySectionedPage {
         ), val: () => import(/* webpackChunkName: "teamSection" */"../../../../_pageSection/teamSection/teamSection")
       },
       {
-        key: new Import("contact", 1, (testSection: typeof TestSection) =>
-          new testSection()
-        ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
+        key: new Import("contact", 1, (contactSection: typeof ContactSection) =>
+          new contactSection()
+        ), val: () => import(/* webpackChunkName: "contactSection" */"../../../../_pageSection/contactSection/contactSection")
       },
       // {
       //   key: new Import("team2", 1, (testSection: typeof TestSection) =>

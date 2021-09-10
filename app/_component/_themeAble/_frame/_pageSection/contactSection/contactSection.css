@@ -1,0 +1,85 @@
+:host {
+  background: #fff9f9;
+  height: 700px;
+  margin-top: -56px;
+}
+
+component-body {
+  padding-left: calc(11.5% - 12px);
+  padding-right: calc(11.5% - 12px);
+  box-sizing: border-box;
+}
+
+big-circle {
+  width: 1200px;
+  height: 1200px;
+  position: absolute;
+  top: -800px;
+  left: -500px;
+  background-color: #ffeeed;
+  box-shadow: var(--soft-shadow);
+  border-radius: 50%;
+}
+
+
+right-side, left-side {
+  position: relative;
+  float: left;
+  display: flex;
+  padding-top: 250px;
+}
+
+left-side {
+  width: 70%;
+  justify-content: flex-start;
+}
+
+right-side {
+  width: 30%;
+  justify-content: center;
+}
+
+right-side c-image {
+  width: 400px;
+  height: max-content;
+  position: relative;
+}
+
+right-side c-image::after {
+  box-shadow: var(--soft-shadow);
+  background-color: white;
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: translate(50px 50px);
+}
+
+text-container {
+  font-size: 18px;
+  max-width: 100%;
+  display: flex;
+}
+
+prefix-text {
+  font-weight: bold;
+}
+
+main-text {
+  display: block;
+  width: 400px;
+  padding-left: calc(45% - 100px);
+}
+
+c-dot-accent {
+  position: absolute;
+  width: 27px;
+}
+
+c-dot-accent.top {
+
+}
+
+c-dot-accent.bot {
+  
+}
