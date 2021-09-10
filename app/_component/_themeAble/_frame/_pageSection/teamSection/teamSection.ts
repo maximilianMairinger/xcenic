@@ -8,6 +8,9 @@ import "../../../_icon/designerWoman/designerWoman"
 import DesignerWomanIcon from "../../../_icon/designerWoman/designerWoman"
 import lang from "../../../../../lib/lang"
 import { Data, DataCollection } from "josm"
+import "extended-dom"
+import "../../../../image/image"
+
 
 
 export default class TeamSection extends PageSection {
