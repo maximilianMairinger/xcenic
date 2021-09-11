@@ -82,7 +82,7 @@ prefix-text {
 
 main-text {
   display: block;
-  width: 400px;
+  width: 500px;
   padding-left: calc(45% - 100px);
   padding-right: 30px;
   box-sizing: border-box;
