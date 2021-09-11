@@ -192,6 +192,39 @@ c-dot-accent.pretext {
     margin-top: 150px;
   }
 
+  right-side {
+    width: 100%;
+    margin-top: 100px;
+    margin-bottom: 100px;
+  }
+
+  image-container {
+    position: initial;
+  }
+
+  c-dot-accent.top {
+    top: -60px;
+    right: 0px;
+  }
+
+  c-dot-accent.bot {
+    opacity: 1;
+    left: 0px;
+    bottom: -70px;
+  }
+
+
+
+  right-side image-container {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+  }
+  right-side c-image {
+    width: 100%;
+    height: auto;
+  }
+
 
   text-container {
     flex-direction: row;
