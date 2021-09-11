@@ -47,7 +47,7 @@ c-external-link-icon {
 slidy-underline-wrapper {
   display: block;
   position: absolute;
-  bottom: -.2em;
+  bottom: -.1em;
   border-radius: 2px;
   height: 2px;
   overflow: hidden;
