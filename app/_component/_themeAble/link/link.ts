@@ -187,7 +187,7 @@ export default class Link extends ThemeAble {
           delay(150).then(() => this.slidyWrapper.anim({height: 0}, 450))
         ])
 
-        this.slidyWrapper.css({height: 2, bottom: "-.2em", top: "unset"})
+        this.slidyWrapper.css({height: 2, bottom: "-.1em", top: "unset"})
         //@ts-ignore
         // this.aElem.css({mixBlendMode: "normal"})
 
