@@ -1,5 +1,5 @@
 :host {
-  --text: var(--primary-text)
+  --text: var(--primary-text);
 }
 
 
@@ -70,4 +70,5 @@ link-body {
   display: block;
   height: fit-content;
   position: relative;
+  overflow: visible;
 }
