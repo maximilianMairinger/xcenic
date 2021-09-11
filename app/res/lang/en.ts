@@ -114,6 +114,7 @@ export default {
       }
 
     },
+    // WIP
     team: {
       note: "Who are we?",
       heading: "A bunch of creative professionals having fun",
@@ -127,6 +128,12 @@ export default {
           authorTitle: "IT Departmenthead"
         }
       ]
+    },
+    // WIP
+    contact: {
+      prefix: "Contact",
+      mainText: "We develop a unique and engaging social media presence for your business. Combining our creative skill, design experience and unique ideas to deliver a state of the art social media page."
+
     }
   }
 }

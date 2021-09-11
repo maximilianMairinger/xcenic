@@ -1,24 +1,29 @@
 tilt-background
-big-circle
+quote-section
+  big-circle
 
 
-left-side
-  c-text-blob(heading="$[ home.team.heading ]" note="$[ home.team.note ]")
+  left-side
+    c-text-blob(heading="$[ home.team.heading ]" note="$[ home.team.note ]")
 
 
-right-side
-  quote-box 
-    quote-heading 
-      heading-line
-        heading-text  $[ home.team.quote.0.author ]
-        heading-seperator / 
-      heading-subtext $[ home.team.quote.0.authorTitle ]
-    
-    quote-text $[ home.team.quote.0.text ]
-    c-link(content="$[ home.team.view ] $[ home.team.quote.0.projectName ]" link="team")
-    
-    c-quotation-mark.top
-    c-quotation-mark.bot 
+  right-side
+    quote-box 
+      quote-heading 
+        heading-line
+          heading-text  $[ home.team.quote.0.author ]
+          heading-seperator / 
+        heading-subtext $[ home.team.quote.0.authorTitle ]
+      
+      quote-text $[ home.team.quote.0.text ]
+      c-link(content="$[ home.team.view ] $[ home.team.quote.0.projectName ]" link="team")
+      
+      c-quotation-mark.top
+      c-quotation-mark.bot 
 
-c-designer-woman
-floor-line
+  c-designer-woman
+  floor-line
+
+
+image-wrapper
+  c-image(src="teamPic").team

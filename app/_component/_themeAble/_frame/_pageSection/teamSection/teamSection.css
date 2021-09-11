@@ -1,13 +1,19 @@
 :host {
-  height: 700px;
-  z-index: 5;
+  height: max-content;
+}
+
+quote-section {
+  height: max-content;
+  width: 100%;
+  display: flex;
+  position: relative;
 }
 
 tilt-background {
   background-color: #f2f2fa;
   box-shadow: var(--soft-shadow);
   width: 100%;
-  height: 100%;
+  height: 70%;
   position: absolute;
   transform: rotate(0deg);
   top: -10px;
@@ -19,9 +25,12 @@ tilt-background {
 component-body {
   display: flex;
   align-content: flex-start;
+  height: max-content;
+  flex-direction: column;
 }
 
 left-side {
+  z-index: 2;
   display: block;
   height: max-content;
   padding-left: calc(11.5% - 12px);
@@ -36,10 +45,12 @@ left-side c-text-blob {
 right-side {
   flex-grow: 1;
   width: 100%;
-  z-index: 1;
+  z-index: 3;
   padding-left: 50px;
   padding-right: calc(11.5% - 12px);
   margin-top: 135px;
+  display: flex;
+  justify-content: center;
 }
 
 
@@ -57,6 +68,7 @@ quote-box  {
   position: relative;
   max-width: 575px;
   float: right;
+  margin-bottom: 20px;
 }
 
 quote-heading {
@@ -77,6 +89,14 @@ quote-heading heading-text {
 quote-heading heading-subtext {
   color: rgb(var(--primary-theme))
 }
+
+quote-heading heading-subtext::selection, quote-heading heading-seperator::selection {
+  background: rgba(var(--primary-theme), 0.15);
+}
+
+
+
+
 
 quote-heading heading-seperator {
   margin: 0 5px;
@@ -137,6 +157,12 @@ c-quotation-mark.top {
   transform: translate(-30%, -30%);
 }
 
+c-quotation-mark.bot {
+  bottom: 0;
+  right: 0;
+  transform: translate(30%, 30%);
+}
+
 c-designer-woman {
   opacity: 0;
   position: absolute;
@@ -146,11 +172,6 @@ c-designer-woman {
   height: 700px;
 }
 
-c-quotation-mark.bot {
-  bottom: 0;
-  right: 0;
-  transform: translate(30%, 30%);
-}
 
 floor-line {
   position: absolute;
@@ -163,7 +184,7 @@ floor-line {
 }
 
 @media (max-width: 1150px) {
-  component-body {
+  quote-section {
     flex-wrap: wrap;
   }
   right-side, left-side {
@@ -174,6 +195,7 @@ floor-line {
   }
   right-side {
     margin-top: 50px;
+    justify-content: flex-start;
   }
   quote-box {
     float: left;
@@ -203,7 +225,6 @@ floor-line {
 
 @media (max-width: 950px) {
   c-designer-woman {
-    z-index: 2;
     left: calc(11.5% + 252px);
   }
   floor-line {
@@ -217,9 +238,6 @@ floor-line {
 }
 
 @media (max-width: 655px) {
-  c-designer-woman {
-    z-index: initial;
-  }
   c-designer-woman, floor-line {
     opacity: 0;
   }
@@ -231,3 +249,38 @@ floor-line {
     width: 100%;
   }
 }
+
+
+
+/* no-overflow {
+  width: 100%;
+  display: block;
+  position: relative;
+  z-index: 1;
+  height: max-content;
+} */
+
+image-wrapper {
+  width: calc(100% + 80px);
+  margin: 0 -40px;
+  position: relative;
+  transform: rotate(-5deg);
+  overflow: hidden;
+  z-index: 1;
+}
+c-image.team {
+  width: 100%;
+  transform: rotate(5deg) scale(1.25);
+  height: 700px;
+}
+
+@media (max-width: 1150px) {
+  image-wrapper {
+    margin-top: -70px;
+    transform: rotate(5deg);
+  }
+  c-image.team {
+    transform: rotate(-5deg) scale(1.15);
+  }
+}
+
