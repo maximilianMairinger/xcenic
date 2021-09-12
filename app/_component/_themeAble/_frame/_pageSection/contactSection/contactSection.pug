@@ -3,8 +3,12 @@ big-circle
 left-side
   text-container
     prefix-text $[ home.contact.prefix ]
-    main-text $[ home.contact.mainText ]
+    main-text-container
+      main-text $[ home.contact.mainText ]
+      //- c-block-button(content="Get in contact")
+      c-link(content="Get in touch" link="contact/form")
     c-dot-accent.pretext
+    
   c-heart-illustration
 
 right-side

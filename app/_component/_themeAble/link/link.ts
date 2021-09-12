@@ -84,6 +84,7 @@ export default class Link extends ThemeAble {
     this.aElem.on("focus", this.updateHref.bind(this))
 
     
+    
     let click: () => void
 
     let onClickAnimationInit: Function
@@ -141,17 +142,18 @@ export default class Link extends ThemeAble {
             clickF().then(click)
           }
         })
-        const dur = this.width() * 3.5
+        const dur = this.width() * 1.5 + 100
         this.slidy.anim({width: "100%"}, dur)
       }
 
       let mouseOut = this.mouseOutAnimation = () => {
+        const dur = this.width() * 1.5 + 100
         if (!click) {
           wantToAnim = false
         
           if (!inAnimation) {
             inAnimation = true
-            this.slidy.anim({width: "0%", left: "100%"}).then(() => this.slidy.css({left: "0%"})).then(() => {
+            this.slidy.anim({width: "0%", left: "100%"}, dur).then(() => this.slidy.css({left: "0%"})).then(() => {
               inAnimation = false
               if (wantToAnim) {
                 wantToAnim = false
@@ -185,7 +187,7 @@ export default class Link extends ThemeAble {
           delay(150).then(() => this.slidyWrapper.anim({height: 0}, 450))
         ])
 
-        this.slidyWrapper.css({height: 2, bottom: "-.2em", top: "unset"})
+        this.slidyWrapper.css({height: 2, bottom: "-.1em", top: "unset"})
         //@ts-ignore
         // this.aElem.css({mixBlendMode: "normal"})
 

@@ -81,12 +81,28 @@ prefix-text {
   font-weight: bold;
 }
 
-main-text {
-  display: block;
-  width: 400px;
+main-text-container {
+  display: flex;
+  width: 500px;
   padding-left: calc(45% - 100px);
   padding-right: 30px;
   box-sizing: border-box;
+  flex-direction: column;
+}
+main-text {
+  width: 100%;
+}
+
+c-block-button {
+  margin-top: 20px;
+  --padding: 13px 25px;
+  --border: none;
+  --background: var(--secondary-theme);
+  --text: var(--plain-background);
+}
+
+c-link {
+  margin-top: 15px
 }
 
 c-dot-accent {
