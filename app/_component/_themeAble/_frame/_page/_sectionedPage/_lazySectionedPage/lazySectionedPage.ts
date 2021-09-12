@@ -21,10 +21,12 @@ export default abstract class LazySectionedPage extends SectionedPage {
         priorElem = loadedElementsIndex[i]
       } while (priorElem === undefined)
 
-
+      e.hide()
       this.componentBody.insertAfter(e, priorElem)
-      loadedElementsIndex[ind] = e
       this.newSectionArrived(e, ind)
+
+      loadedElementsIndex[ind] = e
+      
     })
     super(resourcesMap, baselink, sectionChangeCallback, sectionAliasList, mergeIndex)
 
@@ -40,18 +42,21 @@ export default abstract class LazySectionedPage extends SectionedPage {
     if (sectionIndex.size > 1) {
       //@ts-ignore
       attach("0", {set: (e) => {
-            
-        this.loadingIndecatorTop.remove()
+        // debugger
         attach("0", {value: e})
+        setTimeout(() => {
+          // this.loadingIndecatorTop.remove()
+        })
       }})
       
 
       const lastIndex = (sectionIndex.size - 1) + ""
       //@ts-ignore
       attach(lastIndex, {set: (e) => {
-        
-        this.loadingIndecatorBot.remove()
         attach(lastIndex, {value: e})
+        setTimeout(() => {
+          // this.loadingIndecatorBot.remove()
+        })
       }})
       
     }
@@ -59,8 +64,8 @@ export default abstract class LazySectionedPage extends SectionedPage {
       //@ts-ignore
       attach("0", {set: (e) => {
             
-        this.loadingIndecatorTop.remove()
-        this.loadingIndecatorBot.remove()
+        // this.loadingIndecatorTop.remove()
+        // this.loadingIndecatorBot.remove()
         attach("0", {value: e})
         
       }})
@@ -71,7 +76,7 @@ export default abstract class LazySectionedPage extends SectionedPage {
     
     
     resourcesMap.fullyLoaded.then(() => {
-      this.loadingIndecatorBot.remove()
+      // this.loadingIndecatorBot.remove()
     })
 
     this.importanceMap = importanceMap

@@ -16,7 +16,6 @@ const syncPromAll = require("sync-p/all")
 
 
 
-const sectionResizeAlreadyRenderedSym = Symbol()
 
 
 
@@ -50,7 +49,6 @@ export class ScrollProgressAlias {
     this.aliases = alias instanceof AliasData ? alias : new AliasData(alias)
   }
 }
-
 
 
 
@@ -316,6 +314,7 @@ export default abstract class SectionedPage extends Page {
   }
 
   private lastLocalScrollProgressStoreSubstription: DataSubscription<[number]>
+  private confirmedLastScrollProgress = scrollToPadding
 
   async navigationCallback() {
     let resFunc: Function
@@ -339,6 +338,7 @@ export default abstract class SectionedPage extends Page {
     this.userInitedScrollEvent = false
 
     
+    section.show()
     let scrollToPos = section.offsetTop
 
 
@@ -347,6 +347,7 @@ export default abstract class SectionedPage extends Page {
     setTimeout(async () => {
       if (this.currentSectionIdStore.get() === fragments.rootElem) {
         scrollToPos += this.localScrollPosStore.get() - this.verticalOffset
+        this.confirmedLastScrollProgress += this.localScrollPosStore.get()
       }
 
       
@@ -412,6 +413,12 @@ export default abstract class SectionedPage extends Page {
           s.deactivate()
         }
       }, false)
+    })
+
+    isInWantedPos.then(() => {
+      section.show()
+      calculateDimensionsAndRender()
+      compensateResizeScrollDiff(section.height())
     })
     
     const sec = {rendered, dimensions: {top, bot: top + section.offsetHeight}, section, isInWantedPos, isInPos, wantedPos}
@@ -499,22 +506,23 @@ export default abstract class SectionedPage extends Page {
     // this.calculateSectionRenderingStatus()
 
     let globalScrollToken: Symbol
-    let lastHeight = section.height()
+    let lastHeight = 0
     const compensateResizeScrollDiff = (height: number): Promise<void> => {
       return new SyncProm((resClean) => {
-        const diff = Math.round(height - lastHeight)
+        const diff = Math.round((height + section.css("marginTop")) - lastHeight)
         lastHeight = height
         // only compensate diff when scrolling up and the scroll event was at least once fired by the user before
-        if (!this.neverScrolled && section.offsetTop - this.scrollTop < 0) {
+        if (!this.neverScrolled ? (section.offsetTop - this.scrollTop < 0) : (section.offsetTop - this.scrollTop < (this.confirmedLastScrollProgress < 0 ? -this.confirmedLastScrollProgress : 0) && section.offsetTop + section.height() > this.scrollTop)) {
           
           // This is a little hacky. For some reason you cant change scrollTop while to compensate for offset while scrolling. 
           // This is why this first resolves the diff with a negative margingTop on the scrollElementParent. And later when scroll
           // is idle resolve the diff back to the scroll position.
           
+
           
           lastDiff -= diff
           
-          // console.log("compensating", diff)
+          console.log("compensating", diff, section.tagName.toLowerCase())
           this.componentBody.css("marginTop", lastDiff)
 
           const cleanUp = () => {
@@ -542,7 +550,7 @@ export default abstract class SectionedPage extends Page {
 
 
 
-    let globalToken: Symbol
+    
 
     const calculateDimensionsAndRender = () => {
       const releventRenderingSection = this.renderingSections.slice(this.renderingSections.indexOf(sec))
@@ -557,30 +565,21 @@ export default abstract class SectionedPage extends Page {
       this.calculateSectionRenderingStatus(this.scrollTop, releventRenderingSection)
     }
 
+    let globalToken: Symbol
     section.on("resize", ({height}) => {
       
 
       
 
       // console.log("resize", section)
-      let localToken = globalToken = Symbol();
       
-      if (section[sectionResizeAlreadyRenderedSym]) {
-        compensateResizeScrollDiff(height).then(() => {
-          if (localToken !== globalToken) return
-          calculateDimensionsAndRender()
-        })
-      }
-      else {
-        isInWantedPos.then(() => {
-          if (localToken !== globalToken) return
-          section[sectionResizeAlreadyRenderedSym] = true
-          calculateDimensionsAndRender()
-          // compensateResizeScrollDiff(section.height())
-        })
-        
-        
-      }
+      
+      let localToken = globalToken = Symbol();
+      compensateResizeScrollDiff(height).then(() => {
+        if (localToken !== globalToken) return
+        calculateDimensionsAndRender()
+      })
+
 
       
     }, {passive: true})
@@ -612,14 +611,13 @@ export default abstract class SectionedPage extends Page {
 
 
     (() => {  
-
+      // this.neverScrolled = false
       const sub = this.on("scroll", () => {
         if (!this.ignoreIncScrollEventForInitialScrollDetection) {
           this.neverScrolled = false
           sub.deactivate()
         }
         else this.ignoreIncScrollEventForInitialScrollDetection = false
-        
       })
 
 
@@ -639,7 +637,10 @@ export default abstract class SectionedPage extends Page {
       subScrollUpdate.deactivate()
       setTimeout(() => {
         this.allSectionsReady.get((rdy) => {
-          if (rdy) subScrollUpdate.activate()
+          if (rdy) {
+            subScrollUpdate.activate()
+            
+          }
           else subScrollUpdate.deactivate()
         })
       })
@@ -781,7 +782,7 @@ export default abstract class SectionedPage extends Page {
             }
 
             elem.localScrollProgressData("start").then((e) => {
-              this.lastLocalScrollProgressStoreSubstription = e.get(this.localScrollPosStore.set.bind(this.localScrollPosStore), false)
+              this.lastLocalScrollProgressStoreSubstription = e.get(this.localScrollPosStore.set.bind(this.localScrollPosStore), true)
             })
 
             
