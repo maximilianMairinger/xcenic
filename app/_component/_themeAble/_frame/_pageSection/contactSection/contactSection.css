@@ -1,6 +1,7 @@
 :host {
   background: #fff9f9;
   margin-top: -56px;
+  z-index: 2;
 }
 
 component-body {

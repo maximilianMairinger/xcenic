@@ -1,5 +1,7 @@
 import declareComponent from "../../../../../lib/declareComponent"
 import PageSection from "../pageSection"
+import "../../../link/link"
+
 
 
 

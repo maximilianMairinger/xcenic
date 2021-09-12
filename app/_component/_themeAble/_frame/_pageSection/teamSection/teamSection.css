@@ -1,5 +1,7 @@
 :host {
   height: max-content;
+  z-index: 3;
+  overflow: hidden;
 }
 
 quote-section {
