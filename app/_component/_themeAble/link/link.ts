@@ -142,12 +142,13 @@ export default class Link extends ThemeAble {
             clickF().then(click)
           }
         })
-        const dur = this.width() * 1.5 + 100
+
+        const dur = this.slotElem.width() / (this.slotElem.css("fontSize") / 16) * 2.5 + 100
         this.slidy.anim({width: "100%"}, dur)
       }
 
       let mouseOut = this.mouseOutAnimation = () => {
-        const dur = this.width() * 1.5 + 100
+        const dur = this.slotElem.width() / (this.slotElem.css("fontSize") / 16) * 2.5 + 100
         if (!click) {
           wantToAnim = false
         
