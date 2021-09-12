@@ -27,33 +27,33 @@ export default class HomePage extends LazySectionedPage {
     const subsectionHeight = [new Data(300), new Data(1600)]
 
     super(new ImportanceMap<() => Promise<any>, any>(
-      // {
-      //   key: new Import("", 1, (landingSection: typeof LandingSection) =>
-      //     new landingSection()
-      //   ), val: () => import(/* webpackChunkName: "landingSection" */"../../../../_pageSection/landingSection/landingSection")
-      // },
+      {
+        key: new Import("", 1, (landingSection: typeof LandingSection) =>
+          new landingSection()
+        ), val: () => import(/* webpackChunkName: "landingSection" */"../../../../_pageSection/landingSection/landingSection")
+      },
       {
         key: new Import("lines", 1, (linesSection: typeof LinesSection) => 
           new linesSection()
         ), val: () => import(/* webpackChunkName: "linesSection" */"../../../../_pageSection/linesSection/linesSection")
       },
-      // {
-      //   key: new Import("philosophy", 1, (philosophySection: typeof PhilosophySection) =>
-      //     new philosophySection()
-      //   ), val: () => import(/* webpackChunkName: "philosophySection" */"../../../../_pageSection/philosophySection/philosophySection")
-      // },
-      // {
-      //   key: new Import("services", 1, (workSection: typeof WorkSection) => {
-      //     const sec = new workSection(changeNavTheme)
-      //     for (let i = 0; i < sec.serviceSection.length -1; i++) {
-      //       const subSec = sec.serviceSection[i];
-      //       const heightData = subSec.resizeData().tunnel((rec) => rec.height)
-      //       heightData.get(subsectionHeight[i].set.bind(subsectionHeight[i]), false)
-      //     }
+      {
+        key: new Import("philosophy", 1, (philosophySection: typeof PhilosophySection) =>
+          new philosophySection()
+        ), val: () => import(/* webpackChunkName: "philosophySection" */"../../../../_pageSection/philosophySection/philosophySection")
+      },
+      {
+        key: new Import("services", 1, (workSection: typeof WorkSection) => {
+          const sec = new workSection(changeNavTheme)
+          for (let i = 0; i < sec.serviceSection.length -1; i++) {
+            const subSec = sec.serviceSection[i];
+            const heightData = subSec.resizeData().tunnel((rec) => rec.height)
+            heightData.get(subsectionHeight[i].set.bind(subsectionHeight[i]), false)
+          }
 
-      //     return sec
-      //   }), val: () => import(/* webpackChunkName: "workSection" */"../../../../_pageSection/workSection/workSection")
-      // },
+          return sec
+        }), val: () => import(/* webpackChunkName: "workSection" */"../../../../_pageSection/workSection/workSection")
+      },
       {
         key: new Import("team", 1, (teamSection: typeof TeamSection) =>
           new teamSection()
