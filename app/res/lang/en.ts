@@ -133,24 +133,47 @@ export default {
       ],
       about: {
         prefix: "About us",
-        mainText: "Xcenic was founded in 2019 by a group of IT students attending the TGM. We are now a diverse group of Austrian developers and creatives with a passion for combining content creation and development to form compelling brand identities."
+        mainText: "Xcenic was founded in 2019 by a group of IT students attending the TGM. We are now a diverse group of Austrian developers and creatives with a passion for combining content creation and development to form compelling brand identities.",
+        cta: "Get in touch"
       }
     },
     contact: {
       cta: {
         // WIP
         heading: "Got an idea?",
-        text: "We are happy to talk to you to asses and discuss your project free of charge and without obligation. Throughout our project implementation we believe in active cooperation and strive to involve you in our creative and technical process.",
-        button: "Lets talk"
+        text: "We are happy to talk to you to asses and discuss your project free of charge and without obligation. Throughout our project implementation we believe in active cooperation and strive to involve you in our creative and technical process."
       },
       socials: {
         heading: "Socials",
         // WIP
         text: "We are happy to talk to you to asses and discuss your project free of charge and without obligation.",
         socialMedia: {
-          linkedIn: "xcenic"
+          head: "Social media",
+
+          linkedIn: "LinkedIn",
+          instagram: "Instagram",
+          tikTok: "TikTok"
+        },
+        contact: {
+          head: "Contact",
+
+          email: "hello@xcenic.com",
+          phone: "+43 680 983612",
+          address: "Supergasse 1, 1020 Vienna"
         }
-        
+      },
+      legal: {
+        legalNotice: "All rights reserved",
+        impressum: {
+          // WIP
+          head: "Imprint and privacy",
+          text: "Information regarding the liable owner of this site." 
+        },
+        cookie: {
+          // WIP
+          head: "Cookie settings",
+          text: "Finetune in what way we may track & use your usage data."
+        }
       }
 
       
