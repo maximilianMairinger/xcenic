@@ -960,7 +960,7 @@ class ScrollDiffCompensator {
       if (this.working) return
       this.scrollIdle.set(false)
       clearTimeout(this.timoutId)
-      setTimeout(() => {
+      this.timoutId = setTimeout(() => {
         this.scrollIdle.set(true)
       }, 50)
     }, false)
@@ -994,6 +994,7 @@ class ScrollDiffCompensator {
       console.log("scrollIdle is true");
       this.working = true
       this.page.scrollTop -= this.compensationCurrentDiff
+      this.compensationCurrentDiff = 0
       this.working = false
       return new SyncProm((r) => r())
     }
@@ -1006,6 +1007,7 @@ class ScrollDiffCompensator {
     // console.log("cleaning compensation", diff)
     this.working = true
     this.page.scrollTop -= this.compensationCurrentDiff
+    this.compensationCurrentDiff = 0
     this.working = false
     this.currentDiffProm.resolve()
     delete this.currentDiffProm
