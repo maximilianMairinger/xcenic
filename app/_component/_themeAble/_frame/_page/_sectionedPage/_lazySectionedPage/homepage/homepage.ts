@@ -32,11 +32,11 @@ export default class HomePage extends LazySectionedPage {
       //     new landingSection()
       //   ), val: () => import(/* webpackChunkName: "landingSection" */"../../../../_pageSection/landingSection/landingSection")
       // },
-      {
-        key: new Import("lines", 1, (linesSection: typeof LinesSection) => 
-          new linesSection()
-        ), val: () => import(/* webpackChunkName: "linesSection" */"../../../../_pageSection/linesSection/linesSection")
-      },
+      // {
+      //   key: new Import("lines", 1, (linesSection: typeof LinesSection) => 
+      //     new linesSection()
+      //   ), val: () => import(/* webpackChunkName: "linesSection" */"../../../../_pageSection/linesSection/linesSection")
+      // },
       // {
       //   key: new Import("philosophy", 1, (philosophySection: typeof PhilosophySection) =>
       //     new philosophySection()

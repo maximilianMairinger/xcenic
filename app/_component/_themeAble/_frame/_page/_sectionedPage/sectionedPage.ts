@@ -314,7 +314,7 @@ export default abstract class SectionedPage extends Page {
   }
 
   private lastLocalScrollProgressStoreSubstription: DataSubscription<[number]>
-  private confirmedLastScrollProgress = scrollToPadding
+  private confirmedLastScrollProgress = 0
 
   async navigationCallback() {
     let resFunc: Function
@@ -338,13 +338,18 @@ export default abstract class SectionedPage extends Page {
     this.userInitedScrollEvent = false
 
     
-    section.show()
-    let scrollToPos = section.offsetTop
+    if ((section as any).showSection !== undefined) {
+      const sideEffect = (section as any).showSection()
+      // if (sideEffect) this.scrollDiffCompensator.diff(sideEffect)
+    } 
+    else section.show()
+    let scrollToPos = section.offsetTop;
 
 
 
 
-    setTimeout(async () => {
+    (async () => {
+      console.log("localScrollPosStore", this.localScrollPosStore.get())
       if (this.currentSectionIdStore.get() === fragments.rootElem) {
         scrollToPos += this.localScrollPosStore.get() - this.verticalOffset
         this.confirmedLastScrollProgress += this.localScrollPosStore.get()
@@ -384,14 +389,14 @@ export default abstract class SectionedPage extends Page {
       }
 
       resFunc()
-    })
+    })()
     return funcProm
   }
 
   private unreadySectionCount = new Data(0)
   private allSectionsReady = this.unreadySectionCount.tunnel((count) => count === 0)
   private renderingSections: RenderSections = []
-  protected newSectionArrived(section: PageSection, wantedPos: number) {
+  protected newSectionArrived(section: PageSection & {showSection?: () => (void | number)}, wantedPos: number) {
     const rendered = new Data(false) as Data<boolean>
     const top = section.offsetTop
 
@@ -416,9 +421,24 @@ export default abstract class SectionedPage extends Page {
     })
 
     isInWantedPos.then(() => {
-      section.show()
+      let sideEffect: number
+      if ((section as any).showSection !== undefined) {
+        const _sideEffect = section.showSection()
+        
+        if (_sideEffect !== undefined) {
+          // debugger
+          sideEffect = _sideEffect as any
+        }
+      }
+      else section.show()
+      
+      // console.log(section.offsetTop) // This is important. It forces the section to be rendered.
+      if (sideEffect) {
+        lastHeight = sideEffect
+      }
+      
       calculateDimensionsAndRender()
-      compensateResizeScrollDiff(section.height())
+      compensateResizeScrollDiff(section.offsetHeight)
     })
     
     const sec = {rendered, dimensions: {top, bot: top + section.offsetHeight}, section, isInWantedPos, isInPos, wantedPos}
@@ -496,7 +516,7 @@ export default abstract class SectionedPage extends Page {
 
 
 
-    let lastDiff = 0
+    
     rendered.get((rendered) => {
       if (!rendered) section.css("containIntrinsicSize" as any, section.height() + "px")
       // console.log(rendered ? "visible" : "hidden", section)
@@ -505,48 +525,21 @@ export default abstract class SectionedPage extends Page {
 
     // this.calculateSectionRenderingStatus()
 
-    let globalScrollToken: Symbol
     let lastHeight = 0
     const compensateResizeScrollDiff = (height: number): Promise<void> => {
-      return new SyncProm((resClean) => {
-        const diff = Math.round((height + section.css("marginTop")) - lastHeight)
-        lastHeight = height
-        // only compensate diff when scrolling up and the scroll event was at least once fired by the user before
-        if (!this.neverScrolled ? (section.offsetTop - this.scrollTop < 0) : (section.offsetTop - this.scrollTop < (this.confirmedLastScrollProgress < 0 ? -this.confirmedLastScrollProgress : 0) && section.offsetTop + section.height() > this.scrollTop)) {
-          
-          // This is a little hacky. For some reason you cant change scrollTop while to compensate for offset while scrolling. 
-          // This is why this first resolves the diff with a negative margingTop on the scrollElementParent. And later when scroll
-          // is idle resolve the diff back to the scroll position.
-          
-
-          
-          lastDiff -= diff
-          
-          console.log("compensating", diff, section.tagName.toLowerCase())
-          this.componentBody.css("marginTop", lastDiff)
-
-          const cleanUp = () => {
-            lastDiff += diff
-            this.componentBody.css("marginTop", lastDiff)
-            // console.log("cleaning compensation", diff)
-            this.scrollTop += diff
-            sub.deactivate()
-            resClean()
-          }
-
-          let id = setTimeout(cleanUp, 50)
-          const sub = this.on("scroll", () => {
-            if (id !== undefined) clearTimeout(id)
-            id = setTimeout(cleanUp, 50)
-          }, {passive: false})
-          
-  
-  
-          
-        }
-        else resClean()
-      })
+      height = height + section.css("marginTop")
+      const diff = Math.round(height - lastHeight)
+      lastHeight = height
+      const scrollTop = this.scrollTop - this.componentBody.css("marginTop")
+      console.log("scrollTop", scrollTop, "diff", diff)
+      // only compensate diff when scrolling up and the scroll event was at least once fired by the user before
+      if (!this.neverScrolled ? (section.offsetTop - scrollTop < 0) : (section.offsetTop - scrollTop < (this.confirmedLastScrollProgress < 0 ? -this.confirmedLastScrollProgress : 0) && section.offsetTop + section.offsetHeight + section.css("marginTop") > scrollTop)) {
+        return this.scrollDiffCompensator.diff(diff)
+      }
+      else return new SyncProm((r) => r())
     }
+
+
 
 
 
@@ -559,10 +552,10 @@ export default abstract class SectionedPage extends Page {
         const { section } = sec
         const top = section.offsetTop
         sec.dimensions.top = top
-        sec.dimensions.bot = top + section.offsetHeight
+        sec.dimensions.bot = top + section.offsetHeight + section.css("marginTop")
       }
 
-      this.calculateSectionRenderingStatus(this.scrollTop, releventRenderingSection)
+      this.calculateSectionRenderingStatus(this.scrollTop - this.componentBody.css("marginTop"), releventRenderingSection)
     }
 
     let globalToken: Symbol
@@ -586,6 +579,7 @@ export default abstract class SectionedPage extends Page {
 
   }
 
+  private scrollDiffCompensator = new ScrollDiffCompensator(this)
 
   private sectionRenderingMargin = 0
   private calculateSectionRenderingStatus(scrollPos: number, renderingSections: RenderSections = this.renderingSections) {
@@ -612,13 +606,13 @@ export default abstract class SectionedPage extends Page {
 
     (() => {  
       // this.neverScrolled = false
-      const sub = this.on("scroll", () => {
+      const sub = this.scrollData().get(() => {
         if (!this.ignoreIncScrollEventForInitialScrollDetection) {
           this.neverScrolled = false
           sub.deactivate()
         }
         else this.ignoreIncScrollEventForInitialScrollDetection = false
-      })
+      }, false)
 
 
       
@@ -948,5 +942,72 @@ export default abstract class SectionedPage extends Page {
 
   stl() {
     return super.stl() + require("./sectionedPage.css").toString()
+  }
+}
+
+class ScrollDiffCompensator {
+  private compensationCurrentDiff = 0
+  private timoutId: any
+  private scrollIdle = new Data(false)
+  private currentDiffProm: Promise<void> & {resolve: () => void}
+  private working: boolean = false
+
+  constructor(private page: SectionedPage) {
+    this.timoutId = setTimeout(() => {
+      this.scrollIdle.set(true)
+    }, 50)
+    this.page.scrollData().get(() => {
+      if (this.working) return
+      this.scrollIdle.set(false)
+      clearTimeout(this.timoutId)
+      setTimeout(() => {
+        this.scrollIdle.set(true)
+      }, 50)
+    }, false)
+
+
+    this.scrollIdle.get((idle) => {
+      if (idle && this.currentDiffProm !== undefined) this.cleanUp()
+    }, false)
+  }
+  public diff(diff: number) {
+    
+    // This is a little hacky. For some reason you cant change scrollTop while to compensate for offset while scrolling. 
+    // This is why this first resolves the diff with a negative margingTop on the scrollElementParent. And later when scroll
+    // is idle resolve the diff back to the scroll position.
+    
+    this.compensationCurrentDiff -= diff
+    
+    if (!this.scrollIdle.get()) {
+      console.log("scrollIdle is false");
+      (this.page as any).componentBody.css("marginTop", this.compensationCurrentDiff)
+      console.log("compensationCurrentDiff", this.compensationCurrentDiff)
+      if (this.currentDiffProm === undefined) {
+        let r: any
+        let p = new SyncProm((resClean) => {r = resClean})
+        p.resolve = r
+        return this.currentDiffProm = p
+      }
+      else return this.currentDiffProm
+    }
+    else {
+      console.log("scrollIdle is true");
+      this.working = true
+      this.page.scrollTop -= this.compensationCurrentDiff
+      this.working = false
+      return new SyncProm((r) => r())
+    }
+
+    
+  }
+  private cleanUp() {
+    console.log("cleanUp");
+    (this.page as any).componentBody.css("marginTop", 0)
+    // console.log("cleaning compensation", diff)
+    this.working = true
+    this.page.scrollTop -= this.compensationCurrentDiff
+    this.working = false
+    this.currentDiffProm.resolve()
+    delete this.currentDiffProm
   }
 }

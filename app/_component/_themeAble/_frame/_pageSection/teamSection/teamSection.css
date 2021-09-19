@@ -166,7 +166,7 @@ c-quotation-mark.bot {
 }
 
 c-designer-woman {
-  opacity: 0;
+  display: none;
   position: absolute;
   left: 56%;
   top: 0;
@@ -183,7 +183,7 @@ floor-line {
   background: #2F2E41;
   left: calc(56% + 10px);
   top: 606px;
-  opacity: 0;
+  display: none;
 }
 
 @media (max-width: 1150px) {
@@ -206,7 +206,7 @@ floor-line {
   }
 
   c-designer-woman, floor-line {
-    opacity: 1;
+    display: block;
   }
   
   
@@ -242,7 +242,7 @@ floor-line {
 
 @media (max-width: 655px) {
   c-designer-woman, floor-line {
-    opacity: 0;
+    display: none;
   }
   quote-box {
     max-width: 100%;

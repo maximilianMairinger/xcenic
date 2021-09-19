@@ -23,9 +23,13 @@ export default abstract class LazySectionedPage extends SectionedPage {
 
       e.hide()
       this.componentBody.insertAfter(e, priorElem)
+      e.showSection = () => {
+        e.show()
+      }
+      loadedElementsIndex[ind] = e
       this.newSectionArrived(e, ind)
 
-      loadedElementsIndex[ind] = e
+      
       
     })
     super(resourcesMap, baselink, sectionChangeCallback, sectionAliasList, mergeIndex)
@@ -39,14 +43,22 @@ export default abstract class LazySectionedPage extends SectionedPage {
     const loadedElementsIndex = {"-1": this.loadingIndecatorTop}
     loadedElementsIndex[sectionIndex.size] = this.loadingIndecatorBot
     const attach = constructAttachToPrototype(loadedElementsIndex)
+    let i = 0
     if (sectionIndex.size > 1) {
       //@ts-ignore
       attach("0", {set: (e) => {
         // debugger
         attach("0", {value: e})
-        setTimeout(() => {
-          // this.loadingIndecatorTop.remove()
-        })
+        const showSection = e.showSection.bind(e)
+        e.showSection = () => {
+          const scrollTop = this.scrollTop - this.componentBody.css("marginTop")
+          showSection()
+          let sideEffect = 0
+          if (e.offsetTop > scrollTop) this.scrollTop += sideEffect = e.offsetHeight + e.css("marginTop")
+          
+          this.loadingIndecatorTop.remove()
+          return sideEffect
+        }
       }})
       
 
@@ -54,30 +66,33 @@ export default abstract class LazySectionedPage extends SectionedPage {
       //@ts-ignore
       attach(lastIndex, {set: (e) => {
         attach(lastIndex, {value: e})
-        setTimeout(() => {
-          // this.loadingIndecatorBot.remove()
-        })
+        const showSection = e.showSection.bind(e)
+        e.showSection = () => {
+          showSection()
+          this.loadingIndecatorBot.remove()
+          // console.log(e.offsetTop)
+        }
       }})
       
     }
     else {
       //@ts-ignore
       attach("0", {set: (e) => {
-            
-        // this.loadingIndecatorTop.remove()
-        // this.loadingIndecatorBot.remove()
+        const showSection = e.showSection.bind(e)
+        e.showSection = () => {
+          const scrollTop = this.scrollTop - this.componentBody.css("marginTop")
+          showSection()
+          let sideEffect = 0
+          if (e.offsetTop > scrollTop) this.scrollTop += sideEffect = e.offsetHeight + e.css("marginTop")
+          
+          this.loadingIndecatorTop.remove()
+          this.loadingIndecatorBot.remove()
+          return sideEffect
+        }
         attach("0", {value: e})
-        
       }})
     }
 
-    
-    
-    
-    
-    resourcesMap.fullyLoaded.then(() => {
-      // this.loadingIndecatorBot.remove()
-    })
 
     this.importanceMap = importanceMap
     this.resourceMap = resourcesMap
