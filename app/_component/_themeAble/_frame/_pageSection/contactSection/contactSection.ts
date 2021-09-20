@@ -1,8 +1,9 @@
 import declareComponent from "../../../../../lib/declareComponent"
 import PageSection from "../pageSection"
-import "../../../_icon/heartIllustration/heartIllustration"
-import "../../../_icon/dotAccent/dotAccent"
+import "../../../link/link"
 import "../../../_button/_rippleButton/blockButton/blockButton"
+import "../../../_icon/speachBubble/speachBubble"
+
 
 
 
