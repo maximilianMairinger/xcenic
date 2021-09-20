@@ -165,8 +165,8 @@ export default {
         }
       },
       legal: {
-        legalNotice: "All rights reserved",
-        impressum: {
+        legalNotice: "All rights reserved.",
+        privacy: {
           // WIP
           heading: "Imprint and privacy",
           text: "Information regarding the liable owner of this site." 

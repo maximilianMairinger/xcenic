@@ -3,8 +3,8 @@ import ThemeAble, { Theme } from "../themeAble";
 import { Data } from "josm"
 import * as domain from "../../../lib/domain"
 import delay from "delay"
-import ExternalLinkIcon from "../_icon/externalLink/externalLink"
-import { Prim } from "extended-dom";
+// import ExternalLinkIcon from "../_icon/externalLink/externalLink"
+import { Prim, EventListener } from "extended-dom";
 
 
 export default class Link extends ThemeAble {
@@ -12,18 +12,20 @@ export default class Link extends ThemeAble {
   private slotElem = this.sr.querySelector("slot")
   private slidyWrapper = this.q("slidy-underline-wrapper")
   private slidy = this.slidyWrapper.childs()
-  private externalIcon = new ExternalLinkIcon()
+  // private externalIcon = new ExternalLinkIcon()
 
   public mouseOverAnimation?: () => void
   public mouseOutAnimation?: () => void
   public clickAnimation?: () => void
 
+  private eventTargetLs = [] as EventListener[]
+
   constructor(content: string | Data<string>, link?: string, public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true, eventTarget?: Element) {
     super(false)
 
-    this.theme.get((to) => {
-      this.externalIcon.theme.set(to)
-    })
+    // this.theme.get((to) => {
+    //   this.externalIcon.theme.set(to)
+    // })
 
     
     this.content(content)
@@ -56,34 +58,35 @@ export default class Link extends ThemeAble {
 
     if (eventTarget === undefined) eventTarget = this.aElem as any
 
-    eventTarget.on("mouseup", (e) => {
+    const a = this.eventTargetLs
+    a.add(eventTarget.on("mouseup", (e) => {
       if (e.button === 0) ev(e)
       else if (e.button === 1) ev(e, true)
-    })
+    }))
     this.aElem.on("click", (e) => {
       e.preventDefault()
     })
 
-    eventTarget.on("keydown", (e) => {
+    a.add(eventTarget.on("keydown", (e) => {
       if (e.key === " " || e.key === "Enter") ev(e)
-    })
+    }))
     
 
-    eventTarget.on("mousedown", () => {
+    a.add(eventTarget.on("mousedown", () => {
       this.addClass("pressed")
-    })
-    eventTarget.on("mouseleave", () => {
+    }))
+    a.add(eventTarget.on("mouseleave", () => {
       if (click) return
       this.removeClass("pressed")
-    })
-    eventTarget.on("mouseup", () => {
+    }))
+    a.add(eventTarget.on("mouseup", () => {
       if (click) return
       this.removeClass("pressed")
-    })
+    }))
 
 
-    eventTarget.on("mouseenter", this.updateHref.bind(this))
-    eventTarget.on("focus", this.updateHref.bind(this))
+    a.add(eventTarget.on("mouseenter", this.updateHref.bind(this)))
+    a.add(eventTarget.on("focus", this.updateHref.bind(this)))
 
     
     let click: () => void
@@ -172,8 +175,8 @@ export default class Link extends ThemeAble {
         }
       }
 
-      eventTarget.on("mouseover", mouseOver)
-      eventTarget.on("mouseleave", mouseOut)
+      a.add(eventTarget.on("mouseover", mouseOver))
+      a.add(eventTarget.on("mouseleave", mouseOut))
       
 
       let clickF = (async () => {
@@ -221,11 +224,16 @@ export default class Link extends ThemeAble {
 
   }
 
+  eventtarget(target: Node | "parent") {
+    const el = typeof target === "string" ? this.parent() : target
+    this.eventTargetLs.Inner("target", [el])
+  }
+
   private updateHref() {
     if (!this.link()) return
     let meta = domain.linkMeta(this.link(), this.domainLevel)
-    if (!meta.isOnOrigin) this.aElem.apd(this.externalIcon)
-    else this.externalIcon.remove()
+    // if (!meta.isOnOrigin) this.aElem.apd(this.externalIcon)
+    // else this.externalIcon.remove()
     this.aElem.href = meta.href
   }
 

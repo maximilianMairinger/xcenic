@@ -27,11 +27,11 @@ export default class HomePage extends LazySectionedPage {
     const subsectionHeight = [new Data(300), new Data(1600)]
 
     super(new ImportanceMap<() => Promise<any>, any>(
-      {
-        key: new Import("", 1, (landingSection: typeof LandingSection) =>
-          new landingSection()
-        ), val: () => import(/* webpackChunkName: "landingSection" */"../../../../_pageSection/landingSection/landingSection")
-      },
+      // {
+      //   key: new Import("", 1, (landingSection: typeof LandingSection) =>
+      //     new landingSection()
+      //   ), val: () => import(/* webpackChunkName: "landingSection" */"../../../../_pageSection/landingSection/landingSection")
+      // },
       {
         key: new Import("lines", 1, (linesSection: typeof LinesSection) => 
           new linesSection()
@@ -54,16 +54,16 @@ export default class HomePage extends LazySectionedPage {
       //     return sec
       //   }), val: () => import(/* webpackChunkName: "workSection" */"../../../../_pageSection/workSection/workSection")
       // },
-      {
-        key: new Import("team", 1, (teamSection: typeof TeamSection) =>
-          new teamSection()
-        ), val: () => import(/* webpackChunkName: "teamSection" */"../../../../_pageSection/teamSection/teamSection")
-      },
-      {
-        key: new Import("team", 1, (teamMemberSection: typeof TeamMemberSection) =>
-          new teamMemberSection()
-        ), val: () => import(/* webpackChunkName: "teamMemberSection" */"../../../../_pageSection/teamMembersSection/teamMembersSection")
-      },
+      // {
+      //   key: new Import("team", 1, (teamSection: typeof TeamSection) =>
+      //     new teamSection()
+      //   ), val: () => import(/* webpackChunkName: "teamSection" */"../../../../_pageSection/teamSection/teamSection")
+      // },
+      // {
+      //   key: new Import("team", 1, (teamMemberSection: typeof TeamMemberSection) =>
+      //     new teamMemberSection()
+      //   ), val: () => import(/* webpackChunkName: "teamMemberSection" */"../../../../_pageSection/teamMembersSection/teamMembersSection")
+      // },
       {
         key: new Import("contact", 1, (contactSection: typeof ContactSection) =>
           new contactSection()

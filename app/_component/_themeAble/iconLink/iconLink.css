@@ -9,13 +9,12 @@
 }
 
 c-link {
-  margin-left: 25px;
+  /* margin-left: 7px; */
 }
 
 ::slotted(*) {
   display: inline-block;
-  position: absolute;
+  position: relative;
   width: 20px;
   height: 100%;
-  padding-right: 6px;
 }

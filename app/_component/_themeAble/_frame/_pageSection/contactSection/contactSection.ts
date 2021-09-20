@@ -9,17 +9,18 @@ import "../../../_icon/sendIcon/sendIcon"
 import "../../../_icon/homeIcon/homeIcon"
 import "../../../_icon/tiktokIcon/tiktokIcon"
 import "../../../_icon/phoneIcon/phoneIcon"
+import "../../../_icon/arrowPointer/arrowPointer"
 
 
 
 
 
 export default class ContactSection extends PageSection {
-
+  
   constructor() {
     super("light");
 
-
+    this.q("#currentYear").text(new Date().getFullYear())
 
     
   }
