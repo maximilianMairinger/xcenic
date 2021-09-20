@@ -1,0 +1,21 @@
+:host {
+  display: flex;
+  font-size: 18px;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  float: left;
+  width: 100%;
+}
+
+c-link {
+  margin-left: 25px;
+}
+
+::slotted(*) {
+  display: inline-block;
+  position: absolute;
+  width: 20px;
+  height: 100%;
+  padding-right: 6px;
+}

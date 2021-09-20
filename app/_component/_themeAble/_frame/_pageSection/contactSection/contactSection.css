@@ -2,7 +2,8 @@
   /* height: 300px; */
   z-index: 2;
   --theme: var(--secondary-theme);
-  height: 90vh;
+  /* height: 90vh; */
+  padding-bottom: 500px
 }
 
 p {
@@ -10,6 +11,7 @@ p {
   margin-top: 0;
   margin-bottom: 0;
 }
+
 
 h1.chonker + * {
   margin-top: 68px !important;
@@ -61,6 +63,7 @@ h1.chonker::before {
 }
 
 h2.lil {
+  position: relative;
   color: rgb(var(--theme));
   transition: .3s background-color;
   font-size: 19px;
@@ -77,6 +80,8 @@ h2.lil::before {
   height: 27px;
   left: -19px;
 }
+
+
 
 
 h2.lil::selection {
@@ -101,6 +106,98 @@ icon-line > *:first-child {
 
 
 
+
+
+
+
+c-link, c-icon-link {
+  margin-top: .3em;
+}
+
+c-block-button {
+  margin-top: 10px;
+
+  --background: var(--theme);
+  --text: var(--plain-background);
+  --border: unset;
+  --padding: 14px 30px;
+}
+
+
+
+grid-column.speachBubble {
+  display: flex;
+}
+
+grid-column.speachBubble.a {
+  align-items: flex-start;
+}
+
+grid-column.speachBubble.b {
+  align-items: flex-end;
+}
+
+
+
+
+grid-column.speachBubble c-speach-bubble {
+  width: 100%;
+  height: auto;
+
+}
+
+
+grid-column.speachBubble.a c-speach-bubble {
+  --theme: var(--secondary-theme);
+}
+grid-column.speachBubble.b c-speach-bubble {
+  --theme: var(--primary-theme);
+  transform: scaleX(-1)
+}
+
+
+
+
+
+
+grid-column.cta {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+}
+
+grid-column.speachBubble.a {
+  grid-column: 2 / 3;
+  grid-row: 1 / 3;
+}
+
+grid-column.speachBubble.b {
+  grid-column: 3 / 4;
+  grid-row: 1 / 3;
+}
+
+grid-column.contact {
+  --theme: var(--primary-theme);
+}
+
+grid-column.contact.head {
+  grid-column: 4 / 5;
+  grid-row: 1 / 2;
+  
+}
+
+grid-column.contact.data {
+  grid-column: 4 / 5;
+  grid-row: 2 / 3;
+}
+
+grid-column.contact.socials {
+  grid-column: 4 / 5;
+  grid-row: 3 / 4;
+}
+
+
+
+
 @media (max-width: 1400px) {
   component-body {
     grid-template-columns: 1fr 1fr 1fr;
@@ -118,67 +215,3 @@ icon-line > *:first-child {
     grid-template-columns: 1fr
   }
 }
-
-
-
-c-link {
-  margin-top: .3em;
-}
-
-c-block-button {
-  margin-top: 10px;
-
-  --background: var(--theme);
-  --text: var(--plain-background);
-  --border: unset;
-  --padding: 14px 30px;
-}
-
-
-
-footer-column.speachBubble {
-  display: flex;
-}
-
-footer-column.speachBubble.a {
-  align-items: flex-start;
-}
-
-footer-column.speachBubble.b {
-  align-items: flex-end;
-}
-
-
-
-
-footer-column.speachBubble c-speach-bubble {
-  width: 100%;
-  height: auto;
-
-}
-
-footer-column.speachBubble.b c-speach-bubble {
-  --theme: var(--secondary-theme);
-  transform: scaleX(-1)
-}
-
-
-
-
-
-
-footer-column.head {
-  grid-column: 1 / 2;
-  grid-row: 1 / 2;
-}
-
-footer-column.speachBubble.a {
-  grid-column: 2 / 3;
-  grid-row: 1 / 2;
-}
-
-footer-column.speachBubble.b {
-  grid-column: 3 / 4;
-  grid-row: 1 / 2;
-}
-

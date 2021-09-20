@@ -1,8 +1,12 @@
 import declareComponent from "../../../../../lib/declareComponent"
 import PageSection from "../pageSection"
-import "../../../link/link"
+import "../../../iconLink/iconLink"
 import "../../../_button/_rippleButton/blockButton/blockButton"
 import "../../../_icon/speachBubble/speachBubble"
+import "../../../_icon/instagramIcon/instagramIcon"
+import "../../../_icon/linkedInIcon/linkedInIcon"
+import "../../../_icon/sendIcon/sendIcon"
+import "../../../_icon/homeIcon/homeIcon"
 
 
 

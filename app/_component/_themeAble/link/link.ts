@@ -18,7 +18,7 @@ export default class Link extends ThemeAble {
   public mouseOutAnimation?: () => void
   public clickAnimation?: () => void
 
-  constructor(content: string | Data<string>, link?: string, public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true) {
+  constructor(content: string | Data<string>, link?: string, public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true, eventTarget?: Element) {
     super(false)
 
     this.theme.get((to) => {
@@ -54,7 +54,9 @@ export default class Link extends ThemeAble {
       }
     }
 
-    this.aElem.on("mouseup", (e) => {
+    if (eventTarget === undefined) eventTarget = this.aElem as any
+
+    eventTarget.on("mouseup", (e) => {
       if (e.button === 0) ev(e)
       else if (e.button === 1) ev(e, true)
     })
@@ -62,28 +64,27 @@ export default class Link extends ThemeAble {
       e.preventDefault()
     })
 
-    this.aElem.on("keydown", (e) => {
+    eventTarget.on("keydown", (e) => {
       if (e.key === " " || e.key === "Enter") ev(e)
     })
     
 
-    this.aElem.on("mousedown", () => {
+    eventTarget.on("mousedown", () => {
       this.addClass("pressed")
     })
-    this.aElem.on("mouseleave", () => {
+    eventTarget.on("mouseleave", () => {
       if (click) return
       this.removeClass("pressed")
     })
-    this.aElem.on("mouseup", () => {
+    eventTarget.on("mouseup", () => {
       if (click) return
       this.removeClass("pressed")
     })
 
 
-    this.aElem.on("mouseenter", this.updateHref.bind(this))
-    this.aElem.on("focus", this.updateHref.bind(this))
+    eventTarget.on("mouseenter", this.updateHref.bind(this))
+    eventTarget.on("focus", this.updateHref.bind(this))
 
-    
     
     let click: () => void
 
@@ -171,8 +172,8 @@ export default class Link extends ThemeAble {
         }
       }
 
-      this.aElem.on("mouseover", mouseOver)
-      this.aElem.on("mouseleave", mouseOut)
+      eventTarget.on("mouseover", mouseOver)
+      eventTarget.on("mouseleave", mouseOut)
       
 
       let clickF = (async () => {

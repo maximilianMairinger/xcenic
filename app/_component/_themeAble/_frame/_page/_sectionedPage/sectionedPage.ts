@@ -337,7 +337,6 @@ export default abstract class SectionedPage extends Page {
     
     if (this.currentlyActiveSectionElem) this.currentlyActiveSectionElem.deactivate()
     this.currentlyActiveSectionElem = section
-    debugger
     this.currentlyActiveSectionElem.activate()
 
     this.userInitedScrollEvent = false
@@ -436,13 +435,11 @@ export default abstract class SectionedPage extends Page {
       let isAboveCurrent = wantedPos < this.renderingSections.initElemIndex
       
       const sectionWillTemper = isAboveCurrent && this.confirmedLastScrollProgress < 0 && nextSib && nextSib.offsetTop && nextSib.offsetTop > scrollTop && nextSib.offsetTop < scrollTop + window.innerHeight
-      if (sectionWillTemper) debugger
       let sideEffect: number
       if ((section as any).showSection !== undefined) {
         const _sideEffect = section.showSection()
          
         if (_sideEffect !== undefined) {
-          // debugger
           sideEffect = _sideEffect as any
         }
       }
@@ -457,7 +454,6 @@ export default abstract class SectionedPage extends Page {
         if (sectionWillTemper) this.scrollTop += lastHeight
       }
 
-      debugger
 
       justBeforeInWantedPosScrollPos = this.scrollTop
       justBeforeInWantedPosScrollHeight = this.scrollHeight
@@ -591,7 +587,6 @@ export default abstract class SectionedPage extends Page {
     }
     const compensateResizeScrollDiffFromRuntime = constructResizeScrollCompensationFunction((scrollTop) => section.offsetTop < scrollTop, (height: number) => Math.round(height - lastHeight))
     const compensateResizeScrollDiffFromInit = constructResizeScrollCompensationFunction((scrollTop) => section.offsetTop - scrollTop < (this.confirmedLastScrollProgress < 0 ? -this.confirmedLastScrollProgress : 0) && section.offsetTop + section.offsetHeight + section.css("marginTop") + section.css("marginBottom") > scrollTop, (height) => {
-      debugger
       const max = this.scrollHeight - justBeforeInWantedPosScrollHeight
       
       if (max < 0) {
