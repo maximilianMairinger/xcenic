@@ -189,6 +189,7 @@ export default abstract class SectionedPage extends Page {
 
   public abstract iconIndex: {[key: string]: HightlightAbleIcon}
 
+  private currentSectionIdIndexStore = localSettings<number>("currentSectionIdIndex@" + this.baselink, 0)
   private localScrollPosStore = localSettings<number>("localScrollPos@" + this.baselink, 0)
   private currentSectionIdStore = localSettings<string>("currentSectionId@" + this.baselink, "") // TODO: use first section id as default?
 
@@ -301,7 +302,8 @@ export default abstract class SectionedPage extends Page {
       fragments.closeUp = this.sectionAliasList.aliasify(domainFragment).get().first
     }
 
-    const m = this.sectionIndex.get(this.currentDomainFragment = domainFragment)
+
+    const m = this.sectionIndex.get(this.currentDomainFragment = domainFragment, this.currentlyActiveSectionIdIndex = this.currentSectionIdStore.get() === fragments.rootElem ? this.currentSectionIdIndexStore.get() : 0)
     this.curSectionProm = new Promise((res) => {
       if (m) m.then((pageSection) => {
         res({pageSection, fragments})
@@ -312,6 +314,8 @@ export default abstract class SectionedPage extends Page {
 
     return !!m
   }
+
+  
 
   private lastLocalScrollProgressStoreSubstription: DataSubscription<[number]>
   private confirmedLastScrollProgress = 0
@@ -644,6 +648,7 @@ export default abstract class SectionedPage extends Page {
   private currentlyActiveSectionRootName: string
   private intersectingIndex: Element[] = []
   private currentlyActiveSectionElem: PageSection
+  protected currentlyActiveSectionIdIndex: number
   // private neverScrolled = true
   private ignoreIncScrollEventForInitialScrollDetection = false
   private initialChilds = (this.componentBody.childs(1, true) as ElementList<PageSection>)
@@ -823,18 +828,18 @@ export default abstract class SectionedPage extends Page {
                 this.lastLocalScrollProgressStoreSubstription = undefined
               }
   
-              this.sectionIndex.get(root).then((elem) => {
+              // this.sectionIndex.get(root).then((elem) => {
                 elem.localScrollProgressData("start").then((e) => {
                   this.lastLocalScrollProgressStoreSubstription = e.get(this.localScrollPosStore.set.bind(this.localScrollPosStore), true)
                 })
-              })
+              // })
   
               
   
               
   
               this.currentSectionIdStore.set(this.currentlyActiveSectionRootName)
-  
+              this.currentSectionIdIndexStore.set(this.currentlyActiveSectionIdIndex = this.sectionIndex.getAll(root).indexOf(val))
               
               
             }
