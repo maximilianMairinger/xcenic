@@ -7,6 +7,8 @@ import "../../../_icon/instagramIcon/instagramIcon"
 import "../../../_icon/linkedInIcon/linkedInIcon"
 import "../../../_icon/sendIcon/sendIcon"
 import "../../../_icon/homeIcon/homeIcon"
+import "../../../_icon/tiktokIcon/tiktokIcon"
+import "../../../_icon/phoneIcon/phoneIcon"
 
 
 
