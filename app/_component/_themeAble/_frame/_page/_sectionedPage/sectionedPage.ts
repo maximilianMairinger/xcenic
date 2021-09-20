@@ -449,7 +449,8 @@ export default abstract class SectionedPage extends Page {
         lastHeight = sideEffect
       }
       else {
-        if (sectionWillTemper) this.scrollTop += lastHeight = section.offsetHeight + section.css("marginTop") + section.css("marginBottom")
+        lastHeight = section.offsetHeight + section.css("marginTop") + section.css("marginBottom") - lastHeight 
+        if (sectionWillTemper) this.scrollTop += lastHeight
       }
 
       debugger
@@ -459,6 +460,28 @@ export default abstract class SectionedPage extends Page {
       
       calculateDimensionsAndRender()
       compensateResizeScrollDiffFromInit(section.offsetHeight)
+
+
+      let first = true
+      section.on("resize", ({height}) => {
+        if (first) {
+          first = false
+          return 
+        }
+      
+
+        // console.log("resize", section)
+        
+        
+        let localToken = globalToken = Symbol();
+        compensateResizeScrollDiffFromRuntime(height).then(() => {
+          if (localToken !== globalToken) return
+          calculateDimensionsAndRender()
+        })
+  
+  
+        
+      })
     })
     
     const sec = {rendered, dimensions: {top, bot: top + section.offsetHeight}, section, isInWantedPos, isInPos, wantedPos}
@@ -596,23 +619,8 @@ export default abstract class SectionedPage extends Page {
 
     let globalToken: Symbol
 
-    const resize = ({height}) => {
-      
-      
-
-      // console.log("resize", section)
-      
-      
-      let localToken = globalToken = Symbol();
-      compensateResizeScrollDiffFromRuntime(height).then(() => {
-        if (localToken !== globalToken) return
-        calculateDimensionsAndRender()
-      })
-
-
-      
-    }
-    section.on("resize", resize, {passive: true})
+    
+    
 
   }
 
@@ -664,6 +672,7 @@ export default abstract class SectionedPage extends Page {
 
 
       const subScrollUpdate = this.scrollData().get((p) => {
+        // this.
         this.calculateSectionRenderingStatus(p)
       }, false)
       subScrollUpdate.deactivate()
