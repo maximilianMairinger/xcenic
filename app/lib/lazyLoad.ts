@@ -1,6 +1,8 @@
 const loadStates = ["minimalContentPaint", "fullContentPaint", "completePaint"]
 const defaultPreloadToLoadStatus = loadStates[1]
 
+import keyIndex from "key-index"
+
 export const loadedSymbol = Symbol("loaded")
 
 export default function init<Func extends () => Promise<any>>(resources: ImportanceMap<any, any>, globalInitFunc?: (instance: any, index: number) => void | Promise<void>) {
@@ -121,34 +123,32 @@ export class BidirectionalMap<K, V> extends Map<K, V> {
 }
 
 class MultiKeyMap<K, V> {
-  private index: {key: K, val: V}[]
+  private index = keyIndex<K, V[]>(() => [])
   constructor(...index: {key: K, val: V}[]) {
-    this.index = index
+    for (const e of index) {
+      this.index(e.key).add(e.val)
+    }
   }
   add(key: K, val: V) {
-    this.index.add({key, val})
+    this.index(key).add(val)
   }
-  get(key: K, nth: number = 1) {
-    for (let e of this.index) {
-      if (e.key === key) {
-        nth--
-        if (nth === 0) return e.val
-      }
+  getAll(key: K) {
+    return this.index(key)
+  }
+  get(key: K, atIndex: number = 0) {
+    return this.getAll(key)[atIndex]
+  }
+  
+  has(key: K) {
+    return !!this.getAll(key)
+  }
+  forEach(cb: (key: K, vals: V[]) => void) {
+    for (let e of this.index.entries()) {
+      cb(...e)
     }
   }
-  has(key: K, nth: number = 1) {
-    return !!this.get(key, nth)
-  }
-  forEach(cb: (val: V, key: K) => void) {
-    for (let e of this) {
-      cb(e.val, e.key)
-    }
-  }
-  *[Symbol.iterator](): Iterator<{key: K, val: V}, {key: K, val: V}, any> {
-    for (let e of this.index) {
-      yield e
-    }
-    return this.index.last
+  *[Symbol.iterator](): IterableIterator<[key: K, vals: V[]]> {
+    return this.index.entries()
   }
   entries() {
     return this[Symbol.iterator]()
@@ -177,8 +177,10 @@ export class ResourcesMap extends MultiKeyMap<string, PriorityPromise> {
 
   private reloadStatusPromises() {
     let proms = []
-    this.forEach((e) => {
-      proms.add(e)
+    this.forEach((key, es) => {
+      for (const e of es) {
+        proms.add(e)
+      }
     })
     
     this.fullyLoaded = Promise.all(proms)

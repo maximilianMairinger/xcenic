@@ -60,7 +60,7 @@ export default class HomePage extends LazySectionedPage {
         ), val: () => import(/* webpackChunkName: "teamSection" */"../../../../_pageSection/teamSection/teamSection")
       },
       {
-        key: new Import("team2", 1, (teamMemberSection: typeof TeamMemberSection) =>
+        key: new Import("team", 1, (teamMemberSection: typeof TeamMemberSection) =>
           new teamMemberSection()
         ), val: () => import(/* webpackChunkName: "teamMemberSection" */"../../../../_pageSection/teamMembersSection/teamMembersSection")
       },
@@ -96,9 +96,7 @@ export default class HomePage extends LazySectionedPage {
         new ScrollProgressAlias(subsectionHeight[0], "services/contentCreation"),
         new ScrollProgressAlias(subsectionHeight[1], "services/socialMedia")
       ])
-    ), {
-      // footer: "contact"
-    })
+    ))
 
 
 

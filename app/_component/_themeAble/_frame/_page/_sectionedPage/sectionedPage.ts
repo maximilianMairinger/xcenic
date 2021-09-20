@@ -232,7 +232,7 @@ export default abstract class SectionedPage extends Page {
     }
 
     let dataList: Data<string[]>[] = []
-    map.forEach((val, key) => {
+    map.forEach((key, vals) => {
       let mer = this.merge(key)
       dataList.add(this.sectionAliasList.aliasify(mer))
     })
@@ -731,107 +731,113 @@ export default abstract class SectionedPage extends Page {
         let myToken = globalToken = Symbol("Token")
 
         // TODO: Optimize look into new methods of sectionIndex; 
-        this.sectionIndex.forEach(async (val, root) => {
-          if ((await val) === elem) {
-            if (myToken !== globalToken) return
-            this.currentlyActiveSectionRootName = root
-
-
-            if (this.currentlyActiveSectionElem !== elem) {
-              if (this.currentlyActiveSectionElem !== undefined) this.currentlyActiveSectionElem.deactivate()
-              elem.activate()
-              this.currentlyActiveSectionElem = elem
-            }
-
-            aliasSubscriptions.Inner("deactivate", [])
-            aliasSubscriptions.clear()
-
-
-            root = this.merge(root)
-            let alias = this.sectionAliasList.getAllAliasesByRoot(root)
-            if (alias) {
-
-              if (alias instanceof SimpleAlias) {
-                let sub = new DataSubscription(alias.aliases.tunnel(aliases => aliases.first), this.activateSectionNameWithDomain.bind(this), false)
-                //@ts-ignore
-                aliasSubscriptions.add(this.inScrollAnimation.get((is) => {
-                  if (is) sub.activate()
-                  else sub.deactivate()
-                }))
-                aliasSubscriptions.add(sub)
+        this.sectionIndex.forEach(async (root, vals) => {
+          for (const val of vals) {
+            if ((await val) === elem) {
+              if (myToken !== globalToken) return
+              this.currentlyActiveSectionRootName = root
+  
+  
+              if (this.currentlyActiveSectionElem !== elem) {
+                if (this.currentlyActiveSectionElem !== undefined) this.currentlyActiveSectionElem.deactivate()
+                elem.activate()
+                this.currentlyActiveSectionElem = elem
               }
-              else if (alias instanceof ScrollProgressAliasIndex) {
-                let currentlyTheSmallestWantedProgressTemp = Infinity
-                let currentlyTheSmallestWantedProgress = new Data(currentlyTheSmallestWantedProgressTemp)
-                //@ts-ignore
-                aliasSubscriptions.add(new DataCollection(...(alias.scrollProgressAliases as ScrollProgressAlias[]).Inner("progress")).get((...wantedProgresses) => {
-                  currentlyTheSmallestWantedProgressTemp = Infinity
-                  
-                  wantedProgresses.ea((wantedProgress) => {
-                    if (wantedProgress < currentlyTheSmallestWantedProgressTemp) currentlyTheSmallestWantedProgressTemp = wantedProgress
-                  })
-
-                  currentlyTheSmallestWantedProgress.set(currentlyTheSmallestWantedProgressTemp)
-                }))
-
-                let lastActiveName: Data<string> = new Data()
-
-                for (let i = 0; i < alias.scrollProgressAliases.length; i++) {
-                  const q = alias.scrollProgressAliases[i] as ScrollProgressAlias
-                  let nextProg: Data<number> = alias.scrollProgressAliases[i + 1] as any
-                  if (nextProg === undefined) nextProg = new Data(Infinity)
-                  else nextProg = (nextProg as any).progress
-
-                  let isSmallest = false
+  
+              aliasSubscriptions.Inner("deactivate", [])
+              aliasSubscriptions.clear()
+  
+  
+              root = this.merge(root)
+              let alias = this.sectionAliasList.getAllAliasesByRoot(root)
+              if (alias) {
+  
+                if (alias instanceof SimpleAlias) {
+                  let sub = new DataSubscription(alias.aliases.tunnel(aliases => aliases.first), this.activateSectionNameWithDomain.bind(this), false)
                   //@ts-ignore
-                  aliasSubscriptions.add(new DataCollection(currentlyTheSmallestWantedProgress, q.progress).get((smallestProg, thisProg) => {
-                    isSmallest = smallestProg === thisProg
+                  aliasSubscriptions.add(this.inScrollAnimation.get((is) => {
+                    if (is) sub.activate()
+                    else sub.deactivate()
                   }))
-
-                  
-                  let nameData = q.aliases.tunnel(aliases => aliases.first)
-
-                  let sub = new DataSubscription(new DataCollection(nameData, q.progress, nextProg, localSegmentScrollDataIndex(elem)(.4) as any as Data<number>) as any, (name: string, wantedProgress, nextProg, currentProgress) => {
-                    if (isSmallest) {
-                      wantedProgress = -Infinity
-                    }
-                    
-                    if (wantedProgress <= currentProgress && nextProg > currentProgress) {
-                      lastActiveName.set(name)
-                      this.activateSectionNameWithDomain(name)
-                    }
-                  })
-                  
-                  //@ts-ignore
                   aliasSubscriptions.add(sub)
-                  //@ts-ignore
-                  aliasSubscriptions.add(new DataCollection(lastActiveName, nameData, this.inScrollAnimation).get((currentName, name, inScrollAnimation) => {
-                    let deactivate = currentName === name || inScrollAnimation
-                    if (deactivate) sub.deactivate()
-                    else sub.activate()
-                  }))
                 }
-
+                else if (alias instanceof ScrollProgressAliasIndex) {
+                  let currentlyTheSmallestWantedProgressTemp = Infinity
+                  let currentlyTheSmallestWantedProgress = new Data(currentlyTheSmallestWantedProgressTemp)
+                  //@ts-ignore
+                  aliasSubscriptions.add(new DataCollection(...(alias.scrollProgressAliases as ScrollProgressAlias[]).Inner("progress")).get((...wantedProgresses) => {
+                    currentlyTheSmallestWantedProgressTemp = Infinity
+                    
+                    wantedProgresses.ea((wantedProgress) => {
+                      if (wantedProgress < currentlyTheSmallestWantedProgressTemp) currentlyTheSmallestWantedProgressTemp = wantedProgress
+                    })
+  
+                    currentlyTheSmallestWantedProgress.set(currentlyTheSmallestWantedProgressTemp)
+                  }))
+  
+                  let lastActiveName: Data<string> = new Data()
+  
+                  for (let i = 0; i < alias.scrollProgressAliases.length; i++) {
+                    const q = alias.scrollProgressAliases[i] as ScrollProgressAlias
+                    let nextProg: Data<number> = alias.scrollProgressAliases[i + 1] as any
+                    if (nextProg === undefined) nextProg = new Data(Infinity)
+                    else nextProg = (nextProg as any).progress
+  
+                    let isSmallest = false
+                    //@ts-ignore
+                    aliasSubscriptions.add(new DataCollection(currentlyTheSmallestWantedProgress, q.progress).get((smallestProg, thisProg) => {
+                      isSmallest = smallestProg === thisProg
+                    }))
+  
+                    
+                    let nameData = q.aliases.tunnel(aliases => aliases.first)
+  
+                    let sub = new DataSubscription(new DataCollection(nameData, q.progress, nextProg, localSegmentScrollDataIndex(elem)(.4) as any as Data<number>) as any, (name: string, wantedProgress, nextProg, currentProgress) => {
+                      if (isSmallest) {
+                        wantedProgress = -Infinity
+                      }
+                      
+                      if (wantedProgress <= currentProgress && nextProg > currentProgress) {
+                        lastActiveName.set(name)
+                        this.activateSectionNameWithDomain(name)
+                      }
+                    })
+                    
+                    //@ts-ignore
+                    aliasSubscriptions.add(sub)
+                    //@ts-ignore
+                    aliasSubscriptions.add(new DataCollection(lastActiveName, nameData, this.inScrollAnimation).get((currentName, name, inScrollAnimation) => {
+                      let deactivate = currentName === name || inScrollAnimation
+                      if (deactivate) sub.deactivate()
+                      else sub.activate()
+                    }))
+                  }
+  
+                }
+  
               }
-
+              else this.activateSectionNameWithDomain(root)
+  
+              if (this.lastLocalScrollProgressStoreSubstription) {
+                this.lastLocalScrollProgressStoreSubstription.deactivate()
+                this.lastLocalScrollProgressStoreSubstription = undefined
+              }
+  
+              this.sectionIndex.get(root).then((elem) => {
+                elem.localScrollProgressData("start").then((e) => {
+                  this.lastLocalScrollProgressStoreSubstription = e.get(this.localScrollPosStore.set.bind(this.localScrollPosStore), true)
+                })
+              })
+  
+              
+  
+              
+  
+              this.currentSectionIdStore.set(this.currentlyActiveSectionRootName)
+  
+              
+              
             }
-            else this.activateSectionNameWithDomain(root)
-
-            if (this.lastLocalScrollProgressStoreSubstription) {
-              this.lastLocalScrollProgressStoreSubstription.deactivate()
-              this.lastLocalScrollProgressStoreSubstription = undefined
-            }
-
-            elem.localScrollProgressData("start").then((e) => {
-              this.lastLocalScrollProgressStoreSubstription = e.get(this.localScrollPosStore.set.bind(this.localScrollPosStore), true)
-            })
-
-            
-
-            this.currentSectionIdStore.set(this.currentlyActiveSectionRootName)
-
-            
-            
           }
         })
       }
@@ -840,16 +846,19 @@ export default abstract class SectionedPage extends Page {
       rootMargin: "-50%"
     })
 
-    this.sectionIndex.forEach(async (section: Promise<PageSection>) => {
-      let sec = await section
-      sec._localScrollProgressData.forEach((prom, key) => {
-        prom.res(localSegmentScrollDataIndex(sec)(key))
-      })
-      
+    this.sectionIndex.forEach(async (key, sections: Promise<PageSection>[]) => {
+      for (const section of sections) {
+        let sec = await section
+        sec._localScrollProgressData.forEach((prom, key) => {
+          prom.res(localSegmentScrollDataIndex(sec)(key))
+        })
+        
 
-      sec.localScrollProgressData = (endOfPage: "start" | "end" | "center" | number) => {
-        return Promise.resolve(localSegmentScrollDataIndex(sec)(endOfPage))
+        sec.localScrollProgressData = (endOfPage: "start" | "end" | "center" | number) => {
+          return Promise.resolve(localSegmentScrollDataIndex(sec)(endOfPage))
+        }
       }
+      
     })
   }
 
@@ -865,15 +874,17 @@ export default abstract class SectionedPage extends Page {
       let ajustedHeight = obs.height * threshold
       let upperHit = obs.top + ajustedHeight
       let lowerHit = obs.bottom - ajustedHeight
-      sectionIndex.forEach(async (e: any) => {
-        let elem = await e as PageSection
-        let el = elem.getBoundingClientRect()
+      sectionIndex.forEach(async (key, elems: any) => {
+        for (let elem of elems) {
+          elem = await elem as PageSection
+          let el = elem.getBoundingClientRect()
 
-        
-        if (el.top <= upperHit && el.bottom >= lowerHit) {
-          if (lastHit !== elem) {
-            cb(elem)
-            lastHit = elem
+          
+          if (el.top <= upperHit && el.bottom >= lowerHit) {
+            if (lastHit !== elem) {
+              cb(elem)
+              lastHit = elem
+            }
           }
         }
       })
@@ -971,17 +982,21 @@ export default abstract class SectionedPage extends Page {
       // })
       if (this.currentlyActiveSectionElem) this.currentlyActiveSectionElem.activate()
 
-      sectionIndex.forEach(async (elem: any) => {
-        elem = await elem
-        this.mainIntersectionObserver.observe(elem)
+      sectionIndex.forEach(async (key, elems: any) => {
+        for (let elem of elems) {
+          elem = await elem
+          this.mainIntersectionObserver.observe(elem)
+        }
       })
     }
     else {
       this.intersectingIndex.clear()
       this.currentlyActiveSectionElem.deactivate()
-      sectionIndex.forEach(async (elem: any) => {
-        elem = await elem
-        this.mainIntersectionObserver.unobserve(elem)
+      sectionIndex.forEach(async (key, elems: any) => {
+        for (let elem of elems) {
+          elem = await elem
+          this.mainIntersectionObserver.unobserve(elem)
+        }
       })
     }
   }
