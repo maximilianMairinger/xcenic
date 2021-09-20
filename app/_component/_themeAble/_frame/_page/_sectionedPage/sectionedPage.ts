@@ -468,6 +468,7 @@ export default abstract class SectionedPage extends Page {
           first = false
           return 
         }
+        if (!this.active) return
       
 
         // console.log("resize", section)
