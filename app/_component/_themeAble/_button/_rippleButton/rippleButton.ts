@@ -56,7 +56,7 @@ export default abstract class RippleButton extends Button {
         this.initRipple(e);
       }))
 
-      return preLs
+      return curLs
     })();
 
     this.on("keydown", (e) => {
@@ -91,6 +91,12 @@ export default abstract class RippleButton extends Button {
 
     this.ripples = ce("button-waves");
     this.apd(this.ripples);
+    this.apd(ce("cover-me").css({
+      width: "100%",
+      height: "100%",
+      position: "absolute",
+      top: 0
+    }))
   }
 
 
@@ -98,8 +104,10 @@ export default abstract class RippleButton extends Button {
 
   protected fadeRipple: ((anim?: boolean) => void)[] = []
   protected rippleElems: ElementList<Element & {fade?: ((animation?: boolean) => void) & {auto?: boolean}}> = new ElementList
+  protected initRippleCb = (e?: MouseEvent | TouchEvent | KeyboardEvent | "center") => () => {}
 
   public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
+    const fadeRippleCb = this.initRippleCb()
 
     let r = this.wave.cloneNode() as Element;
     this.ripples.append(r);
@@ -114,6 +122,7 @@ export default abstract class RippleButton extends Button {
     
 
     const fadeAnim = async (anim = true) => {
+      fadeRippleCb()
       this.rippleElems.rmV(r)
 
       if (anim) {

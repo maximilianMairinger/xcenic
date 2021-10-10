@@ -4,7 +4,7 @@
   
   --ripple-color: var(--primary-text);
 
-  --wave: 0, 0, 0;
+  --wave: var(--primary-text);
   --counter-wave: var(--plain-background);
 
   /* private */
@@ -40,9 +40,13 @@ button-text {
   text-align: center;
   font-weight: bold;
   
-
-  color: white;
+  transition: .75s color;
+  color: #D2E1E1;
   mix-blend-mode: difference;
+}
+
+:host(.preSelected) button-text {
+  color: white;
 }
 
 /* button-text {
