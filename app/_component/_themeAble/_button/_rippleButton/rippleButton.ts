@@ -9,6 +9,7 @@ import Button from "../button";
 if (window.TouchEvent === undefined) window.TouchEvent = class SurelyNotTouchEvent {} as any
 
 export default abstract class RippleButton extends Button {
+  private validButtons = [0]
   private ripples: HTMLElement;
   private wave: HTMLElement;
 
@@ -26,7 +27,7 @@ export default abstract class RippleButton extends Button {
       const preLs = [] as EventListener[]
       preLs.add(this.on("mousedown", (e) => {
         if (!touched) {
-          this.initRipple(e);
+          if (this.validButtons.includes(e.button)) this.initRipple(e);
         }
       }))
 
@@ -53,7 +54,7 @@ export default abstract class RippleButton extends Button {
 
       const curLs = [] as EventListener[]
       curLs.add(this.on("mousedown", (e) => {
-        this.initRipple(e);
+        if (this.validButtons.includes(e.button)) this.initRipple(e);
       }))
 
       return curLs
@@ -100,7 +101,16 @@ export default abstract class RippleButton extends Button {
   }
 
 
-
+  public link(): string
+  public link(to: string, domainLevel?: number, push?: boolean, notify?: boolean): this
+  public link(to?: string, domainLevel?: number, push?: boolean, notify?: boolean): any {
+    if (typeof to === "string") this.validButtons.add(1, 2)
+    else if (to === null) {
+      if (this.validButtons.includes(1)) this.validButtons.rmV(1)
+      if (this.validButtons.includes(2)) this.validButtons.rmV(2)
+    }
+    return super.link(to, domainLevel, push, notify)
+  }
 
   protected fadeRipple: ((anim?: boolean) => void)[] = []
   protected rippleElems: ElementList<Element & {fade?: ((animation?: boolean) => void) & {auto?: boolean}}> = new ElementList
