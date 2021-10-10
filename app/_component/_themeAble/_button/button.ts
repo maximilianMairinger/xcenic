@@ -4,6 +4,20 @@ import declareComponent from "../../../lib/declareComponent";
 import * as domain from "./../../../lib/domain"
 
 
+function getActiveElement(root: Document | ShadowRoot = document): Element {
+  const activeEl = root.activeElement;
+
+  if (!activeEl) {
+    return null;
+  }
+
+  if (activeEl.shadowRoot) {
+    return getActiveElement(activeEl.shadowRoot);
+  } else {
+    return activeEl;
+  }
+}
+
 const pressedClass = "pressed";
 
 
@@ -12,17 +26,17 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
   private mouseOverListener: EventListener;
   private mouseOutListener: EventListener;
   private callbacks: ((e: MouseEvent | KeyboardEvent) => void)[] = [];
+  public preventOnClickFocus = false
 
-  private preferedTabIndex: number
+  private preferedTabIndex: number = 0
   private _hotKey: string
-  constructor(protected readonly enabled: boolean = false, focusOnHover: boolean = false, tabIndex: number = 0, public obtainDefault: boolean = false, public preventFocus = false, blurOnMouseOut: boolean = false, hotkey?: string) {
+  constructor(protected readonly enabled: boolean = false) {
     super(ce("a") as any)
     
 
-    if (enabled) this.enableForce(true)
-    else this.enableForce(true)
+    if (enabled) this.enableForce()
+    else this.disableForce()
 
-    this.preferedTabIndex = tabIndex
 
     let alreadyPressed = false;
 
@@ -55,42 +69,55 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
       alreadyPressed = false;
     });
 
+    
+    this.componentBody.on("mouseover", () => {
+      (this as any).lastFocusedElement = getActiveElement()
+    })
+
     //@ts-ignore
     this.mouseOverListener = this.componentBody.on("mouseover", () => {
       this.focus();
-    }, false)
+    }).deactivate()
+
     //@ts-ignore
     this.mouseOutListener = this.componentBody.on("mouseout", () => {
-      this.blur();
-    }, false)
+      this.blurToLastFoc()
+    }).deactivate()
 
-    this.focusOnHover(focusOnHover);
-    this.blurOnMouseOut(blurOnMouseOut);
-    this.hotkey(hotkey)
-
-    this.disable(true)
   }
-  private enableForce(prevFocus: boolean) {
+  public readonly lastFocusedElement: Element
+  private enableForce() {
     //@ts-ignore
     this.enabled = true
-    this.componentBody.tabIndex = this.preferedTabIndex
+    if (this.tabIndex === -1) this.tabIndex = this.preferedTabIndex
     this.addClass("enabled");
-    if (!prevFocus) this.focus()
   }
-  public enable(prevFocus: boolean = true) {
+  public enable() {
     if (this.enabled) return
-    this.enableForce(prevFocus)
+    this.enableForce()
   }
-  private disableForce(prevBlur: boolean) {
+  private disableForce() {
     //@ts-ignore
     this.enabled = false
-    this.componentBody.tabIndex = -1
+    this.preferedTabIndex = this.tabIndex
+    this.tabIndex = -1
     this.removeClass("enabled");
-    if (!prevBlur) this.blur()
   }
-  public disable(prevBlur: boolean = false) {
+  private blurToLastFoc() {
+    let el = this as any
+    while (el.lastFocusedElement) el = el.lastFocusedElement
+    if (el !== this) el.focus()
+    else el.blur()
+  }
+  public disable() {
     if (!this.enabled) return
-    this.disableForce(prevBlur)
+    this.disableForce()
+  }
+  set tabIndex(to: number) {
+    this.componentBody.tabIndex = to
+  }
+  get tabIndex(): number {
+    return this.componentBody.tabIndex
   }
 
   private _link: string
@@ -100,7 +127,6 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
   public link(to?: string, domainLevel: number = 0, push = true, notify?: boolean) {
     if (to !== undefined) {
       if (to !== null) {
-        this.obtainDefault = true
         let link = domain.linkMeta(to, domainLevel)
         this.componentBody.href = link.href
         this._link = link.link
@@ -126,9 +152,6 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
     else return this._link
   }
 
-  public blurOnMouseOut(to: boolean) {
-    this.mouseOutListener.active(to)
-  }
   public addActivationCallback<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB {
     this.callbacks.add(cb);
     if (!this.enabled) this.enable()
@@ -165,9 +188,9 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
       this.addActivationCallback(e_f)
     }
     else {
-      if (e_f !== undefined && !this.obtainDefault) e_f.preventDefault();
+      if (e_f !== undefined) e_f.preventDefault();
       if (this.enabled) {
-        if (!this.preventFocus) this.focus();
+        if (!this.preventOnClickFocus) this.focus();
         this.callbacks.forEach(f => {f.call(this, e_f);});
       }
     }

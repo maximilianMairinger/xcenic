@@ -15,18 +15,23 @@ export function declareComponent<Comp>(name: string, component: Comp){
     let attrbs = []
     attrbs[byMe] = true
     let cur = component
+
+    const attrIndex = {} as any
+    const attrSetFunc = function (attrName: string, oldVal: string, newVal: string) {
+      this[attrIndex[attrName]](newVal)
+    }
+
     //@ts-ignore
     while (cur.prototype instanceof Component) {
       //@ts-ignore
       let localAttrbs = Object.getOwnPropertyNames(cur.prototype)
+      
+      //@ts-ignore
+      cur.prototype.attributeChangedCallback = attrSetFunc
       for (let i = 0; i < localAttrbs.length; i++) {
-        if (!isLowerCase(localAttrbs[i])) {
-          let lower = localAttrbs[i].toLowerCase()
-          //@ts-ignore
-          cur.prototype[lower] = cur.prototype[localAttrbs[i]]
-          localAttrbs[i] = lower
-        }
+        localAttrbs[i] = attrIndex[localAttrbs[i]] = localAttrbs[i].toLowerCase()
       }
+
       attrbs.add(...localAttrbs)
       cur = Object.getPrototypeOf(cur)
       

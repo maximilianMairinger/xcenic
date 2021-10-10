@@ -1,8 +1,9 @@
 import delay from "delay";
-import { ElementList } from "extended-dom";
+import { ElementList, EventListener } from "extended-dom";
 import { Data } from "josm";
 import declareComponent from "../../../../lib/declareComponent";
 import Button from "../button";
+
 
 
 if (window.TouchEvent === undefined) window.TouchEvent = class SurelyNotTouchEvent {} as any
@@ -13,45 +14,86 @@ export default abstract class RippleButton extends Button {
 
 
 
-  public preActive: Data<boolean> = new Data(false) as any
+  public preActive: Data<boolean> = new Data(true) as any
+  
 
-    constructor(activationCallback?: (e?: MouseEvent | KeyboardEvent) => void, enabled?: boolean, focusOnHover?: boolean, tabIndex?: number) {
-      super(enabled, focusOnHover, tabIndex);
-      this.draggable = false
+    constructor(onClick?: (e?: MouseEvent | KeyboardEvent) => void) {
+      super();
+      this.draggable = false;
 
+      const preLs = (() => {
 
-      this.on("mousedown", (e) => {
-        if (!touched) {
+        const preLs = [] as EventListener[]
+        preLs.add(this.on("mousedown", (e) => {
+          if (!touched) {
+            this.initRipple(e);
+          }
+        }))
+
+        let touched = false
+        preLs.add(this.on("touchend", () => {
+          touched = true
+          delay(100).then(() => {
+            touched = false
+          })
+        }))
+
+        preLs.add(this.on("touchstart", (e) => {
           this.initRipple(e);
-          this.preActive.set(true)
-        }
-      })
-      let touched = false
-      this.on("touchend", () => {
-        touched = true
-        delay(100).then(() => {
-          touched = false
-        })
-      })
+        }))
 
-      this.on("touchstart", (e) => {
-        this.initRipple(e);
-        this.preActive.set(true)
-      })
+
+
+        return preLs
+      })();
+
+
+
+      const curLs = (() => {
+
+        const curLs = [] as EventListener[]
+        curLs.add(this.on("mousedown", (e) => {
+          this.initRipple(e);
+        }))
+
+        return preLs
+      })();
 
       this.on("keydown", (e) => {
         if (e.key === " " || e.key === "Enter") this.initRipple(e)
       })
-      
+
+      this.preActive.get((pre) => {
+        if (pre) {
+          for (let p of preLs) {
+            p.activate()
+          }
+          for (let c of curLs) {
+            c.deactivate()
+          }
+        }
+        else {
+          for (let c of curLs) {
+            c.activate()
+          }
+          for (let p of preLs) {
+            p.deactivate()
+          }
+        }
+      }, false)
+
       
 
-      if (activationCallback) super.addActivationCallback(activationCallback);
+
+      if (onClick) super.click(onClick);
 
       this.wave = ce("button-wave");
 
       this.ripples = ce("button-waves");
       this.apd(this.ripples);
     }
+
+
 
 
     protected fadeRipple: ((anim?: boolean) => void)[] = []
@@ -102,7 +144,6 @@ export default abstract class RippleButton extends Button {
         if (once) {
           once = false;
           fadeisok()
-          this.preActive.set(false)
         }
       }
 

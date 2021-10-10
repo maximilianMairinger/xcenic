@@ -14,12 +14,8 @@ export default class SelectButton extends RippleButton {
 
     if (selectedCallback) this.selected.get(selectedCallback)
 
-    this.preActive.get((yes) => {
-      if (yes) {
-        this.componentBody.removeClass("confirmed")
-        this.rippleElems.last.fade.auto = true
-      }
-    })
+
+    this.preActive.set(false)
 
     this.addActivationCallback(() => {
       this.selected.set(!this.selected.get())
@@ -29,7 +25,6 @@ export default class SelectButton extends RippleButton {
 
     this.selected.get((selected) => {
       this.rippleElems.last.fade.auto = false
-      this.componentBody.addClass("confirmed")
 
       if (selected) this.addClass("selected")
       else this.removeClass("selected")

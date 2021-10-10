@@ -62,22 +62,12 @@ button-wave:nth-child(2n) {
   background: rgb(var(--counter-wave));
 }
 
-
 button-wave:nth-child(2n):last-child {
-  background: rgba(var(--counter-wave), .1);
-  transition: background-color .1s;
-}
-
-.confirmed button-wave:nth-child(2n):last-child {
-  background: rgba(var(--counter-wave), 1);
+  background: rgb(var(--counter-wave));
 }
 
 button-wave:nth-child(2n+1):last-child {
-  background: rgba(var(--wave), .1);
-}
-
-.confirmed button-wave:nth-child(2n+1):last-child {
-  background: rgba(var(--wave), 1);
+  background: rgb(var(--wave));
 }
 
 

@@ -31,9 +31,6 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
     }
   }
 
-  protected attributeChangedCallback(attrName: string, oldVal: string, newVal: string) {
-    this[attrName](newVal)
-  }
 
   public abstract stl(): string;
   public abstract pug(): string;

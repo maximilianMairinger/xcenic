@@ -8,10 +8,10 @@ export default class BlockButton extends RippleButton {
   private textElem = ce("button-text")
   private spinner = ce("loading-spinner")
   private textContainer = ce("button-container")
-  constructor(content: string = "", activationCallback?: ((e?: MouseEvent | KeyboardEvent) => void | Promise<void>)) {
+  constructor(content: string = "", onClick?: ((e?: MouseEvent | KeyboardEvent) => any)) {
     super();
 
-    if (activationCallback) this.addActivationCallback(activationCallback)
+    if (onClick) this.click(onClick)
     this.content(content);
     this.apd(
       this.spinner

@@ -25,7 +25,7 @@ export default class LowerNavLink extends ThemeAble {
   constructor(link: string, icon: HighlightAbleIcon, domainLevel?: number, content?: string | Data<string>) {
     super()
 
-    this.buttonElem.preventFocus = true
+    this.buttonElem.preventOnClickFocus = true
 
     this.content(content)
     this.icon(icon)
