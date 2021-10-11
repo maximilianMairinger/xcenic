@@ -44,7 +44,7 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
   protected async minimalContentPaint(): Promise<void> {
     await this.loadPrevResImages()()
   }
-  protected fullContentPaint(): void | Promise<void> {
+  protected async fullContentPaint(): Promise<void> {
 
   }
   protected async completePaint(): Promise<void> {

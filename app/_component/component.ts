@@ -69,6 +69,10 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
     return this
   }
 
+  protected minimalContentPaint?(): Promise<void>
+  protected fullContentPaint?(): Promise<void>
+  protected completePaint?(): Promise<void>
+
   protected parseJSONProp(prop: any) {
     if (typeof prop === "string") return JSON.parse(prop)
     else return prop

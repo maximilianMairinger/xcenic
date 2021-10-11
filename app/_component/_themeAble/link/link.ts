@@ -6,6 +6,8 @@ import delay from "delay"
 // import ExternalLinkIcon from "../_icon/externalLink/externalLink"
 import { Prim, EventListener } from "extended-dom";
 
+import ResablePromise from "../../../lib/resAblePromise";
+
 
 export default class Link extends ThemeAble {
   private aElem = this.q("a") as unknown as HTMLAnchorElement
@@ -20,7 +22,7 @@ export default class Link extends ThemeAble {
 
   private eventTargetLs = [] as EventListener[]
 
-  constructor(content: string | Data<string>, link?: string, public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true, eventTarget?: Element) {
+  constructor(content: string | Data<string>, link?: string | (() => void), public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true, eventTarget?: Element) {
     super(false)
 
     // this.theme.get((to) => {
@@ -29,7 +31,10 @@ export default class Link extends ThemeAble {
 
     
     this.content(content)
-    if (link) this.link(link)
+    if (link !== null && link !== undefined) {
+      if (link instanceof Function) this.addActivationListener(link)
+      else this.link(link)
+    }
 
 
     let ev = async (e: Event, dontSetLocation = false) => {
@@ -224,6 +229,8 @@ export default class Link extends ThemeAble {
 
   }
 
+  
+
   eventtarget(target: Node | "parent") {
     const el = typeof target === "string" ? this.parent() : target
     this.eventTargetLs.Inner("target", [el])
@@ -237,7 +244,29 @@ export default class Link extends ThemeAble {
     this.aElem.href = meta.href
   }
 
-  private _link: string
+  private _link: string = null
+
+  private copyNeeded = false
+  private copyImports = {} as {
+    tippy: ResablePromise
+    copy: ResablePromise
+  }
+  $copy() {
+    this.copyNeeded = true
+    this.copyImports.copy = new ResablePromise()
+    this.copyImports.tippy = new ResablePromise()
+    
+    this.addActivationListener(async () => {
+      
+      this.copyImports.copy.then(({default: copy}) => {
+        copy("test")
+      })
+      this.copyImports.tippy.then(({default: tippy}) => {
+        console.log(tippy)
+      })
+      
+    })
+  }
 
   link(): string
   link(to: string | {link: string, domainLevel: number}): this
@@ -258,7 +287,7 @@ export default class Link extends ThemeAble {
     }
     else if (to === null) {
       this._link = null
-      this.removeClass("active")
+      if (this.cbs.empty) this.removeClass("active")
     }
     else return this._link
   }
@@ -267,9 +296,11 @@ export default class Link extends ThemeAble {
 
   public addActivationListener(listener: (e: Event) => void) {
     this.cbs.add(listener)
+    this.addClass("active")
   }
   public removeActivationListener(listener: (e: Event) => void) {
     this.cbs.rmV(listener)
+    if (this.cbs.empty && this._link === null) this.addClass("active")
   }
 
   content(): string
