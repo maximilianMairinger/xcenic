@@ -50,11 +50,18 @@ export default class SelectButton extends RippleButton {
       if (selected) this.addClass("selected")
       else this.removeClass("selected")
 
-
-      if (!selected && this.fadeRipple.first !== undefined) delay(1000).then(() => {
-        this.rippleElems.first.fade(false)
-        this.rippleElems.first.fade(false)
-      })
+      if (!selected) {
+        if (this.fadeRipple.first !== undefined) {
+          const myRipples = [this.rippleElems[0], this.rippleElems[1]]
+          this.rippleSettled.then(() => {
+            myRipples[0].fade(true).then(() => {
+              myRipples[1].fade(false)  
+            })
+          })
+        }
+          
+        
+      }
     }, false)
 
     this.content(content);

@@ -88,7 +88,8 @@ export default abstract class RippleButton extends Button {
 
     if (onClick) super.click(onClick);
 
-    this.wave = ce("button-wave");
+    this.wave = ce("button-wave-container").apd(ce("button-wave"))
+
 
     this.ripples = ce("button-waves");
     this.apd(this.ripples);
@@ -113,14 +114,19 @@ export default abstract class RippleButton extends Button {
   }
 
   protected fadeRipple: ((anim?: boolean) => void)[] = []
-  protected rippleElems: ElementList<Element & {fade?: ((animation?: boolean) => void) & {auto?: boolean}}> = new ElementList
+  protected rippleElems: ElementList<Element & {fade?: ((animation?: boolean) => Promise<void>) & {auto?: boolean}}> = new ElementList
   protected initRippleCb = (e?: MouseEvent | TouchEvent | KeyboardEvent | "center") => () => {}
 
+
+  public rippleSettled = Promise.resolve()
   public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
+    let rippleSettled: Function
+    this.rippleSettled = new Promise((res) => {rippleSettled = res})
     const fadeRippleCb = this.initRippleCb()
 
-    let r = this.wave.cloneNode() as Element;
-    this.ripples.append(r);
+    let rippleWaveElemContainer = this.wave.cloneNode(true) as Element;
+    let rippleWaveElem = rippleWaveElemContainer.children[0]
+    this.ripples.apd(rippleWaveElemContainer);
 
     const fadeAnimIfPossible: Function & {auto?: boolean} = () => {
       setTimeout(() => {
@@ -133,23 +139,23 @@ export default abstract class RippleButton extends Button {
 
     const fadeAnim = async (anim = true) => {
       fadeRippleCb()
-      this.rippleElems.rmV(r)
+      this.rippleElems.rmV(rippleWaveElem)
 
       if (anim) {
         try {
-          await r.anim({opacity: 0}, 500);  
+          await rippleWaveElem.anim({opacity: 0}, 500);  
         } catch (error) {
           
         }
         await delay(500)
       }
       
-      r.remove()
+      rippleWaveElemContainer.remove()
     }
     fadeAnim.auto = true;
 
-    (r as any).fade = fadeAnim
-    this.rippleElems.add(r)
+    (rippleWaveElem as any).fade = fadeAnim
+    this.rippleElems.add(rippleWaveElem)
 
     this.fadeRipple.add(fadeAnim)
 
@@ -187,21 +193,21 @@ export default abstract class RippleButton extends Button {
 
       }
       let offset = this.absoluteOffset();
-      x = (e as MouseEvent).pageX - offset.left - r.width() / 2;
-      y = (e as MouseEvent).pageY - offset.top - r.height() / 2;
+      x = (e as MouseEvent).pageX - offset.left - rippleWaveElem.width() / 2;
+      y = (e as MouseEvent).pageY - offset.top - rippleWaveElem.height() / 2;
 
       
     }
     else {
-      x = this.width() / 2 - r.width() / 2;
-      y = this.height() / 2 - r.height() / 2;
+      x = this.width() / 2 - rippleWaveElem.width() / 2;
+      y = this.height() / 2 - rippleWaveElem.height() / 2;
 
       if (e instanceof KeyboardEvent) {
         this.on("keyup", uiOut, {once: true});
         this.on("blur", uiOut, {once: true});
       }
     }
-    r.css({
+    rippleWaveElem.css({
         marginTop: y,
         marginLeft: x
     });
@@ -210,17 +216,13 @@ export default abstract class RippleButton extends Button {
 
     
     
-    this.rippleAnimProm = r.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + (this.width() / 25 * 2.2) + ")"}], {duration: biggerMetric * 4, easing: "linear"}).then(fadeisok);
+    const animProm = rippleWaveElem.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + (this.width() / 25 * 2.2) + ")"}], {duration: biggerMetric * 4, easing: "linear"}).then(fadeisok);
+    animProm.then(() => rippleSettled())
     
     
 
     return fadeisok
   }
-
-  protected rippleAnimProm: Promise<any>
-
-
-  
 
 
   stl() {
