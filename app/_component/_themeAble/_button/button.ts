@@ -191,7 +191,9 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
       if (e_f !== undefined) e_f.preventDefault();
       if (this.enabled) {
         if (!this.preventOnClickFocus) this.focus();
-        this.callbacks.forEach(f => {f.call(this, e_f);});
+        setTimeout(() => {
+          this.callbacks.forEach(f => {f.call(this, e_f);});
+        })
       }
     }
     

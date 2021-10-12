@@ -62,8 +62,19 @@ export default abstract class RippleButton extends Button {
       return curLs
     })();
 
+
+    let keyPressed = false
     this.on("keydown", (e) => {
-      if (e.key === " " || e.key === "Enter") this.initRipple(e)
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault()
+        if (!keyPressed) {
+          keyPressed = true
+          this.initRipple(e)
+        }
+      }
+    })
+    this.on("keyup", (e) => {
+      if (e.key === " " || e.key === "Enter") keyPressed = false
     })
 
     this.preActive.get((pre) => {

@@ -45,7 +45,10 @@ export default class SelectButton extends RippleButton {
 
     this.selected.get((selected) => {
       nvmCanc()
+      
       this.rippleElems.last.fade.auto = false
+      
+      
 
       if (selected) this.addClass("selected")
       else this.removeClass("selected")
@@ -74,6 +77,7 @@ export default class SelectButton extends RippleButton {
       top: 0
     }))
     this.apd(this.textElem)
+    this.apd(ce("focus-man"))
   }
   
 
