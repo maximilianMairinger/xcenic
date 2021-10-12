@@ -33,6 +33,7 @@ focus-man {
   left: 0;
   top: 0;
   border-radius: inherit;
+  pointer-events: none;
 }
 
 
