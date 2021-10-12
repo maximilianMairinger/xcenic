@@ -16,7 +16,7 @@ ui-container-box
         c-select-button(content="$[ contact.requestOptions.4 ]")
         c-select-button(content="$[ contact.requestOptions.5 ]")
       h3.details $[ contact.detailsQuery ]
-      textarea.details
+      c-textarea.details(placeholder="$[ contact.detailsPlaceholder ]")
       seperator-row
         c-line-accent
         h3.lastThing $[ contact.lastThingQuery ]

@@ -3,6 +3,10 @@ component-body {
   height: fit-content;
 }
 
+:host {
+  --input-background-color: #f2f2f2;
+}
+
 image-container {
   display: block;
   width: 100%;
@@ -92,18 +96,9 @@ h3 {
   line-height: 1.13em;
 }
 
-textarea {
-  border-radius: 20px;
-  border: 1px solid rgba(var(--plain-text), .2);
-  border: 1px solid rgba(0, 0, 0, .2);
-  box-sizing: border-box;
-  resize: none;
-  padding: 15px;
-  font-size: 14px;
-  font-family: inherit;
-}
 
-textarea.details {
+
+c-textarea.details {
   width: 100%;
   flex-grow: 1;
 }

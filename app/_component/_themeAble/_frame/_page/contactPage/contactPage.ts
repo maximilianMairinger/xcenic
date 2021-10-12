@@ -10,6 +10,7 @@ import BlockButton from  "./../../../_button/_rippleButton/blockButton/blockButt
 import "./../../../_button/_rippleButton/selectButton/selectButton"
 import "./../../../_icon/lineAccent/lineAccent"
 import "./../../../input/input"
+import "./../../../textArea/textArea"
 
 
 
