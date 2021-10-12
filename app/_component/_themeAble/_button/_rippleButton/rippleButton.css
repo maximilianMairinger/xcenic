@@ -12,15 +12,13 @@
   height: fit-content;
   width: fit-content;
   box-sizing: border-box;
+  z-index: 0;
 }
 
 a {
   overflow: hidden;
   border-radius: inherit;
   display: block;
-  margin-left: -.5px;
-  margin-top: -.5px;
-  padding-bottom: 1px;
   position: relative;
 }
 
@@ -31,6 +29,9 @@ button-waves {
   height: 100%;
   display: block;
   border-radius: inherit;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
 
 button-wave-container {

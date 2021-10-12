@@ -53,6 +53,7 @@ export default class SelectButton extends RippleButton {
       if (!selected) {
         if (this.fadeRipple.first !== undefined) {
           const myRipples = [this.rippleElems[0], this.rippleElems[1]]
+          this.rippleElems.rmI(0, 1)
           this.rippleSettled.then(() => {
             myRipples[0].fade(true).then(() => {
               myRipples[1].fade(false)  
@@ -65,6 +66,13 @@ export default class SelectButton extends RippleButton {
     }, false)
 
     this.content(content);
+    
+    this.apd(ce("cover-me").css({
+      width: "100%",
+      height: "100%",
+      position: "absolute",
+      top: 0
+    }))
     this.apd(this.textElem)
   }
   

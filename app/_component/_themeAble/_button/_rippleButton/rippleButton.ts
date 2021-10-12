@@ -22,6 +22,8 @@ export default abstract class RippleButton extends Button {
     super();
     this.draggable = false;
 
+    this.addClass("rippleSettled")
+
     const preLs = (() => {
 
       const preLs = [] as EventListener[]
@@ -93,12 +95,6 @@ export default abstract class RippleButton extends Button {
 
     this.ripples = ce("button-waves");
     this.apd(this.ripples);
-    this.apd(ce("cover-me").css({
-      width: "100%",
-      height: "100%",
-      position: "absolute",
-      top: 0
-    }))
   }
 
 
@@ -121,7 +117,8 @@ export default abstract class RippleButton extends Button {
   public rippleSettled = Promise.resolve()
   public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
     let rippleSettled: Function
-    this.rippleSettled = new Promise((res) => {rippleSettled = res})
+    const myRippleSettledProm = this.rippleSettled = new Promise((res) => {rippleSettled = res})
+    this.removeClass("rippleSettled")
     const fadeRippleCb = this.initRippleCb()
 
     let rippleWaveElemContainer = this.wave.cloneNode(true) as Element;
@@ -131,6 +128,7 @@ export default abstract class RippleButton extends Button {
     const fadeAnimIfPossible: Function & {auto?: boolean} = () => {
       setTimeout(() => {
         if (!fadeAnim.auto) return
+        this.rippleElems.rmV(rippleWaveElem)
         return fadeAnim()
       })
     }
@@ -139,7 +137,6 @@ export default abstract class RippleButton extends Button {
 
     const fadeAnim = async (anim = true) => {
       fadeRippleCb()
-      this.rippleElems.rmV(rippleWaveElem)
 
       if (anim) {
         try {
@@ -217,7 +214,10 @@ export default abstract class RippleButton extends Button {
     
     
     const animProm = rippleWaveElem.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + (this.width() / 25 * 2.2) + ")"}], {duration: biggerMetric * 4, easing: "linear"}).then(fadeisok);
-    animProm.then(() => rippleSettled())
+    animProm.then(() => {
+      if (this.rippleSettled === myRippleSettledProm) this.addClass("rippleSettled")
+      rippleSettled()
+    })
     
     
 

@@ -20,8 +20,32 @@
   border-radius: 25px;
 }
 
-:host(:hover) {
 
+/* :host(:focus-within) {
+  background-color: red;
+} */
+
+cover-me {
+  background: rgba(0, 0, 0, .04);
+  opacity: 0;
+  transition: .2s;
+}
+
+:host(.selected) cover-me {
+  background: rgba(255, 255, 255, .1);
+}
+
+:host(:hover:not(.afterClickFocus)) cover-me {
+  opacity: 1;
+}
+
+:host {
+  box-shadow: inset 0 0 2px 0px rgba(var(--primary-theme), 0);
+  transition: box-shadow .3s;
+}
+
+:host(:not(.clickFocus):focus-within) {
+  box-shadow: inset 0 0 0 2.5px rgba(var(--primary-theme), 1);
 }
 
 a {
@@ -44,13 +68,27 @@ button-text {
   font-weight: bold;
   
   box-sizing: border-box;
-  transition: .5s color;
   color: #D2E1E1;
   mix-blend-mode: difference;
 }
 
 :host(.preSelected) button-text {
   color: white;
+}
+
+
+
+:host(.rippleSettled) button-text {
+  mix-blend-mode: normal;
+}
+
+:host(:not(.preSelected).rippleSettled) button-text {
+  color: rgb(var(--primary-text));
+  color: black;
+}
+
+:host(.preSelected.rippleSettled) button-text {
+  color: #d2e1e1
 }
 
 /* button-text {

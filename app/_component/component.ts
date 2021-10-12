@@ -15,6 +15,21 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
     this.sr = this.attachShadow({mode: "open"});
 
     
+    this.on("mousedown", () => {
+      this.addClass("clickFocus")
+      this.on("blur", () => {
+        this.removeClass("clickFocus")
+      }, {once: true})
+    })
+    this.on("mouseup", () => {
+      this.addClass("afterClickFocus")
+      this.on("mouseout", () => {
+        this.removeClass("afterClickFocus")
+      }, {once: true})
+
+    })
+
+    
     if (bodyExtension !== false) {
       //@ts-ignore
       this.componentBody = bodyExtension === undefined ? ce("component-body") : bodyExtension
