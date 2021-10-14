@@ -40,11 +40,11 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
 
     let alreadyPressed = false;
 
-    this.componentBody.on("click", (e) => {
-      /*if (e.which === 1)*/ this.click(e);
+    this.componentBody.on("mouseup", (e) => {
+      if (e.button === 0) this.click(e);
     });
     this.componentBody.on("mousedown", (e) => {
-      if (e.which === 1) this.addClass(pressedClass)
+      if (e.button === 0) this.addClass(pressedClass)
     })
     this.componentBody.on("mouseup", () => {
       this.removeClass(pressedClass);
@@ -53,7 +53,7 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
       this.removeClass(pressedClass);
     })
     this.componentBody.on("keydown", (e) => {
-      if (e.key === " ") if (!alreadyPressed) {
+      if (e.key === " " || e.key === "Enter") if (!alreadyPressed) {
         alreadyPressed = true;
         this.click(e)
       }
@@ -191,9 +191,7 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
       if (e_f !== undefined) e_f.preventDefault();
       if (this.enabled) {
         if (!this.preventOnClickFocus) this.focus();
-        setTimeout(() => {
-          this.callbacks.forEach(f => {f.call(this, e_f);});
-        })
+        this.callbacks.forEach(f => {f.call(this, e_f);});
       }
     }
     

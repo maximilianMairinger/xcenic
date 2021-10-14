@@ -31,7 +31,7 @@ export default abstract class RippleButton extends Button {
         if (!touched) {
           if (this.validButtons.includes(e.button)) this.initRipple(e);
         }
-      }))
+      }, {capture: true}))
 
       let touched = false
       preLs.add(this.on("touchend", () => {
@@ -39,11 +39,11 @@ export default abstract class RippleButton extends Button {
         delay(100).then(() => {
           touched = false
         })
-      }))
+      }, {capture: true}))
 
       preLs.add(this.on("touchstart", (e) => {
         this.initRipple(e);
-      }))
+      }, {capture: true}))
 
 
 
@@ -57,7 +57,7 @@ export default abstract class RippleButton extends Button {
       const curLs = [] as EventListener[]
       curLs.add(this.on("mousedown", (e) => {
         if (this.validButtons.includes(e.button)) this.initRipple(e);
-      }))
+      }, {capture: true}))
 
       return curLs
     })();
@@ -72,7 +72,7 @@ export default abstract class RippleButton extends Button {
           this.initRipple(e)
         }
       }
-    })
+    }, {capture: true})
     this.on("keyup", (e) => {
       if (e.key === " " || e.key === "Enter") keyPressed = false
     })
@@ -134,9 +134,11 @@ export default abstract class RippleButton extends Button {
 
     let rippleWaveElemContainer = this.wave.cloneNode(true) as Element;
     let rippleWaveElem = rippleWaveElemContainer.children[0]
-    this.ripples.apd(rippleWaveElemContainer);
+    this.ripples.apd(rippleWaveElemContainer); 
 
     const fadeAnimIfPossible: Function & {auto?: boolean} = () => {
+      debugger
+
       setTimeout(() => {
         if (!fadeAnim.auto) return
         this.rippleElems.rmV(rippleWaveElem)
