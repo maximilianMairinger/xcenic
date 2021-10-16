@@ -100,17 +100,19 @@ button-text {
 
 
 
-:host(.rippleSettled) button-text {
+:host(.rippleSettled.preSelected) button-text {
+  
+}
+
+:host(:not(.selected):not(.preSelected).rippleSettled) button-text {
+  color: rgb(var(--primary-text));
+  color: black;
   mix-blend-mode: normal;
 }
 
-:host(:not(.preSelected).rippleSettled) button-text {
-  color: rgb(var(--primary-text));
-  color: black;
-}
-
-:host(.preSelected.rippleSettled) button-text {
-  color: #d2e1e1
+:host(.selected.preSelected.rippleSettled) button-text {
+  color: #d2e1e1;
+  mix-blend-mode: normal;
 }
 
 /* button-text {

@@ -2,6 +2,7 @@ import ThemeAble from "../themeAble";
 import { EventListener } from "extended-dom";
 import declareComponent from "../../../lib/declareComponent";
 import * as domain from "./../../../lib/domain"
+import e from "express";
 
 
 function getActiveElement(root: Document | ShadowRoot = document): Element {
@@ -39,6 +40,10 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
 
 
     let alreadyPressed = false;
+
+    this.componentBody.on("click", (e) => {
+      e.preventDefault()
+    })
 
     this.componentBody.on("mouseup", (e) => {
       if (e.button === 0) this.click(e);

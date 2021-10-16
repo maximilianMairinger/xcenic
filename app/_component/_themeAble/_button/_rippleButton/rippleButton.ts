@@ -127,6 +127,7 @@ export default abstract class RippleButton extends Button {
 
   public rippleSettled = Promise.resolve()
   public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
+    console.log("initRipple")
     let rippleSettled: Function
     const myRippleSettledProm = this.rippleSettled = new Promise((res) => {rippleSettled = res})
     this.removeClass("rippleSettled")
@@ -137,8 +138,6 @@ export default abstract class RippleButton extends Button {
     this.ripples.apd(rippleWaveElemContainer); 
 
     const fadeAnimIfPossible: Function & {auto?: boolean} = () => {
-      debugger
-
       setTimeout(() => {
         if (!fadeAnim.auto) return
         this.rippleElems.rmV(rippleWaveElem)
