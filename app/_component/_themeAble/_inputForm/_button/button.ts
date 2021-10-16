@@ -1,8 +1,7 @@
-import ThemeAble from "../themeAble";
+import InputForm from "../inputForm";
 import { EventListener } from "extended-dom";
-import declareComponent from "../../../lib/declareComponent";
-import * as domain from "./../../../lib/domain"
-import e from "express";
+import declareComponent from "../../../../lib/declareComponent";
+import * as domain from "../../../../lib/domain"
 
 
 function getActiveElement(root: Document | ShadowRoot = document): Element {
@@ -22,7 +21,7 @@ function getActiveElement(root: Document | ShadowRoot = document): Element {
 const pressedClass = "pressed";
 
 
-export default class Button extends ThemeAble<HTMLAnchorElement> {
+export default class Button extends InputForm<HTMLAnchorElement> {
   private doesFocusOnHover: boolean;
   private mouseOverListener: EventListener;
   private mouseOutListener: EventListener;
@@ -227,10 +226,10 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
   }
 
   pug() {
-    return require("./button.pug").default
+    return super.pug() + require("./button.pug").default
   }
   stl() {
-    return require("./button.css")
+    return super.stl() + require("./button.css")
   }
 }
 

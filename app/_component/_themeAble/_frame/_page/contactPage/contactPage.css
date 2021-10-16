@@ -3,9 +3,6 @@ component-body {
   height: fit-content;
 }
 
-:host {
-  --input-background-color: #f2f2f2;
-}
 
 image-container {
   display: block;
@@ -97,10 +94,10 @@ h3 {
 }
 
 
-
 c-textarea.details {
   width: 100%;
   flex-grow: 1;
+  margin-bottom: 10px;
 }
 
 initial-view {
@@ -221,13 +218,15 @@ after-initial-view {
   
 }
 
-c-input {
+c-input2 {
   margin-bottom: 10px;
+  width: 100%;
+  opacity: 1;
 }
 
 
-c-input:last-child {
-  margin-bottom: 0;
+c-select-button:nth-last-child(2), c-textarea:nth-last-child(2), c-input2:nth-last-child(2) {
+  margin-bottom: 0 !important;
 }
 
 ui-container-content > * {

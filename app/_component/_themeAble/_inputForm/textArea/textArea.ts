@@ -3,8 +3,9 @@ import InputForm from "../inputForm";
 
 export default class TextArea extends InputForm {
   private textarea = this.q("textarea") as HTMLTextAreaElement
-  constructor() {
+  constructor(placeholder: string = "") {
     super(false)
+    this.placeholder(placeholder)
   }
   placeholder(to: string) {
     this.textarea.placeholder = to

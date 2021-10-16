@@ -17,12 +17,13 @@ ui-container-box
         c-select-button(content="$[ contact.requestOptions.5 ]")
       h3.details $[ contact.detailsQuery ]
       c-textarea.details(placeholder="$[ contact.detailsPlaceholder ]")
+      
       seperator-row
         c-line-accent
         h3.lastThing $[ contact.lastThingQuery ]
     after-initial-view
-      c-input(placeholder="$[ contact.yourName ]")
-      c-input(placeholder="$[ contact.email ]" type="email")
+      c-input2(placeholder="$[ contact.yourName ]")
+      c-input2(placeholder="$[ contact.email ]" type="email")
 
     scroll-margin
 

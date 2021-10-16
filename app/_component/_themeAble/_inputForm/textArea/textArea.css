@@ -9,7 +9,7 @@ textarea {
   border: 1px solid rgba(0, 0, 0, .2);
   border: none;
 
-  background: var(--input-background-color);
+  background: var(--background-color);
 
   box-sizing: border-box;
   resize: none;

@@ -1,7 +1,7 @@
 import delay from "delay";
 import { ElementList, EventListener } from "extended-dom";
 import { Data } from "josm";
-import declareComponent from "../../../../lib/declareComponent";
+import declareComponent from "../../../../../lib/declareComponent";
 import Button from "../button";
 
 

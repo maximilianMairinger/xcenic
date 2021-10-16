@@ -5,11 +5,11 @@ import Page from "../page";
 
 import "./../../../../image/image"
 import "./../../../textBlob/textBlob"
-import "./../../../_button/_rippleButton/blockButton/blockButton"
-import BlockButton from  "./../../../_button/_rippleButton/blockButton/blockButton"
-import "./../../../_button/_rippleButton/selectButton/selectButton"
+import "./../../../_inputForm/_button/_rippleButton/blockButton/blockButton"
+import BlockButton from  "./../../../_inputForm/_button/_rippleButton/blockButton/blockButton"
+import "./../../../_inputForm/_button/_rippleButton/selectButton/selectButton"
 import "./../../../_icon/lineAccent/lineAccent"
-import "./../../../input/input"
+import "./../../../_inputForm/input/input"
 import "./../../../_inputForm/textArea/textArea"
 
 
@@ -60,7 +60,7 @@ export default class ContactPage extends Page {
         this.lastThingElem.anim({translateY: 5, opacity: 0, scale: .95}, 400).then(() => {if (token === lastThingAnimSym) this.lastThingElem.hide().css({translateY: -20})})
       })
 
-    const afterInitViewElemFadeInScrollPos = lastThingShowPos.tunnel(e => e + 150)
+    const afterInitViewElemFadeInScrollPos = lastThingShowPos.tunnel(e => e + 50)
     scrollData.scrollTrigger(afterInitViewElemFadeInScrollPos)
       .on("forward", () => {
         this.afterInitialViewElem.anim({opacity: 1, translateY: 20}, 550)

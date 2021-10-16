@@ -1,6 +1,6 @@
 import RippleButton from "../rippleButton";
 import delay from "delay"
-import declareComponent from "../../../../../lib/declareComponent";
+import declareComponent from "../../../../../../lib/declareComponent";
 import { Data } from "josm";
 
 type ReadonlyData<T> = Omit<Data<T>, "set">
@@ -77,7 +77,6 @@ export default class SelectButton extends RippleButton {
       top: 0
     }))
     this.apd(this.textElem)
-    this.apd(ce("focus-man"))
   }
   
 

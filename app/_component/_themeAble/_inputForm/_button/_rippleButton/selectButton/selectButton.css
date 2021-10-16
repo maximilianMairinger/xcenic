@@ -5,7 +5,6 @@
 
   /* private */
   --wave-opacity: 1;
-  --background-color: #f2f2f2;
 
   --wave-color: rgb(var(--primary-text));
   --counter-wave-color: var(--background-color);
@@ -40,35 +39,11 @@ cover-me {
   opacity: 1;
 }
 
-focus-man {
-  transform: scale(1.05);
-  transition: .3s;
 
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-  border-radius: inherit;
+:host(.preSelected) {
+  --focus: 0, 153, 255;
 }
 
-focus-man {
-  box-shadow: inset 0 0 2.5px 0px rgba(var(--primary-theme), 0);
-}
-
-:host(.preSelected) focus-man {
-  box-shadow: inset 0 0 2.5px 0px rgba(0, 153, 255, 0);
-}
-
-
-:host(:not(.clickFocus):focus-within.preSelected) focus-man {
-  box-shadow: inset 0 0 0 2.5px rgb(0, 153, 255);
-}
-
-:host(:not(.clickFocus):focus-within) focus-man  {
-  box-shadow: inset 0 0 0 2.5px rgba(var(--primary-theme), 1);
-  transform: scale(1);
-}
 
 a {
   transition: border .3s, color .3s;

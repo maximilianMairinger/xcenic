@@ -1,6 +1,6 @@
 import RippleButton from "../rippleButton";
 import delay from "delay"
-import declareComponent from "../../../../../lib/declareComponent";
+import declareComponent from "../../../../../../lib/declareComponent";
 
 
 
