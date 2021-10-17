@@ -8,36 +8,17 @@
 
   --wave-color: rgb(var(--primary-text));
   --counter-wave-color: var(--background-color);
+
+
+  background-color: var(--background-color);
 }
 
 
 :host {
   display: block;
   width: fit-content;
-
-  background: var(--background-color);
-  border-radius: 25px;
 }
 
-
-/* :host(:focus-within) {
-  background-color: red;
-} */
-
-cover-me {
-  background: rgba(0, 0, 0, .04);
-  opacity: 0;
-  transition: .2s;
-  border-radius: inherit;
-}
-
-:host(.selected) cover-me {
-  background: rgba(255, 255, 255, .1);
-}
-
-:host(:hover:not(.afterClickFocus)) cover-me {
-  opacity: 1;
-}
 
 
 :host(.preSelected) {
@@ -52,6 +33,10 @@ a {
 a {
   height: min-content;
   width: max-content;
+}
+
+:host(.selected) cover-me {
+  background: rgba(255, 255, 255, .1);
 }
 
 

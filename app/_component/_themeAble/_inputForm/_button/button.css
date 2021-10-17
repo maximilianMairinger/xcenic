@@ -1,6 +1,8 @@
 :host {
   --text: var(--primary-text);
   --drag: auto;
+
+  background-color: transparent;
 }
 
 :host {

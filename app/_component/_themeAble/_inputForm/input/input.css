@@ -9,7 +9,8 @@ input {
   position: relative;
   box-sizing: border-box;
   padding: 0px;
-  background-color: var(--background-color);
   border: none;
-
+  background: transparent;
+  padding: 15px 17px;
+  font-size: 14px;
 }
