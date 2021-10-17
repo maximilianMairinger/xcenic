@@ -1,10 +1,10 @@
-import declareComponent from "../../../../lib/declareComponent";
-import InputForm from "../inputForm";
+import declareComponent from "../../../../../lib/declareComponent";
+import FormUi from "../formUi";
 
-export default class TextArea extends InputForm {
+export default class TextArea extends FormUi {
   private textarea = this.q("textarea") as HTMLTextAreaElement
   constructor(placeholder: string = "") {
-    super(false)
+    super()
     this.placeholder(placeholder)
   }
   placeholder(to: string) {

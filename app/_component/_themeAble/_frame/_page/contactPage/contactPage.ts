@@ -5,12 +5,12 @@ import Page from "../page";
 
 import "./../../../../image/image"
 import "./../../../textBlob/textBlob"
-import "./../../../_inputForm/_button/_rippleButton/blockButton/blockButton"
-import BlockButton from  "./../../../_inputForm/_button/_rippleButton/blockButton/blockButton"
-import "./../../../_inputForm/_button/_rippleButton/selectButton/selectButton"
+import "./../../../_focusAble/_formUi/_rippleButton/blockButton/blockButton"
+import BlockButton from  "./../../../_focusAble/_formUi/_rippleButton/blockButton/blockButton"
+import "./../../../_focusAble/_formUi/_rippleButton/selectButton/selectButton"
 import "./../../../_icon/lineAccent/lineAccent"
-import "./../../../_inputForm/input/input"
-import "./../../../_inputForm/textArea/textArea"
+import "./../../../_focusAble/_formUi/input/input"
+import "./../../../_focusAble/_formUi/textArea/textArea"
 
 
 

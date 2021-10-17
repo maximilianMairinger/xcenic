@@ -1,61 +1,42 @@
-import InputForm from "../inputForm";
-import { EventListener } from "extended-dom";
+import FocusAble from "../focusAble";
 import declareComponent from "../../../../lib/declareComponent";
 import * as domain from "../../../../lib/domain"
+import { PrimElem, Token, VariableLibrary } from "extended-dom";
+import Component from "../../../component";
 
 
-function getActiveElement(root: Document | ShadowRoot = document): Element {
-  const activeEl = root.activeElement;
-
-  if (!activeEl) {
-    return null;
-  }
-
-  if (activeEl.shadowRoot) {
-    return getActiveElement(activeEl.shadowRoot);
-  } else {
-    return activeEl;
-  }
-}
-
-const pressedClass = "pressed";
 
 
-export default class Button extends InputForm<HTMLAnchorElement> {
-  private doesFocusOnHover: boolean;
-  private mouseOverListener: EventListener;
-  private mouseOutListener: EventListener;
+export default class Button extends FocusAble<HTMLAnchorElement> {
   private callbacks: ((e: MouseEvent | KeyboardEvent) => void)[] = [];
   public preventOnClickFocus = false
 
   private preferedTabIndex: number = 0
   private _hotKey: string
+  public validMouseButtons = new Set([0])
+  private slotElem = ce("slot")
   constructor(protected readonly enabled: boolean = false) {
     super(ce("a") as any)
+    super.apd(this.slotElem)
+
+    this.draggable = false;
+
+    
     
 
     if (enabled) this.enableForce()
     else this.disableForce()
-
-
-    let alreadyPressed = false;
 
     this.componentBody.on("click", (e) => {
       e.preventDefault()
     })
 
     this.componentBody.on("mouseup", (e) => {
-      if (e.button === 0) this.click(e);
+      if (this.validMouseButtons.has(e.button)) this.click(e);
     });
-    this.componentBody.on("mousedown", (e) => {
-      if (e.button === 0) this.addClass(pressedClass)
-    })
-    this.componentBody.on("mouseup", () => {
-      this.removeClass(pressedClass);
-    });
-    this.componentBody.on("mouseout", () => {
-      this.removeClass(pressedClass);
-    })
+
+
+    let alreadyPressed = false
     this.componentBody.on("keydown", (e) => {
       if (e.key === " " || e.key === "Enter") if (!alreadyPressed) {
         alreadyPressed = true;
@@ -65,31 +46,13 @@ export default class Button extends InputForm<HTMLAnchorElement> {
     this.componentBody.on("keyup", (e) => {
       if (e.key === " " || e.key === "Enter"){
         alreadyPressed = false;
-        this.removeClass(pressedClass);
         e.preventDefault()
       }
     });
     this.componentBody.on("blur", () => {
       alreadyPressed = false;
     });
-
-    
-    this.componentBody.on("mouseover", () => {
-      (this as any).lastFocusedElement = getActiveElement()
-    })
-
-    //@ts-ignore
-    this.mouseOverListener = this.componentBody.on("mouseover", () => {
-      this.focus();
-    }).deactivate()
-
-    //@ts-ignore
-    this.mouseOutListener = this.componentBody.on("mouseout", () => {
-      this.blurToLastFoc()
-    }).deactivate()
-
   }
-  public readonly lastFocusedElement: Element
   private enableForce() {
     //@ts-ignore
     this.enabled = true
@@ -107,12 +70,6 @@ export default class Button extends InputForm<HTMLAnchorElement> {
     this.tabIndex = -1
     this.removeClass("enabled");
   }
-  private blurToLastFoc() {
-    let el = this as any
-    while (el.lastFocusedElement) el = el.lastFocusedElement
-    if (el !== this) el.focus()
-    else el.blur()
-  }
   public disable() {
     if (!this.enabled) return
     this.disableForce()
@@ -124,17 +81,31 @@ export default class Button extends InputForm<HTMLAnchorElement> {
     return this.componentBody.tabIndex
   }
 
+  public apd(...elems: PrimElem[]): this
+  public apd(to: PrimElem | PrimElem[], library?: VariableLibrary, customTokens?: {open?: Token, close?: Token, escape?: Token}): this
+  public apd(...a: any): this {
+    console.log("lol")
+    Object.getPrototypeOf(Component).prototype.apd.call(this, ...a)
+    return this
+  }
+
   private _link: string
   private linkFn: any
   public link(): string
+  public link(to: null): this
   public link(to: string, domainLevel?: number, push?: boolean, notify?: boolean): this
   public link(to?: string, domainLevel: number = 0, push = true, notify?: boolean) {
     if (to !== undefined) {
       if (to !== null) {
+        this.validMouseButtons.add(1)
+        this.validMouseButtons.add(2)
+
+
         let link = domain.linkMeta(to, domainLevel)
         this.componentBody.href = link.href
         this._link = link.link
-        this.linkFn = this.addActivationCallback((e) => {
+        if (this.linkFn !== undefined) this.removeActivationCallback(this.linkFn)
+        this.linkFn = this.click((e) => {
           if (e) e.preventDefault()
 
           domain.set(to, domainLevel, push, notify)
@@ -147,7 +118,10 @@ export default class Button extends InputForm<HTMLAnchorElement> {
         this.componentBody.on("focus", updateF)
       }
       else {
-        this.removeActivationCallback(this.linkFn)
+        this.validMouseButtons.delete(1)
+        this.validMouseButtons.delete(2)
+
+        if (this.linkFn !== undefined) this.removeActivationCallback(this.linkFn)
       }
 
       return this
@@ -167,29 +141,12 @@ export default class Button extends InputForm<HTMLAnchorElement> {
     return cb
   }
 
-  public focusOnHover(): boolean
-  public focusOnHover(to: boolean): void
-  public focusOnHover(to?: boolean) {
-    if (to !== undefined) {
-      this.doesFocusOnHover = to;
-      if (to) {
-        this.mouseOverListener.activate();
-        this.mouseOutListener.activate();
-      }
-      else {
-        this.mouseOverListener.deactivate();
-        this.mouseOutListener.deactivate();
-      }
-    }
-    else return this.doesFocusOnHover;
-  }
-
   
   public click<CB extends (e?: MouseEvent | KeyboardEvent) => void>(f: CB): CB
   public click(e?: MouseEvent | KeyboardEvent)
   public click(e_f?: MouseEvent | KeyboardEvent | ((e?: MouseEvent | KeyboardEvent) => void)) {
     if (e_f instanceof Function) {
-      this.addActivationCallback(e_f)
+      return this.addActivationCallback(e_f)
     }
     else {
       if (e_f !== undefined) e_f.preventDefault();

@@ -1,8 +1,6 @@
 :host {
   --text: var(--primary-text);
   --drag: auto;
-
-  background-color: transparent;
 }
 
 :host {
@@ -12,6 +10,8 @@
   user-select: none;
   cursor: pointer;
   font-weight: bold;
+  display: block;
+  background-color: transparent;
 }
 
 a {
@@ -27,4 +27,7 @@ a {
 
   -webkit-user-drag: var(--drag);
   user-drag: var(--drag);
+
+  height: min-content;
+  width: max-content;
 }

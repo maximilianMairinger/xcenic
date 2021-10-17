@@ -26,22 +26,13 @@
 }
 
 
-a {
-  transition: border .3s, color .3s;
-}
-
-a {
-  height: min-content;
-  width: max-content;
-}
-
-:host(.selected) cover-me {
+:host(.selected) ::slotted(cover-me) {
   background: rgba(255, 255, 255, .1);
 }
 
 
 
-button-text {
+::slotted(button-text) {
   display: block;
   font-size: 1em;
   margin: auto 0;
@@ -54,23 +45,23 @@ button-text {
   mix-blend-mode: difference;
 }
 
-:host(.preSelected) button-text {
+:host(.preSelected) ::slotted(button-text) {
   color: white;
 }
 
 
 
-:host(.rippleSettled.preSelected) button-text {
+:host(.rippleSettled.preSelected) ::slotted(button-text) {
   
 }
 
-:host(:not(.selected):not(.preSelected).rippleSettled) button-text {
+:host(:not(.selected):not(.preSelected).rippleSettled) ::slotted(button-text) {
   color: rgb(var(--primary-text));
   color: black;
   mix-blend-mode: normal;
 }
 
-:host(.selected.preSelected.rippleSettled) button-text {
+:host(.selected.preSelected.rippleSettled) ::slotted(button-text) {
   color: #d2e1e1;
   mix-blend-mode: normal;
 }
@@ -84,19 +75,17 @@ button-text {
 } */
 
 
-button-wave {
-  
-}
 
-button-waves :nth-child(2n) button-wave {
+
+::slotted(button-waves :nth-child(2n) button-wave) {
   background: var(--counter-wave-color);
 }
 
-button-waves :nth-child(2n):last-child button-wave {
+::slotted(button-waves :nth-child(2n):last-child button-wave) {
   background: var(--counter-wave-color);
 }
 
-button-waves :nth-child(2n+1):last-child button-wave {
+::slotted(button-waves :nth-child(2n+1):last-child button-wave) {
   background: var(--wave-color);
 }
 

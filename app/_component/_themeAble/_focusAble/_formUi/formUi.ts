@@ -1,26 +1,22 @@
 import delay from "delay";
 import { ElementList, EventListener } from "extended-dom";
 import { Data } from "josm";
-import declareComponent from "../../../../../lib/declareComponent";
-import Button from "../button";
-
-
+import declareComponent from "../../../../lib/declareComponent";
+import Button from "../_button/button";
+import FocusAble from "../focusAble"
+import { Theme } from "../../themeAble"
 
 if (window.TouchEvent === undefined) window.TouchEvent = class SurelyNotTouchEvent {} as any
 
-export default abstract class RippleButton extends Button {
-  private validButtons = [0]
-  private ripples: HTMLElement;
-  private wave: HTMLElement;
-
-
-
+export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = false | HTMLElement> extends FocusAble<T> {
+  private rippleElements: HTMLElement;
+  private waveElement: HTMLElement;
   public preActive: Data<boolean> = new Data(true) as any
-  
+  public validMouseButtons = new Set([0])
 
-  constructor(onClick?: (e?: MouseEvent | KeyboardEvent) => void) {
-    super();
-    this.draggable = false;
+  constructor(componentBodyExtension?: HTMLElement | false, theme?: Theme | null) {
+    super(componentBodyExtension, theme)
+
 
     this.addClass("rippleSettled")
 
@@ -29,7 +25,7 @@ export default abstract class RippleButton extends Button {
       const preLs = [] as EventListener[]
       preLs.add(this.on("mousedown", (e) => {
         if (!touched) {
-          if (this.validButtons.includes(e.button)) this.initRipple(e);
+          if (this.validMouseButtons.has(e.button)) this.initRipple(e);
         }
       }, {capture: true}))
 
@@ -56,7 +52,7 @@ export default abstract class RippleButton extends Button {
 
       const curLs = [] as EventListener[]
       curLs.add(this.on("mousedown", (e) => {
-        if (this.validButtons.includes(e.button)) this.initRipple(e);
+        if (this.validMouseButtons.has(e.button)) this.initRipple(e);
       }, {capture: true}))
 
       return curLs
@@ -99,25 +95,11 @@ export default abstract class RippleButton extends Button {
     
 
 
-    if (onClick) super.click(onClick);
-
-    this.wave = ce("button-wave-container").apd(ce("button-wave"))
+    this.waveElement = ce("button-wave-container").apd(ce("button-wave"))
 
 
-    this.ripples = ce("button-waves");
-    this.apd(this.ripples);
-  }
-
-
-  public link(): string
-  public link(to: string, domainLevel?: number, push?: boolean, notify?: boolean): this
-  public link(to?: string, domainLevel?: number, push?: boolean, notify?: boolean): any {
-    if (typeof to === "string") this.validButtons.add(1, 2)
-    else if (to === null) {
-      if (this.validButtons.includes(1)) this.validButtons.rmV(1)
-      if (this.validButtons.includes(2)) this.validButtons.rmV(2)
-    }
-    return super.link(to, domainLevel, push, notify)
+    this.rippleElements = ce("button-waves");
+    this.apd(this.rippleElements);
   }
 
   protected fadeRipple: ((anim?: boolean) => void)[] = []
@@ -133,9 +115,9 @@ export default abstract class RippleButton extends Button {
     this.removeClass("rippleSettled")
     const fadeRippleCb = this.initRippleCb()
 
-    let rippleWaveElemContainer = this.wave.cloneNode(true) as Element;
+    let rippleWaveElemContainer = this.waveElement.cloneNode(true) as Element;
     let rippleWaveElem = rippleWaveElemContainer.children[0]
-    this.ripples.apd(rippleWaveElemContainer); 
+    this.rippleElements.apd(rippleWaveElemContainer); 
 
     const fadeAnimIfPossible: Function & {auto?: boolean} = () => {
       setTimeout(() => {
@@ -237,12 +219,11 @@ export default abstract class RippleButton extends Button {
   }
 
 
+  public pug(): string {
+    return super.pug() + require("./formUi.pug").default
+  }
   stl() {
-    return super.stl() + require('./rippleButton.css').toString();
+    return super.stl() + require("./formUi.css").toString()
   }
-  pug() {
-    return super.pug() + require("./rippleButton.pug").default
-  }
+  
 }
-
-declareComponent("ripple-button", RippleButton)
