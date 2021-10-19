@@ -279,7 +279,7 @@ export default class Link extends ThemeAble {
   }
 
   stl() {
-    return require("./link.css").toString()
+    return super.stl() + require("./link.css").toString()
   }
   pug() {
     return require("./link.pug").default

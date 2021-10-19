@@ -531,7 +531,7 @@ export default class Input extends ThemeAble {
     return require("./input.pug").default
   }
   stl() {
-    return require("./input.css").toString()
+    return super.stl() + require("./input.css").toString()
   }
 
 }

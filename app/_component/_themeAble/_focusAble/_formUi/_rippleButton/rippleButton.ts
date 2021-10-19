@@ -3,6 +3,12 @@ import FormUi from "../formUi";
 import Button from "../../_button/button"
 import { PrimElem, Token, VariableLibrary } from "extended-dom";
 
+
+
+
+
+
+
 export default class UiButton extends FormUi<Button> {
   private button: Button
 

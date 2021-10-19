@@ -48,7 +48,7 @@ export default class FocusAble<T extends false | HTMLElement | HTMLAnchorElement
     return require("./focusAble.pug").default
   }
   stl() {
-    return require("./focusAble.css").toString()
+    return super.stl() + require("./focusAble.css").toString()
   }
   
 }

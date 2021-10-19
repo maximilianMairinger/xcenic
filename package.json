@@ -81,6 +81,7 @@
   "dependencies": {
     "ajaon": "^1.5.11",
     "animated-scroll-to": "^2.2.0",
+    "css-simple-parser": "^2.0.1",
     "delay": "^4.4.1",
     "extended-dom": "^4.0.13",
     "fast-decode-uri-component": "^1.0.1",

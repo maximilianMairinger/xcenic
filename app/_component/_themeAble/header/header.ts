@@ -477,7 +477,7 @@ export default class Header extends ThemeAble {
   
 
   stl() {
-    return require("./header.css").toString()
+    return super.stl() + require("./header.css").toString()
   }
   pug() {
     return require("./header.pug").default

@@ -26,13 +26,13 @@
 }
 
 
-:host(.selected) ::slotted(cover-me) {
+:host(.selected) cover-me {
   background: rgba(255, 255, 255, .1);
 }
 
 
 
-::slotted(button-text) {
+button-text {
   display: block;
   font-size: 1em;
   margin: auto 0;
@@ -45,23 +45,23 @@
   mix-blend-mode: difference;
 }
 
-:host(.preSelected) ::slotted(button-text) {
+:host(.preSelected) button-text {
   color: white;
 }
 
 
 
-:host(.rippleSettled.preSelected) ::slotted(button-text) {
+:host(.rippleSettled.preSelected) button-text {
   
 }
 
-:host(:not(.selected):not(.preSelected).rippleSettled) ::slotted(button-text) {
+:host(:not(.selected):not(.preSelected).rippleSettled) button-text {
   color: rgb(var(--primary-text));
   color: black;
   mix-blend-mode: normal;
 }
 
-:host(.selected.preSelected.rippleSettled) ::slotted(button-text) {
+:host(.selected.preSelected.rippleSettled) button-text {
   color: #d2e1e1;
   mix-blend-mode: normal;
 }
@@ -77,15 +77,15 @@
 
 
 
-::slotted(button-waves :nth-child(2n) button-wave) {
+button-waves :nth-child(2n) button-wave {
   background: var(--counter-wave-color);
 }
 
-::slotted(button-waves :nth-child(2n):last-child button-wave) {
+button-waves :nth-child(2n):last-child button-wave {
   background: var(--counter-wave-color);
 }
 
-::slotted(button-waves :nth-child(2n+1):last-child button-wave) {
+button-waves :nth-child(2n+1):last-child button-wave {
   background: var(--wave-color);
 }
 
