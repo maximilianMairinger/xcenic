@@ -1,0 +1,10 @@
+:host {
+  --text: var(--primary-text);
+  --drag: auto;
+}
+
+c-button {
+  --text: var(--text);
+  --drag: var(--drag);
+  border-radius: inherit;
+}
