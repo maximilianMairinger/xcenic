@@ -111,9 +111,9 @@ initial-view {
 
 
 #continue {
-  --background: var(--primary-theme);
+  /* --background-color: rgb(var(--primary-theme));
   --text: var(--plain-background);
-  --border: unset;
+  --border: unset; */
 
   position: fixed;
   bottom: 40px;

@@ -1,4 +1,4 @@
-import { Data } from "josm";
+import { Data, DataBase } from "josm";
 import declareComponent from "../../../lib/declareComponent";
 import { EventListener } from "extended-dom"
 import ThemeAble, { Theme } from "../themeAble";
@@ -6,7 +6,11 @@ import ThemeAble, { Theme } from "../themeAble";
 
 export default class FocusAble<T extends false | HTMLElement | HTMLAnchorElement = false | HTMLElement> extends ThemeAble<T> {
 
-  public focusIndication = new Data(true)
+  public userFeedbackMode = new DataBase({
+    focus: "direct",
+  }) as DataBase<{
+    focus: boolean | "direct",
+  }>
   private focusManElem = ce("focus-man")
   constructor(componentBodyExtension?: HTMLElement | false, theme?: Theme | null) {
     super(componentBodyExtension, theme)
@@ -14,22 +18,25 @@ export default class FocusAble<T extends false | HTMLElement | HTMLAnchorElement
     super.apd(this.focusManElem)
 
 
-    this.on("mousedown", () => {
-      this.addClass("clickFocus")
-      this.on("blur", () => {
-        this.removeClass("clickFocus")
-      }, {once: true})
-    }),
-    this.on("mouseup", () => {
-      this.addClass("afterClickFocus")
-      this.on("mouseout", () => {
-        this.removeClass("afterClickFocus")
-      }, {once: true})
+    const clickFocusListener: EventListener[] = []
+    clickFocusListener.add(
+      this.on("mousedown", () => {
+        this.addClass("clickFocus")
+        this.on("blur", () => {
+          this.removeClass("clickFocus")
+        }, {once: true})
+      }),
+      this.on("mouseup", () => {
+        this.addClass("afterClickFocus")
+        this.on("mouseout", () => {
+          this.removeClass("afterClickFocus")
+        }, {once: true})
 
-    })
+      })
+    )
 
 
-    this.focusIndication.get((enable) => {
+    this.userFeedbackMode.focus.get((enable) => {
       if (!enable) {
         this.removeClass("clickFocus")
         this.removeClass("afterClickFocus")
@@ -37,6 +44,14 @@ export default class FocusAble<T extends false | HTMLElement | HTMLAnchorElement
       }
       else {
         super.apd(this.focusManElem)
+        if (enable === "direct") {
+          clickFocusListener.Inner("activate", [])
+        }
+        else {
+          clickFocusListener.Inner("deactivate", [])
+          this.removeClass("afterClickFocus")
+          this.removeClass("clickFocus")
+        }
       }
     }, false)
     

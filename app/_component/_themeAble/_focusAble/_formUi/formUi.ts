@@ -1,6 +1,6 @@
 import delay from "delay";
 import { ElementList, EventListener } from "extended-dom";
-import { Data } from "josm";
+import { Data, DataBase } from "josm";
 import declareComponent from "../../../../lib/declareComponent";
 import Button from "../_button/button";
 import FocusAble from "../focusAble"
@@ -11,14 +11,40 @@ if (window.TouchEvent === undefined) window.TouchEvent = class SurelyNotTouchEve
 export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = false | HTMLElement> extends FocusAble<T> {
   private rippleElements: HTMLElement;
   private waveElement: HTMLElement;
-  public preActive: Data<boolean> = new Data(true) as any
   public validMouseButtons = new Set([0])
 
-  constructor(componentBodyExtension?: HTMLElement | false, theme?: Theme | null) {
-    super(componentBodyExtension, theme)
+  public userFeedbackMode: DataBase<{
+    ripple: boolean | "late",
+    hover: boolean,
+    focus: boolean | "direct",
+    active: boolean
+  }>
 
+
+  private coverElems = {
+    hover: this.q("hover-cover"),
+    click: this.q("click-cover"),
+  }
+
+  constructor(componentBodyExtension?: HTMLElement | false) {
+    super(componentBodyExtension)
+
+    this.userFeedbackMode({
+      ripple: true,
+      hover: true,
+      active: false
+    })
 
     this.addClass("rippleSettled")
+
+
+    this.userFeedbackMode.hover.get((y) => {
+      this.coverElems.hover[y ? "addClass" : "removeClass"]("active")
+    })
+
+    this.userFeedbackMode.active.get((y) => {
+      this.coverElems.click[y ? "addClass" : "removeClass"]("active")
+    })
 
     const preLs = (() => {
 
@@ -73,18 +99,28 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
       if (e.key === " " || e.key === "Enter") keyPressed = false
     })
 
-    this.preActive.get((pre) => {
-      if (pre) {
-        for (let p of preLs) {
-          p.activate()
+    this.userFeedbackMode.ripple.get((mode) => {
+      if (mode) {
+        if (mode !== "late") {
+          for (let p of preLs) {
+            p.activate()
+          }
+          for (let c of curLs) {
+            c.deactivate()
+          }
         }
-        for (let c of curLs) {
-          c.deactivate()
+        else {
+          for (let c of curLs) {
+            c.activate()
+          }
+          for (let p of preLs) {
+            p.deactivate()
+          }
         }
       }
       else {
         for (let c of curLs) {
-          c.activate()
+          c.deactivate()
         }
         for (let p of preLs) {
           p.deactivate()
@@ -109,7 +145,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
   public rippleSettled = Promise.resolve()
   public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
-    console.log("initRipple")
+
     let rippleSettled: Function
     const myRippleSettledProm = this.rippleSettled = new Promise((res) => {rippleSettled = res})
     this.removeClass("rippleSettled")
@@ -167,6 +203,9 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     let y: number;
 
 
+    const width = this.width()
+    const height = this.height()
+
     if (e instanceof MouseEvent || e instanceof TouchEvent) {
       if (e instanceof TouchEvent) {
         //@ts-ignore
@@ -190,8 +229,8 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
       
     }
     else {
-      x = this.width() / 2 - rippleWaveElem.width() / 2;
-      y = this.height() / 2 - rippleWaveElem.height() / 2;
+      x = width / 2 - rippleWaveElem.width() / 2;
+      y = height / 2 - rippleWaveElem.height() / 2;
 
       if (e instanceof KeyboardEvent) {
         this.on("keyup", uiOut, {once: true});
@@ -203,11 +242,13 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
         marginLeft: x
     });
     let rdyToFade = false;
-    let biggerMetric = this.width() > this.height() ? this.width() : this.height();
 
     
+    let biggerMetric = width > height ? width : height;
+
     
-    const animProm = rippleWaveElem.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + (this.width() / 25 * 2.2) + ")"}], {duration: biggerMetric * 4, easing: "linear"}).then(fadeisok);
+    debugger
+    const animProm = rippleWaveElem.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + Math.ceil(Math.pow(Math.sqrt(width * width + height * height) / 25, 2)) + ")"}], {duration: Math.cbrt(biggerMetric) * 120, easing: "linear"}).then(fadeisok);
     animProm.then(() => {
       if (this.rippleSettled === myRippleSettledProm) this.addClass("rippleSettled")
       rippleSettled()

@@ -902,7 +902,7 @@ view-more-side-panel showcase-section:last-child.inactive:hover {
 }
 
 view-more-side-panel showcase-section c-block-button {
-  --background: var(--theme);
+  --background-color: rgb(var(--theme));
   --text: var(--plain-background);
   --border: unset;
 }

@@ -16,7 +16,7 @@ export default class UiButton extends FormUi<Button> {
     const button = new Button()
     super(button)
     this.button = button
-    button.focusIndication.set(false)
+    button.userFeedbackMode.focus.set(false)
 
     this.validMouseButtons = button.validMouseButtons
   }
