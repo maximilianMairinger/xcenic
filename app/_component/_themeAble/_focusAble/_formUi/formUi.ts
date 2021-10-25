@@ -57,7 +57,9 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
       const preLs = [] as EventListener[]
       preLs.add(this.on("mousedown", (e) => {
         if (!touched) {
-          if (this.validMouseButtons.has(e.button)) this.initRipple(e);
+          if (this.validMouseButtons.has(e.button)) {
+            this.initRipple(e);
+          }
         }
       }, {capture: true}))
 
@@ -83,9 +85,11 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     const curLs = (() => {
 
       const curLs = [] as EventListener[]
-      curLs.add(this.on("mousedown", (e) => {
+      const e = this.on("mousedown", (e) => {
         if (this.validMouseButtons.has(e.button)) this.initRipple(e);
-      }, {capture: true}))
+      }, {capture: true})
+      e.deactivate()
+      curLs.add(e as any)
 
       return curLs
     })();
@@ -132,7 +136,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
           p.deactivate()
         }
       }
-    }, false)
+    }, true)
 
     
 
@@ -151,7 +155,6 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
   public rippleSettled = Promise.resolve()
   public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
-
     let rippleSettled: Function
     const myRippleSettledProm = this.rippleSettled = new Promise((res) => {rippleSettled = res})
     this.removeClass("rippleSettled")
@@ -237,9 +240,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
       }
       let offset = this.absoluteOffset();
-      console.log("mouseX", (e as MouseEvent).pageX,  offset.left, ripple.radius)
       x = (e as MouseEvent).pageX - offset.left;
-      console.log("mouseY", (e as MouseEvent).pageY,  offset.top, ripple.radius)
       y = (e as MouseEvent).pageY - offset.top;
 
       

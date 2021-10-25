@@ -84,7 +84,6 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
   public apd(...elems: PrimElem[]): this
   public apd(to: PrimElem | PrimElem[], library?: VariableLibrary, customTokens?: {open?: Token, close?: Token, escape?: Token}): this
   public apd(...a: any): this {
-    console.log("lol")
     Object.getPrototypeOf(Component).prototype.apd.call(this, ...a)
     return this
   }
