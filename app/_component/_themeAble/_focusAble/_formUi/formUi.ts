@@ -8,6 +8,12 @@ import { Theme } from "../../themeAble"
 
 if (window.TouchEvent === undefined) window.TouchEvent = class SurelyNotTouchEvent {} as any
 
+
+// distance between two points
+function distance(p1: [number, number], p2: [number, number]) {
+    return Math.sqrt(Math.abs(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2)));
+}
+
 export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = false | HTMLElement> extends FocusAble<T> {
   private rippleElements: HTMLElement;
   private waveElement: HTMLElement;
@@ -203,8 +209,16 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     let y: number;
 
 
-    const width = this.width()
-    const height = this.height()
+
+    const body = {
+      width: this.width(),
+      height: this.height()
+    }
+
+    const ripple = {
+      diameter: 25,
+      radius: 25 / 2,
+    }
 
     if (e instanceof MouseEvent || e instanceof TouchEvent) {
       if (e instanceof TouchEvent) {
@@ -223,14 +237,16 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
       }
       let offset = this.absoluteOffset();
-      x = (e as MouseEvent).pageX - offset.left - rippleWaveElem.width() / 2;
-      y = (e as MouseEvent).pageY - offset.top - rippleWaveElem.height() / 2;
+      console.log("mouseX", (e as MouseEvent).pageX,  offset.left, ripple.radius)
+      x = (e as MouseEvent).pageX - offset.left;
+      console.log("mouseY", (e as MouseEvent).pageY,  offset.top, ripple.radius)
+      y = (e as MouseEvent).pageY - offset.top;
 
       
     }
     else {
-      x = width / 2 - rippleWaveElem.width() / 2;
-      y = height / 2 - rippleWaveElem.height() / 2;
+      x = body.width / 2;
+      y = body.height / 2;
 
       if (e instanceof KeyboardEvent) {
         this.on("keyup", uiOut, {once: true});
@@ -238,17 +254,28 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
       }
     }
     rippleWaveElem.css({
-        marginTop: y,
-        marginLeft: x
+        marginTop: y - ripple.radius,
+        marginLeft: x - ripple.radius
     });
     let rdyToFade = false;
 
     
-    let biggerMetric = width > height ? width : height;
-
     
-    debugger
-    const animProm = rippleWaveElem.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + Math.ceil(Math.pow(Math.sqrt(width * width + height * height) / 25, 2)) + ")"}], {duration: Math.cbrt(biggerMetric) * 120, easing: "linear"}).then(fadeisok);
+    const cursorPoint = [x, y] as [number, number]
+    let maxDistance = Math.max(
+      distance(cursorPoint, [0, 0]), 
+      distance(cursorPoint, [body.width, body.height]), 
+      distance(cursorPoint, [body.width, 0]), 
+      distance(cursorPoint, [0, body.height])
+    )
+
+    const scale = maxDistance / ripple.radius
+
+  
+    
+    
+    const animProm = rippleWaveElem.anim([{transform: "scale(0)", offset: 0}, {transform: "scale(" + scale + ")"}], {duration: maxDistance * 4, easing: "linear"}).then(fadeisok);
+
     animProm.then(() => {
       if (this.rippleSettled === myRippleSettledProm) this.addClass("rippleSettled")
       rippleSettled()
