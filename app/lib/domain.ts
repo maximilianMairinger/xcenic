@@ -1,5 +1,5 @@
 import decodeUri from "fast-decode-uri-component"
-import * as global from "./../global"
+import * as global from "../globals"
 import slugify from "slugify"
 import getBaseUrl from "get-base-url";
 import lang from "./../lib/lang"

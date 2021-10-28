@@ -1,0 +1,9 @@
+component-body {
+  padding: 0 50px;
+  padding-top: 100px;
+  box-sizing: border-box;
+}
+
+c-block-button {
+  margin-bottom: 50px;
+}

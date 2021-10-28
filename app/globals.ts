@@ -1,5 +1,6 @@
-import polyfill from "extended-dom"
 import "xrray"
+import "extended-dom"
+import polyfill from "extended-dom"
 
 
 export default async function() {
