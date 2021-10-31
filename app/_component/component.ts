@@ -1,6 +1,6 @@
 import "../global"
 import lang from "./../lib/lang"
-import slotifyCss from "./../lib/slotifyCss"
+import slotifyCss from "slotify-css"
 import { DataBase, Data } from "josm";
 import { ElementList, ElementListOrElement, PrimElem, VariableLibrary } from "extended-dom";
 
@@ -21,7 +21,7 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
       this.componentBody = bodyExtension !== undefined ? bodyExtension : ce("component-body")
 
 
-      this.sr.html("<style>" + (this.componentBody instanceof Component ? slotifyCss(this.stl()) : this.stl()) + "</style>")
+      this.sr.html("<style>" + this.stl() + "</style>")
       this.sr.append(this.componentBody as HTMLElement)
     }
     else {

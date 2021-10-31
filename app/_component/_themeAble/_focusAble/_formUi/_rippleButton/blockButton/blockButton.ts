@@ -2,13 +2,6 @@ import RippleButton from "../rippleButton";
 import delay from "delay"
 import declareComponent from "../../../../../../lib/declareComponent";
 
-const regex = /(?!}).*{/g
-function slotifyCss(css) {
-  const s = css.match(regex)
-  for (const e of s) {
-    console.log(e)
-  }
-}
 
 export default class BlockButton extends RippleButton {
   private textElem = ce("button-text")
