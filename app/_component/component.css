@@ -60,4 +60,5 @@ component-body {
   color: rgb(59, 59, 59);
   transition: .3s color;
   letter-spacing: .5px;
+  border-radius: inherit;
 }

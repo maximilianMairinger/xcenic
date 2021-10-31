@@ -1,16 +1,15 @@
-import RippleButton from "../rippleButton";
-import declareComponent from "../../../../../../lib/declareComponent";
+import BlockButton from "../blockButton";
+import declareComponent from "../../../../../../../lib/declareComponent";
 import { Data } from "josm";
 
 type ReadonlyData<T> = Omit<Data<T>, "set">
 
-export default class SelectButton extends RippleButton {
-  private textElem = ce("button-text")
+export default class SelectButton extends BlockButton {
   public selected = new Data(false) as ReadonlyData<boolean>
   public preSelected = new Data(false) as ReadonlyData<boolean>
 
   constructor(content: string = "", selectedCallback?: (selected: boolean) => void) {
-    super();
+    super(content);
 
     if (selectedCallback) this.selected.get(selectedCallback)
 
@@ -21,7 +20,7 @@ export default class SelectButton extends RippleButton {
 
 
 
-    this.preActive.set(false)
+    this.userFeedbackMode.ripple.set("late")
 
     this.addActivationCallback(() => {
       (this.selected as Data<boolean>).set(!this.selected.get())
@@ -66,23 +65,8 @@ export default class SelectButton extends RippleButton {
         
       }
     }, false)
-
-    this.content(content);
-    
-    this.apd(ce("cover-me").css({
-      width: "100%",
-      height: "100%",
-      position: "absolute",
-      top: 0
-    }))
-    this.apd(this.textElem)
   }
   
-
-  content(to: string) {
-    this.textElem.text(to)
-  }
-
   stl() {
     return super.stl() + require('./selectButton.css').toString();
   }

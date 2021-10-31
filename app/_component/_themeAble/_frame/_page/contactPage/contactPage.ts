@@ -5,9 +5,9 @@ import Page from "../page";
 
 import "./../../../../image/image"
 import "./../../../textBlob/textBlob"
-import "./../../../_focusAble/_formUi/_rippleButton/blockButton/blockButton"
-import BlockButton from  "./../../../_focusAble/_formUi/_rippleButton/blockButton/blockButton"
-import "./../../../_focusAble/_formUi/_rippleButton/selectButton/selectButton"
+import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
+import BlockButton from  "./../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
+import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/selectButton/selectButton"
 import "./../../../_icon/lineAccent/lineAccent"
 import "./../../../_focusAble/_formUi/input/input"
 import "./../../../_focusAble/_formUi/textArea/textArea"

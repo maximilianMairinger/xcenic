@@ -1,49 +1,20 @@
 :host {
-  --border: var(--primary-text);
-  
-  
-
   /* private */
   --wave-opacity: 1;
 
-  --wave-color: rgb(var(--primary-text));
+  --wave-color: rgb(var(--text));
   --counter-wave-color: var(--background-color);
-
-
-  background-color: var(--background-color);
 }
 
 
-:host {
-  display: block;
-  width: fit-content;
+button-text {
+  color: #D2E1E1;
 }
-
-
 
 :host(.preSelected) {
   --focus: 0, 153, 255;
 }
 
-
-:host(.selected) cover-me {
-  background: rgba(255, 255, 255, .1);
-}
-
-
-
-button-text {
-  display: block;
-  font-size: 1em;
-  margin: auto 0;
-  padding: 13px 24px;
-  text-align: center;
-  font-weight: bold;
-  
-  box-sizing: border-box;
-  color: #D2E1E1;
-  mix-blend-mode: difference;
-}
 
 :host(.preSelected) button-text {
   color: white;
@@ -51,9 +22,9 @@ button-text {
 
 
 
-:host(.rippleSettled.preSelected) button-text {
+/* :host(.rippleSettled.preSelected) button-text {
   
-}
+} */
 
 :host(:not(.selected):not(.preSelected).rippleSettled) button-text {
   color: rgb(var(--primary-text));
@@ -91,6 +62,9 @@ button-waves :nth-child(2n+1):last-child button-wave {
 
 
 
+button-text {
+  mix-blend-mode: difference;
+}
 
 
 

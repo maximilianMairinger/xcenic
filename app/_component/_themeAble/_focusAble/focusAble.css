@@ -3,6 +3,7 @@
   position: relative;
 
   --focus: var(--primary-theme);
+  /* some sub classes need this variable */
   --background-color: #f2f2f2;
   background-color: var(--background-color);
 

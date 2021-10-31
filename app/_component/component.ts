@@ -1,6 +1,5 @@
 import "../global"
 import lang from "./../lib/lang"
-import slotifyCss from "slotify-css"
 import { DataBase, Data } from "josm";
 import { ElementList, ElementListOrElement, PrimElem, VariableLibrary } from "extended-dom";
 
