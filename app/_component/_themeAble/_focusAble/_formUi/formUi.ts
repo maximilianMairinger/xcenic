@@ -32,6 +32,8 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     click: this.q("click-cover"),
   }
 
+  private preHoverDetector = this.q("prehover-detector") as HTMLElement
+
   constructor(componentBodyExtension?: HTMLElement | false) {
     super(componentBodyExtension)
 
@@ -127,6 +129,16 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     }, true)
 
     
+    if (window.matchMedia && window.matchMedia("(hover:hover)").matches) {
+      import("./preHoverInteraction").then(({default: f}) => {
+        f(this as any)
+      })
+    }
+
+    
+
+
+
 
 
     this.waveElement = ce("button-wave-container").apd(ce("button-wave"))

@@ -4,6 +4,15 @@
   resize: none;
 }
 
+textarea {
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+}
+
+textarea::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
+}
+
 placeholder-bg {
   height: 20px;
   opacity: 0;
