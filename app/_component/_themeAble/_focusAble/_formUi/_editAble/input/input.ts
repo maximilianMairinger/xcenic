@@ -10,19 +10,24 @@ export default class Input extends EditAble {
 
     this.placeholderContainer.prepend(ce("left-gradient"), ce("right-gradient"))
 
-    debugger
-    const scrollStart = this.inputElem.scrollData().tunnel((p) => {
-      console.log(p)
-      return p === 0
-    }) as Data<boolean>
-    scrollStart.get((is) => {
-      this.componentBody[is ? "addClass" : "removeClass"]("scrollStart")
+    
+    setTimeout(() => {
+      debugger
+      // wait till styles get applied. So that scrollData can access correct overflow direction with getComputedStyle
+      const scrollStart = this.inputElem.scrollData().tunnel((p) => {
+        console.log(p)
+        return p === 0
+      }) as Data<boolean>
+      scrollStart.get((is) => {
+        this.componentBody[is ? "addClass" : "removeClass"]("scrollStart")
+      })
+  
+      const scrollEnd = this.inputElem.scrollData(true).tunnel((p) => p >= this.inputElem.scrollWidth -1) as Data<boolean>
+      scrollEnd.get((is) => {
+        this.componentBody[is ? "addClass" : "removeClass"]("scrollEnd")
+      })
     })
-
-    const scrollEnd = this.inputElem.scrollData(true).tunnel((p) => p >= this.inputElem.scrollWidth -1) as Data<boolean>
-    scrollEnd.get((is) => {
-      this.componentBody[is ? "addClass" : "removeClass"]("scrollEnd")
-    })
+    
   }
   public pug(): string {
     return super.pug() + require("./input.pug").default

@@ -6,7 +6,7 @@ left-gradient {
   position: absolute;
   opacity: 0;
   transition: .2s;
-  background: linear-gradient(90deg, rgba(var(--background), 0), rgba(var(--background), 1));
+  background: linear-gradient(270deg, rgba(var(--background), 0), rgba(var(--background), 1));
 }
 
 right-gradient {
@@ -17,9 +17,14 @@ right-gradient {
   position: absolute;
   opacity: 0;
   transition: .2s;
-  background: linear-gradient(270deg, rgba(var(--background), 0), rgba(var(--background), 1));
+  background: linear-gradient(90deg, rgba(var(--background), 0), rgba(var(--background), 1));
 }
 
-component-body:not(.scrollStart) right-gradient, component-body:not(.scrollEnd) left-gradient {
+component-body:not(.scrollStart) left-gradient, component-body:not(.scrollEnd) right-gradient {
   opacity: 1;
+}
+
+input {
+  overflow-x: "auto";
+  overflow-y: hidden;
 }
