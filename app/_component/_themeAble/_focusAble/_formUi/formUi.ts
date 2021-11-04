@@ -95,19 +95,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     })();
 
 
-    let keyPressed = false
-    this.on("keydown", (e) => {
-      if (e.key === " " || e.key === "Enter") {
-        e.preventDefault()
-        if (!keyPressed) {
-          keyPressed = true
-          this.initRipple(e)
-        }
-      }
-    }, {capture: true})
-    this.on("keyup", (e) => {
-      if (e.key === " " || e.key === "Enter") keyPressed = false
-    })
+    
 
     this.userFeedbackMode.ripple.get((mode) => {
       if (mode) {

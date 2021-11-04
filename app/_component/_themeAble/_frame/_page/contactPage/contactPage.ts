@@ -9,8 +9,8 @@ import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
 import BlockButton from  "./../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
 import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/selectButton/selectButton"
 import "./../../../_icon/lineAccent/lineAccent"
-import "./../../../_focusAble/_formUi/input/input"
-import "./../../../_focusAble/_formUi/textArea/textArea"
+import "./../../../_focusAble/_formUi/_editAble/input/input"
+import "./../../../_focusAble/_formUi/_editAble/textArea/textArea"
 
 
 

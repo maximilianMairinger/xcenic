@@ -19,6 +19,21 @@ export default class UiButton extends FormUi<Button> {
     button.userFeedbackMode.focus.set(false)
 
     this.validMouseButtons = button.validMouseButtons
+
+
+    let keyPressed = false
+    this.on("keydown", (e) => {
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault()
+        if (!keyPressed) {
+          keyPressed = true
+          this.initRipple(e)
+        }
+      }
+    }, {capture: true})
+    this.on("keyup", (e) => {
+      if (e.key === " " || e.key === "Enter") keyPressed = false
+    })
   }
 
   public enable: () => void
