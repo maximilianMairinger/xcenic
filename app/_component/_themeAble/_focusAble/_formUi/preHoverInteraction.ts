@@ -1,14 +1,17 @@
 import FormUi from "./formUi";
-import { stats, nextFrame } from "animation-frame-delta";
+import animationFrame from "animation-frame-delta";
+import Easing from "waapi-easing"
+
+const easeOut = new Easing("easeOut").function
 
 
-const maxPxPerFrame = .2;
+const maxPxPerFrame = 2
 // const overShootFactor = 1.05
-const overShoot = 5
+const overShoot = 6
 
 export default function(t: FormUi) {
 
-  const target = t.q("prehover-detector")
+  const target = t.q("prehover-detector") as HTMLElement
   // target.css({scale: overShootFactor})
   // const overShootX = t.offsetWidth * (overShootFactor-1) / 2;
   // const overShootY = t.offsetHeight * (overShootFactor-1) / 2;
@@ -20,50 +23,80 @@ export default function(t: FormUi) {
   let relY = 0
 
 
+  let maxX: number
+  let maxY: number
 
-  const followRuntime = () => {
+  target.on("resize", (e: DOMRectReadOnly) => {
+    maxX = e.width / 2
+    maxY = e.height / 2
+  })
+
+
+  let leaveMaxX: number
+
+  target.on("mouseleave", () => {
+    leaveMaxX = renderedX
+    relX = relY = 0
+    followRuntime.cancel()
+    snapBackRuntime.resume()
+  })
+
+  target.on("mouseenter", () => {
+    snapBackRuntime.cancel()
+    followRuntime.resume()
+  })
+  
+  
+  
+
+  
+  const followRuntimeFunc = (delta: number) => {
     const diffX = relX - renderedX
     const diffY = relY - renderedY
 
-    const cappedX = Math.min(diffX / stats.delta, maxPxPerFrame) * stats.delta
-    const cappedY = Math.min(diffY / stats.delta, maxPxPerFrame) * stats.delta
+    const fac = Math.min(1, (maxPxPerFrame * delta) / Math.sqrt(diffX**2 + diffY**2))
 
-    renderedX += cappedX
-    renderedY += cappedY
+    renderedX += diffX * fac
+    renderedY += diffY * fac
+
+
 
     t.css({translateX: renderedX, translateY: renderedY})
     target.css({translateX: -renderedX, translateY: -renderedY})
-    
-
-    if (cappedX / stats.delta === maxPxPerFrame || cappedY / stats.delta === maxPxPerFrame) nextFrame(nextFrameRuntime)
   }
 
-  const nextFrameRuntime = () => {
-    if (mouseMoveThisFrame) mouseMoveThisFrame = false
-    else {
-      console.log("nextFrameRuntime")
-      followRuntime()
-    }
-  }
 
-  let mouseMoveThisFrame = false
+  const followRuntime = animationFrame(followRuntimeFunc)
+  followRuntime.cancel(followRuntimeFunc)
+  // let currentlyActiveRuntime = followRuntime
+  const snapBackRuntime = animationFrame((delta: number) => {
+    const diffX = 0 - renderedX
+    const diffY = 0 - renderedY
 
-  const mouseMoveRuntime = (e: MouseEvent) => {
-    mouseMoveThisFrame = true
+    const prog = .9999 - (renderedX / leaveMaxX)
+    const easeProgFac = easeOut(prog) / prog
+    console.log("easeProgFac", easeProgFac)
+
+    const fac = Math.min(1, (maxPxPerFrame * delta) / Math.sqrt(diffX**2 + diffY**2))
+    const facc = fac * easeProgFac
+
+    renderedX += diffX * facc
+    renderedY += diffY * facc
+
+    t.css({translateX: renderedX, translateY: renderedY})
+    target.css({translateX: -renderedX, translateY: -renderedY})
+
+    if (fac === 1) snapBackRuntime.cancel()
+  })
+  snapBackRuntime.cancel()
 
 
-    const maxX = target.css("width") / 2
-    const maxY = target.css("height") / 2
-
-
+  target.on("mousemove", (e: MouseEvent) => {
     const absX = e.offsetX - maxX
     const absY = e.offsetY - maxY
 
-    relX = absX / maxX * overShoot
-    relY = absY / maxY * overShoot
+    relX = easeOut(absX / maxX) * overShoot
+    relY = easeOut(absY / maxY) * overShoot
 
-    followRuntime()
-  }
-
-  target.on("mousemove", mouseMoveRuntime)
+  })
 }
