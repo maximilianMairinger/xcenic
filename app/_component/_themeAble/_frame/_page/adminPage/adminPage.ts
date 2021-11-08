@@ -17,6 +17,7 @@ class AdminPage extends Page {
       // document.body.innerHTML = ""
       stopRecording()
       console.log(recording)
+      console.log(JSON.stringify(recording))
 
       const replayer = new Replayer({
         props: {
