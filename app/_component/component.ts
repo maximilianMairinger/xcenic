@@ -78,7 +78,10 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
   public apd(...elems: PrimElem[]): this
   public apd(to: PrimElem | PrimElem[], library?: VariableLibrary, customTokens?: {open?: Token, close?: Token, escape?: Token}): this
   public apd(...a: any): this {
-    this.componentBody.apd(...a)
+    setTimeout(() => {
+      this.componentBody.apd(...a)
+
+    }, 1000)
     return this
   }
 

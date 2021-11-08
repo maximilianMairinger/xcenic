@@ -22,18 +22,6 @@ import { record } from "rrweb"
 export const recording = []
 export const stopRecording = record({
   emit: (e) => {
-    try {
-      //@ts-ignore
-      e.data.adds.forEach(add => {
-        // if (add.node.tagName === "my-name") debugger
-        if (add.parentId === 29) debugger
-      })
-
-    }
-    catch (e) {
-    
-    }
-
     recording.add(e)
   }
 })
