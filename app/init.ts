@@ -5,11 +5,43 @@ import { Replayer } from "rrweb"
 export async function init() {
   await global()
   const rr = require("./record")
+  document.body.innerHTML = `
+  <link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/rrweb@latest/dist/rrweb.min.css"
+/>`
 
+  document.body.append(new A)
+
+  const styleElem = document.createElement("style")
+  styleElem.innerHTML = `
+    my-name {
+
+    }
+  ` + /* require("rrweb-player/dist/style.css").toString()*/
+
+  document.body.append(styleElem)
+
+
+  const btn = document.createElement("button")
+  btn.innerHTML = "replay"
+  setTimeout(() => {
+    console.log("ww")
+    const rrweb = require("rrweb")
+    const replayer = new rrweb.Replayer(rr.recording);
+    replayer.play();
+    console.log( rr.recording )
+  }, 2000)
+  // btn.onclick = () => {
+    
+    
+  // }
+
+  document.body.append(btn)
   
   
-  const main = (await import("./main")).default
-  main()
+  // const main = (await import("./main")).default
+  // main()
 
 
   // if ("serviceWorker" in navigator) {

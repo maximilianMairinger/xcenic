@@ -3,7 +3,8 @@ import Page from "../page"
 
 import "./../../../../_themeAble/_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
 import BlockButton from "./../../../../_themeAble/_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
-
+import Replayer from "rrweb-player"
+import { stopRecording, recording } from "./../../../../../record"
 
 
 
@@ -12,7 +13,20 @@ class AdminPage extends Page {
   constructor() {
     super();
     
+    (this.body.button as BlockButton).click(() => {
+      // document.body.innerHTML = ""
+      stopRecording()
+      console.log(recording)
 
+      const replayer = new Replayer({
+        props: {
+          events: recording
+        },
+        target: this.componentBody
+      });
+      replayer.play();
+      console.log(replayer)
+    })
     
 
   }
