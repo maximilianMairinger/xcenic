@@ -20,8 +20,10 @@ export default class Site extends Component {
 
 
     
-
-
+    setTimeout(() => {
+      this.apd(ce("lelelel"))
+    }, 2000)
+    
     
     
 
@@ -147,6 +149,11 @@ export default class Site extends Component {
 
     
 
+  }
+
+  connectedCallback() {
+    console.log("connected")
+    this.apd(ce("lol"))
   }
 
   stl() {
