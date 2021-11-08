@@ -13,27 +13,41 @@
 //   a.appendChild(r);
 // })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
 
+
+
+console.log("recording123")
+
+import OpenReplay from '@openreplay/tracker';
+//...
+const tracker = new OpenReplay({
+  projectKey: "wk89kO0Z05MBz1fQZAsF"
+});
+tracker.start();
+
 // import logrocket from 'logrocket';
 // logrocket.init('kvem5g/test');
 
-import { record } from "rrweb"
 
 
-export const recording = []
-export const stopRecording = record({
-  emit: (e) => {
-    try {
-      //@ts-ignore
-      e.data.adds.forEach(add => {
-        // if (add.node.tagName === "my-name") debugger
-        if (add.parentId === 29) debugger
-      })
 
-    }
-    catch (e) {
+// import { record } from "rrweb"
+
+
+// export const recording = []
+// export const stopRecording = record({
+//   emit: (e) => {
+//     try {
+//       //@ts-ignore
+//       e.data.adds.forEach(add => {
+//         // if (add.node.tagName === "my-name") debugger
+//         if (add.parentId === 29) debugger
+//       })
+
+//     }
+//     catch (e) {
     
-    }
+//     }
 
-    recording.add(e)
-  }
-})
+//     recording.add(e)
+//   }
+// })
