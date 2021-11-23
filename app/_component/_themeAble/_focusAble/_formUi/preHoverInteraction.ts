@@ -2,12 +2,13 @@ import FormUi from "./formUi";
 import animationFrame from "animation-frame-delta";
 import Easing from "waapi-easing"
 
-const easeOut = new Easing("easeOut").function
+const dragImpactEaseFunc = new Easing("easeIn").function
 
 
-const maxPxPerFrame = 2
+let c = 0
+const maxPxPerFrame = 1
 // const overShootFactor = 1.05
-const overShoot = 6
+const overShoot = 10
 
 export default function(t: FormUi) {
 
@@ -32,16 +33,42 @@ export default function(t: FormUi) {
   })
 
 
-  let leaveMaxX: number
-
   target.on("mouseleave", () => {
-    leaveMaxX = renderedX
+    console.log("leave")
     relX = relY = 0
+
+    t.css({zIndex: 2})
+    target.css({
+      left: -10,
+      top: -10,
+      width: "calc(100% + 20px)",
+      height: "calc(100% + 20px)",
+    })
+    maxX = target.width() / 2
+    maxY = target.height() / 2
+
     followRuntime.cancel()
+    debugger
     snapBackRuntime.resume()
   })
 
+  
+
   target.on("mouseenter", () => {
+    console.log("enter")
+    t.css({zIndex: 20})
+    target.css({
+      left: -30,
+      top: -30,
+      width: "calc(100% + 60px)",
+      height: "calc(100% + 60px)",
+    })
+    maxX = target.width() / 2
+    maxY = target.height() / 2
+
+    c++
+    if (c === 2) debugger
+
     snapBackRuntime.cancel()
     followRuntime.resume()
   })
@@ -49,12 +76,21 @@ export default function(t: FormUi) {
   
   
 
-  
+  let maxDistance = 0
+  let curDistance = 0
   const followRuntimeFunc = (delta: number) => {
     const diffX = relX - renderedX
     const diffY = relY - renderedY
 
-    const fac = Math.min(1, (maxPxPerFrame * delta) / Math.sqrt(diffX**2 + diffY**2))
+    curDistance = Math.sqrt(diffX**2 + diffY**2)
+
+    if (maxDistance < curDistance) {
+      maxDistance = curDistance
+    }
+
+    const speed = curDistance / maxDistance * maxPxPerFrame
+
+    const fac = Math.min(1, (speed * delta) / curDistance)
 
     renderedX += diffX * fac
     renderedY += diffY * fac
@@ -67,26 +103,13 @@ export default function(t: FormUi) {
 
 
   const followRuntime = animationFrame(followRuntimeFunc)
-  followRuntime.cancel(followRuntimeFunc)
+  followRuntime.cancel()
   // let currentlyActiveRuntime = followRuntime
   const snapBackRuntime = animationFrame((delta: number) => {
-    const diffX = 0 - renderedX
-    const diffY = 0 - renderedY
+    followRuntimeFunc(delta)
+    console.log("snap")
 
-    const prog = .9999 - (renderedX / leaveMaxX)
-    const easeProgFac = easeOut(prog) / prog
-    console.log("easeProgFac", easeProgFac)
-
-    const fac = Math.min(1, (maxPxPerFrame * delta) / Math.sqrt(diffX**2 + diffY**2))
-    const facc = fac * easeProgFac
-
-    renderedX += diffX * facc
-    renderedY += diffY * facc
-
-    t.css({translateX: renderedX, translateY: renderedY})
-    target.css({translateX: -renderedX, translateY: -renderedY})
-
-    if (fac === 1) snapBackRuntime.cancel()
+    if (curDistance < .4) snapBackRuntime.cancel()
   })
   snapBackRuntime.cancel()
 
@@ -95,8 +118,8 @@ export default function(t: FormUi) {
     const absX = e.offsetX - maxX
     const absY = e.offsetY - maxY
 
-    relX = easeOut(absX / maxX) * overShoot
-    relY = easeOut(absY / maxY) * overShoot
+    relX = dragImpactEaseFunc(absX / maxX) * overShoot
+    relY = dragImpactEaseFunc(absY / maxY) * overShoot
 
   })
 }

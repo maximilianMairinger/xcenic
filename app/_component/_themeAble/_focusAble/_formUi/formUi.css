@@ -2,6 +2,7 @@
   --background: 242, 242, 242;
   --background-color: rgb(var(--background));
   background-color: var(--background-color);
+  z-index: 2;
 }
 
 
@@ -123,6 +124,7 @@ prehover-detector {
   left: -10px;
   width: calc(100% + 20px);
   height: calc(100% + 20px);
+  
   /* background-color: red;
   opacity: .05; */
 }
