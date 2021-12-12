@@ -16,12 +16,22 @@
 // import logrocket from 'logrocket';
 // logrocket.init('kvem5g/test');
 
-import { record } from "rrweb"
+// import { record } from "rrweb"
 
 
-export const recording = []
-export const stopRecording = record({
-  emit: (e) => {
-    recording.add(e)
-  }
-})
+// export const recording = []
+// export const stopRecording = record({
+//   emit: (e) => {
+//     recording.add(e)
+//   }
+// })
+
+//@ts-ignore
+window._mfq = window._mfq || [];
+  (function() {
+    var mf = document.createElement("script");
+    mf.type = "text/javascript"; mf.defer = true;
+    mf.src = "//cdn.mouseflow.com/projects/deb2b2e9-a78c-4a5e-95f7-440d42bf6fe8.js";
+    //@ts-ignore
+    document.getElementsByTagName("head")[0].appendChild(mf);
+  })();
