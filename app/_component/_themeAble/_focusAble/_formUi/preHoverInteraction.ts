@@ -5,8 +5,7 @@ import Easing from "waapi-easing"
 const dragImpactEaseFunc = new Easing("easeIn").function
 
 
-let c = 0
-const maxPxPerFrame = 1
+const maxPxPerFrame = 1.25
 // const overShootFactor = 1.05
 const overShoot = 10
 
@@ -34,7 +33,6 @@ export default function(t: FormUi) {
 
 
   target.on("mouseleave", () => {
-    console.log("leave")
     relX = relY = 0
 
     t.css({zIndex: 2})
@@ -48,14 +46,12 @@ export default function(t: FormUi) {
     maxY = target.height() / 2
 
     followRuntime.cancel()
-    debugger
     snapBackRuntime.resume()
   })
 
   
 
-  target.on("mouseenter", () => {
-    console.log("enter")
+  target.on("mouseenter", (e) => {
     t.css({zIndex: 20})
     target.css({
       left: -30,
@@ -66,8 +62,11 @@ export default function(t: FormUi) {
     maxX = target.width() / 2
     maxY = target.height() / 2
 
-    c++
-    if (c === 2) debugger
+    const absX = e.offsetX - maxX
+    const absY = e.offsetY - maxY
+
+    relX = dragImpactEaseFunc(absX / maxX) * overShoot
+    relY = dragImpactEaseFunc(absY / maxY) * overShoot
 
     snapBackRuntime.cancel()
     followRuntime.resume()
@@ -90,7 +89,8 @@ export default function(t: FormUi) {
 
     const speed = curDistance / maxDistance * maxPxPerFrame
 
-    const fac = Math.min(1, (speed * delta) / curDistance)
+    let fac = Math.min(1, (speed * delta) / curDistance)
+    if (isNaN(fac)) fac = 0
 
     renderedX += diffX * fac
     renderedY += diffY * fac
@@ -107,7 +107,6 @@ export default function(t: FormUi) {
   // let currentlyActiveRuntime = followRuntime
   const snapBackRuntime = animationFrame((delta: number) => {
     followRuntimeFunc(delta)
-    console.log("snap")
 
     if (curDistance < .4) snapBackRuntime.cancel()
   })
@@ -120,6 +119,5 @@ export default function(t: FormUi) {
 
     relX = dragImpactEaseFunc(absX / maxX) * overShoot
     relY = dragImpactEaseFunc(absY / maxY) * overShoot
-
   })
 }
