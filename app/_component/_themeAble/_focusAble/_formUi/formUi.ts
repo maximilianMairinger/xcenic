@@ -32,7 +32,6 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     click: this.q("click-cover"),
   }
 
-  private preHoverDetector = this.q("prehover-detector") as HTMLElement
 
   constructor(componentBodyExtension?: HTMLElement | false) {
     super(componentBodyExtension)
@@ -129,9 +128,14 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     }, true)
 
     
+    const hovPreDet = ce("prehover-detector")
+    this.sra(hovPreDet);
+    const root = ce("root-bounds")
+    this.sra(root);
+
     if (window.matchMedia && window.matchMedia("(hover:hover)").matches) {
       import("./preHoverInteraction").then(({default: f}) => {
-        f(this as any)
+        f(root as any, hovPreDet, this.componentBody as any)
       })
     }
 
@@ -146,7 +150,10 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
     this.rippleElements = ce("button-waves");
     this.apd(this.rippleElements);
+
+    
   }
+
 
   protected fadeRipple: ((anim?: boolean) => void)[] = []
   protected rippleElems: ElementList<Element & {fade?: ((animation?: boolean) => Promise<void>) & {auto?: boolean}}> = new ElementList

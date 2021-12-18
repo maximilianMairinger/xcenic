@@ -4,6 +4,10 @@
   cursor: text;
 }
 
+prehover-detector {
+  cursor: text;
+}
+
 component-body {
   position: relative;
 }

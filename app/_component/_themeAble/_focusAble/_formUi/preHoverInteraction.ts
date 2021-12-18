@@ -4,14 +4,30 @@ import Easing from "waapi-easing"
 
 const dragImpactEaseFunc = new Easing("easeIn").function
 
+// let i = 0
+// const getColor = () => {
+//   i++
+//   if (i % 3 === 0) {
+//     return "red"
+//   }
+//   if (i % 3 === 1) {
+//     return "green"
+//   }
+//   return "blue"
+// }
 
 const maxPxPerFrame = 1.25
 // const overShootFactor = 1.05
-const overShoot = 10
+const overShoot = 11
 
-export default function(t: FormUi) {
+export default function(root: HTMLElement, target: HTMLElement, moveElement: HTMLElement) {
 
-  const target = t.q("prehover-detector") as HTMLElement
+  
+
+  // target.css({backgroundColor: getColor()});
+
+
+
   // target.css({scale: overShootFactor})
   // const overShootX = t.offsetWidth * (overShootFactor-1) / 2;
   // const overShootY = t.offsetHeight * (overShootFactor-1) / 2;
@@ -35,12 +51,14 @@ export default function(t: FormUi) {
   target.on("mouseleave", () => {
     relX = relY = 0
 
-    t.css({zIndex: 2})
+    root.css({zIndex: 6})
+
     target.css({
       left: -10,
       top: -10,
       width: "calc(100% + 20px)",
       height: "calc(100% + 20px)",
+      zIndex: 1,
     })
     maxX = target.width() / 2
     maxY = target.height() / 2
@@ -49,15 +67,18 @@ export default function(t: FormUi) {
     snapBackRuntime.resume()
   })
 
-  
+
+
 
   target.on("mouseenter", (e) => {
-    t.css({zIndex: 20})
+    root.css({zIndex: -1})
+
     target.css({
       left: -30,
       top: -30,
       width: "calc(100% + 60px)",
       height: "calc(100% + 60px)",
+      zIndex: 3
     })
     maxX = target.width() / 2
     maxY = target.height() / 2
@@ -70,6 +91,13 @@ export default function(t: FormUi) {
 
     snapBackRuntime.cancel()
     followRuntime.resume()
+  })
+
+  root.on("mouseenter", () => {
+    root.css({zIndex: -1})
+    target.css({
+      zIndex: 3
+    })
   })
   
   
@@ -97,8 +125,7 @@ export default function(t: FormUi) {
 
 
 
-    t.css({translateX: renderedX, translateY: renderedY})
-    target.css({translateX: -renderedX, translateY: -renderedY})
+    moveElement.css({translateX: renderedX, translateY: renderedY})
   }
 
 
