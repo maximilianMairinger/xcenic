@@ -3,7 +3,6 @@ import declareComponent from "../../../../../../lib/declareComponent";
 import EditAble from "../editAble";
 
 export default class Input extends EditAble {
-  private placeholderContainer = this.q("placeholder-container") as HTMLElement
   constructor(placeholder?: string) {
     super(ce("input"), placeholder)
 

@@ -4,7 +4,7 @@ import Easing from "waapi-easing"
 
 const dragImpactEaseFunc = new Easing("easeIn").function
 
-// let i = 0
+// /* let i = 0
 // const getColor = () => {
 //   i++
 //   if (i % 3 === 0) {
@@ -14,11 +14,11 @@ const dragImpactEaseFunc = new Easing("easeIn").function
 //     return "green"
 //   }
 //   return "blue"
-// }
+// } */
 
 const maxPxPerFrame = 1.25
 // const overShootFactor = 1.05
-const overShoot = 11
+const overShoot = 12
 
 export default function(root: HTMLElement, target: HTMLElement, moveElement: HTMLElement) {
 
@@ -54,10 +54,10 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
     root.css({zIndex: 6})
 
     target.css({
-      left: -10,
-      top: -10,
-      width: "calc(100% + 20px)",
-      height: "calc(100% + 20px)",
+      left: -12,
+      top: -12,
+      width: "calc(100% + 24px)",
+      height: "calc(100% + 24px)",
       zIndex: 1,
     })
     maxX = target.width() / 2

@@ -18,6 +18,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
   private rippleElements: HTMLElement;
   private waveElement: HTMLElement;
   public validMouseButtons = new Set([0])
+  protected moveBody = this.q("move-me") as HTMLElement;
 
   public userFeedbackMode: DataBase<{
     ripple: boolean | "late",
@@ -129,13 +130,13 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
     
     const hovPreDet = ce("prehover-detector")
-    this.sra(hovPreDet);
+    this.apd(hovPreDet);
     const root = ce("root-bounds")
-    this.sra(root);
+    this.apd(root);
 
     if (window.matchMedia && window.matchMedia("(hover:hover)").matches) {
       import("./preHoverInteraction").then(({default: f}) => {
-        f(root as any, hovPreDet, this.componentBody as any)
+        f(root as any, hovPreDet, this.moveBody as any)
       })
     }
 
@@ -149,7 +150,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
 
     this.rippleElements = ce("button-waves");
-    this.apd(this.rippleElements);
+    this.moveBody.apd(this.rippleElements);
 
     
   }

@@ -10,7 +10,7 @@ export default class BlockButton extends RippleButton {
 
     if (onClick) this.click(onClick)
     this.content(content);
-    this.apd(this.textElem)
+    this.moveBody.apd(this.textElem)
   }
 
 

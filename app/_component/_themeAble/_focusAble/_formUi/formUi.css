@@ -3,8 +3,12 @@
   --background-color: rgb(var(--background));
   z-index: initial !important;
 }
-:host>*:nth-child(3) {
+
+move-me {
+  display: inline-block;
+  position: relative;
   background-color: var(--background-color);
+  border-radius: inherit;
 }
 
 root-bounds {
@@ -14,6 +18,7 @@ root-bounds {
   right: 0;
   bottom: 0;
   z-index: 6;
+  /* background-color: yellow; */
 }
 
 
@@ -133,8 +138,5 @@ prehover-detector {
   width: calc(100% + 20px);
   height: calc(100% + 20px);
   cursor: pointer;
-  
-  /* background-color: red;
-  opacity: .1; */
 }
 

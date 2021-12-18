@@ -2,13 +2,21 @@ import { Data, DataCollection } from "josm";
 import FormUi from "../formUi";
 
 export default class EditAble extends FormUi {
-  private placeholderElem = this.q("placeholder-text")
-  private placeholderCoverGradientElem = this.q("placeholder-gradient")
+
+  
+  
+
+  protected placeholderContainer = ce("placeholder-container")
+  
+  protected placeholderText = ce("placeholder-text")
+
   protected placeholderUp: Data<boolean>
   constructor(protected inputElem: HTMLInputElement | HTMLTextAreaElement, placeholder = "") {
     super()
     inputElem.id = "editAble"
-    this.apd(inputElem as any)
+    this.moveBody.apd(this.placeholderContainer.apd(this.placeholderText))
+    this.moveBody.apd(inputElem as any)
+    
 
     this.placeholder(placeholder)
 
@@ -36,13 +44,13 @@ export default class EditAble extends FormUi {
 
       let localAnimDone = globalAnimDone = Symbol()
       this.componentBody.removeClass("animDone")
-      this.placeholderElem.anim(up ? {paddingTop: 7, fontSize: 12} : {paddingTop: 14, fontSize: 14}, 200).then(() => {
+      this.placeholderText.anim(up ? {paddingTop: 7, fontSize: 12} : {paddingTop: 14, fontSize: 14}, 200).then(() => {
         if (localAnimDone === globalAnimDone) this.componentBody.addClass("animDone")
       })
     })
 
     isEmpty.get((isEmpty) => {
-      this.placeholderElem.css({fontWeight: isEmpty ? "normal" : "bold"})
+      this.placeholderText.css({fontWeight: isEmpty ? "normal" : "bold"})
     })
 
     this.on("click", () => {
@@ -53,7 +61,7 @@ export default class EditAble extends FormUi {
     this.inputElem.focus()
   }
   placeholder(to: string) {
-    this.placeholderElem.text(to)
+    this.placeholderText.text(to)
   }
   public pug(): string {
     return super.pug() + require("./editAble.pug").default

@@ -22,7 +22,6 @@ focus-man {
   left: 0;
   top: 0;
   border-radius: inherit;
-  z-index: 20;
   pointer-events: none;
 }
 
