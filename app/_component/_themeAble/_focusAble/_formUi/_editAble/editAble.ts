@@ -18,6 +18,8 @@ export default class EditAble extends FormUi {
     this.moveBody.apd(inputElem as any)
     
 
+    this.userFeedbackMode.ripple.set(false)
+
     this.placeholder(placeholder)
 
     

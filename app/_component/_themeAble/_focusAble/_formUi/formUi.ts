@@ -36,6 +36,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
   constructor(componentBodyExtension?: HTMLElement | false) {
     super(componentBodyExtension)
+    if (this.componentBody instanceof HTMLElement) this.componentBody.id = "componentBody"
 
     this.userFeedbackMode({
       ripple: true,
@@ -130,13 +131,13 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
     
     const hovPreDet = ce("prehover-detector")
-    this.apd(hovPreDet);
+    this.componentBody.prepend(hovPreDet);
     const root = ce("root-bounds")
     this.apd(root);
 
     if (window.matchMedia && window.matchMedia("(hover:hover)").matches) {
       import("./preHoverInteraction").then(({default: f}) => {
-        f(root as any, hovPreDet, this.moveBody as any)
+        f(root as any, hovPreDet, this.moveBody as any, this.componentBody as any)
       })
     }
 

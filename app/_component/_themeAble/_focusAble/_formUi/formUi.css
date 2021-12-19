@@ -9,6 +9,7 @@ move-me {
   position: relative;
   background-color: var(--background-color);
   border-radius: inherit;
+  z-index: 4;
 }
 
 root-bounds {
@@ -60,6 +61,7 @@ root-bounds {
 
 
 
+
 :host {
   --text: var(--primary-text);
   --drag: auto;
@@ -69,7 +71,7 @@ root-bounds {
   --drag-p: var(--drag);
 }
 
-c-button {
+#componentBody {
   --text: var(--text-p);
   --drag: var(--drag-p);
   border-radius: inherit;

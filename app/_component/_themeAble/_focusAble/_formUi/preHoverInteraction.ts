@@ -20,7 +20,7 @@ const maxPxPerFrame = 1.25
 // const overShootFactor = 1.05
 const overShoot = 12
 
-export default function(root: HTMLElement, target: HTMLElement, moveElement: HTMLElement) {
+export default function(root: HTMLElement, target: HTMLElement, moveElement: HTMLElement, evTarget: HTMLElement) {
 
   
 
@@ -48,7 +48,7 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
   })
 
 
-  target.on("mouseleave", () => {
+  evTarget.on("mouseleave", () => {
     relX = relY = 0
 
     root.css({zIndex: 6})
@@ -70,7 +70,7 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
 
 
 
-  target.on("mouseenter", (e) => {
+  evTarget.on("mouseenter", (e) => {
     root.css({zIndex: -1})
 
     target.css({
@@ -140,7 +140,7 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
   snapBackRuntime.cancel()
 
 
-  target.on("mousemove", (e: MouseEvent) => {
+  evTarget.on("mousemove", (e: MouseEvent) => {
     const absX = e.offsetX - maxX
     const absY = e.offsetY - maxY
 
