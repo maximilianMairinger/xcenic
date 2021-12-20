@@ -45,6 +45,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     })
 
     this.addClass("rippleSettled")
+    this.moveBody.apd(this.focusManElem)
 
 
     this.userFeedbackMode.hover.get((y) => {

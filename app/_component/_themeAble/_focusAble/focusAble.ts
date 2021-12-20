@@ -11,7 +11,7 @@ export default class FocusAble<T extends false | HTMLElement | HTMLAnchorElement
   }) as DataBase<{
     focus: boolean | "direct",
   }>
-  private focusManElem = ce("focus-man")
+  protected focusManElem = ce("focus-man")
   constructor(componentBodyExtension?: HTMLElement | false, theme?: Theme | null) {
     super(componentBodyExtension, theme)
 
