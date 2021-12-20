@@ -4,6 +4,10 @@ import Easing from "waapi-easing"
 
 const dragImpactEaseFunc = new Easing("easeIn").function
 
+
+
+
+
 // /* let i = 0
 // const getColor = () => {
 //   i++
@@ -16,13 +20,30 @@ const dragImpactEaseFunc = new Easing("easeIn").function
 //   return "blue"
 // } */
 
-const maxPxPerFrame = 1.25
-// const overShootFactor = 1.05
+const maxPxPerFrame = 1
 const overShoot = 12
+const targetOverflow = 10
+const targetOverflowWidthStr = `calc(100% + ${targetOverflow * 2}px)`
+const activeTargetOverflow = 35
+const activeTargetOverflowWidthStr = `calc(100% + ${activeTargetOverflow * 2}px)`
+const qlance = .35
+
+
+
+const halfQlance = qlance / 2
+
 
 export default function(root: HTMLElement, target: HTMLElement, moveElement: HTMLElement, evTarget: HTMLElement) {
 
   
+
+  target.css({
+    left: -targetOverflow,
+    top: -targetOverflow,
+    width: targetOverflowWidthStr,
+    height: targetOverflowWidthStr,
+    zIndex: 1,
+  })
 
   // target.css({backgroundColor: getColor()});
 
@@ -39,12 +60,36 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
   let relY = 0
 
 
-  let maxX: number
-  let maxY: number
 
-  target.on("resize", (e: DOMRectReadOnly) => {
-    maxX = e.width / 2
-    maxY = e.height / 2
+  let width: number
+  let heigh: number
+  let offsetX: number
+  let offsetY: number
+  let qWidth: number
+  let qHeight: number
+
+  let qWithWithActiveTargetOverflow: number
+  let qHeightWithActiveTargetOverflow: number
+
+  root.on("resize", () => {
+    const bounds = root.getBoundingClientRect()
+
+    width = bounds.width
+    heigh = bounds.height
+    qWidth = width * halfQlance
+    qHeight = heigh * halfQlance
+    qWithWithActiveTargetOverflow = qWidth + activeTargetOverflow
+    qHeightWithActiveTargetOverflow = qHeight + activeTargetOverflow
+
+    offsetX = bounds.left
+    offsetY = bounds.top
+  })
+
+  window.on("resize", () => {
+    const bounds = root.getBoundingClientRect()
+
+    offsetX = bounds.left
+    offsetY = bounds.top
   })
 
 
@@ -53,41 +98,58 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
 
     root.css({zIndex: 6})
 
+    
     target.css({
-      left: -12,
-      top: -12,
-      width: "calc(100% + 24px)",
-      height: "calc(100% + 24px)",
+      left: -targetOverflow,
+      top: -targetOverflow,
+      width: targetOverflowWidthStr,
+      height: targetOverflowWidthStr,
       zIndex: 1,
     })
-    maxX = target.width() / 2
-    maxY = target.height() / 2
 
     followRuntime.cancel()
     snapBackRuntime.resume()
   })
 
+  
+  const mouseMove = (e: MouseEvent) => {
+    let absX = e.clientX - offsetX
+    let absY = e.clientY - offsetY
+
+    if (absX - width + qWidth < 0) {
+      if (absX - qWidth > 0) absX = 0
+      else absX -= qWidth
+    }
+    else absX -= width - qWidth
+
+    if (absY - heigh + qHeight < 0) {
+      if (absY - qHeight > 0) absY = 0
+      else absY -= qHeight
+    }
+    else absY -= heigh - qHeight
+
+    
+    
+    relX = dragImpactEaseFunc(absX / qWithWithActiveTargetOverflow) * overShoot
+    relY = dragImpactEaseFunc(absY / qHeightWithActiveTargetOverflow) * overShoot
 
 
+  }
+
+  evTarget.on("mousemove", mouseMove)
 
   evTarget.on("mouseenter", (e) => {
     root.css({zIndex: -1})
 
     target.css({
-      left: -30,
-      top: -30,
-      width: "calc(100% + 60px)",
-      height: "calc(100% + 60px)",
+      left: -activeTargetOverflow,
+      top: -activeTargetOverflow,
+      width: activeTargetOverflowWidthStr,
+      height: activeTargetOverflowWidthStr,
       zIndex: 3
     })
-    maxX = target.width() / 2
-    maxY = target.height() / 2
-
-    const absX = e.offsetX - maxX
-    const absY = e.offsetY - maxY
-
-    relX = dragImpactEaseFunc(absX / maxX) * overShoot
-    relY = dragImpactEaseFunc(absY / maxY) * overShoot
+    
+    mouseMove(e)
 
     snapBackRuntime.cancel()
     followRuntime.resume()
@@ -139,12 +201,5 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
   })
   snapBackRuntime.cancel()
 
-
-  evTarget.on("mousemove", (e: MouseEvent) => {
-    const absX = e.offsetX - maxX
-    const absY = e.offsetY - maxY
-
-    relX = dragImpactEaseFunc(absX / maxX) * overShoot
-    relY = dragImpactEaseFunc(absY / maxY) * overShoot
-  })
+  
 }
