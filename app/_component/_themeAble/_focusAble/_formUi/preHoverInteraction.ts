@@ -61,36 +61,6 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
 
 
 
-  let width: number
-  let heigh: number
-  let offsetX: number
-  let offsetY: number
-  let qWidth: number
-  let qHeight: number
-
-  let qWithWithActiveTargetOverflow: number
-  let qHeightWithActiveTargetOverflow: number
-
-  root.on("resize", () => {
-    const bounds = root.getBoundingClientRect()
-
-    width = bounds.width
-    heigh = bounds.height
-    qWidth = width * halfQlance
-    qHeight = heigh * halfQlance
-    qWithWithActiveTargetOverflow = qWidth + activeTargetOverflow
-    qHeightWithActiveTargetOverflow = qHeight + activeTargetOverflow
-
-    offsetX = bounds.left
-    offsetY = bounds.top
-  })
-
-  window.on("resize", () => {
-    const bounds = root.getBoundingClientRect()
-
-    offsetX = bounds.left
-    offsetY = bounds.top
-  })
 
 
   evTarget.on("mouseleave", () => {
@@ -112,28 +82,48 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
   })
 
   
+  let bounds: DOMRect
+  let absX: number
+  let absY: number
+  let width: number
+  let height: number
+  let qWidth: number
+  let qHeight: number
+  let qWithWithActiveTargetOverflow: number
+  let qHeightWithActiveTargetOverflow: number
+  
   const mouseMove = (e: MouseEvent) => {
-    let absX = e.clientX - offsetX
-    let absY = e.clientY - offsetY
+    bounds = root.getBoundingClientRect()
 
-    if (absX - width + qWidth < 0) {
+    absX = e.pageX - bounds.left
+    absY = e.pageY - bounds.top
+
+    
+    width = bounds.width
+    height = bounds.height
+    qWidth = width * halfQlance
+    qHeight = height * halfQlance
+    qWithWithActiveTargetOverflow = qWidth + activeTargetOverflow
+    qHeightWithActiveTargetOverflow = qHeight + activeTargetOverflow
+
+
+
+    if (absX - bounds.width + qWidth < 0) {
       if (absX - qWidth > 0) absX = 0
       else absX -= qWidth
     }
     else absX -= width - qWidth
 
-    if (absY - heigh + qHeight < 0) {
+    if (absY - height + qHeight < 0) {
       if (absY - qHeight > 0) absY = 0
       else absY -= qHeight
     }
-    else absY -= heigh - qHeight
+    else absY -= height - qHeight
 
     
     
     relX = dragImpactEaseFunc(absX / qWithWithActiveTargetOverflow) * overShoot
     relY = dragImpactEaseFunc(absY / qHeightWithActiveTargetOverflow) * overShoot
-
-
   }
 
   evTarget.on("mousemove", mouseMove)
