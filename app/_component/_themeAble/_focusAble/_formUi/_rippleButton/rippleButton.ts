@@ -8,7 +8,6 @@ import { PrimElem, Token, VariableLibrary } from "extended-dom";
 
 
 
-
 export default class UiButton extends FormUi<Button> {
   private button: Button
 
