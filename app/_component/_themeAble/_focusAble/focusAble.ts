@@ -19,20 +19,38 @@ export default class FocusAble<T extends false | HTMLElement | HTMLAnchorElement
 
 
     const clickFocusListener: EventListener[] = []
+    let lastBlurListener: EventListener
+    let lastMouseoutListener: EventListener
     clickFocusListener.add(
       this.on("mousedown", () => {
         this.addClass("clickFocus")
-        this.on("blur", () => {
-          this.removeClass("clickFocus")
-        }, {once: true})
-      }),
+        if (lastBlurListener) {
+          lastBlurListener.deactivate()
+          lastBlurListener = undefined
+        }
+        setTimeout(() => {
+          lastBlurListener = this.on("blur", () => {
+            this.removeClass("clickFocus")
+            lastBlurListener = undefined
+          }, {once: true})
+        })
+        
+      }, true),
       this.on("mouseup", () => {
         this.addClass("afterClickFocus")
-        this.on("mouseout", () => {
-          this.removeClass("afterClickFocus")
-        }, {once: true})
+        if (lastMouseoutListener) {
+          lastMouseoutListener.deactivate()
+          lastMouseoutListener = undefined
+        }
+        setTimeout(() => {
+          this.on("mouseout", () => {
+            this.removeClass("afterClickFocus")
+            lastMouseoutListener = undefined
+          }, {once: true})
+        })
+        
 
-      })
+      }, true)
     )
 
 
