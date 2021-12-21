@@ -29,7 +29,9 @@ export function declareComponent<Comp>(name: string, component: Comp){
       //@ts-ignore
       cur.prototype.attributeChangedCallback = attrSetFunc
       for (let i = 0; i < localAttrbs.length; i++) {
-        localAttrbs[i] = attrIndex[localAttrbs[i]] = localAttrbs[i].toLowerCase()
+        const lc = localAttrbs[i].toLowerCase()
+        attrIndex[lc] = localAttrbs[i]
+        localAttrbs[i] = lc
       }
 
       attrbs.add(...localAttrbs)
