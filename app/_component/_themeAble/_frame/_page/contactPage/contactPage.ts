@@ -1,8 +1,10 @@
-import { ScrollData } from "extended-dom";
+import { ElementList, ScrollData } from "extended-dom";
 import { Data, DataCollection, DataSubscription } from "josm";
 import declareComponent from "../../../../../lib/declareComponent";
-import Page from "../page";
+import Page from "../page"
 
+
+import "./../../../../form/form"
 import "./../../../../image/image"
 import "./../../../textBlob/textBlob"
 import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
@@ -11,6 +13,7 @@ import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/selectButton/se
 import "./../../../_icon/lineAccent/lineAccent"
 import "./../../../_focusAble/_formUi/_editAble/input/input"
 import "./../../../_focusAble/_formUi/_editAble/textArea/textArea"
+import Form from "./../../../../form/form";
 
 
 
@@ -20,10 +23,25 @@ export default class ContactPage extends Page {
   
   private continueButton = this.q("#continue") as BlockButton
 
-  private afterInitialViewElem = this.q("after-initial-view")
+  private afterInitialViewElem = this.q("after-initial-view") as HTMLElement
+  private formElem = this.q("c-form") as Form
 
   constructor() {
     super("dark")
+
+
+
+
+    this.formElem.submit((e) => {
+      console.log(e)
+    })
+
+
+
+
+
+
+
 
     const isMobile = this.resizeData().tunnel((e) => e.width <= 700)
 
@@ -69,9 +87,21 @@ export default class ContactPage extends Page {
         this.afterInitialViewElem.anim({opacity: 0, translateY: .1}, 400)
       })
 
+    
 
+    this.afterInitialViewElem.on("focusin", () => {
+      if (currentScollBody.get().scrollTop < afterInitViewElemFadeInScrollPos.get()) {
+        currentScollBody.get().scroll(currentScollBody.get().scrollHeight - currentScollBody.get().height(), {speed: 500}, false)  
+      }
+    })
+
+
+    const afterInitViewInputs = this.afterInitialViewElem.childs(1, true) as ElementList<HTMLElement>
     this.continueButton.addActivationCallback(() => {
-      currentScollBody.get().scroll(currentScollBody.get().scrollHeight - currentScollBody.get().height(), {speed: 500}, false)
+      if (currentScollBody.get().scrollTop < afterInitViewElemFadeInScrollPos.get()) {
+        afterInitViewInputs.first.focus({preventScroll: true})
+      }
+      else this.formElem.submit()
     })
 
   

@@ -1,10 +1,14 @@
 import { Data, DataCollection } from "josm";
 import FormUi from "../formUi";
 
+
+type ReadonlyData<T> = Omit<Data<T>, "set">
+
 export default class EditAble extends FormUi {
 
   
-  
+  public isEmpty: ReadonlyData<boolean>
+  public value: ReadonlyData<string>
 
   protected placeholderContainer = ce("placeholder-container")
   
@@ -24,15 +28,15 @@ export default class EditAble extends FormUi {
 
     
 
-    const isFocused = new Data(false)
-    this.inputElem.on("focus", () => {isFocused.set(true)})
-    this.inputElem.on("blur", () => {isFocused.set(false)})
+    
 
-    const isEmpty = new Data(true)
-    this.inputElem.on("input", () => {isEmpty.set(this.inputElem.value === "")})
+    
+    const value = (this as any).value = new Data("")
+    this.inputElem.on("input", () => {(this.value as Data<string>).set(this.inputElem.value)})
+    const isEmpty = (this as any).isEmpty = value.tunnel((v) => v === "")
 
     this.placeholderUp = new Data(false) as any
-    new DataCollection(isFocused, isEmpty).get((isFocused, isEmpty) => {
+    new DataCollection(this.isFocused as Data<boolean>, isEmpty).get((isFocused, isEmpty) => {
       this.placeholderUp.set(!isEmpty || isFocused)
     })
 

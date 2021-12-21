@@ -9,6 +9,8 @@ import { Theme } from "../../themeAble"
 if (window.TouchEvent === undefined) window.TouchEvent = class SurelyNotTouchEvent {} as any
 
 
+type ReadonlyData<T> = Omit<Data<T>, "set">
+
 // distance between two points
 function distance(p1: [number, number], p2: [number, number]) {
     return Math.sqrt(Math.abs(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2)));
@@ -34,6 +36,8 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
   }
 
 
+  public isFocused: ReadonlyData<boolean>
+
   constructor(componentBodyExtension?: HTMLElement | false) {
     super(componentBodyExtension)
     if (this.componentBody instanceof HTMLElement) this.componentBody.id = "componentBody"
@@ -46,6 +50,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
     this.addClass("rippleSettled")
     this.moveBody.apd(this.focusManElem)
+
 
 
     this.userFeedbackMode.hover.get((y) => {
@@ -131,7 +136,21 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     }, true)
 
     
+    const isFocused = (this as any).isFocused = new Data(false)
+    this.on("focusin", () => {(this as any).isFocused.set(true)})
+    this.on("focusout", () => {(this as any).isFocused.set(false)})
+
+
+
+
+
     const hovPreDet = ce("prehover-detector")
+    hovPreDet.on("mousedown", (e) => {
+      if (isFocused.get()) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+    }, true)
     this.componentBody.prepend(hovPreDet);
     const root = ce("root-bounds")
     this.apd(root);
@@ -156,7 +175,6 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
     
   }
-
 
   protected fadeRipple: ((anim?: boolean) => void)[] = []
   protected rippleElems: ElementList<Element & {fade?: ((animation?: boolean) => Promise<void>) & {auto?: boolean}}> = new ElementList

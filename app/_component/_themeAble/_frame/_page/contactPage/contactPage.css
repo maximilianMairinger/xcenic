@@ -22,7 +22,7 @@ image-darken {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-ui-container-box {
+c-form {
   display: block;
   width: 40%;
   min-width: 415px;
@@ -127,13 +127,6 @@ initial-view {
 
 
 
-ui-container-box-scroll::-webkit-scrollbar { 
-  display: none;  
-}
-
-ui-container-box-scroll {
-  scrollbar-width: none; 
-}
 
 @media (max-width: 700px) {
   ui-container-content {
@@ -145,7 +138,7 @@ ui-container-box-scroll {
     right: calc(11.5% - 3px);
   }
 
-  ui-container-box {
+  c-form {
     width: 100%;
     position: absolute;
     min-width: 345px;
