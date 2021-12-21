@@ -173,6 +173,8 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
 
     curDistance = Math.sqrt(diffX**2 + diffY**2)
 
+    if (curDistance < .25) return
+
     if (maxDistance < curDistance) {
       maxDistance = curDistance
     }
