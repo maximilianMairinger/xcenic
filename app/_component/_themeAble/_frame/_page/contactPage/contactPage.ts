@@ -14,6 +14,7 @@ import "./../../../_icon/lineAccent/lineAccent"
 import "./../../../_focusAble/_formUi/_editAble/input/input"
 import "./../../../_focusAble/_formUi/_editAble/textArea/textArea"
 import Form from "./../../../../form/form";
+import lang from "../../../../../lib/lang";
 
 
 
@@ -78,14 +79,43 @@ export default class ContactPage extends Page {
         this.lastThingElem.anim({translateY: 5, opacity: 0, scale: .95}, 400).then(() => {if (token === lastThingAnimSym) this.lastThingElem.hide().css({translateY: -20})})
       })
 
+    this.continueButton.content(lang.contact.continue)
     const afterInitViewElemFadeInScrollPos = lastThingShowPos.tunnel(e => e + 50)
     scrollData.scrollTrigger(afterInitViewElemFadeInScrollPos)
       .on("forward", () => {
         this.afterInitialViewElem.anim({opacity: 1, translateY: 20}, 550)
+        this.continueButton.content(lang.contact.send)
       })
       .on("backward", () => {
         this.afterInitialViewElem.anim({opacity: 0, translateY: .1}, 400)
-      })
+        this.continueButton.content(lang.contact.continue)
+      });
+    
+    (() => {
+      let first = true
+      let lastWidth: number
+
+
+      const sub = this.continueButton.on("resize", (e: DOMRect) => {
+        if (first) {
+          first = false
+          lastWidth = Math.round(e.width)
+          return
+        }
+        if (Math.round(e.width) === lastWidth) return
+
+        sub.deactivate()
+        this.continueButton.anim([{width: lastWidth, maxWidth: lastWidth, offset: 0}, {width: e.width, maxWidth: e.width}]).then(() => {
+          this.continueButton.css({width: "unset", maxWidth: "unset"})
+          sub.activate()
+        })
+        
+        
+        
+        lastWidth = Math.round(e.width)
+      }, true)
+    })();
+    
 
     
 

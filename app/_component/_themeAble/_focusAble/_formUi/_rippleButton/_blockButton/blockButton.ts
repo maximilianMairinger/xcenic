@@ -1,6 +1,7 @@
 import RippleButton from "../rippleButton";
 import delay from "delay"
 import declareComponent from "../../../../../../lib/declareComponent";
+import { Data } from "josm";
 
 
 export default class BlockButton extends RippleButton {
@@ -14,8 +15,8 @@ export default class BlockButton extends RippleButton {
   }
 
 
-  content(to: string) {
-    this.textElem.text(to)
+  content(to: string | Data<string>) {
+    this.textElem.text(to as any)
   }
   stl() {
     return super.stl() + require('./blockButton.css').toString();

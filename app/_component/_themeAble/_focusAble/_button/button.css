@@ -15,6 +15,8 @@
 }
 
 a {
+  width: inherit;
+  max-width: inherit;
   height: 100%;
   text-align: inherit;
   color: inherit;
@@ -36,4 +38,6 @@ a {
 
 slot {
   border-radius: inherit;
+  width: inherit;
+  max-width: inherit;
 }

@@ -23,6 +23,7 @@ export default {
     lastThingQuery: "One more thing...",
     
     continue: "Continue",
+    send: "Send",
 
     yourName: "Name",
     email: "Email"
