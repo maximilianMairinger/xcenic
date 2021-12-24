@@ -7,14 +7,15 @@ import Page from "../page"
 import "./../../../../form/form"
 import "./../../../../image/image"
 import "./../../../textBlob/textBlob"
-import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
-import BlockButton from  "./../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
+import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/loadButton/loadButton"
+import LoadButton from  "./../../../_focusAble/_formUi/_rippleButton/_blockButton/loadButton/loadButton"
 import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/selectButton/selectButton"
 import "./../../../_icon/lineAccent/lineAccent"
 import "./../../../_focusAble/_formUi/_editAble/input/input"
 import "./../../../_focusAble/_formUi/_editAble/textArea/textArea"
 import Form from "./../../../../form/form";
 import lang from "../../../../../lib/lang";
+import delay from "delay";
 
 
 
@@ -22,7 +23,7 @@ export default class ContactPage extends Page {
   private initialViewElem = this.q("initial-view") as HTMLElement
   private lastThingElem = this.initialViewElem.childs("h3.lastThing")
   
-  private continueButton = this.q("#continue") as BlockButton
+  private continueButton = this.q("#continue") as LoadButton
 
   private afterInitialViewElem = this.q("after-initial-view") as HTMLElement
   private formElem = this.q("c-form") as Form
@@ -33,8 +34,13 @@ export default class ContactPage extends Page {
 
 
 
-    this.formElem.submit((e) => {
+    this.formElem.submit(async (e) => {
+      console.log("now")
+      await delay(1000)
       console.log(e)
+      return () => {
+        console.log("later")
+      }
     })
 
 
@@ -131,7 +137,9 @@ export default class ContactPage extends Page {
       if (currentScollBody.get().scrollTop < afterInitViewElemFadeInScrollPos.get()) {
         afterInitViewInputs.first.focus({preventScroll: true})
       }
-      else this.formElem.submit()
+      else {
+        return this.formElem.submit()
+      }
     })
 
   

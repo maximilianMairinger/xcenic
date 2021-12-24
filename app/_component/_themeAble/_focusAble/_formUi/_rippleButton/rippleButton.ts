@@ -7,9 +7,9 @@ import { PrimElem, Token, VariableLibrary } from "extended-dom";
 
 
 
-
+//@ts-ignore
 export default class UiButton extends FormUi<Button> {
-  private button: Button
+  protected button: Button
 
   constructor() {
     const button = new Button()
@@ -35,13 +35,14 @@ export default class UiButton extends FormUi<Button> {
     })
   }
 
-  public enable: () => void
-  public disable: () => void
+  public enable?(): void
+  public disable?(): void
   public link: ((() => string) & ((to: null) => this) & ((to: string, domainLevel?: number, push?: boolean, notify?: boolean) => this))
-  public addActivationCallback: <CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB) => CB
-  public removeActivationCallback: <CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB) => CB
-  public click: ((<CB extends (e?: MouseEvent | KeyboardEvent) => void>(f: CB) => CB) & ((e?: MouseEvent | KeyboardEvent) => void))
-  public hotkey: ((key: string) => void)
+  public addActivationCallback?<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB
+  public removeActivationCallback?<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB
+  public click?<CB extends (e?: MouseEvent | KeyboardEvent) => void>(f: CB): CB
+  public click?(e?: MouseEvent | KeyboardEvent): Promise<any[]>
+  public hotkey?(key: string): void
   
 
 

@@ -17,6 +17,10 @@ export default class Form extends Component<false> {
     if (submitElement) {
       this.submitElement(submitElement)
     }
+
+    this.dataBase((full, diff) => {
+      Promise.all(this.callbacks.map(cb => cb(full, diff))).then(this.resCurSubCall as any)
+    })
   }
   private unsubFromLastSubmitElement = () => {}
   submitElement(submitElement: SelectorToButton | Button) {
@@ -41,11 +45,19 @@ export default class Form extends Component<false> {
 
   }
 
-  submit(callback: (...any: any[]) => void): DataBaseSubscription<[{[key in string]: any}]>
-  submit(): {[key: string]: any}
-  submit(callback?: () => void) {
+  private callbacks: Function[] = []
+  private resCurSubCall: Function
+
+  submit(callback: (fullData: any, diffData: any) => (Promise<any> | void)): {remove: () => void}
+  submit(): Promise<{[key: string]: any}> & {data: {[key: string]: any}}
+  submit(callback?: (fullData: any, diffData: any) => (Promise<any> | void)) {
     if (callback) {
-      return this.dataBase(callback, true, false)
+      this.callbacks.push(callback)
+      return {
+        remove: () => {
+          this.callbacks.splice(this.callbacks.indexOf(callback), 1)
+        }
+      }
     } else {
       const ob = {} as {[key: string]: any}
       let prevWasSelect = false
@@ -68,9 +80,15 @@ export default class Form extends Component<false> {
         }
       })
 
+
+      const prom = new Promise((res) => {
+        this.resCurSubCall = res
+      }) as Promise<{[key: string]: any}> & {data: {[key: string]: any}}
+      prom.data = ob
+
       this.dataBase(ob, true)
 
-      return this.dataBase()
+      return prom
     }
   }
 

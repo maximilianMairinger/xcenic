@@ -15,7 +15,7 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
   private _hotKey: string
   public validMouseButtons = new Set([0])
   private slotElem = ce("slot")
-  constructor(protected readonly enabled: boolean = false) {
+  constructor(public readonly enabled: boolean = false) {
     super(ce("a") as any)
     super.apd(this.slotElem)
 
@@ -97,7 +97,6 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
     if (to !== undefined) {
       if (to !== null) {
         this.validMouseButtons.add(1)
-        this.validMouseButtons.add(2)
 
 
         let link = domain.linkMeta(to, domainLevel)
@@ -118,7 +117,6 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
       }
       else {
         this.validMouseButtons.delete(1)
-        this.validMouseButtons.delete(2)
 
         if (this.linkFn !== undefined) this.removeActivationCallback(this.linkFn)
       }
@@ -142,7 +140,7 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
 
   
   public click<CB extends (e?: MouseEvent | KeyboardEvent) => void>(f: CB): CB
-  public click(e?: MouseEvent | KeyboardEvent)
+  public click(e?: MouseEvent | KeyboardEvent): Promise<any[]>
   public click(e_f?: MouseEvent | KeyboardEvent | ((e?: MouseEvent | KeyboardEvent) => void)) {
     if (e_f instanceof Function) {
       return this.addActivationCallback(e_f)
@@ -150,9 +148,10 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
     else {
       if (e_f !== undefined) e_f.preventDefault();
       if (this.enabled) {
-        if (!this.preventOnClickFocus) this.focus();
-        this.callbacks.forEach(f => {f.call(this, e_f);});
+        if (!this.preventOnClickFocus) this.focus()
+        return Promise.all(this.callbacks.map(f => f.call(this, e_f)))
       }
+      else return Promise.resolve()
     }
     
   }
