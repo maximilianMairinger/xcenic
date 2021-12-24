@@ -1,4 +1,3 @@
-import { DataBase, DataBaseSubscription, DataSubscription } from "josm"
 import Component from "../component"
 import FormUi from "../_themeAble/_focusAble/_formUi/formUi"
 import EditAble from "../_themeAble/_focusAble/_formUi/_editAble/editAble"
@@ -9,7 +8,6 @@ import Button from "./../_themeAble/_focusAble/_formUi/_rippleButton/rippleButto
 type SelectorToButton = string
 
 export default class Form extends Component<false> {
-  private dataBase: DataBase<{[key in string]: any}> = new DataBase({})
   private slotElem = ce("slot")
   constructor(submitElement?: SelectorToButton | Button) {
     super(false)
@@ -17,10 +15,6 @@ export default class Form extends Component<false> {
     if (submitElement) {
       this.submitElement(submitElement)
     }
-
-    this.dataBase((full, diff) => {
-      Promise.all(this.callbacks.map(cb => cb(full, diff))).then(this.resCurSubCall as any)
-    })
   }
   private unsubFromLastSubmitElement = () => {}
   submitElement(submitElement: SelectorToButton | Button) {
@@ -48,9 +42,9 @@ export default class Form extends Component<false> {
   private callbacks: Function[] = []
   private resCurSubCall: Function
 
-  submit(callback: (fullData: any, diffData: any) => (Promise<any> | void)): {remove: () => void}
+  submit(callback: (fullData: any) => (Promise<any> | void)): {remove: () => void}
   submit(): Promise<{[key: string]: any}> & {data: {[key: string]: any}}
-  submit(callback?: (fullData: any, diffData: any) => (Promise<any> | void)) {
+  submit(callback?: (fullData: any) => (Promise<any> | void)) {
     if (callback) {
       this.callbacks.push(callback)
       return {
@@ -81,12 +75,8 @@ export default class Form extends Component<false> {
       })
 
 
-      const prom = new Promise((res) => {
-        this.resCurSubCall = res
-      }) as Promise<{[key: string]: any}> & {data: {[key: string]: any}}
+      const prom = Promise.all(this.callbacks.map(cb => cb(ob))).then(this.resCurSubCall as any) as Promise<{[key: string]: any}> & {data: {[key: string]: any}}
       prom.data = ob
-
-      this.dataBase(ob, true)
 
       return prom
     }

@@ -36,7 +36,7 @@ export default class ContactPage extends Page {
 
     this.formElem.submit(async (e) => {
       console.log("now")
-      await delay(1000)
+      await delay(2000)
       console.log(e)
       return () => {
         console.log("later")

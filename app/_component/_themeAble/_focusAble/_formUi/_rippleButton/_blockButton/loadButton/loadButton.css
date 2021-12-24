@@ -1,0 +1,29 @@
+move-me {
+  align-items: center;
+}
+
+.buttonAccent {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  right: 13px;
+  opacity: 0;
+}
+
+loading-circle {
+  border-radius: 50%;
+  border: 2px solid hsl(0deg 0% 100%);
+  border-left-color: hsl(0deg 0% 0% / 0%);
+  animation: spin 1s linear infinite;
+  margin-right: -5px;
+  box-sizing: border-box;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

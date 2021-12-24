@@ -26,7 +26,7 @@ const targetOverflow = 15
 const targetOverflowWidthStr = `calc(100% + ${targetOverflow * 2}px)`
 const activeTargetOverflow = 30
 const activeTargetOverflowWidthStr = `calc(100% + ${activeTargetOverflow * 2}px)`
-const qlance = .35
+const qlance = .4
 
 
 
