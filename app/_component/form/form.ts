@@ -28,7 +28,7 @@ export default class Form extends Component<false> {
 
       this.unsubFromLastSubmitElement();
       const cb = (submitElement as Button).addActivationCallback(() => {
-        this.submit()
+        return this.submit()
       })
       this.unsubFromLastSubmitElement = () => {
         (submitElement as Button).removeActivationCallback(cb)
@@ -43,7 +43,7 @@ export default class Form extends Component<false> {
   private resCurSubCall: Function
 
   submit(callback: (fullData: any) => (Promise<any> | void)): {remove: () => void}
-  submit(): Promise<{[key: string]: any}> & {data: {[key: string]: any}}
+  submit(): Promise<any[]> & {data: {[key: string]: any}}
   submit(callback?: (fullData: any) => (Promise<any> | void)) {
     if (callback) {
       this.callbacks.push(callback)
@@ -75,7 +75,7 @@ export default class Form extends Component<false> {
       })
 
 
-      const prom = Promise.all(this.callbacks.map(cb => cb(ob))).then(this.resCurSubCall as any) as Promise<{[key: string]: any}> & {data: {[key: string]: any}}
+      const prom = Promise.all(this.callbacks.map(cb => cb(ob))) as Promise<any[]> & {data: {[key: string]: any}}
       prom.data = ob
 
       return prom

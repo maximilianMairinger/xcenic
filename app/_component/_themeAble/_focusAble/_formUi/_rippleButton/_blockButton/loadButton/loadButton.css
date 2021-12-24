@@ -8,14 +8,14 @@ move-me {
   height: 14px;
   right: 13px;
   opacity: 0;
+  margin-right: -5px;
 }
 
 loading-circle {
   border-radius: 50%;
-  border: 2px solid hsl(0deg 0% 100%);
+  border: 2.5px solid hsl(0deg 0% 100%);
   border-left-color: hsl(0deg 0% 0% / 0%);
   animation: spin 1s linear infinite;
-  margin-right: -5px;
   box-sizing: border-box;
 }
 

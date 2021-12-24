@@ -20,7 +20,7 @@ const dragImpactEaseFunc = new Easing("easeIn").function
 //   return "blue"
 // } */
 
-const maxPxPerFrame = 1
+const maxPxPerFrame = .75
 const overShoot = 11
 const targetOverflow = 15
 const targetOverflowWidthStr = `calc(100% + ${targetOverflow * 2}px)`
