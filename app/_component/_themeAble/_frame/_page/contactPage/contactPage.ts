@@ -36,7 +36,7 @@ export default class ContactPage extends Page {
 
     this.formElem.submit(async (e) => {
       console.log("now")
-      await delay(2000)
+      // await delay(2000)
       console.log(e)
       return () => {
         console.log("later")
@@ -133,7 +133,7 @@ export default class ContactPage extends Page {
 
 
     const afterInitViewInputs = this.afterInitialViewElem.childs(1, true) as ElementList<HTMLElement>
-    this.continueButton.addActivationCallback(() => {
+    this.continueButton.click(() => {
       if (currentScollBody.get().scrollTop < afterInitViewElemFadeInScrollPos.get()) {
         afterInitViewInputs.first.focus({preventScroll: true})
       }

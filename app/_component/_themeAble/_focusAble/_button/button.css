@@ -8,10 +8,13 @@
   color: rgb(var(--text));
   text-align: left;
   user-select: none;
-  cursor: pointer;
   font-weight: bold;
   display: block;
   background-color: transparent;
+}
+
+:host(:not(.disabled)) {
+  cursor: pointer;
 }
 
 a {

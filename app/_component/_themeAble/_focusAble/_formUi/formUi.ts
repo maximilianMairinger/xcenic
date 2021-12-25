@@ -20,6 +20,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
   private rippleElements: HTMLElement;
   private waveElement: HTMLElement;
   public validMouseButtons = new Set([0])
+
   protected moveBody = this.q("move-me") as HTMLElement;
 
   public userFeedbackMode: DataBase<{
@@ -144,7 +145,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
 
 
-    const hovPreDet = ce("prehover-detector")
+    const hovPreDet = this.hovPreDet = ce("prehover-detector")
     hovPreDet.on("mousedown", (e) => {
       if (isFocused.get()) {
         e.preventDefault()
@@ -157,7 +158,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
     if (window.matchMedia && window.matchMedia("(hover:hover)").matches) {
       import("./preHoverInteraction").then(({default: f}) => {
-        f(root as any, hovPreDet, this.moveBody as any, this.componentBody as any)
+        this.preHoverAnimations = f(root as any, hovPreDet, this.moveBody as any, this.componentBody as any)
       })
     }
 
@@ -175,6 +176,22 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
     
   }
+  private preHoverAnimations: {disable: () => void, enable: () => void}
+  private hovPreDet: HTMLElement;
+  private enabled: boolean = true
+  public isEnabled(): boolean {
+    return this.enabled
+  }
+  public disable() {
+    this.addClass("disabled")
+    if (this.preHoverAnimations) this.preHoverAnimations.disable()
+    this.enabled = false
+  }
+  public enable() {
+    this.removeClass("disabled")
+    if (this.preHoverAnimations) this.preHoverAnimations.enable()
+    this.enabled = true
+  }
 
   protected fadeRipple: ((anim?: boolean) => void)[] = []
   protected rippleElems: ElementList<Element & {fade?: ((animation?: boolean) => Promise<void>) & {auto?: boolean}}> = new ElementList
@@ -183,6 +200,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
   public rippleSettled = Promise.resolve()
   public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
+    if (!this.isEnabled()) return
     let rippleSettled: Function
     const myRippleSettledProm = this.rippleSettled = new Promise((res) => {rippleSettled = res})
     this.removeClass("rippleSettled")

@@ -61,9 +61,7 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
 
 
 
-
-
-  evTarget.on("mouseleave", () => {
+  const mouseLeaveF = () => {
     relX = relY = 0
 
     root.css({zIndex: 6})
@@ -79,7 +77,10 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
 
     followRuntime.cancel()
     snapBackRuntime.resume()
-  })
+  }
+
+
+  evTarget.on("mouseleave", mouseLeaveF)
 
   
   let bounds: DOMRect
@@ -92,7 +93,7 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
   let qWithWithActiveTargetOverflow: number
   let qHeightWithActiveTargetOverflow: number
   
-  const mouseMove = (e: MouseEvent) => {
+  const mouseMoveF = (e: MouseEvent) => {
     bounds = root.getBoundingClientRect()
 
     absX = e.pageX - bounds.left
@@ -126,9 +127,9 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
     relY = dragImpactEaseFunc(absY / qHeightWithActiveTargetOverflow) * overShoot
   }
 
-  evTarget.on("mousemove", mouseMove)
+  evTarget.on("mousemove", mouseMoveF)
 
-  evTarget.on("mouseenter", (e) => {
+  const mouseEneterF = (e) => {
     root.css({zIndex: -1})
 
     target.css({
@@ -139,18 +140,22 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
       zIndex: 3
     })
     
-    mouseMove(e)
+    mouseMoveF(e)
 
     snapBackRuntime.cancel()
     followRuntime.resume()
-  })
+  }
 
-  root.on("mouseenter", () => {
+  evTarget.on("mouseenter", mouseEneterF)
+
+  const rootMouseEnterF = () => {
     root.css({zIndex: -1})
     target.css({
       zIndex: 3
     })
-  })
+  }
+
+  root.on("mouseenter", rootMouseEnterF)
   
   
   
@@ -163,7 +168,7 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
 
     curDistance = Math.sqrt(diffX**2 + diffY**2)
 
-    if (Math.abs(curDistance) < .25) return
+    if (Math.abs(curDistance) < .4) return
 
     if (maxDistance < curDistance) {
       maxDistance = curDistance
@@ -193,5 +198,21 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
   })
   snapBackRuntime.cancel()
 
-  
+  return {
+    disable() {
+      evTarget.off("mouseleave", mouseLeaveF)
+      evTarget.off("mousemove", mouseMoveF)
+      evTarget.off("mouseenter", mouseEneterF)
+      root.off("mouseenter", rootMouseEnterF)
+      mouseLeaveF()
+      target.css({pointerEvents: "none"})
+    },
+    enable() {
+      evTarget.on("mouseleave", mouseLeaveF)
+      evTarget.on("mousemove", mouseMoveF)
+      evTarget.on("mouseenter", mouseEneterF)
+      root.on("mouseenter", rootMouseEnterF)
+      target.css({pointerEvents: "all"})
+    }
+  }
 }

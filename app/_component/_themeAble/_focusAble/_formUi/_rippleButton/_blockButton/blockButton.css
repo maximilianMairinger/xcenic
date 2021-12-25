@@ -19,8 +19,13 @@ button-text {
   box-sizing: border-box;
 }
 
+c-button {
+  transition: opacity .3s, filter .3s;
+}
 
-c-button:not(.enabled) {
-  opacity: .5;
+
+c-button.disabled {
+  opacity: .8;
+  filter: grayscale(10%);
 }
 

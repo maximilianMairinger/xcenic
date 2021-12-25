@@ -15,7 +15,8 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
   private _hotKey: string
   public validMouseButtons = new Set([0])
   private slotElem = ce("slot")
-  constructor(public readonly enabled: boolean = false) {
+  private enabled: boolean
+  constructor(enabled: boolean = true) {
     super(ce("a") as any)
     super.apd(this.slotElem)
 
@@ -54,21 +55,22 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
     });
   }
   private enableForce() {
-    //@ts-ignore
     this.enabled = true
     if (this.tabIndex === -1) this.tabIndex = this.preferedTabIndex
-    this.addClass("enabled");
+    this.removeClass("disabled")
+  }
+  public isEnabled() {
+    return this.enabled
   }
   public enable() {
     if (this.enabled) return
     this.enableForce()
   }
   private disableForce() {
-    //@ts-ignore
     this.enabled = false
     this.preferedTabIndex = this.tabIndex
     this.tabIndex = -1
-    this.removeClass("enabled");
+    this.addClass("disabled")
   }
   public disable() {
     if (!this.enabled) return
@@ -129,12 +131,12 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
 
   public addActivationCallback<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB {
     this.callbacks.add(cb);
-    if (!this.enabled) this.enable()
+    if (!this.isEnabled()) this.enable()
     return cb
   }
   public removeActivationCallback<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB {
     this.callbacks.removeV(cb);
-    if (this.callbacks.empty && this.enabled) this.disable()
+    if (this.callbacks.empty && this.isEnabled()) this.disable()
     return cb
   }
 
@@ -147,7 +149,7 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
     }
     else {
       if (e_f !== undefined) e_f.preventDefault();
-      if (this.enabled) {
+      if (this.isEnabled()) {
         if (!this.preventOnClickFocus) this.focus()
         return Promise.all(this.callbacks.map(f => f.call(this, e_f)))
       }
