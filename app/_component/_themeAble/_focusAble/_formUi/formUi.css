@@ -49,12 +49,12 @@ root-bounds {
 
 
   /* :not(.afterClickFocus) */
-  :host(:hover) hover-cover {
+  :host(:hover:not(.disabled)) hover-cover {
     opacity: 1;
   }
 
 
-  :host(:hover:active) active-cover {
+  :host(:hover:active:not(.disabled)) active-cover {
     background: rgba(0, 0, 0, .07);
   }
 }
@@ -140,4 +140,18 @@ prehover-detector {
   position: absolute;
   cursor: pointer;
 }
+
+#componentBody {
+  transition: opacity .3s, filter .3s;
+}
+
+
+:host(.disabled) #componentBody {
+  opacity: .5;
+  filter: grayscale(10%);
+}
+
+/* :host(.disabled) #componentBody {
+  cursor: not-allowed;
+} */
 

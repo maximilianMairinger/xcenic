@@ -3,9 +3,12 @@ import FormUi from "../_themeAble/_focusAble/_formUi/formUi"
 import EditAble from "../_themeAble/_focusAble/_formUi/_editAble/editAble"
 import SelectButton from "../_themeAble/_focusAble/_formUi/_rippleButton/_blockButton/selectButton/selectButton"
 import declareComponent from "./../../lib/declareComponent"
-import Button from "./../_themeAble/_focusAble/_formUi/_rippleButton/rippleButton"
-
+import GUIButton from "./../_themeAble/_focusAble/_formUi/_rippleButton/rippleButton"
+import NButton from "./../_themeAble/_focusAble/_button/button"
+import { ElementList } from "extended-dom"
+type Button = GUIButton | NButton
 type SelectorToButton = string
+
 
 export default class Form extends Component<false> {
   private slotElem = ce("slot")
@@ -27,8 +30,14 @@ export default class Form extends Component<false> {
       if (localUnsub !== this.unsubFromLastSubmitElement) return
 
       this.unsubFromLastSubmitElement();
-      const cb = (submitElement as Button).addActivationCallback(() => {
-        return this.submit()
+      const cb = (submitElement as Button).addActivationCallback(async () => {
+        this.disableChilds(submitElement as Button)
+        const res = await this.submit()
+        res.push(() => {
+          this.enableChilds(submitElement as Button)
+        })
+
+        return res
       })
       this.unsubFromLastSubmitElement = () => {
         (submitElement as Button).removeActivationCallback(cb)
@@ -39,8 +48,23 @@ export default class Form extends Component<false> {
 
   }
 
+  public disableChilds(...except: (FormUi | Button)[]) {
+    this.getAllFormUiChilds().forEach((e) => {
+      if (!except.includes(e)) e.disable()
+    })
+  }
+  public enableChilds(...except: (FormUi | Button)[]) {
+    this.formUiChildsCache.forEach((e) => {
+      if (!except.includes(e)) e.enable()
+    })
+    this.formUiChildsCache = undefined
+  }
+
+  private formUiChildsCache: ElementList<FormUi>
+  private getAllFormUiChilds() {
+    return this.formUiChildsCache = this.childs(Infinity, true).filter(elem => elem instanceof FormUi) as ElementList<FormUi>
+  }
   private callbacks: Function[] = []
-  private resCurSubCall: Function
 
   submit(callback: (fullData: any) => (Promise<any> | void)): {remove: () => void}
   submit(): Promise<any[]> & {data: {[key: string]: any}}
@@ -56,7 +80,7 @@ export default class Form extends Component<false> {
       const ob = {} as {[key: string]: any}
       let prevWasSelect = false
       let curSelValOb: {[key: string]: any}
-      this.childs(Infinity, true).forEach((elem) => {
+      (this.formUiChildsCache !== undefined ? this.formUiChildsCache : this.getAllFormUiChilds()).forEach((elem) => {
         if (elem instanceof FormUi) {
           if (elem instanceof SelectButton) {
             if (!prevWasSelect) {

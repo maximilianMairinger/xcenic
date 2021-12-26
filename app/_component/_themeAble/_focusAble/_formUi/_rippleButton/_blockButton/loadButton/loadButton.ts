@@ -78,6 +78,7 @@ export default class LoadButton extends BlockButton {
       this.moveText()
     ])
     
+    await delay(250)
   }
   private async stopLoading(started: boolean) {
     this.removeClass("loading")
@@ -105,7 +106,10 @@ export default class LoadButton extends BlockButton {
           opacity: 0,
           marginRight: 5
         }),
-        delay(100).then()
+        delay(100).then(() => this.checkIcon.anim({
+          opacity: 1,
+          marginRight: 0
+        }))
       ])
       this.loadingCircle.remove()
       

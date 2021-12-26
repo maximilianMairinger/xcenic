@@ -36,7 +36,7 @@ export default class ContactPage extends Page {
 
     this.formElem.submit(async (e) => {
       console.log("now")
-      // await delay(2000)
+      await delay(5000)
       console.log(e)
       return () => {
         console.log("later")
@@ -138,7 +138,14 @@ export default class ContactPage extends Page {
         afterInitViewInputs.first.focus({preventScroll: true})
       }
       else {
-        return this.formElem.submit()
+        return (async () => {
+          this.formElem.disableChilds(this.continueButton)
+          const r = await this.formElem.submit()
+          r.push(() => {
+            this.formElem.enableChilds(this.continueButton)
+          })
+          return r
+        })() 
       }
     })
 
