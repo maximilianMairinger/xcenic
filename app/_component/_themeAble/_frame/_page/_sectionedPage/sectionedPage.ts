@@ -380,7 +380,6 @@ export default abstract class SectionedPage extends Page {
   
       }
       else {
-        this.ignoreIncScrollEventForInitialScrollDetection = true
         this.scrollTop = this.verticalOffset + scrollToPos
       }
 
@@ -556,7 +555,6 @@ export default abstract class SectionedPage extends Page {
     }
 
 
-    this.ignoreIncScrollEventForInitialScrollDetection = true
 
 
 
@@ -586,7 +584,7 @@ export default abstract class SectionedPage extends Page {
       }
     }
     const compensateResizeScrollDiffFromRuntime = constructResizeScrollCompensationFunction((scrollTop) => section.offsetTop < scrollTop, (height: number) => Math.round(height - lastHeight))
-    const compensateResizeScrollDiffFromInit = constructResizeScrollCompensationFunction((scrollTop) => section.offsetTop - scrollTop < (this.confirmedLastScrollProgress < 0 ? -this.confirmedLastScrollProgress : 0) && section.offsetTop + section.offsetHeight + section.css("marginTop") + section.css("marginBottom") > scrollTop, (height) => {
+    const compensateResizeScrollDiffFromInit = constructResizeScrollCompensationFunction((scrollTop) => section.offsetTop + section.offsetHeight + section.css("marginTop") + section.css("marginBottom") <= scrollTop, (height) => {
       const max = this.scrollHeight - justBeforeInWantedPosScrollHeight
       
       if (max < 0) {
@@ -645,7 +643,6 @@ export default abstract class SectionedPage extends Page {
   private currentlyActiveSectionElem: PageSection
   protected currentlyActiveSectionIdIndex: number
   // private neverScrolled = true
-  private ignoreIncScrollEventForInitialScrollDetection = false
   private initialChilds = (this.componentBody.childs(1, true) as ElementList<PageSection>)
   initialActivationCallback() {
 
@@ -818,14 +815,19 @@ export default abstract class SectionedPage extends Page {
               }
               else this.activateSectionNameWithDomain(root)
   
-              if (this.lastLocalScrollProgressStoreSubstription) {
+
+              const notInit = !!this.lastLocalScrollProgressStoreSubstription
+              if (notInit) {
                 this.lastLocalScrollProgressStoreSubstription.deactivate()
                 this.lastLocalScrollProgressStoreSubstription = undefined
               }
   
               // this.sectionIndex.get(root).then((elem) => {
                 elem.localScrollProgressData("start").then((e) => {
-                  this.lastLocalScrollProgressStoreSubstription = e.get(this.localScrollPosStore.set.bind(this.localScrollPosStore), true)
+                  this.lastLocalScrollProgressStoreSubstription = e.get((e) => {
+                    this.localScrollPosStore.set(e)
+                    // this.localScrollPosStore.set.bind(this.localScrollPosStore)
+                  }, notInit)
                 })
               // })
   

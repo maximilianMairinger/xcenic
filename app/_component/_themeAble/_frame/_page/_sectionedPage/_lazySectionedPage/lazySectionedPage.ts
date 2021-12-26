@@ -79,14 +79,10 @@ export default abstract class LazySectionedPage extends SectionedPage {
       attach("0", {set: (e) => {
         const showSection = e.showSection.bind(e)
         e.showSection = () => {
-          const scrollTop = this.scrollTop - this.componentBody.css("marginTop")
-          showSection()
-          let sideEffect = e.offsetHeight + e.css("marginTop") + e.css("marginBottom")
-          if (e.offsetTop > scrollTop) this.scrollTop += sideEffect
-          
+          showSection()          
           this.loadingIndecatorTop.remove()
           this.loadingIndecatorBot.remove()
-          return sideEffect
+          e.showSection = showSection
         }
         attach("0", {value: e})
       }})
