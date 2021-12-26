@@ -38,7 +38,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
 
   public isFocused: ReadonlyData<boolean>
-
+  public enabled: Data<boolean>
   constructor(componentBodyExtension?: HTMLElement | false) {
     super(componentBodyExtension)
     if (this.componentBody instanceof HTMLElement) this.componentBody.id = "componentBody"
@@ -51,6 +51,20 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
     this.addClass("rippleSettled")
     this.moveBody.apd(this.focusManElem)
+
+    this.enabled = new Data(true) as Data<boolean>
+    this.enabled.get((enabled) => {
+      if (enabled) {
+        this.removeClass("disabled")
+        if (this.preHoverAnimations) this.preHoverAnimations.enable()
+      }
+      else {
+        this.addClass("disabled")
+        if (this.preHoverAnimations) this.preHoverAnimations.disable()
+      }
+
+    }, false)
+
 
 
 
@@ -145,7 +159,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
 
 
-    const hovPreDet = this.hovPreDet = ce("prehover-detector")
+    const hovPreDet = ce("prehover-detector")
     hovPreDet.on("mousedown", (e) => {
       if (isFocused.get()) {
         e.preventDefault()
@@ -177,21 +191,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     
   }
   private preHoverAnimations: {disable: () => void, enable: () => void}
-  private hovPreDet: HTMLElement;
-  private enabled: boolean = true
-  public isEnabled(): boolean {
-    return this.enabled
-  }
-  public disable() {
-    this.addClass("disabled")
-    if (this.preHoverAnimations) this.preHoverAnimations.disable()
-    this.enabled = false
-  }
-  public enable() {
-    this.removeClass("disabled")
-    if (this.preHoverAnimations) this.preHoverAnimations.enable()
-    this.enabled = true
-  }
+
 
   protected fadeRipple: ((anim?: boolean) => void)[] = []
   protected rippleElems: ElementList<Element & {fade?: ((animation?: boolean) => Promise<void>) & {auto?: boolean}}> = new ElementList
@@ -200,7 +200,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
   public rippleSettled = Promise.resolve()
   public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
-    if (!this.isEnabled()) return
+    if (!this.enabled.get()) return
     let rippleSettled: Function
     const myRippleSettledProm = this.rippleSettled = new Promise((res) => {rippleSettled = res})
     this.removeClass("rippleSettled")

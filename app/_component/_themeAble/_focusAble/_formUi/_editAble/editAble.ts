@@ -26,7 +26,16 @@ export default class EditAble extends FormUi {
 
     this.placeholder(placeholder)
 
-    
+    this.enabled.get((enabled) => {
+      if (enabled) {
+        this.inputElem.tabIndex = 0
+        clickListener.activate()
+      }
+      else {
+        this.inputElem.tabIndex = -1
+        clickListener.deactivate()
+      }
+    }, false)
 
     
 
@@ -59,7 +68,7 @@ export default class EditAble extends FormUi {
       this.placeholderText.css({fontWeight: isEmpty ? "normal" : "bold"})
     })
 
-    this.on("click", () => {
+    const clickListener = this.on("click", () => {
       inputElem.focus()
     })
   }

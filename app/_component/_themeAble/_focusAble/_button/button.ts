@@ -3,6 +3,7 @@ import declareComponent from "../../../../lib/declareComponent";
 import * as domain from "../../../../lib/domain"
 import { PrimElem, Token, VariableLibrary } from "extended-dom";
 import Component from "../../../component";
+import { Data } from "josm";
 
 
 
@@ -15,14 +16,19 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
   private _hotKey: string
   public validMouseButtons = new Set([0])
   private slotElem = ce("slot")
-  private enabled: boolean
+  public enabled: Data<boolean>
+
   constructor(enabled: boolean = true) {
     super(ce("a") as any)
     super.apd(this.slotElem)
 
     this.draggable = false;
 
-    
+    this.enabled = new Data(enabled)
+    this.enabled.get((enabled) => {
+      if (enabled) this.enableForce()
+      else this.disableForce()
+    })
     
 
     if (enabled) this.enableForce()
@@ -55,27 +61,16 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
     });
   }
   private enableForce() {
-    this.enabled = true
     if (this.tabIndex === -1) this.tabIndex = this.preferedTabIndex
     this.removeClass("disabled")
   }
-  public isEnabled() {
-    return this.enabled
-  }
-  public enable() {
-    if (this.enabled) return
-    this.enableForce()
-  }
+
   private disableForce() {
-    this.enabled = false
     this.preferedTabIndex = this.tabIndex
     this.tabIndex = -1
     this.addClass("disabled")
   }
-  public disable() {
-    if (!this.enabled) return
-    this.disableForce()
-  }
+
   set tabIndex(to: number) {
     this.componentBody.tabIndex = to
   }
@@ -131,12 +126,12 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
 
   public addActivationCallback<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB {
     this.callbacks.add(cb);
-    if (!this.isEnabled()) this.enable()
+    this.enabled.set(true)
     return cb
   }
   public removeActivationCallback<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB {
     this.callbacks.removeV(cb);
-    if (this.callbacks.empty && this.isEnabled()) this.disable()
+    if (this.callbacks.empty) this.enabled.set(false)
     return cb
   }
 
@@ -149,7 +144,7 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
     }
     else {
       if (e_f !== undefined) e_f.preventDefault();
-      if (this.isEnabled()) {
+      if (this.enabled.get()) {
         if (!this.preventOnClickFocus) this.focus()
         return Promise.all(this.callbacks.map(f => f.call(this, e_f)))
       }

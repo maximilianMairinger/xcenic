@@ -50,12 +50,12 @@ export default class Form extends Component<false> {
 
   public disableChilds(...except: (FormUi | Button)[]) {
     this.getAllFormUiChilds().forEach((e) => {
-      if (!except.includes(e)) e.disable()
+      if (!except.includes(e)) e.enabled.set(false)
     })
   }
   public enableChilds(...except: (FormUi | Button)[]) {
     this.formUiChildsCache.forEach((e) => {
-      if (!except.includes(e)) e.enable()
+      if (!except.includes(e)) e.enabled.set(true)
     })
     this.formUiChildsCache = undefined
   }

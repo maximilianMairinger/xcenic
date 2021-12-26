@@ -33,19 +33,13 @@ export default class UiButton extends FormUi<Button> {
     this.on("keyup", (e) => {
       if (e.key === " " || e.key === "Enter") keyPressed = false
     })
+
+    this.enabled.get(this.button.enabled.set.bind(this.button.enabled))
   }
 
 
 
-  public enable() {
-    this.button.enable()
-    super.enable()
-  }
-  public disable() {
-    this.button.disable()
-    super.disable()
-  }
-  public isEnabled?(): boolean
+  
   public link: ((() => string) & ((to: null) => this) & ((to: string, domainLevel?: number, push?: boolean, notify?: boolean) => this))
   public addActivationCallback?<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB
   public removeActivationCallback?<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB
@@ -71,7 +65,7 @@ export default class UiButton extends FormUi<Button> {
   
 }
 
-for (const f of ["isEnabled", "link", "addActivationCallback", "removeActivationCallback", "click", "hotkey"]) {
+for (const f of ["link", "addActivationCallback", "removeActivationCallback", "click", "hotkey"]) {
   UiButton.prototype[f] = function (...args: any[]) {
     return this.button[f](...args)
   }

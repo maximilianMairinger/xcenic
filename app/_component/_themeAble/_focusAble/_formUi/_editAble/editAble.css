@@ -1,12 +1,12 @@
 :host {
   position: relative;
   display: block;
+}
+
+:host(:not(.disabled)) {
   cursor: text;
 }
 
-prehover-detector {
-  cursor: text;
-}
 
 move-me {
   width: 100%;

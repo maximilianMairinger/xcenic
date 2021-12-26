@@ -138,7 +138,7 @@ button-wave {
 prehover-detector {
   z-index: 1;
   position: absolute;
-  cursor: pointer;
+  cursor: inherit;
 }
 
 #componentBody {
