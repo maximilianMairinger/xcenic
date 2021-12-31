@@ -19,3 +19,9 @@ button-text {
   box-sizing: border-box;
 }
 
+
+move-me {
+  width: inherit;
+  height: inherit;
+  background-color: rgb(var(--background));
+}

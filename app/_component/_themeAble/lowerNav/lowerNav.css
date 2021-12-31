@@ -12,7 +12,7 @@ component-body {
   box-sizing: border-box;
   box-shadow: 0 0 20px 0 rgba(var(--plain-text), .16);
   background: rgb(var(--plain-background));
-  border-radius: 15px;
+  border-radius: 20px;
 
   /* display: flex; */
   height: 100%;
@@ -29,11 +29,13 @@ link-container {
   height: 100%;
   min-width: 55px;
   flex-grow: 1;
-  width: 100%;;
+  width: 100%;
 }
 
 c-lower-nav-link {
   display: inline-block;
   width: 100%;
-  height: 100%
+  height: 100%;
+  /* border-radius: 0; */
 }
+
