@@ -203,6 +203,9 @@ export default abstract class SectionedPage extends Page {
     }
 
 
+    
+    
+
 
     let r = this.prepSectionIndex(sectionIndex)
     this.sectionIndex = r.sectionIndex as any
@@ -1013,6 +1016,7 @@ class ScrollDiffCompensator {
   private compensationCurrentDiff = 0
   private timoutId: any
   private scrollIdle = new Data(false)
+  private pressingScrollbar = new Data(false)
   private currentDiffProm: Promise<void> & {resolve: () => void}
   private working: boolean = false
 
@@ -1029,10 +1033,23 @@ class ScrollDiffCompensator {
       }, 50)
     }, false)
 
+    page.on("mousedown", (e) => {
+      this.pressingScrollbar.set(e.pageX >= (page as any).componentBody.outerWidth())
+      if (this.pressingScrollbar.get()) {
+        const f = () => {
+          this.pressingScrollbar.set(false)
+          l1.deactivate()
+          l2.deactivate()
+        }
+        const l1 = document.body.on("mouseup", f)
+        const l2 = document.body.on("mouseleave", f)
+      }
+    })
 
-    this.scrollIdle.get((idle) => {
-      if (idle && this.currentDiffProm !== undefined) this.cleanUp()
-    }, false)
+
+    new DataCollection(this.scrollIdle, this.pressingScrollbar).get((idle, pressingScrollbar) => {
+      if (idle && !pressingScrollbar && this.currentDiffProm !== undefined) this.cleanUp()
+    })
   }
   public diff(diff: number) {
     
