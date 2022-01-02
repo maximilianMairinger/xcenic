@@ -97,7 +97,7 @@ c-block-button {
   margin-top: 20px;
   --padding: 13px 25px;
   --border: none;
-  --background-color: rgb(var(--secondary-theme));
+  --background: var(--secondary-theme);
   --text: var(--plain-background);
 }
 

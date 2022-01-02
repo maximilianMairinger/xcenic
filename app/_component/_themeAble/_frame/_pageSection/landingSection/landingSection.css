@@ -191,7 +191,7 @@ text-blob {
 }
 
 c-block-button {
-  --background-color: rgb(var(--primary-theme));
+  --background: var(--primary-theme);
   --text: var(--plain-background);
   --border: unset;
   --padding: 15px 50px;

@@ -111,7 +111,7 @@ initial-view {
 
 
 #continue {
-  --background-color: rgb(var(--primary-theme));
+  --background: var(--primary-theme);
   --text: 255, 255, 255;
 
   position: fixed;
