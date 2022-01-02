@@ -1,7 +1,7 @@
 :host {
   --background: 242, 242, 242;
   --background-color: rgb(var(--background));
-  z-index: initial !important;
+  /* z-index: initial !important; */
   border-radius: 20px;
 }
 
