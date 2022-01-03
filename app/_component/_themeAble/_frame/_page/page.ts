@@ -15,7 +15,7 @@ export default abstract class Page extends Frame {
   }
   public async tryNavigate(domainFragment?: string) {
     let res = true
-    if (this.navigationCallback) {
+    if (this.tryNavigationCallback) {
       let acRes = await this.tryNavigationCallback(domainFragment)
       if (acRes === undefined) acRes = true
       if (!acRes) res = false
