@@ -4,6 +4,7 @@ import * as domain from "../../../../lib/domain"
 import { PrimElem, Token, VariableLibrary } from "extended-dom";
 import Component from "../../../component";
 import { Data } from "josm";
+import { linkRecord } from "../../link/link";
 
 
 
@@ -98,6 +99,7 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
 
         let link = domain.linkMeta(to, domainLevel)
         this.componentBody.href = link.href
+        linkRecord.add({link: to, level: domainLevel})
         this._link = link.link
         if (this.linkFn !== undefined) this.removeActivationCallback(this.linkFn)
         this.linkFn = this.click((e) => {
