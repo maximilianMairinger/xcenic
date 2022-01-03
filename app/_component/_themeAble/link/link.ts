@@ -7,6 +7,10 @@ import delay from "delay"
 import { Prim, EventListener } from "extended-dom";
 
 import ResablePromise from "../../../lib/resAblePromise";
+import { PrimitiveRecord } from "../../../lib/record";
+
+export const linkRecord = new PrimitiveRecord<{link: string, level: number}>()
+
 
 
 export default class Link extends ThemeAble {
@@ -246,27 +250,6 @@ export default class Link extends ThemeAble {
 
   private _link: string = null
 
-  private copyNeeded = false
-  private copyImports = {} as {
-    tippy: ResablePromise
-    copy: ResablePromise
-  }
-  $copy() {
-    this.copyNeeded = true
-    this.copyImports.copy = new ResablePromise()
-    this.copyImports.tippy = new ResablePromise()
-    
-    this.addActivationListener(async () => {
-      
-      this.copyImports.copy.then(({default: copy}) => {
-        copy("test")
-      })
-      this.copyImports.tippy.then(({default: tippy}) => {
-        console.log(tippy)
-      })
-      
-    })
-  }
 
   link(): string
   link(to: string | {link: string, domainLevel: number}): this
@@ -281,6 +264,8 @@ export default class Link extends ThemeAble {
         this._link = to
         this.domainLevel = domainLevel !== undefined ? domainLevel : this.domainLevel
       }
+
+      linkRecord.add({link: this._link, level: this.domainLevel})
       this.updateHref()
       this.addClass("active")
       return this

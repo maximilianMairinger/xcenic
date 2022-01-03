@@ -2,6 +2,7 @@ import ThemeAble from "../themeAble";
 import { EventListener } from "extended-dom";
 import declareComponent from "../../../lib/declareComponent";
 import * as domain from "./../../../lib/domain"
+import { linkRecord } from "../link/link";
 
 
 const pressedClass = "pressed";
@@ -104,6 +105,9 @@ export default class Button extends ThemeAble<HTMLAnchorElement> {
         let link = domain.linkMeta(to, domainLevel)
         this.componentBody.href = link.href
         this._link = link.link
+
+        linkRecord.add({link: to, level: domainLevel})
+
         this.linkFn = this.addActivationCallback((e) => {
           if (e) e.preventDefault()
 

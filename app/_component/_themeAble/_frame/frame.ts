@@ -41,13 +41,13 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
   stl() {
     return require("./frame.css").toString()
   }
-  protected async minimalContentPaint(): Promise<void> {
+  public async minimalContentPaint(): Promise<void> {
     await this.loadPrevResImages()()
   }
-  protected async fullContentPaint(): Promise<void> {
+  public async fullContentPaint(): Promise<void> {
 
   }
-  protected async completePaint(): Promise<void> {
+  public async completePaint(): Promise<void> {
     await this.loadFullResImages()()
   }
 

@@ -9,7 +9,7 @@ export default class LinesSection extends PageSection {
 
   constructor() {
     super()
-
+    console.log("lines init")
 
   }
 

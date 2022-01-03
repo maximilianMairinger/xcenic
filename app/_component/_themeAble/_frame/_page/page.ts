@@ -1,5 +1,9 @@
+import lazyLoad from "../../../../lib/lazyLoad";
+import { linkRecord } from "../../link/link";
 import { Theme } from "../../themeAble";
 import Frame from "../frame";
+
+
 
 
 export default abstract class Page extends Frame {

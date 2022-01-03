@@ -11,6 +11,7 @@ import Page from "../_page/page";
 
 import HighlightAbleIcon from "../../_icon/_highlightAbleIcon/highlightAbleIcon";
 import { Data } from "josm";
+import { linkRecord } from "../../link/link";
 
 
 
@@ -108,23 +109,48 @@ export default abstract class Manager extends Frame {
     this.domainSubscription = domain.get(this.domainLevel, this.setDomain.bind(this), false, "")
   }
   private async setDomain(to: string) {
+    const linkRecording = linkRecord.record()
     let wanted = await this.setElem(to)
-    domain.set(wanted.domain, wanted.level, false)
+    if (wanted !== undefined) domain.set(wanted.domain, wanted.level, false)
+    this.currentPageFullyLoaded.then(() => {
+      this.preloadLinks(linkRecording())
+    })
+    return wanted
   }
 
   private scrollEventListener: EventListener
   private domainSubscription: domain.DomainSubscription
-  private loadImages: Function
+
+  private currentPageFullyLoaded: Promise<any>
+
   async minimalContentPaint() {
-    // this.doneRec = record.record()
     await this.setDomain(this.domainSubscription.domain)
-    // this.loadImages = this.doneRec()
+    await super.minimalContentPaint()
   }
-  async fullContentPaint() {
-    // this.loadImages = this.doneRec()
-  }
-  async completePaint() {
-    // this.loadImages()
+
+
+  async preloadLinks(links: {link: string, level: number}[]) {
+    const toBePreloadedLocally = [] as string[]
+    const toBePreloadedExternally = [] as string[]
+    
+    for (const {link, level} of links) {
+      const { href, isOnOrigin} = domain.linkMeta(link, level)
+      if (isOnOrigin) {
+        toBePreloadedLocally.add(href)
+      }
+      else toBePreloadedExternally.add(href)
+      
+    }
+
+    const el = await Promise.all(toBePreloadedLocally.map(async (url) => 
+      (await this.findSuitablePage(url)).pageProm.imp
+    ))
+    await this.importanceMap.whiteList(el, "minimalContentPaint")
+    
+    
+    await Promise.all(toBePreloadedExternally.map((url) => fetch(url).catch(() => {})))
+    
+    
   }
 
   private lastScrollbarWidth: number
@@ -274,10 +300,11 @@ export default abstract class Manager extends Frame {
     else return this.currentUrl
   }
 
-  private async setElem(fullDomain: string) {
+  private async findSuitablePage(fullDomain: string) {
+    if (fullDomain.startsWith("/")) fullDomain = fullDomain.slice(1)
+    if (fullDomain.endsWith("/")) fullDomain = fullDomain.slice(0, -1)
     let to: any = fullDomain
-    let nextPageToken = Symbol("nextPageToken")
-    this.nextPageToken = nextPageToken;
+    
 
     let sucDomainFrag: string
     let sucPage: any
@@ -305,13 +332,10 @@ export default abstract class Manager extends Frame {
         nthTry++
 
         let suc: boolean = await pageProm.priorityThen(async (page: Page | SectionedPage) => {
-          if (nextPageToken === this.nextPageToken) {
-            sucPage = page
-            page.domainLevel = domainLevel
-            domainFragment = rootDomainFragment === "" ? page.defaultDomain : rootDomainFragment
-            return await this.canSwap(page, domainFragment)
-          }
-          return false
+          sucPage = page
+          page.domainLevel = domainLevel
+          domainFragment = rootDomainFragment === "" ? page.defaultDomain : rootDomainFragment
+          return await this.canSwap(page, domainFragment)
         }, false)
   
         if (suc) {
@@ -324,8 +348,24 @@ export default abstract class Manager extends Frame {
         }
       }
     }
+
+    return { to, pageProm, suc: {
+        domain: sucDomainFrag,
+        page: sucPage,
+        level: sucDomainLevel
+      } 
+    }
+  }
+
+  private async setElem(fullDomain: string) {
+    let nextPageToken = Symbol("nextPageToken")
+    this.nextPageToken = nextPageToken;
+    const { to, pageProm, suc } = await this.findSuitablePage(fullDomain)
+    if (this.nextPageToken !== nextPageToken) return
     
-    pageProm.priorityThen(() => {
+    
+    this.currentPageFullyLoaded = pageProm.priorityThen(() => {
+      console.log("fully loaded")
       if (this.currentUrl !== to) {
         this.currentUrl = to;
         let page = this.currentPage;
@@ -354,12 +394,12 @@ export default abstract class Manager extends Frame {
           }
         })()
       }
-    }, true)
+    }, "completePaint")
 
-    this.swapFrame(sucPage)
+    this.swapFrame(suc.page)
 
     
-    return {domain: sucDomainFrag, level: sucDomainLevel}
+    return suc
   }
 
   protected async activationCallback(active: boolean) {
