@@ -1,15 +1,21 @@
-import { ScrollData } from "extended-dom";
+import { ElementList, ScrollData } from "extended-dom";
 import { Data, DataCollection, DataSubscription } from "josm";
 import declareComponent from "../../../../../lib/declareComponent";
-import Page from "../page";
+import Page from "../page"
 
+
+import "./../../../../form/form"
 import "./../../../../image/image"
 import "./../../../textBlob/textBlob"
-import "./../../../_button/_rippleButton/blockButton/blockButton"
-import BlockButton from  "./../../../_button/_rippleButton/blockButton/blockButton"
-import "./../../../_button/_rippleButton/selectButton/selectButton"
+import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/loadButton/loadButton"
+import LoadButton from  "./../../../_focusAble/_formUi/_rippleButton/_blockButton/loadButton/loadButton"
+import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/selectButton/selectButton"
 import "./../../../_icon/lineAccent/lineAccent"
-import "./../../../input/input"
+import "./../../../_focusAble/_formUi/_editAble/input/input"
+import "./../../../_focusAble/_formUi/_editAble/textArea/textArea"
+import Form from "./../../../../form/form";
+import lang from "../../../../../lib/lang";
+import delay from "delay";
 
 
 
@@ -17,12 +23,32 @@ export default class ContactPage extends Page {
   private initialViewElem = this.q("initial-view") as HTMLElement
   private lastThingElem = this.initialViewElem.childs("h3.lastThing")
   
-  private continueButton = this.q("#continue") as BlockButton
+  private continueButton = this.q("#continue") as LoadButton
 
-  private afterInitialViewElem = this.q("after-initial-view")
+  private afterInitialViewElem = this.q("after-initial-view") as HTMLElement
+  private formElem = this.q("c-form") as Form
 
   constructor() {
     super("dark")
+
+
+
+
+    this.formElem.submit(async (e) => {
+      console.log("now")
+      await delay(5000)
+      console.log(e)
+      return () => {
+        console.log("later")
+      }
+    })
+
+
+
+
+
+
+
 
     const isMobile = this.resizeData().tunnel((e) => e.width <= 700)
 
@@ -59,18 +85,68 @@ export default class ContactPage extends Page {
         this.lastThingElem.anim({translateY: 5, opacity: 0, scale: .95}, 400).then(() => {if (token === lastThingAnimSym) this.lastThingElem.hide().css({translateY: -20})})
       })
 
-    const afterInitViewElemFadeInScrollPos = lastThingShowPos.tunnel(e => e + 150)
+    this.continueButton.content(lang.contact.continue)
+    const afterInitViewElemFadeInScrollPos = lastThingShowPos.tunnel(e => e + 50)
     scrollData.scrollTrigger(afterInitViewElemFadeInScrollPos)
       .on("forward", () => {
         this.afterInitialViewElem.anim({opacity: 1, translateY: 20}, 550)
+        this.continueButton.content(lang.contact.send)
       })
       .on("backward", () => {
         this.afterInitialViewElem.anim({opacity: 0, translateY: .1}, 400)
-      })
+        this.continueButton.content(lang.contact.continue)
+      });
+    
+    (() => {
+      let first = true
+      let lastWidth: number
 
 
-    this.continueButton.addActivationCallback(() => {
-      currentScollBody.get().scroll(currentScollBody.get().scrollHeight - currentScollBody.get().height(), {speed: 500}, false)
+      const sub = this.continueButton.on("resize", (e: DOMRect) => {
+        if (first) {
+          first = false
+          lastWidth = Math.round(e.width)
+          return
+        }
+        if (Math.round(e.width) === lastWidth) return
+
+        sub.deactivate()
+        this.continueButton.anim([{width: lastWidth, maxWidth: lastWidth, offset: 0}, {width: e.width, maxWidth: e.width}]).then(() => {
+          this.continueButton.css({width: "unset", maxWidth: "unset"})
+          sub.activate()
+        })
+        
+        
+        
+        lastWidth = Math.round(e.width)
+      }, true)
+    })();
+    
+
+    
+
+    this.afterInitialViewElem.on("focusin", () => {
+      if (currentScollBody.get().scrollTop < afterInitViewElemFadeInScrollPos.get()) {
+        currentScollBody.get().scroll(currentScollBody.get().scrollHeight - currentScollBody.get().height(), {speed: 500}, false)  
+      }
+    })
+
+
+    const afterInitViewInputs = this.afterInitialViewElem.childs(1, true) as ElementList<HTMLElement>
+    this.continueButton.click(() => {
+      if (currentScollBody.get().scrollTop < afterInitViewElemFadeInScrollPos.get()) {
+        afterInitViewInputs.first.focus({preventScroll: true})
+      }
+      else {
+        return (async () => {
+          this.formElem.disableChilds(this.continueButton)
+          const r = await this.formElem.submit()
+          r.push(() => {
+            this.formElem.enableChilds(this.continueButton)
+          })
+          return r
+        })() 
+      }
     })
 
   

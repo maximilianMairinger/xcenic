@@ -9,7 +9,7 @@ export default class SlidyUnderline extends ThemeAble {
     return ""
   }
   stl() {
-    return require("./slidyUnderline.css").toString()
+    return super.stl() + require("./slidyUnderline.css").toString()
   }
   
 }

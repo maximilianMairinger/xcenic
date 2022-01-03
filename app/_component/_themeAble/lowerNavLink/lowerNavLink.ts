@@ -1,8 +1,8 @@
 import ThemeAble, { Theme } from "../themeAble"
 import declareComponent from "../../../lib/declareComponent"
-import "./../../_themeAble/_button/button"
-import "./../../_themeAble/_button/_rippleButton/rippleButton"
-import Button from "./../../_themeAble/_button/button"
+import "./../../_themeAble/_focusAble/_button/button"
+import "./../../_themeAble/_focusAble/_formUi/_rippleButton/rippleButton"
+import Button from "./../../_themeAble/_focusAble/_button/button"
 import HighlightAbleIcon from "../_icon/_highlightAbleIcon/highlightAbleIcon"
 import lang from "./../../../lib/lang"
 import { Data } from "josm"
@@ -25,7 +25,7 @@ export default class LowerNavLink extends ThemeAble {
   constructor(link: string, icon: HighlightAbleIcon, domainLevel?: number, content?: string | Data<string>) {
     super()
 
-    this.buttonElem.preventFocus = true
+    this.buttonElem.preventOnClickFocus = true
 
     this.content(content)
     this.icon(icon)
@@ -85,7 +85,7 @@ export default class LowerNavLink extends ThemeAble {
 
 
   stl() {
-    return require("./lowerNavLink.css").toString()
+    return super.stl() + require("./lowerNavLink.css").toString()
   }
   pug() {
     return require("./lowerNavLink.pug").default

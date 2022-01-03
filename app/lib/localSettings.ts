@@ -12,6 +12,7 @@ window.settings = {}
 export function createLocalSettings<DefaultVal extends DefaultValType>(settingsName: Name, defaultVal: DefaultVal): Data<DefaultVal>
 export function createLocalSettings<Settings extends {[k in Key]: DefaultValType}>(settingsName: Name, settingsDefault: Settings): DataBase<Settings>
 export function createLocalSettings(settingsName: Name, settingsDefault_valDefault: DefaultValType | {[k in Key]: DefaultValType}): any {
+  // if (settingsName === "localScrollPos@") debugger
   let dat: any
 
   let val: any

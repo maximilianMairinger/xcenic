@@ -27,7 +27,7 @@ export default class TextBlob extends ThemeAble {
     return require("./textBlob.pug").default
   }
   stl() {
-    return require("./textBlob.css").toString()
+    return super.stl() + require("./textBlob.css").toString()
   }
   
 }

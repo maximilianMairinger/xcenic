@@ -32,16 +32,16 @@ export default class HomePage extends LazySectionedPage {
       //     new landingSection()
       //   ), val: () => import(/* webpackChunkName: "landingSection" */"../../../../_pageSection/landingSection/landingSection")
       // },
-      {
-        key: new Import("lines", 1, (linesSection: typeof LinesSection) => 
-          new linesSection()
-        ), val: () => import(/* webpackChunkName: "linesSection" */"../../../../_pageSection/linesSection/linesSection")
-      },
       // {
-      //   key: new Import("philosophy", 1, (philosophySection: typeof PhilosophySection) =>
-      //     new philosophySection()
-      //   ), val: () => import(/* webpackChunkName: "philosophySection" */"../../../../_pageSection/philosophySection/philosophySection")
+      //   key: new Import("lines", 1, (linesSection: typeof LinesSection) => 
+      //     new linesSection()
+      //   ), val: () => import(/* webpackChunkName: "linesSection" */"../../../../_pageSection/linesSection/linesSection")
       // },
+      {
+        key: new Import("philosophy", 1, (philosophySection: typeof PhilosophySection) =>
+          new philosophySection()
+        ), val: () => import(/* webpackChunkName: "philosophySection" */"../../../../_pageSection/philosophySection/philosophySection")
+      },
       // {
       //   key: new Import("services", 1, (workSection: typeof WorkSection) => {
       //     const sec = new workSection(changeNavTheme)
