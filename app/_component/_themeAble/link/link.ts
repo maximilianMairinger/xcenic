@@ -44,7 +44,7 @@ export default class Link extends ThemeAble {
     let ev = async (e: Event, dontSetLocation = false) => {
       let link = this.link()
       let meta = domain.linkMeta(link, this.domainLevel)
-      if (link) this.cbs.Call(e)
+      this.cbs.Call(e)
 
       if (onClickAnimationInit) {
         onClickAnimationInit()

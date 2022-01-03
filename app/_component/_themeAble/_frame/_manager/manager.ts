@@ -110,12 +110,10 @@ export default abstract class Manager extends Frame {
   }
   private async setDomain(to: string) {
     const linkRecording = linkRecord.record()
-    let wanted = await this.setElem(to)
-    if (wanted !== undefined) domain.set(wanted.domain, wanted.level, false)
+    await this.setElem(to)
     this.currentPageFullyLoaded.then(() => {
       this.preloadLinks(linkRecording())
     })
-    return wanted
   }
 
   private scrollEventListener: EventListener
@@ -301,9 +299,11 @@ export default abstract class Manager extends Frame {
   }
 
   private async findSuitablePage(fullDomain: string) {
-    if (fullDomain.startsWith("/")) fullDomain = fullDomain.slice(1)
-    if (fullDomain.endsWith("/")) fullDomain = fullDomain.slice(0, -1)
     let to: any = fullDomain
+
+    if (fullDomain.startsWith(domain.dirString)) to = to.slice(1)
+    const fullDomainHasTrailingSlash = fullDomain.endsWith(domain.dirString)
+    if (fullDomainHasTrailingSlash) to = to.slice(0, -1)
     
 
     let sucDomainFrag: string
@@ -317,15 +317,20 @@ export default abstract class Manager extends Frame {
       
       
       while(pageProm === undefined) {
+        if (to === "") {
+          const msg = "421 Misdirected request"
+          document.body.html(`<b>${msg}</b>`)
+          throw new Error(msg)
+        }
         to = to.substr(0, to.lastIndexOf("/")) as any
         pageProm = this.resourcesMap.get(to, nthTry)
       }
 
-      let domFrag = fullDomain.splice(0, to.length)
-      if (domFrag.startsWith("/")) domFrag = domFrag.substring(1)
+      const toIsEmpty = to === ""
+      let domFrag = fullDomain.slice(to.length + (toIsEmpty ? 1 : 2), fullDomainHasTrailingSlash ? -1 : undefined)
       const rootDomainFragment = domFrag
       let domainFragment: string
-      const domainLevel = to === "" ? 0 : (occurrences(to, "/") + 1 + this.domainLevel)
+      const domainLevel = toIsEmpty ? 0 : (occurrences(to, "/") + 1 + this.domainLevel)
       sucDomainLevel = domainLevel
 
       while(pageProm !== undefined) {
@@ -349,7 +354,7 @@ export default abstract class Manager extends Frame {
       }
     }
 
-    return { to, pageProm, suc: {
+    return { to, pageProm, fullDomainHasTrailingSlash, suc: {
         domain: sucDomainFrag,
         page: sucPage,
         level: sucDomainLevel
@@ -360,46 +365,47 @@ export default abstract class Manager extends Frame {
   private async setElem(fullDomain: string) {
     let nextPageToken = Symbol("nextPageToken")
     this.nextPageToken = nextPageToken;
-    const { to, pageProm, suc } = await this.findSuitablePage(fullDomain)
+    const { to, pageProm, fullDomainHasTrailingSlash, suc } = await this.findSuitablePage(fullDomain)
     if (this.nextPageToken !== nextPageToken) return
     
-    
-    this.currentPageFullyLoaded = pageProm.priorityThen(() => {
-      console.log("fully loaded")
-      if (this.currentUrl !== to) {
-        this.currentUrl = to;
-        let page = this.currentPage;
-        (async () => {
-          if (this.pageChangeCallback) {
-            try {
-              if ((page as SectionedPage).sectionList) {
-                (page as SectionedPage).sectionList.tunnel(e => e.filter(s => s !== "")).get((sectionListNested) => {
-                  let ob = {} as any
-                  for (let e of sectionListNested) {
-                    let ic = (page as SectionedPage).iconIndex[e]
-                    while (!ic) {
-                      if (e === "") break
-                      e = e.substr(0, e.lastIndexOf("/"))
-                      ic = (page as SectionedPage).iconIndex[e]
-                    }
-                    ob[e] = ic
+    this.currentPageFullyLoaded = new Promise((doneLoading) => {
+      domain.set(domain.dirString + suc.domain + (fullDomainHasTrailingSlash ? domain.dirString : ""), suc.level, false).then(() => {
+
+        pageProm.priorityThen(() => {
+          console.log("fully loaded")
+          if (this.currentUrl !== to) {
+            this.currentUrl = to;
+            let page = this.currentPage;
+            (async () => {
+              if (this.pageChangeCallback) {
+                try {
+                  if ((page as SectionedPage).sectionList) {
+                    (page as SectionedPage).sectionList.tunnel(e => e.filter(s => s !== "")).get((sectionListNested) => {
+                      let ob = {} as any
+                      for (let e of sectionListNested) {
+                        let ic = (page as SectionedPage).iconIndex[e]
+                        while (!ic) {
+                          if (e === "") break
+                          e = e.substr(0, e.lastIndexOf("/"))
+                          ic = (page as SectionedPage).iconIndex[e]
+                        }
+                        ob[e] = ic
+                      }
+                      
+                      this.pageChangeCallback(to, ob, page.domainLevel)
+                    })
                   }
-                  
-                  this.pageChangeCallback(to, ob, page.domainLevel)
-                })
+                  else this.pageChangeCallback(to, [], page.domainLevel)
+                }
+                catch(e) {}
               }
-              else this.pageChangeCallback(to, [], page.domainLevel)
-            }
-            catch(e) {}
+            })()
           }
-        })()
-      }
-    }, "completePaint")
-
-    this.swapFrame(suc.page)
-
-    
-    return suc
+        }, "completePaint")
+  
+        this.swapFrame(suc.page)
+      }).then(doneLoading)
+    })
   }
 
   protected async activationCallback(active: boolean) {

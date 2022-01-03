@@ -5,7 +5,7 @@ import getBaseUrl from "get-base-url";
 import lang from "./../lib/lang"
 
 
-const commonTitle = "Xcenic";
+const commonTitle = "TGM";
 const commonTitleSeperator = " - "
 const commonSubtileSeperator = " > "
 const maxCharactersInTitle = 20
@@ -37,8 +37,8 @@ const titleElement = document.querySelector("title")
 const httpString = "http://"
 const httpsString = "https://"
 export const dirString = "/";
-const domIndex = [] as string[];
-export const domainIndex = domIndex as Readonly<typeof domIndex>
+const domIndex = [] as string[] & {setWithTrailingSlash: boolean}
+export const domainIndex = domIndex as Readonly<typeof domIndex> & {readonly setWithTrailingSlash: boolean}
 
 
 function getCurrentSubDomainPath() {
@@ -46,18 +46,19 @@ function getCurrentSubDomainPath() {
 }
 
 function parselocalUrlToDomainIndex() {
-  let currentDomain = getCurrentSubDomainPath()
-  domIndex.set(getCurrentSubDomainPath().split(dirString))
+  const currentDomain = getCurrentSubDomainPath()
+  domIndex.set(currentDomain.split(dirString))
   domIndex.remove("");
 
-  let endDomain = !currentDomain.endsWith("/") ? currentDomain + dirString : currentDomain
-  
-  history.replaceState(argData, updateTitle(), document.location.origin + endDomain)
+  const setWithTrailingSlash = currentDomain.endsWith(dirString)
+  domIndex.setWithTrailingSlash = setWithTrailingSlash
+  const endDomain = !setWithTrailingSlash ? currentDomain + dirString : currentDomain
+  replaceState(renderSubtitle(), endDomain)
 }
 parselocalUrlToDomainIndex()
 
 
-function renderSubtitle(myDomainIndex = domIndex) {
+function renderSubtitle(myDomainIndex: string[] = domIndex) {
   return myDomainIndex.Replace((k) => {
     try {
       return lang.links[k].get()
@@ -136,18 +137,19 @@ let inDomainSet = false
  * Set the path or the current domain at runtime. Control the pathLevel, weather or not to push to the history stack or not and event propergation as seperate parameters.
  * Or redirect to an entirely external page.
  * 
- * Warning this is non standard! A path **without** a preceding "/" will still be interpreted as beeing origin level. Relative subdomians must be explicitly set
- * by prefixing the path with a "./" or "..". Additionally the second function argument level can be used to set a url index from which path should be interpreted from.
+ * Warning this is non standard! A path **without** a preceding "/" will **still** be interpreted as beeing origin level. Relative subdomians must be explicitly set
+ * by prefixing the path with a "./" or "..". Additionally the second function argument "level" can be used to set a url index from which path should be interpreted from.
  */
 export async function set(path: string, level: number = 0, push: boolean = true, notify = push) {
   if (level < 0) level = domainIndex.length - level
   initialGet = false
-  if (path.startsWith(dirString)) path = path.slice(1)
-  else if (path.startsWith("./") || path.startsWith("..")) {
-    let pathname = document.location.pathname
+
+
+  if (path.startsWith("./") || path.startsWith("..")) {
+    let pathname = getCurrentSubDomainPath()
     if (pathname.startsWith(dirString)) pathname = pathname.slice(1)
     if (pathname.endsWith(dirString)) pathname = pathname.slice(0, -1)
-    let currentUrlLvl = pathname.split(dirString).length - 1
+    let currentUrlLvl = pathname.split(dirString).length
     level = level + currentUrlLvl
     if (path.startsWith("./")) path = path.slice(2)
     while(path.startsWith("../")) {
@@ -163,14 +165,17 @@ export async function set(path: string, level: number = 0, push: boolean = true,
       return
     }
 
+    if (path.startsWith(dirString)) path = path.slice(1)
   }
-  
-
   
   while (inDomainSet) {
     await currentDomainSet
   }
+
   
+  const setWithTrailingSlash = path.endsWith(dirString)
+  const trailingSlashChange = setWithTrailingSlash !== domainIndex.setWithTrailingSlash
+  domIndex.setWithTrailingSlash = setWithTrailingSlash
 
   let domainIndexRollback = domIndex.clone()
 
@@ -181,7 +186,8 @@ export async function set(path: string, level: number = 0, push: boolean = true,
   })
 
   let anyChange = parseDomainToDomainIndex(domIndex, path, level)
-  if (!anyChange) {
+  console.log("trailingSlashChange", trailingSlashChange)
+  if (!(anyChange || trailingSlashChange)) {
     inDomainSet = false
     res()
     return
@@ -190,7 +196,6 @@ export async function set(path: string, level: number = 0, push: boolean = true,
 
 
   let endDomain = dirString + parseDomainIndexToDomain(domIndex)
-  if (!endDomain.endsWith(dirString)) endDomain += dirString
 
   
   if (notify) {
@@ -209,18 +214,18 @@ export async function set(path: string, level: number = 0, push: boolean = true,
         set(endDomain, 0, true)
       }
       else {
-        if (push) pushState(updateTitle(), endDomain)
-        else replaceState(updateTitle(), endDomain)
+        if (push) pushState(updateTitle(), endDomain + dirString)
+        else replaceState(updateTitle(), endDomain + dirString)
       }
     }
     else {
-      if (push) pushState(updateTitle(), endDomain)
-      else replaceState(updateTitle(), endDomain)
+      if (push) pushState(updateTitle(), endDomain + dirString)
+      else replaceState(updateTitle(), endDomain + dirString)
     }
   }
   else {
-    if (push) pushState(updateTitle, endDomain)
-    else replaceState(updateTitle(), endDomain)
+    if (push) pushState(updateTitle, endDomain + dirString)
+    else replaceState(updateTitle(), endDomain + dirString)
   }
 
 
@@ -266,23 +271,15 @@ export function get(domainLevel: number, subscription?: (domainFragment: DomainF
         myDomainIndex.shift() 
       }
   
-      let joined = parseDomainIndexToDomain(myDomainIndex)
-      return joined === "" ? defaultDomain : joined
+      let joined = dirString + parseDomainIndexToDomain(myDomainIndex)
+      return (joined === "" ? defaultDomain : joined) + (domIndex.setWithTrailingSlash ? dirString : "")
     }
     else {
-      return domIndex[domLvl] === undefined ? defaultDomain : domIndex[domLvl]
+      return (domIndex[domLvl] === undefined ? defaultDomain : domIndex[domLvl]) + (domIndex.setWithTrailingSlash ? dirString : "")
     }
   })
   let currentDomain = calcCurrentDomain();
-  (() => {
-    if (!initialGet) return
-    let joined = parseDomainIndexToDomain(domIndex)
-    let domain = joined === "" ? defaultDomain : joined
 
-    if (joined !== domain) {
-      set(domain, domainLevel < 0 ? domIndex.length - domainLevel : domainLevel, false)
-    }
-  })()
 
 
   if (subscription) {
@@ -293,7 +290,7 @@ export function get(domainLevel: number, subscription?: (domainFragment: DomainF
         for (let i = 0; i < domLvl; i++) {
           myDomainIndex.shift() 
         }
-        let joined = parseDomainIndexToDomain(myDomainIndex)
+        let joined = dirString + parseDomainIndexToDomain(myDomainIndex) + (domIndex.setWithTrailingSlash ? dirString : "")
         let domain = joined === "" ? defaultDomain : joined
         await subscription(domain)
         if (joined !== domain) {
@@ -383,7 +380,7 @@ export function linkMeta(link: string, domainLevel: number = 0) {
   else {
     href = link.startsWith(httpsString) || link.startsWith(httpString) ? link : httpsString + link
   }
-  if (!href.endsWith(dirString)) href += dirString
+  // if (!href.endsWith(dirString)) href += dirString
 
   return {
     link,
