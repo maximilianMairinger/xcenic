@@ -1,11 +1,7 @@
 import Component from "../component"
 import declareComponent from "./../../lib/declareComponent"
-import { InstanceRecord } from "../../lib/record"
-import { ElementList } from "extended-dom"
-const _fullRecord = new InstanceRecord(() => console.warn("img load without init proxy"))
-export const fullRecord = _fullRecord as Omit<typeof _fullRecord, "add">
-const _prevRecord = new InstanceRecord(() => {})
-export const prevRecord = _prevRecord as Omit<typeof _prevRecord, "add">
+import { loadRecord } from "../_themeAble/_frame/frame"
+
 const unionSymbol = "@"
 const typePrefix = "image/"
 
@@ -142,10 +138,10 @@ export default class Image extends Component {
       }
     }
     else {
-      _prevRecord.add(() => {
+      loadRecord.minimal.add(() => {
         return this.loadSrc(src, prevRes)
       })
-      _fullRecord.add(() => {
+      loadRecord.full.add(() => {
         return this.loadSrc(src, fullRes)
       })
     }
