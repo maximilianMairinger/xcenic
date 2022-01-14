@@ -11,12 +11,14 @@ grid-column.contact.head
   p $[ home.contact.socials.text ]
 grid-column.contact.data
   h2.lil $[ home.contact.socials.contact.heading ]
-  c-icon-link(content="$[ home.contact.socials.contact.email ]" iconside="left")
-    c-send-icon
-  c-icon-link(content="$[ home.contact.socials.contact.phone ]" iconside="left")
+  c-link(iconside="left")
     c-phone-icon
-  c-icon-link(content="$[ home.contact.socials.contact.address ]" iconside="left")
-    c-home-icon
+    | $[ home.contact.socials.contact.email ]
+    
+  c-icon-link(content="$[ home.contact.socials.contact.email ]" iconside="left")
+    c-phone-icon
+  //- c-icon-link(content="$[ home.contact.socials.contact.address ]" iconside="left")
+  //-   c-home-icon
 grid-column.contact.socials
   h2.lil $[ home.contact.socials.socialMedia.heading ]
   c-icon-link(content="$[ home.contact.socials.socialMedia.linkedIn ]" iconside="left")

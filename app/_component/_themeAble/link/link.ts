@@ -41,6 +41,26 @@ export default class Link extends ThemeAble {
     }
 
 
+    
+    const mutateCB = () => {
+      let cummulatedWidth = 0
+      for (const child of this.childNodes) {
+        if (!(child instanceof Text)) cummulatedWidth += child.width()
+      }
+      console.log(cummulatedWidth) 
+    }
+    mutateCB()
+
+
+    const observer = new MutationObserver(mutateCB)
+
+    
+    observer.observe(this, { attributes: false, childList: true, subtree: false });
+
+
+
+
+
     let ev = async (e: Event, dontSetLocation = false) => {
       let link = this.link()
       let meta = domain.linkMeta(link, this.domainLevel)
@@ -291,7 +311,8 @@ export default class Link extends ThemeAble {
   content(): string
   content(to?: string | Data<string>): void
   content(to?: string | Data<string>): any {
-    return this.slotElem.text(to as any, true, false)
+    if (to !== undefined) return this.text(to as any, true, false)
+    return this.text()
   }
 
   stl() {

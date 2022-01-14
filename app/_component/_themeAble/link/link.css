@@ -24,8 +24,18 @@
 slot {
   font-weight: inherit;
   cursor: inherit;
-  display: inline-block;
+  display: inline-flex;
+  align-content: center;
 }
+
+::slotted(*) {
+  height: 1.4em;
+  width: 1.4em;
+  display: inline-block;
+  position: absolute;
+}
+
+
 
 a {
   color: rgb(var(--text));

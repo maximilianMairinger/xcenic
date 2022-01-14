@@ -2,6 +2,7 @@ export default {
   xcenic: {
     longName: "Xcenic"
   },
+  copiedFeedback: "Copied to clipboard",
   links: {
     philosophy: "Philosophy",
     services: "Services",
