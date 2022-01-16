@@ -16,7 +16,7 @@ export const linkRecord = new PrimitiveRecord<{link: string, level: number}>()
 export default class Link extends ThemeAble {
   private linkBodyElem = this.q("link-body")
   private aElem = this.q("a") as unknown as HTMLAnchorElement
-  private slotElem = this.sr.querySelector("slot")
+  protected slotElem = this.sr.querySelector("slot")
   private slidyWrapper = this.q("slidy-underline-wrapper")
   private slidy = this.slidyWrapper.childs()
   // private externalIcon = new ExternalLinkIcon()
@@ -57,22 +57,22 @@ export default class Link extends ThemeAble {
 
     let ev = async (e: Event, dontSetLocation = false) => {
       let link = this.link()
-      let meta = domain.linkMeta(link, this.domainLevel)
+      const linkIsDefined = link !== undefined && link !== null
+      let meta = linkIsDefined ? domain.linkMeta(link, this.domainLevel) : null
       this.cbs.Call(e)
 
       if (onClickAnimationInit) {
         onClickAnimationInit()
-        if (meta.isOnOrigin) await delay(300)
-        else {
-          fetch(meta.href)
-          await delay(500)
+        if (linkIsDefined) {
+          if (meta.isOnOrigin) await delay(300)
+          else {
+            fetch(meta.href)
+            await delay(500)
+          }
         }
       }
-
-      // click event Handle
       
-      if (link) {
-        
+      if (linkIsDefined) {
         if (!dontSetLocation) {
           domain.set(link, this.domainLevel, this.push, this.notify)
         }
@@ -247,6 +247,7 @@ export default class Link extends ThemeAble {
 
   }
 
+
   
 
   private textNodeIndex: number
@@ -256,14 +257,14 @@ export default class Link extends ThemeAble {
     let preTextCummulativeWidth = 7
     for (let i = 0; i < this.textNodeIndex; i++) {
       preTextCummulativeWidth += elems[i].width
-      this.curChilds[i].css({marginLeft: -preTextCummulativeWidth})
+      this.curChilds[i].css({marginLeft: -preTextCummulativeWidth, paddingRight: preTextCummulativeWidth})
     }
     if (preTextCummulativeWidth === 7) preTextCummulativeWidth = 0
 
     let afterTextCummulativeWidth = 7
-    for (let i = this.textNodeIndex + 1; i < elems.length; i++) {
+    for (let i = this.textNodeIndex; i < elems.length; i++) {
+      this.curChilds[i].css({paddingLeft: afterTextCummulativeWidth})
       afterTextCummulativeWidth += elems[i].width
-      this.curChilds[i].css({marginRight: afterTextCummulativeWidth, right: 0})
     }
     if (afterTextCummulativeWidth === 7) afterTextCummulativeWidth = 0
    
@@ -305,7 +306,7 @@ export default class Link extends ThemeAble {
   }
   
 
-  eventtarget(target: Node | "parent") {
+  eventTarget(target: Node | "parent") {
     const el = typeof target === "string" ? this.parent() : target
     this.eventTargetLs.Inner("target", [el])
   }

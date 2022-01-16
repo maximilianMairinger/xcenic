@@ -9,28 +9,28 @@ grid-column.speachBubble.b
 grid-column.contact.head
   h1.chonker $[ home.contact.socials.heading ]
   p $[ home.contact.socials.text ]
-grid-column.contact.data
+grid-column.contact.data.copyLinkList
   h2.lil $[ home.contact.socials.contact.heading ]
-  c-link
+  c-copy-link
     c-send-icon
     | $[ home.contact.socials.contact.email ]
-  c-link
+  c-copy-link
     c-phone-icon
     | $[ home.contact.socials.contact.phone ]
-  c-link
+  c-copy-link
     c-home-icon
     | $[ home.contact.socials.contact.address ]
-grid-column.contact.socials
+grid-column.contact.socials.copyLinkList
   h2.lil $[ home.contact.socials.socialMedia.heading ]
-  c-link
+  c-link(link="https://at.linkedin.com/company/xcenic")
     c-linked-in-icon 
     | $[ home.contact.socials.socialMedia.linkedIn ]
-  c-link
-    c-instagram-icon 
+  c-link(link="https://www.instagram.com/xcenicofficial")
+    c-instagram-icon
     | $[ home.contact.socials.socialMedia.instagram ]
-  c-link
-    c-tiktok-icon 
-    | $[ home.contact.socials.socialMedia.tikTok ]
+  //- c-link(link="https://www.tiktok.com/@xcenic")
+  //-   c-tiktok-icon 
+  //-   | $[ home.contact.socials.socialMedia.tikTok ]
 grid-column.legal
   legal-container
     legal-container-background
@@ -40,7 +40,8 @@ grid-column.legal
         h1 $[ xcenic.longName ]
         p © 2019-<span id="currentYear"></span>. $[ home.contact.legal.legalNotice ]
       grid-legal.body.privacy
-        c-icon-link.lil(content="$[ home.contact.legal.privacy.heading ]" eventTarget="parent" link="https://www.e-recht24.de/impressum-generator.html")
+        c-link.lil(link="https://www.e-recht24.de/impressum-generator.html", eventtarget="parent")
+          | $[ home.contact.legal.privacy.heading ]
           c-arrow-pointer
         p $[ home.contact.legal.privacy.text ]
       grid-legal.body.cookie

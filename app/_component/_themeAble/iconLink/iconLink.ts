@@ -28,7 +28,7 @@ export default class IconLink extends ThemeAble {
   }
 
   eventtarget(target: Node | "parent") {
-    this.linkElem.eventtarget(typeof target === "string" ? this.parent() : target)
+    this.linkElem.eventTarget(typeof target === "string" ? this.parent() : target)
   }
 
   iconside(iconSide: "left" | "right") {

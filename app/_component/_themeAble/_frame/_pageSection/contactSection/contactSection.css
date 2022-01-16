@@ -12,10 +12,8 @@ p {
   margin-bottom: 0;
 }
 
-grid-column.contact c-link {
-  display: block;
-}
-c-link {
+
+c-copy-link, c-link {
   font-size: 18px;
 }
 
@@ -118,7 +116,7 @@ icon-line > *:first-child {
 
 
 
-c-link, c-icon-link {
+c-link, c-copy-link {
   margin-top: .3em;
 }
 
@@ -207,6 +205,16 @@ grid-column.contact.socials {
   grid-row: 3 / 4;
 }
 
+.copyLinkList {
+  display: flex;
+  flex-direction: column;
+}
+
+.copyLinkList > c-copy-link, .copyLinkList > c-link {
+  font-weight: normal;
+  width: max-content;
+}
+
 grid-column.legal {
   z-index: unset;
   margin-top: 20px;
@@ -265,7 +273,7 @@ legal-box > *:last-child {
   box-sizing: border-box;
 }
 
-c-icon-link.lil {
+c-link.lil {
   position: relative;
   color: rgb(var(--theme));
   transition: .3s background-color;
@@ -275,7 +283,7 @@ c-icon-link.lil {
 }
 
 
-c-icon-link.lil::before {
+c-link.lil::before {
   content: "";
   background: rgb(var(--theme));
   transition: .3s background-color;
@@ -286,7 +294,7 @@ c-icon-link.lil::before {
   left: -19px;
 }
 
-legal-box c-icon-link.lil {
+legal-box c-link.lil {
   font-size: 17px;
 }
 
@@ -295,7 +303,7 @@ grid-legal.body {
 }
 
 
-legal-box c-icon-link.lil::before {
+legal-box c-link.lil::before {
   left: -16px;
 }
 
