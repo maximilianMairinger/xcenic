@@ -19,12 +19,17 @@
 
 :host a {
   cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
 }
 
 slot {
   font-weight: inherit;
   cursor: inherit;
-  display: inline-block;
+
+
+  display: flex;
+  align-items: center;
 }
 
 ::slotted(*) {
@@ -33,8 +38,8 @@ slot {
   display: inline-block;
   position: absolute;
 
-  top: 50%;
-  transform: translateY(-50%);
+  /* top: 50%;
+  transform: translateY(-50%); */
 }
 
 

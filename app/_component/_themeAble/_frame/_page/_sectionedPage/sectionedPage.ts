@@ -357,7 +357,6 @@ export default abstract class SectionedPage extends Page {
 
 
     (async () => {
-      console.log("localScrollPosStore", this.localScrollPosStore.get())
       if (this.currentSectionIdStore.get() === fragments.rootElem) {
         scrollToPos += this.localScrollPosStore.get() - this.verticalOffset
         this.confirmedLastScrollProgress += this.localScrollPosStore.get()
@@ -578,7 +577,6 @@ export default abstract class SectionedPage extends Page {
         let diff = calculateDiff(height) 
         lastHeight = height
         const scrollTop = this.scrollTop - this.componentBody.css("marginTop")
-        console.log("scrollTop", scrollTop, "diff", diff)
         // only compensate diff when scrolling up and the scroll event was at least once fired by the user before
         if (validator(scrollTop)) {
           return this.scrollDiffCompensator.diff(diff)
@@ -1060,9 +1058,7 @@ class ScrollDiffCompensator {
     this.compensationCurrentDiff -= diff
     
     if (!this.scrollIdle.get()) {
-      console.log("scrollIdle is false");
       (this.page as any).componentBody.css("marginTop", this.compensationCurrentDiff)
-      console.log("compensationCurrentDiff", this.compensationCurrentDiff)
       if (this.currentDiffProm === undefined) {
         let r: any
         let p = new SyncProm((resClean) => {r = resClean})
@@ -1072,7 +1068,6 @@ class ScrollDiffCompensator {
       else return this.currentDiffProm
     }
     else {
-      console.log("scrollIdle is true");
       this.working = true
       this.page.scrollTop -= this.compensationCurrentDiff
       this.compensationCurrentDiff = 0
@@ -1083,7 +1078,6 @@ class ScrollDiffCompensator {
     
   }
   private cleanUp() {
-    console.log("cleanUp");
     (this.page as any).componentBody.css("marginTop", 0)
     // console.log("cleaning compensation", diff)
     this.working = true

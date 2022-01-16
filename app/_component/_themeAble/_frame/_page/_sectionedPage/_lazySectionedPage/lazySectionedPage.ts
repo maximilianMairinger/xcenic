@@ -94,7 +94,6 @@ export default abstract class LazySectionedPage extends SectionedPage {
   }
   
   async minimalContentPaint() {
-    console.log("minimalPaint")
     const e = await this.resourceMap.get(this.currentDomainFragment, this.currentlyActiveSectionIdIndex).priorityThen(() => {}, "minimalContentPaint")
     await super.minimalContentPaint()
   }
@@ -102,17 +101,14 @@ export default abstract class LazySectionedPage extends SectionedPage {
 
 
   async fullContentPaint() {
-    console.log("fullContent")
     await this.resourceMap.get(this.currentDomainFragment, this.currentlyActiveSectionIdIndex).priorityThen(() => {}, "completePaint")
     await this.importanceMap.whiteListAll("minimalContentPaint")
     await this.resourceMap.fullyLoaded  
   }
 
   async completePaint() {
-    console.log("completePaint start")
     await this.importanceMap.whiteListAll("completePaint")
     await super.completePaint()
-    console.log("completePaint end")
   }
 
   

@@ -26,6 +26,7 @@ component-body {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   column-gap: 35px;
+  /* grid-auto-rows: minmax(100px, auto); */
   padding: 50px calc(11.5% - 9px);
   box-sizing: border-box;
 }
@@ -168,8 +169,6 @@ grid-column.speachBubble.b c-speach-bubble {
 
 
 
-
-
 grid-column.cta {
   grid-column: 1 / 2;
   grid-row: 1 / 3;
@@ -212,7 +211,7 @@ grid-column.contact.socials {
 
 .copyLinkList > c-copy-link, .copyLinkList > c-link {
   font-weight: normal;
-  width: max-content;
+  max-width: max-content;
 }
 
 grid-column.legal {
@@ -279,7 +278,7 @@ c-link.lil {
   transition: .3s background-color;
   font-size: 19px;
   margin-top: 4px;
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 }
 
 

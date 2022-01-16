@@ -263,7 +263,7 @@ export default class Link extends ThemeAble {
 
     let afterTextCummulativeWidth = 7
     for (let i = this.textNodeIndex; i < elems.length; i++) {
-      this.curChilds[i].css({paddingLeft: afterTextCummulativeWidth})
+      this.curChilds[i].css({paddingLeft: afterTextCummulativeWidth, right: 0, translateX: "100%"})
       afterTextCummulativeWidth += elems[i].width
     }
     if (afterTextCummulativeWidth === 7) afterTextCummulativeWidth = 0
