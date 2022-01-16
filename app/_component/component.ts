@@ -17,26 +17,25 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
     
     if (bodyExtension !== false) {
       //@ts-ignore
-      this.componentBody = bodyExtension === undefined ? ce("component-body") : bodyExtension
+      this.componentBody = bodyExtension !== undefined ? bodyExtension : ce("component-body")
 
 
-      this.sr.html("<!--General styles--><style>" + require('./component.css').toString() + "</style><!--Main styles--><style>" + this.stl() + "</style>")
-      this.componentBody.html(this.pug(), lang)
+      this.sr.html("<style>" + this.stl() + "</style>")
       this.sr.append(this.componentBody as HTMLElement)
     }
     else {
       //@ts-ignore
       this.componentBody = this.sr
-      this.sr.html("<!--General styles--><style>" + require('./component.css').toString() + "</style><!--Main styles--><style>" + this.stl() + "</style>").apd(this.pug(), lang)
+      this.sr.html("<style>" + this.stl() + "</style>")
     }
+    this.componentBody.apd(this.pug(), lang)
   }
 
-  protected attributeChangedCallback(attrName: string, oldVal: string, newVal: string) {
-    this[attrName](newVal)
-  }
 
-  public abstract stl(): string;
-  public abstract pug(): string;
+  public stl(): string {
+    return require('./component.css').toString()
+  }
+  public abstract pug(): string
   /**
    * Appends to ShadowRoot
    */
@@ -69,11 +68,8 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
     return this
   }
 
-  protected parseJSONProp(prop: any) {
-    if (typeof prop === "string") return JSON.parse(prop)
-    else return prop
-  }
 }
+
 
 
 /*

@@ -1,18 +1,26 @@
 import declareComponent from "../../../../../lib/declareComponent"
 import PageSection from "../pageSection"
-import "../../../_icon/heartIllustration/heartIllustration"
-import "../../../_icon/dotAccent/dotAccent"
-import "../../../_button/_rippleButton/blockButton/blockButton"
+import "../../../link/copyLink/copyLink"
+import "../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
+import "../../../_icon/speachBubble/speachBubble"
+import "../../../_icon/instagramIcon/instagramIcon"
+import "../../../_icon/linkedInIcon/linkedInIcon"
+import "../../../_icon/sendIcon/sendIcon"
+import "../../../_icon/homeIcon/homeIcon"
+import "../../../_icon/tiktokIcon/tiktokIcon"
+import "../../../_icon/phoneIcon/phoneIcon"
+import "../../../_icon/arrowPointer/arrowPointer"
+
 
 
 
 
 export default class ContactSection extends PageSection {
-
+  
   constructor() {
     super("light");
 
-
+    this.q("#currentYear").text(new Date().getFullYear())
 
     
   }

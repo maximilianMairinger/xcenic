@@ -21,10 +21,16 @@ export default abstract class LazySectionedPage extends SectionedPage {
         priorElem = loadedElementsIndex[i]
       } while (priorElem === undefined)
 
-
+      e.hide()
       this.componentBody.insertAfter(e, priorElem)
+      e.showSection = () => {
+        e.show()
+      }
       loadedElementsIndex[ind] = e
       this.newSectionArrived(e, ind)
+
+      
+      
     })
     super(resourcesMap, baselink, sectionChangeCallback, sectionAliasList, mergeIndex)
 
@@ -37,62 +43,76 @@ export default abstract class LazySectionedPage extends SectionedPage {
     const loadedElementsIndex = {"-1": this.loadingIndecatorTop}
     loadedElementsIndex[sectionIndex.size] = this.loadingIndecatorBot
     const attach = constructAttachToPrototype(loadedElementsIndex)
+    let i = 0
     if (sectionIndex.size > 1) {
       //@ts-ignore
       attach("0", {set: (e) => {
-            
-        this.loadingIndecatorTop.remove()
         attach("0", {value: e})
+        const showSection = e.showSection.bind(e)
+        e.showSection = () => {
+          const scrollTop = this.scrollTop - this.componentBody.css("marginTop")
+          showSection()
+          let sideEffect = e.offsetHeight + e.css("marginTop") + e.css("marginBottom")
+          if (e.offsetTop > scrollTop) this.scrollTop += sideEffect
+          
+          this.loadingIndecatorTop.remove()
+          return sideEffect
+        }
       }})
       
 
       const lastIndex = (sectionIndex.size - 1) + ""
       //@ts-ignore
       attach(lastIndex, {set: (e) => {
-        
-        this.loadingIndecatorBot.remove()
         attach(lastIndex, {value: e})
+        const showSection = e.showSection.bind(e)
+        e.showSection = () => {
+          showSection()
+          this.loadingIndecatorBot.remove()
+          // console.log(e.offsetTop)
+        }
       }})
       
     }
     else {
       //@ts-ignore
       attach("0", {set: (e) => {
-            
-        this.loadingIndecatorTop.remove()
-        this.loadingIndecatorBot.remove()
+        const showSection = e.showSection.bind(e)
+        e.showSection = () => {
+          showSection()          
+          this.loadingIndecatorTop.remove()
+          this.loadingIndecatorBot.remove()
+          e.showSection = showSection
+        }
         attach("0", {value: e})
-        
       }})
     }
 
-    
-    
-    
-    
-    resourcesMap.fullyLoaded.then(() => {
-      this.loadingIndecatorBot.remove()
-    })
 
     this.importanceMap = importanceMap
     this.resourceMap = resourcesMap
   }
   
   async minimalContentPaint() {
-    const e = await this.resourceMap.get(this.currentDomainFragment).priorityThen()
+    console.log("minimalPaint")
+    const e = await this.resourceMap.get(this.currentDomainFragment, this.currentlyActiveSectionIdIndex).priorityThen(() => {}, "minimalContentPaint")
+    await super.minimalContentPaint()
   }
   
 
 
   async fullContentPaint() {
-    await this.resourceMap.get(this.currentDomainFragment).priorityThen(() => {}, "fullContentPaint")
-    await this.importanceMap.whiteListAll()
+    console.log("fullContent")
+    await this.resourceMap.get(this.currentDomainFragment, this.currentlyActiveSectionIdIndex).priorityThen(() => {}, "completePaint")
+    await this.importanceMap.whiteListAll("minimalContentPaint")
     await this.resourceMap.fullyLoaded  
   }
 
   async completePaint() {
-    await this.resourceMap.get(this.currentDomainFragment).priorityThen(() => {}, "completePaint")
+    console.log("completePaint start")
     await this.importanceMap.whiteListAll("completePaint")
+    await super.completePaint()
+    console.log("completePaint end")
   }
 
   

@@ -1,0 +1,282 @@
+:host {
+  background: #fff9f9;
+  margin-top: -56px;
+  z-index: 2;
+}
+
+component-body {
+  padding-left: calc(11.5% - 12px);
+  padding-right: calc(11.5% - 12px);
+  box-sizing: border-box;
+  display: flex;
+}
+
+big-circle {
+  width: 1200px;
+  height: 1200px;
+  position: absolute;
+  top: -800px;
+  left: -500px;
+  background-color: #ffe7e6;
+  box-shadow: var(--soft-shadow);
+  border-radius: 50%;
+}
+
+
+right-side, left-side {
+  position: relative;
+  float: left;
+  display: flex;
+  margin-top: 250px;
+}
+
+left-side {
+  flex-wrap: wrap;
+  max-width: 60%;
+  justify-content: flex-start;
+}
+
+right-side {
+  width: 40%;
+  justify-content: center;
+  position: relative;
+  min-width: max-content;
+}
+
+right-side c-image {
+  width: 300px;
+  height: 380px;
+  position: relative;
+  border-radius: 20px;
+  z-index: 0;
+}
+
+right-side c-image::after {
+  box-shadow: var(--soft-shadow);
+  background-color: white;
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 40px;
+  top: 40px;
+  border-radius: 20px;
+  z-index: -1;
+}
+
+text-container {
+  font-size: 18px;
+  max-width: 100%;
+  display: flex;
+  margin-bottom: 50px;
+  position: relative;
+}
+
+text-container > * {
+  max-width: 100%;
+}
+
+prefix-text {
+  font-weight: bold;
+}
+
+main-text-container {
+  display: flex;
+  width: 500px;
+  padding-left: calc(45% - 100px);
+  padding-right: 30px;
+  box-sizing: border-box;
+  flex-direction: column;
+}
+main-text {
+  width: 100%;
+}
+
+c-block-button {
+  margin-top: 20px;
+  --padding: 13px 25px;
+  --border: none;
+  --background: var(--secondary-theme);
+  --text: var(--plain-background);
+}
+
+c-link {
+  margin-top: 15px
+}
+
+c-dot-accent {
+  position: absolute;
+  width: 27px;
+  height: auto;
+}
+
+c-dot-accent.top {
+  right: -80px;
+  top: -130px;
+  transform: rotate(-90deg);
+}
+
+c-dot-accent.bot {
+  bottom: 20px;
+  left: -180px;
+  transform: scaleX(-1) rotate(0deg);
+}
+
+c-heart-illustration {
+  width: 400px;
+  height: auto;
+}
+
+
+image-container {
+  display: inline-block;
+  position: relative;
+}
+
+@media (max-width: 1300px) {
+  c-dot-accent.bot {
+    bottom: -40px;
+    left: -90px;
+  }
+}
+
+@media (max-width: 1150px) {
+  c-dot-accent.top {
+    right: -60px;
+    top: -50px;
+  }
+  
+  c-dot-accent.bot {
+    opacity: 0;
+  }
+}
+
+dot-container {
+  width: 100%;
+  display: block;
+  position: relative;
+}
+
+c-dot-accent.pretext {
+  opacity: 0;
+  display: block;
+  position: absolute;
+  right: calc(350px - 35vw);
+  bottom: -30px;
+  transform: translateY(100%)
+  
+  /* transform: translateY(-100%);
+  right: -10px;
+  top: 200px; */
+}
+
+
+@media (max-width: 1090px) {
+  c-dot-accent.pretext {
+    opacity: 1;
+  }
+  text-container {
+    flex-direction: column;
+  }
+  prefix-text {
+    color: rgb(var(--secondary-theme));
+    font-size: 21px;
+    margin-bottom: .3em;
+  }
+  main-text {
+    padding-left: 0;
+  }
+
+  c-heart-illustration {
+    transform: translateX(-60px);
+  }
+}
+
+@media (max-width: 800px) {
+  right-side, left-side {
+    margin-top: 200px;
+  }
+}
+
+
+@media (max-width: 650px) {
+  component-body {
+    flex-wrap: wrap;
+  }
+  left-side, right-side {
+    max-width: 100%;
+    margin-top: 150px;
+  }
+
+  right-side {
+    width: 100%;
+    margin-top: 100px;
+    margin-bottom: 100px;
+  }
+
+  image-container {
+    position: initial;
+  }
+
+  c-dot-accent.top {
+    top: -60px;
+    right: 0px;
+  }
+
+  c-dot-accent.bot {
+    opacity: 1;
+    left: 0px;
+    bottom: -70px;
+  }
+
+
+
+  right-side image-container {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+  }
+  right-side c-image {
+    width: 100%;
+    height: auto;
+  }
+
+
+  text-container {
+    flex-direction: row;
+  }
+  prefix-text {
+    color: initial;
+    font-size: 18px;
+    margin-bottom: initial;
+  }
+  main-text {
+    padding-left: calc(45% - 130px);
+    padding-right: 0;
+    width: 100%;
+  }
+  c-dot-accent.pretext {
+    opacity: 0;
+  }
+  c-heart-illustration {
+    transform: translateX(0px);
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  text-container {
+    flex-direction: column;
+  }
+  prefix-text {
+    color: rgb(var(--secondary-theme));
+    font-size: 21px;
+    margin-bottom: .3em;
+  }
+  main-text {
+    padding-left: 0;
+  }
+}

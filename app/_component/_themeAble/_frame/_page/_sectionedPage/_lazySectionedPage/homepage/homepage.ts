@@ -4,8 +4,8 @@ import PhilosophySection from "../../../../_pageSection/philosophySection/philos
 import LandingSection from "../../../../_pageSection/landingSection/landingSection"
 import WorkSection from "../../../../_pageSection/workSection/workSection"
 import TeamSection from "../../../../_pageSection/teamSection/teamSection"
+import TeamMemberSection from "../../../../_pageSection/teamMembersSection/teamMembersSection"
 import ContactSection from "../../../../_pageSection/contactSection/contactSection"
-import FooterSection from "../../../../_pageSection/footerSection/footerSection"
 import LinesSection from "../../../../_pageSection/linesSection/linesSection"
 import TestSection from "../../../../_pageSection/testSection/testSection"
 import LazySectionedPage from "../lazySectionedPage"
@@ -60,14 +60,14 @@ export default class HomePage extends LazySectionedPage {
         ), val: () => import(/* webpackChunkName: "teamSection" */"../../../../_pageSection/teamSection/teamSection")
       },
       {
+        key: new Import("team", 1, (teamMemberSection: typeof TeamMemberSection) =>
+          new teamMemberSection()
+        ), val: () => import(/* webpackChunkName: "teamMemberSection" */"../../../../_pageSection/teamMembersSection/teamMembersSection")
+      },
+      {
         key: new Import("contact", 1, (contactSection: typeof ContactSection) =>
           new contactSection()
         ), val: () => import(/* webpackChunkName: "contactSection" */"../../../../_pageSection/contactSection/contactSection")
-      },
-      {
-        key: new Import("footer", 1, (footerSection: typeof FooterSection) =>
-          new footerSection()
-        ), val: () => import(/* webpackChunkName: "footerSection" */"../../../../_pageSection/footerSection/footerSection")
       },
       // {
       //   key: new Import("team2", 1, (testSection: typeof TestSection) =>
@@ -96,9 +96,7 @@ export default class HomePage extends LazySectionedPage {
         new ScrollProgressAlias(subsectionHeight[0], "services/contentCreation"),
         new ScrollProgressAlias(subsectionHeight[1], "services/socialMedia")
       ])
-    ), {
-      footer: "contact"
-    })
+    ))
 
 
 

@@ -1,9 +1,7 @@
 :host {
-  --border: var(--primary-text);
-}
+  --background-color: #f2f2f2;
 
 
-:host {
   display: block;
   position: relative;
   height: fit-content;
@@ -13,16 +11,11 @@
   display: flex;
   align-items: center;
   border-radius: 18px;
-  border: 1px solid rgba(var(--border), .25);
   transition: opacity .3s, border-color .15s, color .15s;
-  background: white;
+  background: var(--background-color);
   z-index: 0;
 }
 
-
-:host(:not(.invalid):focus-within) {
-  border: 1px solid rgba(var(--border), .45);
-}
 
 sup {
   /* transform: translateY(-2px); */
@@ -43,6 +36,7 @@ input {
   color: inherit;
   border: none;
   border-radius: inherit;
+  background: transparent;
 }
 input-placeholder {
   z-index: 2;

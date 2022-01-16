@@ -3,26 +3,27 @@ image-container
   image-darken
 
 
-ui-container-box
+c-form
   ui-container-content
     initial-view
       c-text-blob(heading="$[ contact.heading ]", note="$[ contact.note ]")
       h3.request $[ contact.requestQuery ]
-      selection-body
-        c-select-button(content="$[ contact.requestOptions.0 ]")
-        c-select-button(content="$[ contact.requestOptions.1 ]")
-        c-select-button(content="$[ contact.requestOptions.2 ]")
-        c-select-button(content="$[ contact.requestOptions.3 ]")
-        c-select-button(content="$[ contact.requestOptions.4 ]")
-        c-select-button(content="$[ contact.requestOptions.5 ]")
+      selection-body(name="intrests")
+        c-select-button(name="dev" content="$[ contact.requestOptions.0 ]")
+        c-select-button(name="design" content="$[ contact.requestOptions.1 ]")
+        c-select-button(name="video"  content="$[ contact.requestOptions.2 ]")
+        c-select-button(name="photo" content="$[ contact.requestOptions.3 ]")
+        c-select-button(name="social" content="$[ contact.requestOptions.4 ]")
+        c-select-button(name="other" content="$[ contact.requestOptions.5 ]")
       h3.details $[ contact.detailsQuery ]
-      textarea.details
+      c-textarea.details(name="details" placeholder="$[ contact.detailsPlaceholder ]")
+      
       seperator-row
         c-line-accent
         h3.lastThing $[ contact.lastThingQuery ]
     after-initial-view
-      c-input(placeholder="$[ contact.yourName ]")
-      c-input(placeholder="$[ contact.email ]" type="email")
+      c-input2(name="sender" placeholder="$[ contact.yourName ]")
+      c-input2(name="email" placeholder="$[ contact.email ]" type="email")
 
     scroll-margin
 
@@ -30,7 +31,7 @@ ui-container-box
 
 
 
-  c-block-button(content="$[ contact.continue ]")#continue
+  c-load-button#continue
         
 
 

@@ -1,19 +1,34 @@
 import ThemeAble, { Theme } from "../themeAble";
-import { prevRecord as prevImageRecord, fullRecord as fullImageRecord } from "../../image/image"
+import { InstanceRecord } from "../../../lib/record";
+
+export const loadRecord = {
+  minimal: new InstanceRecord(() => {}),
+  content: new InstanceRecord(() => {}),
+  full: new InstanceRecord(() => {})
+}
+
+type Recording = () => () => Promise<any>
+
 
 export default abstract class Frame extends ThemeAble<HTMLElement> {
   public readonly active: boolean;
-  public readonly initiallyActivated
+  public readonly initiallyActivated: boolean
 
-  private loadFullResImages: () => () => Promise<any>
-  private loadPrevResImages: () => () => Promise<any>
+  private minimalRec: Recording
+  private contentRec: Recording
+  private fullRec: Recording
 
   constructor(theme: Theme) {
-    const prevResDone = prevImageRecord.record()
-    const fullResDone = fullImageRecord.record()
+    const minimal = loadRecord.minimal.record()
+    const content = loadRecord.content.record()
+    const full = loadRecord.full.record()
     super(undefined, theme)
-    this.loadPrevResImages = prevResDone
-    this.loadFullResImages = fullResDone
+
+    this.minimalRec = minimal
+    this.contentRec = content
+    this.fullRec = full
+
+    
 
     this.active = false
     this.initiallyActivated = false
@@ -39,16 +54,16 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
   }
   
   stl() {
-    return require("./frame.css").toString()
+    return super.stl() + require("./frame.css").toString()
   }
-  protected async minimalContentPaint(): Promise<void> {
-    await this.loadPrevResImages()()
+  public async minimalContentPaint(): Promise<void> {
+    await this.minimalRec()()
   }
-  protected fullContentPaint(): void | Promise<void> {
-
+  public async fullContentPaint(): Promise<void> {
+    await this.contentRec()()
   }
-  protected async completePaint(): Promise<void> {
-    await this.loadFullResImages()()
+  public async completePaint(): Promise<void> {
+    await this.fullRec()()
   }
 
   protected activationCallback?(active: boolean): void

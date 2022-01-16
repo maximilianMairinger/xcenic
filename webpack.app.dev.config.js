@@ -6,6 +6,16 @@ module.exports = (env) => {
   return merge(common, {
     watch: true,
     devtool: 'inline-source-map',
-    mode: "development"
+    mode: "development",
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [
+            {loader: 'postcss-loader', options: {postcssOptions: {path: "./"}}}
+          ]
+        }
+      ]
+    }
   })
 };

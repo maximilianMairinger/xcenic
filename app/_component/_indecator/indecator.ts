@@ -21,6 +21,6 @@ export default abstract class Indecator extends Component {
     this.ongoingAnimation = undefined
   }
   stl() {
-    return require('./indecator.css').toString();
+    return super.stl() + require('./indecator.css').toString();
   }
 }

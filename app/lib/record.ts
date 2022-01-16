@@ -17,7 +17,7 @@ export abstract class Record<T, R> {
   }
 }
 
-type Primitive = string | number | boolean | symbol
+type Primitive = string | number | boolean | symbol | object
 export class PrimitiveRecord<E extends Primitive = string> extends Record<E, E[]> {
   record() {
     return this._record(record => record)

@@ -8,10 +8,14 @@ import { dirString } from "../../lib/domain"
 import { ElementList } from "extended-dom"
 import HighlightAbleIcon from "../_themeAble/_icon/_highlightAbleIcon/highlightAbleIcon"
 import { Data, DataSubscription } from "josm"
+import { linkRecord } from "../_themeAble/link/link"
 
 
 const topLimit = 0
 const scrollTrendActivationCount = 20
+
+// intentionally never resolve those
+linkRecord.record()
 
 export default class Site extends Component {
 
@@ -150,7 +154,7 @@ export default class Site extends Component {
   }
 
   stl() {
-    return require("./site.css").toString()
+    return super.stl() + require("./site.css").toString()
   }
   pug() {
     return require("./site.pug").default

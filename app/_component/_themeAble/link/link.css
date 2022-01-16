@@ -27,6 +27,18 @@ slot {
   display: inline-block;
 }
 
+::slotted(*) {
+  height: min-content;
+  width: 1.1119em;
+  display: inline-block;
+  position: absolute;
+
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+
+
 a {
   color: rgb(var(--text));
   font-weight: inherit;

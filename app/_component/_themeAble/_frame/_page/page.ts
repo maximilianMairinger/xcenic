@@ -1,5 +1,9 @@
+import lazyLoad from "../../../../lib/lazyLoad";
+import { linkRecord } from "../../link/link";
 import { Theme } from "../../themeAble";
 import Frame from "../frame";
+
+
 
 
 export default abstract class Page extends Frame {
@@ -11,7 +15,7 @@ export default abstract class Page extends Frame {
   }
   public async tryNavigate(domainFragment?: string) {
     let res = true
-    if (this.navigationCallback) {
+    if (this.tryNavigationCallback) {
       let acRes = await this.tryNavigationCallback(domainFragment)
       if (acRes === undefined) acRes = true
       if (!acRes) res = false

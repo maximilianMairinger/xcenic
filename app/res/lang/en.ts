@@ -2,6 +2,7 @@ export default {
   xcenic: {
     longName: "Xcenic"
   },
+  copiedFeedback: "Copied to clipboard",
   links: {
     philosophy: "Philosophy",
     services: "Services",
@@ -19,9 +20,11 @@ export default {
     requestQuery: "What are you looking for",
     requestOptions: ["Web/App-development", "UI Design", "Video Production", "Photography", "Social Media", "Other"],
     detailsQuery: "Tell us about the details",
+    detailsPlaceholder: "Project details...",
     lastThingQuery: "One more thing...",
     
     continue: "Continue",
+    send: "Send",
 
     yourName: "Name",
     email: "Email"
@@ -114,25 +117,73 @@ export default {
       }
 
     },
-    // WIP
     team: {
+      // WIP
       note: "Who are we?",
+      // WIP
       heading: "A bunch of creative professionals having fun",
       view: "View",
       quote: [
         {
           projectName: "TGM Website",
           projectLink: "tgmWebsite",
+          // WIP
           text: "Very good work. Its super beautiful, I like it alot. In fact it is superb, I would probably bye again if I had enough money. Yes I am sure it is super nice, the collaboration and everything, just nice!",
           author: "Koppensteiner",
+          // WIP
           authorTitle: "IT Departmenthead"
         }
-      ]
+      ],
+      about: {
+        prefix: "About us",
+        mainText: "Xcenic was founded in 2019 by a group of IT students attending the TGM. We are now a diverse group of Austrian developers and creatives with a passion for combining content creation and development to form compelling brand identities.",
+        cta: "Get in touch"
+      }
     },
-    // WIP
     contact: {
-      prefix: "Contact",
-      mainText: "We develop a unique and engaging social media presence for your business. Combining our creative skill, design experience and unique ideas to deliver a state of the art social media page."
+      cta: {
+        // WIP
+        heading: "Got an idea?",
+        text: "We are happy to talk to you to asses and discuss your project free of charge and without obligation. Throughout our project implementation we believe in active cooperation and strive to involve you in our creative and technical process.",
+        button: "Lets talk"
+      },
+      socials: {
+        // WIP
+        heading: "Get in touch",
+        // WIP
+        text: "We are happy to talk to you to asses and discuss your project free of charge and without obligation.",
+        socialMedia: {
+          heading: "Social media",
+
+          linkedIn: "LinkedIn",
+          instagram: "Instagram",
+          tikTok: "TikTok"
+        },
+        contact: {
+          heading: "Contact",
+
+          email: "hello@xcenic.com",
+          phone: "+43 680 983612",
+          address: "Supergasse 1, 1020 Vienna"
+        }
+      },
+      legal: {
+        legalNotice: "All rights reserved.",
+        terms: {
+          // WIP
+          heading: "Terms and Conditions",
+          text: "Information regarding the liable owner of this site." 
+        },
+        privacy: {
+          // WIP
+          heading: "Privacy settings",
+          text: "View and change your privacy settings."
+        }
+      }
+
+      
+      
+      
 
     }
   }

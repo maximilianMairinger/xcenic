@@ -1,89 +1,116 @@
 import declareComponent from "../../../lib/declareComponent"
 import ThemeAble, { Theme } from "../themeAble";
-import { Data } from "josm"
+import { Data, DataCollection, DataSubscription } from "josm"
 import * as domain from "../../../lib/domain"
 import delay from "delay"
-import ExternalLinkIcon from "../_icon/externalLink/externalLink"
-import { Prim } from "extended-dom";
+// import ExternalLinkIcon from "../_icon/externalLink/externalLink"
+import { Prim, EventListener } from "extended-dom";
+
+import ResablePromise from "../../../lib/resAblePromise";
+import { PrimitiveRecord } from "../../../lib/record";
+
+export const linkRecord = new PrimitiveRecord<{link: string, level: number}>()
+
 
 
 export default class Link extends ThemeAble {
+  private linkBodyElem = this.q("link-body")
   private aElem = this.q("a") as unknown as HTMLAnchorElement
-  private slotElem = this.sr.querySelector("slot")
+  protected slotElem = this.sr.querySelector("slot")
   private slidyWrapper = this.q("slidy-underline-wrapper")
   private slidy = this.slidyWrapper.childs()
-  private externalIcon = new ExternalLinkIcon()
+  // private externalIcon = new ExternalLinkIcon()
 
   public mouseOverAnimation?: () => void
   public mouseOutAnimation?: () => void
   public clickAnimation?: () => void
 
-  constructor(content: string | Data<string>, link?: string, public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true) {
+  private eventTargetLs = [] as EventListener[]
+
+  constructor(content: string | Data<string>, link?: string | (() => void), public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true, eventTarget?: Element) {
     super(false)
 
-    this.theme.get((to) => {
-      this.externalIcon.theme.set(to)
-    })
+    // this.theme.get((to) => {
+    //   this.externalIcon.theme.set(to)
+    // })
 
     
     this.content(content)
-    if (link) this.link(link)
+    if (link !== null && link !== undefined) {
+      if (link instanceof Function) this.addActivationListener(link)
+      else this.link(link)
+    }
+
+
+  
+    
+
+
+    const observer = new MutationObserver(this.mutateChildsCb.bind(this))
+
+    
+    observer.observe(this, { attributes: false, childList: true, subtree: false });
+
+
+
 
 
     let ev = async (e: Event, dontSetLocation = false) => {
       let link = this.link()
-      let meta = domain.linkMeta(link, this.domainLevel)
-      if (link) this.cbs.Call(e)
+      const linkIsDefined = link !== undefined && link !== null
+      let meta = linkIsDefined ? domain.linkMeta(link, this.domainLevel) : null
+      this.cbs.Call(e)
 
       if (onClickAnimationInit) {
         onClickAnimationInit()
-        if (meta.isOnOrigin) await delay(300)
-        else {
-          fetch(meta.href)
-          await delay(500)
+        if (linkIsDefined) {
+          if (meta.isOnOrigin) await delay(300)
+          else {
+            fetch(meta.href)
+            await delay(500)
+          }
         }
       }
-
-      // click event Handle
       
-      if (link) {
-        
+      if (linkIsDefined) {
         if (!dontSetLocation) {
           domain.set(link, this.domainLevel, this.push, this.notify)
         }
       }
     }
 
-    this.aElem.on("mouseup", (e) => {
+    if (eventTarget === undefined) eventTarget = this.aElem as any
+
+    const a = this.eventTargetLs
+    a.add(eventTarget.on("mouseup", (e) => {
       if (e.button === 0) ev(e)
       else if (e.button === 1) ev(e, true)
-    })
+    }))
     this.aElem.on("click", (e) => {
       e.preventDefault()
     })
 
-    this.aElem.on("keydown", (e) => {
+    a.add(eventTarget.on("keydown", (e) => {
       if (e.key === " " || e.key === "Enter") ev(e)
-    })
+    }))
     
 
-    this.aElem.on("mousedown", () => {
+    a.add(eventTarget.on("mousedown", () => {
       this.addClass("pressed")
-    })
-    this.aElem.on("mouseleave", () => {
+    }))
+    a.add(eventTarget.on("mouseleave", () => {
       if (click) return
       this.removeClass("pressed")
-    })
-    this.aElem.on("mouseup", () => {
+    }))
+    a.add(eventTarget.on("mouseup", () => {
       if (click) return
       this.removeClass("pressed")
-    })
+    }))
 
 
-    this.aElem.on("mouseenter", this.updateHref.bind(this))
-    this.aElem.on("focus", this.updateHref.bind(this))
+    a.add(eventTarget.on("mouseenter", this.updateHref.bind(this)))
+    a.add(eventTarget.on("focus", this.updateHref.bind(this)))
 
-    
     
     let click: () => void
 
@@ -142,12 +169,13 @@ export default class Link extends ThemeAble {
             clickF().then(click)
           }
         })
-        const dur = this.width() * 1.5 + 100
+
+        const dur = this.slotElem.width() / (this.slotElem.css("fontSize") / 16) * 2.5 + 100
         this.slidy.anim({width: "100%"}, dur)
       }
 
       let mouseOut = this.mouseOutAnimation = () => {
-        const dur = this.width() * 1.5 + 100
+        const dur = this.slotElem.width() / (this.slotElem.css("fontSize") / 16) * 2.5 + 100
         if (!click) {
           wantToAnim = false
         
@@ -170,8 +198,8 @@ export default class Link extends ThemeAble {
         }
       }
 
-      this.aElem.on("mouseover", mouseOver)
-      this.aElem.on("mouseleave", mouseOut)
+      a.add(eventTarget.on("mouseover", mouseOver))
+      a.add(eventTarget.on("mouseleave", mouseOut))
       
 
       let clickF = (async () => {
@@ -219,15 +247,80 @@ export default class Link extends ThemeAble {
 
   }
 
+
+  
+
+  private textNodeIndex: number
+  private cummulatorListener = new DataCollection<{width: number}[]>().get((...elems) => {
+    
+
+    let preTextCummulativeWidth = 7
+    for (let i = 0; i < this.textNodeIndex; i++) {
+      preTextCummulativeWidth += elems[i].width
+      this.curChilds[i].css({marginLeft: -preTextCummulativeWidth, paddingRight: preTextCummulativeWidth})
+    }
+    if (preTextCummulativeWidth === 7) preTextCummulativeWidth = 0
+
+    let afterTextCummulativeWidth = 7
+    for (let i = this.textNodeIndex; i < elems.length; i++) {
+      this.curChilds[i].css({paddingLeft: afterTextCummulativeWidth})
+      afterTextCummulativeWidth += elems[i].width
+    }
+    if (afterTextCummulativeWidth === 7) afterTextCummulativeWidth = 0
+   
+
+    this.linkBodyElem.css({marginLeft: preTextCummulativeWidth, marginRight: afterTextCummulativeWidth})
+  }, false)
+
+
+  private hasIconChilds = false
+  private curChilds: HTMLElement[] = []
+  private mutateChildsCb() {
+    const hasIconChildsNow = this.children.length !== 0
+    if (!hasIconChildsNow && !this.hasIconChilds) return
+    this.hasIconChilds = hasIconChildsNow
+
+    const childs = this.childNodes as any
+    const iconsResizeDatas: Data<any>[] = []
+    this.curChilds.clear()
+    for (let i = 0; i < childs.length; i++) {
+      
+      if (childs[i] instanceof Text) {
+        this.textNodeIndex = i
+      }
+      else {
+        iconsResizeDatas.push(childs[i].resizeData() as Data<DOMRectReadOnly>)
+        this.curChilds.push(childs[i])
+      }
+    }
+
+    const e = new DataCollection(...iconsResizeDatas)
+    // @ts-ignore
+    this.cummulatorListener.data(e)
+
+  }
+
+
+  connectedCallback() {
+    this.mutateChildsCb()
+  }
+  
+
+  eventTarget(target: Node | "parent") {
+    const el = typeof target === "string" ? this.parent() : target
+    this.eventTargetLs.Inner("target", [el])
+  }
+
   private updateHref() {
     if (!this.link()) return
     let meta = domain.linkMeta(this.link(), this.domainLevel)
-    if (!meta.isOnOrigin) this.aElem.apd(this.externalIcon)
-    else this.externalIcon.remove()
+    // if (!meta.isOnOrigin) this.aElem.apd(this.externalIcon)
+    // else this.externalIcon.remove()
     this.aElem.href = meta.href
   }
 
-  private _link: string
+  private _link: string = null
+
 
   link(): string
   link(to: string | {link: string, domainLevel: number}): this
@@ -242,13 +335,15 @@ export default class Link extends ThemeAble {
         this._link = to
         this.domainLevel = domainLevel !== undefined ? domainLevel : this.domainLevel
       }
+
+      linkRecord.add({link: this._link, level: this.domainLevel})
       this.updateHref()
       this.addClass("active")
       return this
     }
     else if (to === null) {
       this._link = null
-      this.removeClass("active")
+      if (this.cbs.empty) this.removeClass("active")
     }
     else return this._link
   }
@@ -257,19 +352,22 @@ export default class Link extends ThemeAble {
 
   public addActivationListener(listener: (e: Event) => void) {
     this.cbs.add(listener)
+    this.addClass("active")
   }
   public removeActivationListener(listener: (e: Event) => void) {
     this.cbs.rmV(listener)
+    if (this.cbs.empty && this._link === null) this.addClass("active")
   }
 
   content(): string
   content(to?: string | Data<string>): void
   content(to?: string | Data<string>): any {
-    return this.slotElem.text(to as any, true, false)
+    if (to !== undefined) return this.text(to as any, true, false)
+    return this.text()
   }
 
   stl() {
-    return require("./link.css").toString()
+    return super.stl() + require("./link.css").toString()
   }
   pug() {
     return require("./link.pug").default

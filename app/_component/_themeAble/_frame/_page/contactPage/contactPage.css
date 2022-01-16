@@ -3,6 +3,7 @@ component-body {
   height: fit-content;
 }
 
+
 image-container {
   display: block;
   width: 100%;
@@ -21,7 +22,7 @@ image-darken {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-ui-container-box {
+c-form {
   display: block;
   width: 40%;
   min-width: 415px;
@@ -92,20 +93,11 @@ h3 {
   line-height: 1.13em;
 }
 
-textarea {
-  border-radius: 20px;
-  border: 1px solid rgba(var(--plain-text), .2);
-  border: 1px solid rgba(0, 0, 0, .2);
-  box-sizing: border-box;
-  resize: none;
-  padding: 15px;
-  font-size: 14px;
-  font-family: inherit;
-}
 
-textarea.details {
+c-textarea.details {
   width: 100%;
   flex-grow: 1;
+  margin-bottom: 10px;
 }
 
 initial-view {
@@ -120,12 +112,12 @@ initial-view {
 
 #continue {
   --background: var(--primary-theme);
-  --text: var(--plain-background);
-  --border: unset;
+  --text: 255, 255, 255;
 
   position: fixed;
   bottom: 40px;
   right: calc(5% - 12px);
+  z-index: 5;
 }
 
 @media (max-width: 1475px) {
@@ -136,13 +128,6 @@ initial-view {
 
 
 
-ui-container-box-scroll::-webkit-scrollbar { 
-  display: none;  
-}
-
-ui-container-box-scroll {
-  scrollbar-width: none; 
-}
 
 @media (max-width: 700px) {
   ui-container-content {
@@ -154,7 +139,7 @@ ui-container-box-scroll {
     right: calc(11.5% - 3px);
   }
 
-  ui-container-box {
+  c-form {
     width: 100%;
     position: absolute;
     min-width: 345px;
@@ -193,7 +178,7 @@ c-select-button {
 scroll-margin {
   position: relative;
   display: block;
-  height: 100px;
+  height: 60px;
   width: 100%;
 }
 
@@ -226,14 +211,18 @@ after-initial-view {
   
 }
 
-c-input {
+c-input2 {
   margin-bottom: 10px;
+  width: 100%;
+  opacity: 1;
 }
 
 
-c-input:last-child {
-  margin-bottom: 0;
+initial-view > *:nth-last-child(2), after-initial-view > *:last-child {
+  margin-bottom: 0 !important;
 }
+
+
 
 ui-container-content > * {
   position: relative;
