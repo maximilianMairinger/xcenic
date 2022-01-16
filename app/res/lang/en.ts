@@ -169,15 +169,15 @@ export default {
       },
       legal: {
         legalNotice: "All rights reserved.",
-        privacy: {
+        terms: {
           // WIP
-          heading: "Imprint and privacy",
+          heading: "Terms and Conditions",
           text: "Information regarding the liable owner of this site." 
         },
-        cookie: {
+        privacy: {
           // WIP
-          heading: "Cookie settings",
-          text: "Finetune in what way we may track & use your usage data."
+          heading: "Privacy settings",
+          text: "View and change your privacy settings."
         }
       }
 
