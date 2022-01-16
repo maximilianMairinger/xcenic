@@ -1,7 +1,7 @@
 import declareComponent from "../../../../../lib/declareComponent"
 import PageSection from "../pageSection"
 import "./../../../_icon/lineAccent/lineAccent"
-import "./../../../_focusAble/_formUi/_rippleButton/blockButton/blockButton"
+import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
 import "./../../../_focusAble/_formUi/_rippleButton/rippleButton"
 import RippleButton from "./../../../_focusAble/_formUi/_rippleButton/rippleButton"
 import "./../../../_focusAble/_button/button"
