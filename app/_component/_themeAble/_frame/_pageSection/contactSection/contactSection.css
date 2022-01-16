@@ -12,6 +12,13 @@ p {
   margin-bottom: 0;
 }
 
+grid-column.contact c-link {
+  display: block;
+}
+c-link {
+  font-size: 18px;
+}
+
 
 h1.chonker + * {
   margin-top: 68px !important;

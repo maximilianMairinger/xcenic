@@ -1,6 +1,6 @@
 import declareComponent from "../../../lib/declareComponent"
 import ThemeAble, { Theme } from "../themeAble";
-import { Data } from "josm"
+import { Data, DataCollection, DataSubscription } from "josm"
 import * as domain from "../../../lib/domain"
 import delay from "delay"
 // import ExternalLinkIcon from "../_icon/externalLink/externalLink"
@@ -14,6 +14,7 @@ export const linkRecord = new PrimitiveRecord<{link: string, level: number}>()
 
 
 export default class Link extends ThemeAble {
+  private linkBodyElem = this.q("link-body")
   private aElem = this.q("a") as unknown as HTMLAnchorElement
   private slotElem = this.sr.querySelector("slot")
   private slidyWrapper = this.q("slidy-underline-wrapper")
@@ -41,18 +42,11 @@ export default class Link extends ThemeAble {
     }
 
 
+  
     
-    const mutateCB = () => {
-      let cummulatedWidth = 0
-      for (const child of this.childNodes) {
-        if (!(child instanceof Text)) cummulatedWidth += child.width()
-      }
-      console.log(cummulatedWidth) 
-    }
-    mutateCB()
 
 
-    const observer = new MutationObserver(mutateCB)
+    const observer = new MutationObserver(this.mutateChildsCb.bind(this))
 
     
     observer.observe(this, { attributes: false, childList: true, subtree: false });
@@ -253,6 +247,62 @@ export default class Link extends ThemeAble {
 
   }
 
+  
+
+  private textNodeIndex: number
+  private cummulatorListener = new DataCollection<{width: number}[]>().get((...elems) => {
+    
+
+    let preTextCummulativeWidth = 7
+    for (let i = 0; i < this.textNodeIndex; i++) {
+      preTextCummulativeWidth += elems[i].width
+      this.curChilds[i].css({marginLeft: -preTextCummulativeWidth})
+    }
+    if (preTextCummulativeWidth === 7) preTextCummulativeWidth = 0
+
+    let afterTextCummulativeWidth = 7
+    for (let i = this.textNodeIndex + 1; i < elems.length; i++) {
+      afterTextCummulativeWidth += elems[i].width
+      this.curChilds[i].css({marginRight: afterTextCummulativeWidth, right: 0})
+    }
+    if (afterTextCummulativeWidth === 7) afterTextCummulativeWidth = 0
+   
+
+    this.linkBodyElem.css({marginLeft: preTextCummulativeWidth, marginRight: afterTextCummulativeWidth})
+  }, false)
+
+
+  private hasIconChilds = false
+  private curChilds: HTMLElement[] = []
+  private mutateChildsCb() {
+    const hasIconChildsNow = this.children.length !== 0
+    if (!hasIconChildsNow && !this.hasIconChilds) return
+    this.hasIconChilds = hasIconChildsNow
+
+    const childs = this.childNodes as any
+    const iconsResizeDatas: Data<any>[] = []
+    this.curChilds.clear()
+    for (let i = 0; i < childs.length; i++) {
+      
+      if (childs[i] instanceof Text) {
+        this.textNodeIndex = i
+      }
+      else {
+        iconsResizeDatas.push(childs[i].resizeData() as Data<DOMRectReadOnly>)
+        this.curChilds.push(childs[i])
+      }
+    }
+
+    const e = new DataCollection(...iconsResizeDatas)
+    // @ts-ignore
+    this.cummulatorListener.data(e)
+
+  }
+
+
+  connectedCallback() {
+    this.mutateChildsCb()
+  }
   
 
   eventtarget(target: Node | "parent") {

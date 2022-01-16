@@ -24,15 +24,17 @@
 slot {
   font-weight: inherit;
   cursor: inherit;
-  display: inline-flex;
-  align-content: center;
+  display: inline-block;
 }
 
 ::slotted(*) {
-  height: 1.4em;
-  width: 1.4em;
+  height: min-content;
+  width: 1.1119em;
   display: inline-block;
   position: absolute;
+
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 
