@@ -12,6 +12,7 @@ import Page from "../_page/page";
 import HighlightAbleIcon from "../../_icon/_highlightAbleIcon/highlightAbleIcon";
 import { Data } from "josm";
 import { linkRecord } from "../../link/link";
+import * as isSafari from "is-safari"
 
 
 
@@ -262,7 +263,8 @@ export default abstract class Manager extends Frame {
       })
     }
 
-    let showAnim = from !== undefined ? to.anim([{zIndex: 100, opacity: 0, translateX: -5, scale: 1.005, offset: 0}, {opacity: 1, translateX: 0, scale: 1}], 400) : to.anim([{offset: 0, opacity: 0}, {opacity: 1}], 400);
+
+    let showAnim = from !== undefined ? !(isSafari && domain.isInNativeUserNavigation()) ? to.anim([{zIndex: 100, opacity: 0, translateX: -5, scale: 1.005, offset: 0}, {opacity: 1, translateX: 0, scale: 1}], 400) : to.css({opacity: 1}) : to.anim([{offset: 0, opacity: 0}, {opacity: 1}], 400);
 
 
     (async () => {
@@ -372,7 +374,6 @@ export default abstract class Manager extends Frame {
       domain.set(domain.dirString + suc.domain + (fullDomainHasTrailingSlash ? domain.dirString : ""), suc.level, false).then(() => {
 
         pageProm.priorityThen(() => {
-          console.log("fully loaded")
           if (this.currentUrl !== to) {
             this.currentUrl = to;
             let page = this.currentPage;

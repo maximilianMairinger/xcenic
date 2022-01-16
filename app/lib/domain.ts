@@ -186,7 +186,6 @@ export async function set(path: string, level: number = 0, push: boolean = true,
   })
 
   let anyChange = parseDomainToDomainIndex(domIndex, path, level)
-  console.log("trailingSlashChange", trailingSlashChange)
   if (!(anyChange || trailingSlashChange)) {
     inDomainSet = false
     res()
@@ -333,10 +332,17 @@ export function get(domainLevel: number, subscription?: (domainFragment: DomainF
   
 }
 
+let inUserNavigation = false
+export function isInNativeUserNavigation() {
+  return inUserNavigation
+}
+
+
 
 
 let ls = new Map()
 window.onpopstate = async function(e) {
+  inUserNavigation = true
   while(inDomainSet) {
     await currentDomainSet
   }
@@ -361,6 +367,11 @@ window.onpopstate = async function(e) {
   
   
   inDomainSet = false
+  setTimeout(() => {
+    inUserNavigation = false
+  })
+  
+  
   res()
 }
 
