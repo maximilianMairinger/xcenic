@@ -27,11 +27,11 @@ export default class HomePage extends LazySectionedPage {
     const subsectionHeight = [new Data(300), new Data(1600)]
 
     super(new ImportanceMap<() => Promise<any>, any>(
-      // {
-      //   key: new Import("", 1, (landingSection: typeof LandingSection) =>
-      //     new landingSection()
-      //   ), val: () => import(/* webpackChunkName: "landingSection" */"../../../../_pageSection/landingSection/landingSection")
-      // },
+      {
+        key: new Import("", 1, (landingSection: typeof LandingSection) =>
+          new landingSection()
+        ), val: () => import(/* webpackChunkName: "landingSection" */"../../../../_pageSection/landingSection/landingSection")
+      },
       {
         key: new Import("lines", 1, (linesSection: typeof LinesSection) => 
           new linesSection()
