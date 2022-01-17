@@ -327,11 +327,9 @@ grid-legal.head h1 {
   margin-bottom: 5px;
 }
 
-grid-legal.body p {
+grid-legal.body {
   padding-right: 30px;
   box-sizing: border-box;
-}
-grid-legal.body {
   cursor: pointer;
 }
 
@@ -413,4 +411,80 @@ grid-legal.body {
   component-body {
     grid-template-columns: 1fr
   }
+
+  grid-column {
+    grid-column: unset !important;
+    grid-row: unset !important;
+  }
+
+  grid-column.speachBubble.a {
+    display: none;
+  }
+
+  grid-column.speachBubble.b {
+    display: flex;
+    justify-content: center;
+  }
+
+  grid-column.speachBubble.b > * {
+    max-width: 400px;
+  }
+
+
+
+  
+
+
+  legal-box {
+    column-gap: 0px;
+  }
+
+
+  grid-legal.body {
+    padding-right: 15px;
+    grid-row: 2 / 3;
+  }
+
+  grid-legal.body.terms {
+    padding-left: 25px;
+  }
+
+  grid-legal.body c-link::before {
+    display: none;
+  }
+
+
+}
+
+@media (max-width: 670px) {
+
+
+  grid-legal.head {
+    display: block;
+    padding-bottom: 0;
+  }
+  legal-box {
+    grid-template-columns: 1fr;
+    row-gap: 15px;
+  }
+
+  grid-legal {
+    padding: 0;
+  }
+  grid-legal.body.privacy {
+    grid-row: 3 / 4;
+  }
+
+  grid-legal.body.privacy {
+    padding-left: 25px;
+  }
+
+  grid-legal:first-child {
+    padding-top: 15px;
+  }
+
+  grid-legal:last-child {
+    padding-bottom: 15px;
+  }
+  
 }
