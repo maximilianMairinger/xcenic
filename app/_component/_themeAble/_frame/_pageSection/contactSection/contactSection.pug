@@ -9,7 +9,7 @@ grid-column.speachBubble.b
 grid-column.contact.head
   h1.chonker $[ home.contact.socials.heading ]
   p $[ home.contact.socials.text ]
-grid-column.contact.data.copyLinkList
+grid-column.contact.data.linkList
   h2.lil $[ home.contact.socials.contact.heading ]
   c-copy-link
     c-send-icon
@@ -20,7 +20,7 @@ grid-column.contact.data.copyLinkList
   c-copy-link
     c-home-icon
     | $[ home.contact.socials.contact.address ]
-grid-column.contact.socials.copyLinkList
+grid-column.contact.socials.linkList
   h2.lil $[ home.contact.socials.socialMedia.heading ]
   c-link(link="https://at.linkedin.com/company/xcenic")
     c-linked-in-icon 
@@ -31,6 +31,8 @@ grid-column.contact.socials.copyLinkList
   //- c-link(link="https://www.tiktok.com/@xcenic")
   //-   c-tiktok-icon 
   //-   | $[ home.contact.socials.socialMedia.tikTok ]
+
+
 grid-column.legal
   legal-container
     legal-container-background

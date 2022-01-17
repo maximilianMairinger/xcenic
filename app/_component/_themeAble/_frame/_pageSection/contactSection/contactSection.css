@@ -204,12 +204,12 @@ grid-column.contact.socials {
   grid-row: 3 / 4;
 }
 
-.copyLinkList {
+.linkList {
   display: flex;
   flex-direction: column;
 }
 
-.copyLinkList > c-copy-link, .copyLinkList > c-link {
+.linkList > c-copy-link, .linkList > c-link {
   font-weight: normal;
   max-width: max-content;
 }
@@ -227,7 +227,8 @@ legal-container {
   width: 100%;
   display: block;
   position: relative;
-  height: 100px;
+  min-height: 100px;
+  height: max-content;
   border-radius: 25px;
 }
 legal-container-background {
@@ -248,7 +249,7 @@ legal-box {
   column-gap: 25px;
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   z-index: 2;
@@ -257,8 +258,8 @@ legal-box {
 }
 
 legal-box > * {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 15px;
+  padding-bottom: 15px;
   box-sizing: border-box;
 }
 
@@ -340,6 +341,40 @@ grid-legal.body {
   component-body {
     grid-template-columns: 1fr 1fr 1fr;
   }
+
+  grid-column.speachBubble.b {
+    grid-column: 2 / 3;
+  }
+
+  grid-column.speachBubble.a {
+    grid-column: 2 / 3;
+    display: none;
+  }
+
+  grid-column.contact.head, grid-column.contact.data, grid-column.contact.socials {
+    grid-column: 3 / 4;
+  }
+
+  grid-column.legal {
+    grid-column: 1 / 3;
+    grid-row: 3 / 5;
+  }
+
+  legal-box {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  grid-legal.body.terms {
+    padding-left: 20px;
+  }
+  grid-legal.body.terms c-link::before {
+    display: none;
+  }
+
+  grid-legal.head {
+    display: none;
+  }
+
 }
 
 @media (max-width: 1100px) {
