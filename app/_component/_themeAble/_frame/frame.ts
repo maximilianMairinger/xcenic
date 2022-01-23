@@ -1,5 +1,6 @@
 import ThemeAble, { Theme } from "../themeAble";
 import { InstanceRecord } from "../../../lib/record";
+import { Data } from "josm";
 
 export const loadRecord = {
   minimal: new InstanceRecord(() => {}),
@@ -11,6 +12,9 @@ type Recording = () => () => Promise<any>
 
 
 export default abstract class Frame extends ThemeAble<HTMLElement> {
+  public readonly accentTheme: Data<"primary" | "secondary">
+
+
   public readonly active: boolean;
   public readonly initiallyActivated: boolean
 
@@ -23,6 +27,7 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
     const content = loadRecord.content.record()
     const full = loadRecord.full.record()
     super(undefined, theme)
+    this.accentTheme = new Data("primary") as Data<"primary" | "secondary">
 
     this.minimalRec = minimal
     this.contentRec = content
@@ -66,7 +71,11 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
     await this.fullRec()()
   }
 
-  protected activationCallback?(active: boolean): void
+  protected activationCallback(active: boolean): void{
+    if (active) {
+      
+    }
+  }
   protected initialActivationCallback?(): void
   public userInitedScrollEvent: boolean
   public addIntersectionListener?(root: HTMLElement, cb: Function, threshold?: number, rootMargin?: string): void

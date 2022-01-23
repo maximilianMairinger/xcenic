@@ -23,7 +23,7 @@ export default class HomePage extends LazySectionedPage {
 
   public iconIndex: {[key: string]: HightlightAbleIcon}
 
-  constructor(baselink: string, changeNavTheme: (theme: string) => void, sectionChangeCallback?: (section: string) => void) {
+  constructor(baselink: string, sectionChangeCallback?: (section: string) => void) {
     const subsectionHeight = [new Data(300), new Data(1600)]
 
     super(new ImportanceMap<() => Promise<any>, any>(
@@ -44,7 +44,7 @@ export default class HomePage extends LazySectionedPage {
       },
       {
         key: new Import("services", 1, (workSection: typeof WorkSection) => {
-          const sec = new workSection(changeNavTheme)
+          const sec = new workSection()
           for (let i = 0; i < sec.serviceSection.length -1; i++) {
             const subSec = sec.serviceSection[i];
             const heightData = subSec.resizeData().tunnel((rec) => rec.height)

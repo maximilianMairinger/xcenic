@@ -256,7 +256,9 @@ export default abstract class SectionedPage extends Page {
   private lastSectionName: string
   private activateSectionName(name: string) {
     if (this.active) {
-      if (this.sectionChangeCallback && this.lastSectionName !== name) this.sectionChangeCallback(name)
+      if (this.lastSectionName !== name) {
+        if (this.sectionChangeCallback) this.sectionChangeCallback(name)
+      }
       this.lastSectionName = name as string
     }
   }
@@ -338,9 +340,7 @@ export default abstract class SectionedPage extends Page {
     this.activateSectionName(fragments.closeUp)
     this.currentlyActiveSectionRootName = fragments.rootElem
     
-    if (this.currentlyActiveSectionElem) this.currentlyActiveSectionElem.deactivate()
-    this.currentlyActiveSectionElem = section
-    this.currentlyActiveSectionElem.activate()
+    this.switchSectionElem(section)
 
     this.userInitedScrollEvent = false
 
@@ -562,7 +562,7 @@ export default abstract class SectionedPage extends Page {
 
     
     rendered.get((rendered) => {
-      console.log("rendered", rendered, section)
+      // console.log("rendered", rendered, section)
       if (!rendered) section.css("containIntrinsicSize" as any, section.height() + "px")
       // console.log(rendered ? "visible" : "hidden", section)
       section.css("contentVisibility" as any, rendered ? "visible" : "hidden")
@@ -737,11 +737,7 @@ export default abstract class SectionedPage extends Page {
               this.currentlyActiveSectionRootName = root
   
   
-              if (this.currentlyActiveSectionElem !== elem) {
-                if (this.currentlyActiveSectionElem !== undefined) this.currentlyActiveSectionElem.deactivate()
-                elem.activate()
-                this.currentlyActiveSectionElem = elem
-              }
+              this.switchSectionElem(elem)
   
               aliasSubscriptions.Inner("deactivate", [])
               aliasSubscriptions.clear()
@@ -897,6 +893,14 @@ export default abstract class SectionedPage extends Page {
     f()
   }
 
+  private switchSectionElem(elem: PageSection) {
+    if (this.currentlyActiveSectionElem !== elem) {
+      if (this.currentlyActiveSectionElem !== undefined) this.currentlyActiveSectionElem.deactivate()
+      elem.activate()
+      this.currentlyActiveSectionElem = elem
+    }
+  }
+
   public removeIntersectionListener(obsElem: HTMLElement) {
     this.customIntersectionObserver.get(obsElem).deactivate()
     this.customIntersectionObserver.delete(obsElem)
@@ -929,9 +933,7 @@ export default abstract class SectionedPage extends Page {
       this.activateSectionName(sectionName)
 
 
-      if (this.currentlyActiveSectionElem) this.currentlyActiveSectionElem.deactivate()
-      this.currentlyActiveSectionElem = section
-      this.currentlyActiveSectionElem.activate()
+      this.switchSectionElem(section)
 
 
       await scrollTo(section.offsetTop, {

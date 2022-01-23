@@ -3,6 +3,7 @@ import declareComponent from "../../../lib/declareComponent"
 import { ElementList } from "extended-dom"
 import LowerNavLink from "./../lowerNavLink/lowerNavLink"
 import HighlightAbleIcon from "../_icon/_highlightAbleIcon/highlightAbleIcon"
+import { Data } from "josm"
 
 
 export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
@@ -11,16 +12,15 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
   private backgroundContainer = this.q("background-container")
   private layers = this.backgroundContainer.childs(1, true).add(this.componentBody) as any
   private slidy: Element
+  public accentTheme = new Data("primary") as Data<"primary" | "secondary">
 
   constructor(public linkPressedCb?: Function) { 
     super()
 
+    this.accentTheme.get((theme) => {
+      this.style.setProperty("--theme", `var(--${theme}-theme)`)
+    }, false)
   }
-
-  public setHighlightColor(theme: string) {
-    this.style.setProperty("--theme", theme)
-  }
-  
 
   private enableToken: Symbol
   public async enable(init: boolean, func: "css" | "anim" = init ? "css" : "anim") {

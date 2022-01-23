@@ -178,6 +178,11 @@ export default abstract class Manager extends Frame {
       cb(q.theme)
     })
   }
+  public addAccentThemeIntersectionListener(root: HTMLElement, cb: (theme: Data<"primary" | "secondary">) => void) {
+    this.addIntersectionListener(root, (q) => {
+      cb(q.accentTheme)
+    })
+  }
 
   public removeThemeIntersectionListener(root: Frame) {
     this.removeIntersectionListener(root)

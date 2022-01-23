@@ -24,7 +24,7 @@ const inactiveClass = "inactive"
 
 export default class PhilosophySection extends PageSection {
   public serviceSection = this.q("service-showcase") as ElementList<HTMLElement>
-  constructor(changeNavTheme: (theme: string) => void) {
+  constructor() {
     super("light")
 
 
@@ -107,13 +107,13 @@ export default class PhilosophySection extends PageSection {
         scrollTrigger.on(localToggleBool ? "forward" : "backward", () => {
           this.css("backgroundColor", "#FFFAFA")
           this.style.setProperty("--theme", "var(--secondary-theme)")
-          changeNavTheme("var(--secondary-theme)")
+          this.accentTheme.set("secondary")
         })
   
         scrollTrigger.on(!localToggleBool ? "forward" : "backward", () => {
           this.css("backgroundColor", "#F9FAFE")
           this.style.setProperty("--theme", "var(--primary-theme)")
-          changeNavTheme("var(--primary-theme)")
+          this.accentTheme.set("primary")
         })
 
 

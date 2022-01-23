@@ -29,9 +29,7 @@ export default class Site extends Component {
     
     
 
-    let lowerNav = new LowerNav(() => {
-      scrollTrendDownCounter = scrollTrendUpCounter = 0
-    })
+    let lowerNav = new LowerNav()
     let currentlyShowingLowerNav: boolean
 
 
@@ -63,12 +61,8 @@ export default class Site extends Component {
     let currentSectons: {[link: string]: HighlightAbleIcon}[]
     let currentSection: string
 
-    let scrollTrendUpCounter = 0
-    let scrollTrendDownCounter = 0
 
-    let pageManager = new PageManager((theme: string) => {
-      lowerNav.setHighlightColor(theme)
-    }, (page, sections, domainLevel) => {
+    let pageManager = new PageManager((page, sections, domainLevel) => {
       currentDomainLevel = domainLevel
       currentSectons = sections
 
@@ -122,12 +116,18 @@ export default class Site extends Component {
     this.apd(pageManager)
     pageManager.activate()
     pageManager.minimalContentPaint().then(() => {
-      let themeSub = new DataSubscription(new Data(undefined), (theme) => {
+      const themeSub = new DataSubscription(new Data(undefined), (theme) => {
         header.theme.set(theme)
         lowerNav.theme.set(theme)
       }, true, false)
+
+      const accentThemeSub = new DataSubscription(new Data(undefined), (theme) => {
+        lowerNav.accentTheme.set(theme)
+      }, true, false)
+      pageManager.addAccentThemeIntersectionListener(lowerNav, accentThemeSub.data.bind(accentThemeSub))    
       pageManager.addThemeIntersectionListener(header, themeSub.data.bind(themeSub))    
       pageManager.addThemeIntersectionListener(lowerNav, themeSub.data.bind(themeSub))
+      
       pageManager.fullContentPaint().then(() => {
         pageManager.completePaint().then(() => {
 

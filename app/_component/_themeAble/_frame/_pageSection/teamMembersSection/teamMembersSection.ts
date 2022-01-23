@@ -12,7 +12,7 @@ export default class TeamMemberSection extends PageSection {
 
   constructor() {
     super("light");
-
+    this.accentTheme.set("secondary")
 
 
     
