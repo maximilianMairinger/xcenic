@@ -79,6 +79,7 @@ text-container > * {
 
 prefix-text {
   font-weight: bold;
+  white-space: nowrap;
 }
 
 main-text-container {
@@ -178,15 +179,17 @@ c-dot-accent.pretext {
   }
   text-container {
     flex-direction: column;
+    width: calc(70% + 50px);
   }
   prefix-text {
     color: rgb(var(--secondary-theme));
     font-size: 21px;
     margin-bottom: .3em;
   }
-  main-text {
+  main-text-container {
     padding-left: 0;
   }
+
 
   c-heart-illustration {
     transform: translateX(-60px);
@@ -245,13 +248,14 @@ c-dot-accent.pretext {
 
   text-container {
     flex-direction: row;
+    width: 100%;
   }
   prefix-text {
     color: initial;
     font-size: 18px;
     margin-bottom: initial;
   }
-  main-text {
+  main-text-container {
     padding-left: calc(45% - 130px);
     padding-right: 0;
     width: 100%;
@@ -276,7 +280,7 @@ c-dot-accent.pretext {
     font-size: 21px;
     margin-bottom: .3em;
   }
-  main-text {
+  main-text-container {
     padding-left: 0;
   }
 }

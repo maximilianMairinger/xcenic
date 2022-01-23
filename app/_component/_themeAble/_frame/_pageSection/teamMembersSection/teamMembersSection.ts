@@ -1,5 +1,6 @@
 import declareComponent from "../../../../../lib/declareComponent"
 import PageSection from "../pageSection"
+import "../../../../image/image"
 import "../../../_icon/heartIllustration/heartIllustration"
 import "../../../_icon/dotAccent/dotAccent"
 import "../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
