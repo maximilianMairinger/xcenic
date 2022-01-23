@@ -274,7 +274,7 @@ export default abstract class Manager extends Frame {
       else {
 
         // let fromAnim = from.anim([{offset: 0, translateX: 0}, {translateX: 10}], 3000)
-        await Promise.all([showAnim])
+        await Promise.all([showAnim as any])
   
         from.css({opacity: 0, display: "none"})
   
