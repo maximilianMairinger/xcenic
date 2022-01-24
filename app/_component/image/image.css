@@ -3,6 +3,7 @@
   height: 100%;
   
   display: inline-block;
+  vertical-align:bottom;
   --display: block;
   position: relative;
   --object-postion: 50% 50%;

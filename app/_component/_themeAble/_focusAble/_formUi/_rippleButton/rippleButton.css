@@ -1,5 +1,5 @@
 :host {
-  
+  display: block;
 }
 
 c-button {
@@ -10,7 +10,6 @@ c-button {
 }
 
 move-me {
-  width: 100%;
-  height: 100%;
   background-color: transparent;
 }
+

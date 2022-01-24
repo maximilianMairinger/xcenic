@@ -14,6 +14,13 @@ export default class UiButton extends FormUi<Button> {
   constructor() {
     const button = new Button()
     super(button)
+    this.sra(ce("slot"))
+    
+    const observer = new MutationObserver(this.mutateChildsCb.bind(this))
+    observer.observe(this, { attributes: false, childList: true, subtree: false });
+
+
+
     this.button = button
     button.userFeedbackMode.focus.set(false)
 
@@ -37,6 +44,14 @@ export default class UiButton extends FormUi<Button> {
     this.enabled.get(this.button.enabled.set.bind(this.button.enabled))
   }
 
+  private mutateChildsCb() {
+    const childs = this.childNodes as any
+    this.moveBody.append(...childs)
+  }
+
+  connectedCallback() {
+    this.mutateChildsCb()
+  }
 
 
   

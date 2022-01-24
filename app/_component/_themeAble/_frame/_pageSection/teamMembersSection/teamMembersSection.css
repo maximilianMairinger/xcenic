@@ -51,19 +51,53 @@ right-side c-image {
   z-index: 0;
 }
 
-right-side c-image::after {
+
+image-container > image-accent {
+  --top-offset: 70px;
+  --left-offset: 30px;
   box-shadow: var(--soft-shadow);
   background-color: white;
-  content: "";
   display: block;
   width: 100%;
   height: 100%;
   position: absolute;
-  left: 40px;
-  top: 40px;
+  left: var(--left-offset);
+  top: var(--top-offset);
   border-radius: 20px;
-  z-index: -1;
 }
+
+details-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--top-offset);
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  box-sizing: border-box;
+}
+
+heading-elem {
+  font-weight: bold;
+}
+
+
+
+
+c-ripple-button {
+  position: absolute;
+  right: 0;
+  margin-right: var(--left-offset);
+  border-radius: 10px;
+}
+
+
+
+details-entry > * {
+  display: block;
+}
+
 
 text-container {
   font-size: 18px;
@@ -133,6 +167,7 @@ c-heart-illustration {
 image-container {
   display: inline-block;
   position: relative;
+  height: min-content;
 }
 
 @media (max-width: 1300px) {
