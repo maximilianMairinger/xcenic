@@ -140,7 +140,6 @@ export default class Image extends Component {
 
 
   src(src?: string, forceLoad: boolean = false): this {
-    debugger
     if (forceLoad) {
       this.loadSrc(src, reses.last)
     }
