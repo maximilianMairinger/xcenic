@@ -37,7 +37,7 @@ export class InstanceRecord extends Record<F, () => Promise<any>> {
       delete this.record
       delete this.add
       const done = this.record()
-      return function doneRecording() {
+      return /* Done recording */() => {
         this.record = recProxy
         this.add = addProxy
         return done()
