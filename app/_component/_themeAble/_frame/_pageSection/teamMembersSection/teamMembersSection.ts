@@ -75,13 +75,10 @@ export default class TeamMemberSection extends PageSection {
 
   private rmLastEmployee() {
     const { img, details } = this.lls.shift()
-    img.anim({
-      opacity: 1,
-      // translateX: -25,
-    }, 500).then(() => img.remove())
+    delay(500).then(() => img.remove())
     delay(80).then(() => details.anim({
       opacity: 0,
-      translateX: -25,
+      translateX: -15,
     }, 500).then(() => details.remove()))
   }
 
