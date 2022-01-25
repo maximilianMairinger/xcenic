@@ -43,13 +43,25 @@ right-side {
   min-width: max-content;
 }
 
-right-side c-image {
-  width: 300px;
-  height: 380px;
-  position: relative;
-  border-radius: 20px;
-  z-index: 0;
+right-side c-image, right-side image-placeholder {
+  width: calc(4vw + 250px);
+  height: calc(4vw + 340px);
+  /* width: 300px;
+  height: 380px; */
+  position: absolute;
 }
+
+right-side c-image {
+  border-radius: 20px;
+  top: 0;
+  left: 0;
+}
+
+right-side image-placeholder {
+  position: relative;
+  display: block;
+}
+
 
 
 image-container > image-accent {
@@ -70,11 +82,11 @@ details-bar {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100%;
   height: var(--top-offset);
   display: flex;
   align-items: center;
-  padding-left: 20px;
+  margin-left: 20px;
+  width: calc(100% - 20px);
   box-sizing: border-box;
 }
 
@@ -92,7 +104,10 @@ c-ripple-button {
   border-radius: 10px;
 }
 
-
+details-entry {
+  position: absolute;
+  left: 0;
+}
 
 details-entry > * {
   display: block;

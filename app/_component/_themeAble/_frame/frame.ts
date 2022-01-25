@@ -3,12 +3,17 @@ import { InstanceRecord } from "../../../lib/record";
 import { Data } from "josm";
 
 export const loadRecord = {
-  minimal: new InstanceRecord(() => {}),
-  content: new InstanceRecord(() => {}),
-  full: new InstanceRecord(() => {})
+  minimal: new InstanceRecord(() => {console.log("eeey")}),
+  content: new InstanceRecord(() => {console.log("eye2")}),
+  full: new InstanceRecord(() => {console.log("eye3")})
 }
 
+const e = loadRecord.content.record()
+e()
+loadRecord.content.add(() => {console.log("eye4")})
+
 type Recording = () => () => Promise<any>
+
 
 
 export default abstract class Frame extends ThemeAble<HTMLElement> {
@@ -71,11 +76,7 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
     await this.fullRec()()
   }
 
-  protected activationCallback(active: boolean): void{
-    if (active) {
-      
-    }
-  }
+  protected activationCallback?(active: boolean): void
   protected initialActivationCallback?(): void
   public userInitedScrollEvent: boolean
   public addIntersectionListener?(root: HTMLElement, cb: Function, threshold?: number, rootMargin?: string): void

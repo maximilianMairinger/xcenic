@@ -20,6 +20,14 @@ const reses = [
   fullRes
 ]
 
+const loadingChashe = {} as { [key in typeof reses[number]]: { [src: string]: boolean | undefined } }
+for (const res of reses) {
+  loadingChashe[res] = {}
+}
+
+
+
+
 
 const whenPossibleFormats = formats.slice(0, -1)
 const fallbackFormat = formats.last
@@ -82,14 +90,6 @@ export default class Image extends Component {
         //@ts-ignore
         this.loaded[resolution].done = true
         res();
-        this.elems[resolution].img.anim({opacity: 1}, 150).then(() => {
-          const resIndex = reses.indexOf(resolution)
-          if (resIndex !== 0) {
-            this.elems[reses[resIndex - 1]].img.anim({opacity: 0}, 150)
-            this.elems[resolution].img.anim({filter: "blur(0px)"}, 800)
-            this.elems[resolution].img.anim({scale: 1}, 800)
-          }
-        })
       }
     })
   }
@@ -97,23 +97,31 @@ export default class Image extends Component {
 
   private loadSrc(src: string, res: typeof reses[number]): Promise<void> {
     const { img, sources } = this.elems[res]
-    
-    
-    if ((this.loaded[res] as any).done) this.newLoadedPromise(res)
-    this.loaded[res].then(() => {
-      
 
-      const resIndex = reses.indexOf(res)
-      if (resIndex === 0) {
-        this.elems[res].img.css({opacity: 1})
-      }
-      else {
-        this.elems[res].img.anim({opacity: 1}, 150).then(() => { 
-          this.elems[reses[resIndex - 1]].img.anim({opacity: 0}, 150)
-          this.elems[res].img.anim({filter: "blur(0px)"}, 800)
+    const wasLoaded = loadingChashe[res][src]
+    
+
+
+    if ((this.loaded[res] as any).done) this.newLoadedPromise(res)
+
+    if (!wasLoaded) {
+      loadingChashe[res][src] = false
+      this.loaded[res].then(() => {
+        loadingChashe[res][src] = true
+        this.elems[res].img.anim({opacity: 1}, 150).then(() => {
+          const resIndex = reses.indexOf(res)
+          if (resIndex !== 0) {
+            this.elems[reses[resIndex - 1]].img.anim({opacity: 0}, 150)
+            this.elems[res].img.anim({filter: "blur(0px)"}, 800)
+            this.elems[res].img.anim({scale: 1}, 800)
+          }
         })
-      }
-    })
+      })
+    }
+    else {
+      this.elems[res].img.css({opacity: 1, filter: "blur(0px)", scale: 1})
+    }
+
 
     if (isExplicitLocation(src)) {
       img.setSource(src)
@@ -132,18 +140,25 @@ export default class Image extends Component {
 
 
   src(src?: string, forceLoad: boolean = false): this {
+    debugger
     if (forceLoad) {
-      for (const res of reses) {
-        this.loadSrc(src, res)
-      }
+      this.loadSrc(src, reses.last)
     }
     else {
-      loadRecord.minimal.add(() => {
-        return this.loadSrc(src, prevRes)
-      })
-      loadRecord.full.add(() => {
+      if (loadingChashe[reses.last][src] !== undefined) {
+        this.loadSrc(src, reses.last)
+        return this
+      }
+      else loadRecord.full.add(() => {
         return this.loadSrc(src, fullRes)
       })
+
+      if (loadingChashe[reses.first][src] !== undefined) this.loadSrc(src, reses.first)
+      else loadRecord.minimal.add(() => {
+        return this.loadSrc(src, prevRes)
+      })
+      
+      
     }
     return this
   }
