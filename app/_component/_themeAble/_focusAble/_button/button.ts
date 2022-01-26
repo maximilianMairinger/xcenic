@@ -62,7 +62,7 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
     });
   }
   private enableForce() {
-    if (this.tabIndex === -1) this.tabIndex = this.preferedTabIndex
+    if (this.componentBody.tabIndex === -1 || this.componentBody.tabIndex === undefined) this.tabIndex = this.preferedTabIndex
     this.removeClass("disabled")
   }
 
@@ -75,9 +75,7 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
   set tabIndex(to: number) {
     this.componentBody.tabIndex = to
   }
-  get tabIndex(): number {
-    return this.componentBody.tabIndex
-  }
+
 
   public apd(...elems: PrimElem[]): this
   public apd(to: PrimElem | PrimElem[], library?: VariableLibrary, customTokens?: {open?: Token, close?: Token, escape?: Token}): this

@@ -67,9 +67,6 @@ export default class UiButton extends FormUi<Button> {
   set tabIndex(to: number) {
     this.componentBody.tabIndex = to
   }
-  get tabIndex(): number {
-    return this.componentBody.tabIndex
-  }
 
   public pug(): string {
     return super.pug() + require("./rippleButton.pug").default
