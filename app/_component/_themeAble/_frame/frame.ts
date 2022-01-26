@@ -3,14 +3,11 @@ import { InstanceRecord } from "../../../lib/record";
 import { Data } from "josm";
 
 export const loadRecord = {
-  minimal: new InstanceRecord(() => {console.log("eeey")}),
-  content: new InstanceRecord(() => {console.log("eye2")}),
-  full: new InstanceRecord(() => {console.log("eye3")})
+  minimal: new InstanceRecord(() => {}),
+  content: new InstanceRecord(() => {}),
+  full: new InstanceRecord(() => {})
 }
 
-const e = loadRecord.content.record()
-e()
-loadRecord.content.add(() => {console.log("eye4")})
 
 type Recording = () => () => Promise<any>
 

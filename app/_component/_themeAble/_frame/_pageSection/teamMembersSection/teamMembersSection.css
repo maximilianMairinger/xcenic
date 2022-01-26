@@ -29,6 +29,9 @@ right-side, left-side {
   display: flex;
   margin-top: 250px;
 }
+right-side {
+  margin-top: 180px;
+}
 
 left-side {
   flex-wrap: wrap;
@@ -43,9 +46,18 @@ right-side {
   min-width: max-content;
 }
 
+
+image-container {
+  width: inherit;
+  height: inherit;
+  display: block;
+  position: absolute;
+  pointer-events: none;
+}
+
 right-side c-image, right-side image-placeholder {
-  width: calc(4vw + 250px);
-  height: calc(4vw + 340px);
+  width: 100%;
+  height: 100%;
   /* width: 300px;
   height: 380px; */
   position: absolute;
@@ -65,8 +77,6 @@ right-side image-placeholder {
 
 
 image-container > image-accent {
-  --top-offset: 70px;
-  --left-offset: 30px;
   box-shadow: var(--soft-shadow);
   background-color: white;
   display: block;
@@ -102,6 +112,7 @@ c-ripple-button {
   right: 0;
   margin-right: var(--left-offset);
   border-radius: 10px;
+  pointer-events: all;
 }
 
 details-entry {
@@ -179,12 +190,6 @@ c-heart-illustration {
 }
 
 
-image-container {
-  display: inline-block;
-  position: relative;
-  height: min-content;
-}
-
 @media (max-width: 1300px) {
   c-dot-accent.bot {
     bottom: -40px;
@@ -221,6 +226,45 @@ c-dot-accent.pretext {
   right: -10px;
   top: 200px; */
 }
+
+scroll-container {
+  --top-offset: 70px;
+  --left-offset: 30px;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: calc(4vw + 250px);
+  height: calc(4vw + 340px);
+  overflow-x: scroll;
+  padding-top: 20px;
+  /* padding-left: 20px; */
+  padding-bottom: calc(var(--top-offset) + 20px);
+  padding-right: calc(var(--left-offset) + 20px);
+
+  scroll-snap-type: x mandatory;
+}
+
+scroll-container > * {
+  flex-shrink: 0;
+}
+
+scroll-container > scrollmargin-element {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: block;
+}
+
+
+scroll-container::-webkit-scrollbar {
+  display: none
+}
+
+scroll-conrainer {
+  scrollbar-width: none
+}
+
+
 
 
 @media (max-width: 1090px) {
@@ -285,7 +329,7 @@ c-dot-accent.pretext {
 
 
 
-  right-side image-container {
+  right-side scroll-container {
     width: 100%;
     max-width: 400px;
     height: auto;
