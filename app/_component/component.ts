@@ -8,9 +8,10 @@ type Token = string | string[]
 export default abstract class Component<T extends HTMLElement | HTMLAnchorElement | false | never = HTMLElement> extends HTMLElement {
   protected sr: ShadowRoot;
   protected componentBody: T extends (HTMLElement | HTMLAnchorElement) ? T : T extends false ? ShadowRoot : HTMLElement
+  protected body: {[name: string]: Element | ElementList} = {}
 
 
-  constructor(bodyExtension?: T) {
+  constructor(bodyExtension?: T, indexName = true) {
     super();
     this.sr = this.attachShadow({mode: "open"});
 
@@ -29,6 +30,20 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
       this.sr.html("<style>" + this.stl() + "</style>")
     }
     this.componentBody.apd(this.pug(), lang)
+
+
+    if (indexName) {
+      this.componentBody.childs("*", true).ea((e: any) => {
+        const name = e.getAttribute("name")
+        if (name !== undefined) {
+          if (this.body[name] === undefined) this.body[name] = e
+          else if (this.body[name] instanceof ElementList) (this.body[name] as ElementList).add(e)
+          else this.body[name] = new ElementList(this.body[name], e)
+  
+  
+        }
+      })
+    }
   }
 
 
