@@ -27,7 +27,8 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     ripple: boolean | "late",
     hover: boolean,
     focus: boolean | "direct",
-    active: boolean
+    active: boolean,
+    enabled: boolean
   }>
 
 
@@ -46,7 +47,8 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     this.userFeedbackMode({
       ripple: true,
       hover: true,
-      active: false
+      active: false,
+      enabled: true
     })
 
     this.addClass("rippleSettled")
@@ -55,15 +57,29 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
     this.enabled = new Data(true) as Data<boolean>
     this.enabled.get((enabled) => {
       if (enabled) {
-        this.removeClass("disabled")
         if (this.preHoverAnimations) this.preHoverAnimations.enable()
       }
       else {
-        this.addClass("disabled")
         if (this.preHoverAnimations) this.preHoverAnimations.disable()
       }
 
     }, false)
+
+    const enabledUserFeedbackSub = this.enabled.get((enabled) => {
+      if (enabled) this.removeClass("disabled")
+      else this.addClass("disabled")
+    })
+
+    this.userFeedbackMode.enabled.get((feedback) => {
+      if (feedback) enabledUserFeedbackSub.activate(true)
+      else {
+        this.removeClass("disabled")
+        enabledUserFeedbackSub.deactivate()
+      }
+    }, false)
+
+
+    
 
 
 
