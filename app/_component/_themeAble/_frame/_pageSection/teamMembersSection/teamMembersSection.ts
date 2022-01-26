@@ -42,6 +42,11 @@ function makeEntryDetailsElement(data: {name: string, role: string, imgSrc: stri
 
 const teamMembers = [
   {
+    name: "Person Name",
+    role: "Person Role",
+    imgSrc: "person3"
+  },
+  {
     name: "José",
     role: "CEO",
     imgSrc: "person1"

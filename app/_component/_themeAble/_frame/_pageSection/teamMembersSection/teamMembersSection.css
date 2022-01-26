@@ -312,9 +312,6 @@ scroll-conrainer {
     margin-bottom: 100px;
   }
 
-  image-container {
-    position: initial;
-  }
 
   c-dot-accent.top {
     top: -60px;
@@ -330,10 +327,10 @@ scroll-conrainer {
 
 
   right-side scroll-container {
-    width: 100%;
-    max-width: 400px;
-    height: auto;
+    width: calc(95vw - 100px);
+    height: 600px;
   }
+
   right-side c-image {
     width: 100%;
   }
@@ -375,5 +372,11 @@ scroll-conrainer {
   }
   main-text-container {
     padding-left: 0;
+  }
+}
+
+@media (max-width: 365px) {
+  right-side scroll-container {
+    width: 250px
   }
 }
