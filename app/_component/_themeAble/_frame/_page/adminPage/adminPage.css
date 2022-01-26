@@ -1,27 +1,41 @@
 component-body {
-  display: flex;
   height: 100%;
 }
 
-c-form {
-  margin: auto;
+page-canvas-container {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
-c-form > h1 {
-  margin-bottom: 16px;
+.moveArea, page-canvas {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-c-form > * {
-  margin: 10px 0;
-  width: 300px;
-  max-width: 100%;
+page-frame {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: visible;
+  display: block;
 }
 
-c-form > *:not(c-load-button) {
-  
+page-frame > * {
+  opacity: 1;
 }
 
-c-form > c-load-button {
-  --background: var(--primary-theme);
-  --text: var(--plain-background);
+test-box {
+  width: 200px;
+  height: 200px;
+  display: block;
+  position: absolute;
+  top: 200px;
+  left: 200px;
+  background-color: red;
 }
