@@ -33,4 +33,4 @@ export default class Input extends EditAble {
   
 }
 
-declareComponent("input2", Input)
+declareComponent("input", Input)

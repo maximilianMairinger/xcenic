@@ -3,6 +3,8 @@
   --background-color: rgb(var(--background));
   /* z-index: initial !important; */
   border-radius: 20px;
+  text-align: left;
+
 }
 
 move-me {

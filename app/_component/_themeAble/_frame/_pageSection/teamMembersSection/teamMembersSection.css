@@ -157,7 +157,6 @@ main-text {
 c-block-button {
   margin-top: 20px;
   --padding: 13px 25px;
-  --border: none;
   --background: var(--secondary-theme);
   --text: var(--plain-background);
 }
