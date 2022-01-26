@@ -7,9 +7,10 @@ import IconArrowPointer from "../../../_icon/arrowPointer/arrowPointer"
 import "../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
 import "./../../../_focusAble/_formUi/_rippleButton/rippleButton"
 import RippleButton from "./../../../_focusAble/_formUi/_rippleButton/rippleButton"
-import { Data } from "josm"
+import { Data, DataSubscription } from "josm"
 import Image from "../../../../image/image"
 import delay from "delay"
+import { EventListener } from "extended-dom"
 
 
 const fadeInAnimOptions = {
@@ -52,6 +53,7 @@ const teamMembers = [
   }
 ]
 
+const scrollElemWidth = 300
 
 
 export default class TeamMemberSection extends PageSection {
@@ -73,13 +75,15 @@ export default class TeamMemberSection extends PageSection {
     })
 
     this.nextEmploeeBtn.append(arrowIcon)
+    this.nextEmploeeBtn.userFeedbackMode.enabled.set(false)
 
-    this.nextEmployeeAnimation()
+    
     
 
-    this.nextEmploeeBtn.click(() => {
-      this.nextEmployeeAnimation()
-      this.rmLastEmployee()
+    this.nextEmploeeBtn.click(async () => {
+      this.nextEmploeeBtn.enabled.set(false)
+      await Promise.all([this.nextEmployeeAnimation(), this.rmLastEmployee()])
+      this.nextEmploeeBtn.enabled.set(true)
     })
 
 
@@ -87,52 +91,75 @@ export default class TeamMemberSection extends PageSection {
       this.addScrollElem()
     }
 
-    const scrollElemWidth = 300
     this.sra(ce("style").html(`scroll-container>scrollmargin-element{width:${scrollElemWidth}px}`))
 
 
     let animGuide = new Data(0)
-    const itr = new Data(0)
+    const itr = this.count = new Data(1)
+
     
-    this.scrollContainer.on("scroll", (e) => {
+    this.scrollSub = this.scrollContainer.on("scroll", (e) => {
       const t = e.progress.x / (scrollElemWidth - 1)
-      itr.set(Math.ceil(t))
+      itr.set(Math.max(Math.ceil(t), 1))
       
       let animPos = t % 1
       animGuide.set(animPos)
     })
 
+
+    const { img, details } = this.prepNewEmployeeElements(0)
+    img.css(fadeInAnimOptions)
+    details.css(fadeInAnimOptions)
+
     
     let lastItr = itr.get()
     itr.get((itr) => {
       const forwards = itr >= lastItr // the euqal sign here is important
+      lastItr = itr
 
-      let lastGuy: ReturnType<typeof makeEntryDetailsElement>
+      if (this.preElem) {
+        this.lls.push(this.preElem)
+        this.preElem = undefined
+      }
+
       if (!forwards) {
-        console.log("extra")
-        lastGuy = this.lls.pop()
+        const preGuy = this.lls.pop()
+        setTimeout(() => {
+          preGuy.img.remove()
+          preGuy.details.remove()
+        }, 200)
+        
         animGuide.set(0)
         animGuide = new Data(0)
-        if (itr === 0) return
+        if (itr === 0) {
+          return
+        }
       }
       else {
         if (itr !== 1) {
-          lastGuy = this.lls.shift()
+          const preGuy = this.lls.shift()
+          setTimeout(() => {
+            preGuy.img.remove()
+            preGuy.details.remove()
+          }, 200)
         }
-      }
-      if (lastGuy) {
-        setTimeout(() => {
-          lastGuy.img.remove()
-          lastGuy.details.remove()
-        }, 200)
+        
         
       }
 
-      console.log(itr, forwards)
-      animGuide.set(+forwards)
-      const curElem = this.lls.first
+
+      
+      
       const nextElems = this.prepNewEmployeeElements(itr - (!forwards ? 1 : 0), forwards)
-      nextElems.img.css({zIndex: 10})
+      this.preElem = this.lls.pop()
+
+
+      // if (this.inTimingAnimation) return
+
+      const curElem = forwards ? this.lls.first : this.preElem
+
+
+      if (!this.inTimingAnimation) animGuide.set(+forwards)
       animGuide = new Data(+!forwards)
 
       const fadeInAnimKeyFrames = [{...fadeoutAnimOptions}, {...fadeInAnimOptions}] as any[]
@@ -146,17 +173,18 @@ export default class TeamMemberSection extends PageSection {
       fadeOutAnimKeyFrames.first.offset = 0
 
       
-      
       nextElems.img.anim(fadeInAnimKeyFrames, {start: 0, end: 1, smooth}, animGuide)
       nextElems.details.anim(fadeInAnimKeyFrames, forwards ? {start: 0.1, end: 1, smooth} : {start: 0, end: .9, smooth}, animGuide)
       curElem.details.anim(fadeOutAnimKeyFrames, forwards ? {start: 0, end: .6, smooth} : {start: .4, end: 1, smooth}, animGuide)
-
-
-
-      lastItr = itr
-    }, false)
+    }, true)
     
+
+
   }
+  private scrollSub: EventListener
+  private inTimingAnimation = false
+  private preElem: ReturnType<typeof makeEntryDetailsElement>
+  private count: Data<number>
 
   private addScrollElem() {
     this.scrollContainer.apd(ce("scrollmargin-element"))
@@ -164,10 +192,10 @@ export default class TeamMemberSection extends PageSection {
 
   private lls = [] as ReturnType<typeof makeEntryDetailsElement>[]
 
-  private rmLastEmployee() {
-    const { img, details } = this.lls.shift()
+  private rmLastEmployee(): Promise<void> {
+    const { img, details } = this.lls.last
     delay(500).then(() => img.remove())
-    delay(80).then(() => details.anim(fadeoutAnimOptions, 500).then(() => details.remove()))
+    return delay(80).then(() => details.anim(fadeoutAnimOptions, 500).then(() => details.remove()))
   }
 
 
@@ -195,17 +223,48 @@ export default class TeamMemberSection extends PageSection {
 
 
 
-  private count = 0
   private nextEmployeeAnimation() {
-    
-    const { img, details } = this.prepNewEmployeeElements(this.count)
-    this.count++
+    return new Promise<void>((res) => {
+
+      this.inTimingAnimation = true
+
+      if (this.preElem) {
+        this.preElem.img.remove()
+        this.preElem.details.remove()
+      }
+      console.log("getting", this.count.get())
+      this.prepNewEmployeeElements(this.count.get())
+      this.preElem = this.lls.pop()
 
 
-    delay(120).then(() => {
-      img.anim(fadeInAnimOptions, 500)
-      delay(80).then(() => details.anim(fadeInAnimOptions, 500))
+      const { img, details } = this.preElem
+
+
+      
+
+      this.scrollContainer.css({pointerEvents: "none"})
+  
+
+      delay(120).then(() => {
+        img.anim(fadeInAnimOptions, 500)
+        delay(80).then(() => details.anim(fadeInAnimOptions, 500)).then(() => {
+          this.count.set(this.count.get() + 1)
+          this.scrollContainer.scrollLeft = (this.count.get() - 1) * scrollElemWidth
+          this.scrollSub.deactivate()
+          
+          setTimeout(() => {
+            this.inTimingAnimation = false
+            this.scrollContainer.css({pointerEvents: "all"})
+            this.scrollSub.activate()
+            res()
+          })
+          
+          
+        })
+      })
     })
+    
+    
 
     
 
