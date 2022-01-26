@@ -14,6 +14,7 @@ export default class UiButton extends FormUi<Button> {
   constructor() {
     const button = new Button()
     super(button)
+
     this.sra(ce("slot"))
     
     const observer = new MutationObserver(this.mutateChildsCb.bind(this))
@@ -66,6 +67,9 @@ export default class UiButton extends FormUi<Button> {
 
   set tabIndex(to: number) {
     this.componentBody.tabIndex = to
+  }
+  get tabIndex() {
+    return this.componentBody.tabIndex
   }
 
   public pug(): string {

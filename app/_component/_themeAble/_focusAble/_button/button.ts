@@ -23,6 +23,9 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
     super(ce("a") as any)
     super.apd(this.slotElem)
 
+    this.tabIndex = undefined
+
+
     this.draggable = false;
 
     this.enabled = new Data(enabled)
@@ -45,7 +48,7 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
 
 
     let alreadyPressed = false
-    this.componentBody.on("keydown", (e) => {
+    this.on("keydown", (e) => {
       if (e.key === " " || e.key === "Enter") if (!alreadyPressed) {
         alreadyPressed = true;
         this.click(e)
@@ -62,18 +65,22 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
     });
   }
   private enableForce() {
-    if (this.componentBody.tabIndex === -1 || this.componentBody.tabIndex === undefined) this.tabIndex = this.preferedTabIndex
+    if (this.componentBody.tabIndex === -1) this.componentBody.tabIndex = this.preferedTabIndex
     this.removeClass("disabled")
   }
 
   private disableForce() {
-    this.preferedTabIndex = this.tabIndex
-    this.tabIndex = -1
+    this.preferedTabIndex = this.componentBody.tabIndex
+    this.componentBody.tabIndex = -1
     this.addClass("disabled")
   }
 
   set tabIndex(to: number) {
     this.componentBody.tabIndex = to
+  }
+
+  get tabIndex() {
+    return this.componentBody.tabIndex
   }
 
 
