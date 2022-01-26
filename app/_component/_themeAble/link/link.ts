@@ -6,7 +6,6 @@ import delay from "delay"
 // import ExternalLinkIcon from "../_icon/externalLink/externalLink"
 import { Prim, EventListener } from "extended-dom";
 
-import ResablePromise from "../../../lib/resAblePromise";
 import { PrimitiveRecord } from "../../../lib/record";
 
 export const linkRecord = new PrimitiveRecord<{link: string, level: number}>()
