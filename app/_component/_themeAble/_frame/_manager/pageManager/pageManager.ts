@@ -6,6 +6,7 @@ import ContactPage from "../../_page/contactPage/contactPage";
 import { declareComponent } from "../../../../../lib/declareComponent"
 import HighlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon";
 import LoginPage from "../../_page/loginPage/loginPage"
+import AdminPage from "../../_page/adminPage/adminPage"
 
 
 
@@ -25,7 +26,12 @@ export default class PageManager extends Manager {
         ), val: () => import(/* webpackChunkName: "contactPage" */"../../_page/contactPage/contactPage")
       },
       {
-        key: new Import("admin/login", 10, (loginPage: typeof LoginPage) =>
+        key: new Import("admin", 10, (adminPage: typeof AdminPage) =>
+            new adminPage()
+        ), val: () => import(/* webpackChunkName: "adminPage" */"../../_page/adminPage/adminPage")
+      },
+      {
+        key: new Import("admin", 10, (loginPage: typeof LoginPage) =>
             new loginPage()
         ), val: () => import(/* webpackChunkName: "loginPage" */"../../_page/loginPage/loginPage")
       },
