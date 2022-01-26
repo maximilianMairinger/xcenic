@@ -5,6 +5,7 @@ import HomePage from "../../_page/_sectionedPage/_lazySectionedPage/homepage/hom
 import ContactPage from "../../_page/contactPage/contactPage";
 import { declareComponent } from "../../../../../lib/declareComponent"
 import HighlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon";
+import LoginPage from "../../_page/loginPage/loginPage"
 
 
 
@@ -22,6 +23,11 @@ export default class PageManager extends Manager {
         key: new Import("contact/form", 10, (contactPage: typeof ContactPage) =>
             new contactPage()
         ), val: () => import(/* webpackChunkName: "contactPage" */"../../_page/contactPage/contactPage")
+      },
+      {
+        key: new Import("admin/login", 10, (loginPage: typeof LoginPage) =>
+            new loginPage()
+        ), val: () => import(/* webpackChunkName: "loginPage" */"../../_page/loginPage/loginPage")
       },
       {
         key: new Import("", 60, (notFoundPage: typeof NotFoundPage) =>

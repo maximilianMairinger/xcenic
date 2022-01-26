@@ -1,0 +1,27 @@
+component-body {
+  display: flex;
+  height: 100%;
+}
+
+c-form {
+  margin: auto;
+}
+
+c-form > h1 {
+  margin-bottom: 16px;
+}
+
+c-form > * {
+  margin: 10px 0;
+  width: 300px;
+  max-width: 100%;
+}
+
+c-form > *:not(c-load-button) {
+  
+}
+
+c-form > c-load-button {
+  --background: var(--primary-theme);
+  --text: var(--plain-background);
+}
