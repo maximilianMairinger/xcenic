@@ -6,6 +6,7 @@ import adminSession from "../../../../../lib/adminSession"
 import ContactPage from "./../contactPage/contactPage"
 import { ElementList } from "extended-dom"
 
+import PanZ from "@thesoulfresh/pan-z"
 
 
 export default class AdminPage extends Page {
@@ -20,32 +21,31 @@ export default class AdminPage extends Page {
     )
 
 
-
-
-
-
-    const panArea = this.body.panArea
-    const pinchArea = this.body.pinchArea
-
-    this.body.canvas.on("mousemove", (e) => {
-      pinchArea.css("transformOrigin", `${e.clientX}px ${e.clientY}px` as any)
-    })
-
-
-    this.body.canvas.on("wheel", (e: WheelEvent) => {
+    const target = this.body.panArea
+    this.body.canvasContainer.on("wheel", (e: WheelEvent) => {
       e.preventDefault();
-      if (e.ctrlKey) {
-        pinchArea.css({
-          scale: pinchArea.css("scale") * (e.deltaY > 0 ? 0.99 : 1.01)
+      console.log(e.ctrlKey)
+      if (!e.ctrlKey) {
+        target.css({
+          translateX: target.css("translateX") - e.deltaX, 
+          translateY: target.css("translateY") - e.deltaY
         })
-        
-      } else {
-        panArea.css({
-          translateX: panArea.css("translateX") - e.deltaX, 
-          translateY: panArea.css("translateY") - e.deltaY
-        })
+        e.stopPropagation()
       }
-    }, {passive: false})
+      //   pinchArea.css({
+      //     scale: pinchArea.css("scale") * (e.deltaY > 0 ? 0.99 : 1.01)
+      //   })
+
+      // } else {
+      //   
+      // }
+    }, true)
+
+    const pz = new PanZ();
+    pz.init(this.body.zoomArea);
+
+    
+
 
 
   }

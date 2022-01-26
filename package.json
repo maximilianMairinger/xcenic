@@ -79,6 +79,7 @@
     "yargs": "16.2.0"
   },
   "dependencies": {
+    "@thesoulfresh/pan-z": "^1.2.8",
     "ajaon": "^1.5.11",
     "animated-scroll-to": "^2.2.0",
     "animation-frame-delta": "^2.7.8",
