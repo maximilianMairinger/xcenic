@@ -11,7 +11,6 @@ import { PrimitiveRecord } from "../../../lib/record";
 export const linkRecord = new PrimitiveRecord<{link: string, level: number}>()
 
 
-
 export default class Link extends ThemeAble {
   private linkBodyElem = this.q("link-body")
   private aElem = this.q("a") as unknown as HTMLAnchorElement
