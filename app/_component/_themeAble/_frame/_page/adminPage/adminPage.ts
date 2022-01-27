@@ -105,15 +105,17 @@ export default class AdminPage extends Page {
     
 
 
-
-    const target = this.body.panArea
-    const child = target.children[0]
+    const container = this.body.canvasContainer as HTMLElement
+    const target = this.body.panArea as HTMLElement
+    const child = target.children[0] as HTMLElement
 
 
     const abs = {
       x: target.css("translateX") as number,
-      y: target.css("translateY") as number
+      y: target.css("translateY") as number,
+      z: 1
     }
+
 
 
     const howFarOutOfBounds = {
@@ -125,9 +127,16 @@ export default class AdminPage extends Page {
       x: 0,
       y: 0
     }
-    this.body.canvasContainer.on("wheel", (e: WheelEvent) => {
+
+    const zoomOffsetTransition = {
+      x: 0,
+      y: 0
+    }
+
+    container.on("wheel", (e: WheelEvent) => {
       e.preventDefault();
       if (!e.ctrlKey) {
+        // pan
         delta.x = e.deltaX
         delta.y = e.deltaY
 
@@ -136,6 +145,32 @@ export default class AdminPage extends Page {
 
 
         e.stopPropagation()  
+      }
+      else {
+        // zoom
+        const zoom = e.deltaY < 0 ? 1.01 : 0.99
+        const prevZoom = abs.z - 1
+        abs.z = abs.z * zoom
+
+        const zoomDelta = prevZoom - (abs.z - 1)
+
+
+        // keep the zoom around the pointer
+        const mouseX = e.clientX
+        const mouseY = e.clientY
+
+
+        console.log(zoomDelta)
+        zoomOffsetTransition.x += mouseX * (-zoomDelta)
+        zoomOffsetTransition.y += mouseY * (-zoomDelta)
+
+
+
+        console.log(zoomOffsetTransition)
+
+
+
+
       }
 
     }, true)
@@ -146,22 +181,29 @@ export default class AdminPage extends Page {
       howFarOutOfBounds.x = abs.x > 0 ? -abs.x : abs.x < target.width() - child.width() ? target.width() - child.width() - abs.x : 0
       howFarOutOfBounds.y = abs.y > 0 ? -abs.y : abs.y < target.height() - child.height() ? target.height() - child.height() - abs.y : 0
 
-      if (howFarOutOfBounds.x !== 0) abs.x += howFarOutOfBounds.x * .4
-      if (howFarOutOfBounds.y !== 0) abs.y += howFarOutOfBounds.y * .4
+      if (Math.abs(howFarOutOfBounds.x) > .4) abs.x += howFarOutOfBounds.x * .4
+      if (Math.abs(howFarOutOfBounds.y) > .4) abs.y += howFarOutOfBounds.y * .4
 
 
       target.css({
-        translateX: abs.x,
-        translateY: abs.y
+        translateX: abs.x - zoomOffsetTransition.x,
+        translateY: abs.y - zoomOffsetTransition.y,
+        scale: abs.z
       })
+      // child.css({
+      //   translateX: zoomOffsetTransition.x,
+      //   translateY: zoomOffsetTransition.y
+      // })
+      
     })
 
 
-    const pz = new PanZ({
-      minZoom: .5,
-      // bounds: 1
-    });
-    pz.init(this.body.zoomArea);
+    // const pz = new PanZ({
+    //   minZoom: .001,
+    //   zoomSpeed: .5,
+    //   // bounds: 1
+    // });
+    // pz.init(this.body.zoomArea);
 
 
   }

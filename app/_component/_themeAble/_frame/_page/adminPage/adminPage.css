@@ -42,6 +42,12 @@ test-box {
 
 zoom-area.moveArea {
   background-color: green;
-  width: 400%;
-  height: 400%;
+  width: 200%;
+  height: 200%;
+
+
+}
+pan-area.moveArea {
+  transform-origin: 0 0;
+  /* transform-origin: center; */
 }
