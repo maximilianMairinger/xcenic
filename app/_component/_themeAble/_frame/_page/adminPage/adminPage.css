@@ -39,3 +39,9 @@ test-box {
   left: 200px;
   background-color: red;
 }
+
+zoom-area.moveArea {
+  background-color: green;
+  width: 400%;
+  height: 400%;
+}
