@@ -163,6 +163,33 @@ export default class AdminPage extends Page {
           else resetPanXIdleTimer()
         }
 
+        if (lastAbs.y - abs.y > .4) {
+          if (isPanYIdle.get()) {
+            if (lastBoyY !== false && yWasAtIdelOutOfBounds) {
+              if (howFarOutOfBounds.y >= 0) abs.y = lastAbs.y
+              else resetPanYIdleTimer()
+            }
+            else {
+              if (howFarOutOfBounds.y > 0) abs.y = lastAbs.y
+              else resetPanYIdleTimer()
+            }
+          }
+          else resetPanYIdleTimer()
+        }
+        else if (lastAbs.y - abs.y < -.4) {
+          if (isPanYIdle.get()) {
+            if (lastBoyY !== true && yWasAtIdelOutOfBounds) {
+              if (howFarOutOfBounds.y <= 0) abs.y = lastAbs.y
+              else resetPanYIdleTimer()
+            }
+            else {
+              if (howFarOutOfBounds.y < 0) abs.y = lastAbs.y
+              else resetPanYIdleTimer()
+            }
+          }
+          else resetPanYIdleTimer()
+        }
+
 
         target.css({
           translateX: abs.x,
