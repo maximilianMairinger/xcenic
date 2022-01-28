@@ -165,6 +165,71 @@ export default class AdminPage extends Page {
     }, true)
 
 
+    const dragMouseButton = 0
+
+
+    let dragging = false
+    let curCoords = {
+      x: 0,
+      y: 0
+    }
+
+    container.on("mousedown", (e: MouseEvent) => {
+      if (e.button === dragMouseButton) {
+        dragging = true
+        curCoords.x = e.clientX
+        curCoords.y = e.clientY
+        inertiaRender.cancel()
+        e.stopPropagation()
+        e.preventDefault()
+      }
+    })
+
+    document.body.on("mouseup", (e: MouseEvent) => {
+      if (e.button === dragMouseButton) {
+        dragging = false
+        inertiaRender.resume()
+        e.stopPropagation()
+        e.preventDefault()
+      }
+    })
+    window.on("blur", () => {
+      dragging = false
+    })
+
+    container.on("mousemove", (e: MouseEvent) => {
+      if (dragging) {
+        delta.x = e.clientX - curCoords.x
+        delta.y = e.clientY - curCoords.y
+
+        abs.x += delta.x
+        abs.y += delta.y
+
+        curCoords.x = e.clientX
+        curCoords.y = e.clientY
+
+        e.stopPropagation()
+        e.preventDefault()
+      }
+    })
+
+    const minMove = .4 / abs.z
+    const inertiaRender = animationFrameDelta((timingDelta) => {
+      console.log("inertiaRender", delta.x)
+      const deltaedMinMove = minMove * timingDelta
+      if (Math.abs(delta.x) > deltaedMinMove || Math.abs(delta.y) > deltaedMinMove) {
+        delta.x *= 0.955
+        delta.y *= 0.955
+        abs.x += delta.x * timingDelta
+        abs.y += delta.y * timingDelta
+      }
+      else {
+        inertiaRender.cancel()
+      }
+    })
+    inertiaRender.cancel()
+
+
 
     animationFrameDelta(() => {
 
