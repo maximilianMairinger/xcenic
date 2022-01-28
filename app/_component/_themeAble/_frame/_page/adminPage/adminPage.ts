@@ -210,20 +210,34 @@ export default class AdminPage extends Page {
     }
 
 
+    const moveWithoutSmooth = 40
+    function cappedSmooth(soll: number, ist: number) {
+      let diff = soll - ist
+      if (Math.abs(diff) > moveWithoutSmooth) {
+        console.log("nomin")
+        return diff * .2 + (Math.sign(diff) * moveWithoutSmooth)
+      }
+      else {
+        console.log("min")
+        return diff
+      }
+    }
+
+    function smooth(soll: number, ist: number) {
+      return (soll - ist) * .2
+    }
+
 
     animationFrameDelta(() => {
 
       // smooths the panning by approaching the target coordinates (abs)
 
       
-      renderedCoords.x += (abs.x - renderedCoords.x) * 0.2
-      renderedCoords.y += (abs.y - renderedCoords.y) * 0.2
-      renderedCoords.z += (abs.z - renderedCoords.z) * 0.2
-      renderedCoords.zoomOffset.x += (zoomOffsetTransition.x - renderedCoords.zoomOffset.x) * 0.2
-      renderedCoords.zoomOffset.y += (zoomOffsetTransition.y - renderedCoords.zoomOffset.y) * 0.2
-      // renderedCoords.x = abs.x
-      // renderedCoords.y = abs.y
-      // renderedCoords.z = abs.z
+      renderedCoords.x += cappedSmooth(abs.x, renderedCoords.x)
+      renderedCoords.y += cappedSmooth(abs.y, renderedCoords.y)
+      renderedCoords.z += smooth(abs.z, renderedCoords.z)
+      renderedCoords.zoomOffset.x += smooth(zoomOffsetTransition.x, renderedCoords.zoomOffset.x)
+      renderedCoords.zoomOffset.y += smooth(zoomOffsetTransition.y, renderedCoords.zoomOffset.y)
 
       
       let x = renderedCoords.x - renderedCoords.zoomOffset.x
