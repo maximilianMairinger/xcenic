@@ -7,7 +7,22 @@ import ContactPage from "./../contactPage/contactPage"
 import { ElementList } from "extended-dom"
 import animationFrameDelta, { stats } from "animation-frame-delta"
 
-import { Data } from "josm"
+
+const dragMouseButton = 1
+const zoomStep = 1.1
+
+
+
+
+
+function getPlatform() {
+  const platform = ((navigator as any).userAgentData !== undefined ? (navigator as any).userAgentData.platform : navigator.platform).toLowerCase() as string
+  return platform.includes("win") ? "win" : platform.includes("mac") ? "mac" : platform.includes("linux") ? "linux" : null
+}
+
+function getCtrlKey() {
+  return getPlatform() === "mac" ? "Meta" : "Control"
+}
 
 
 export default class AdminPage extends Page {
@@ -75,23 +90,29 @@ export default class AdminPage extends Page {
         e.stopPropagation()  
       }
       else {
-        // zoom
-        const zoom = 1 - (e.deltaY / 100)
-        abs.z *= zoom
+        if (holdingControl) {
 
-        // keep the zoom around the pointer
-        const mouseX = (e.clientX + zoomOffsetTransition.x - abs.x)
-        const mouseY = (e.clientY + zoomOffsetTransition.y - abs.y)
+        }
+        else {
+          // zoom
+          const zoom = 1 - (e.deltaY / 100)
+          abs.z *= zoom
 
-        zoomOffsetTransition.x += mouseX * (zoom - 1)
-        zoomOffsetTransition.y += mouseY * (zoom - 1)
+          // keep the zoom around the pointer
+          const mouseX = (e.clientX + zoomOffsetTransition.x - abs.x)
+          const mouseY = (e.clientY + zoomOffsetTransition.y - abs.y)
+
+          zoomOffsetTransition.x += mouseX * (zoom - 1)
+          zoomOffsetTransition.y += mouseY * (zoom - 1)
+        }
+        
 
       }
 
     }, true)
 
 
-    const dragMouseButton = 1
+    
 
 
     let dragging = false
@@ -111,6 +132,7 @@ export default class AdminPage extends Page {
       }
     })
 
+
     document.body.on("mouseup", (e: MouseEvent) => {
       if (e.button === dragMouseButton) {
         dragging = false
@@ -120,6 +142,10 @@ export default class AdminPage extends Page {
       }
     })
     window.on("blur", () => {
+      dragging = false
+      holdingControl = false
+    })
+    document.body.on("mouseleave", () => {
       dragging = false
     })
 
@@ -154,6 +180,19 @@ export default class AdminPage extends Page {
     })
     inertiaRender.cancel()
 
+    
+    let holdingControl = false
+    const ctrlKey = getCtrlKey()
+    container.on("keydown", (e) => {
+      if (e.key === ctrlKey) {
+        holdingControl = true  
+      }
+    })
+    document.body.on("keyup", (e) => {
+      if (e.key === ctrlKey) {
+        holdingControl = false
+      }
+    })
 
 
     animationFrameDelta(() => {
