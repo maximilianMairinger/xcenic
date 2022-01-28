@@ -133,6 +133,8 @@ export default class AdminPage extends Page {
       y: 0
     }
 
+
+
     container.on("wheel", (e: WheelEvent) => {
       e.preventDefault();
       if (!e.ctrlKey) {
@@ -148,28 +150,15 @@ export default class AdminPage extends Page {
       }
       else {
         // zoom
-        const zoom = e.deltaY < 0 ? 1.01 : 0.99
-        const prevZoom = abs.z - 1
-        abs.z = abs.z * zoom
-
-        const zoomDelta = prevZoom - (abs.z - 1)
-
+        const zoom = 1 - (e.deltaY / 100)
+        abs.z *= zoom
 
         // keep the zoom around the pointer
-        const mouseX = e.clientX
-        const mouseY = e.clientY
+        const mouseX = (e.clientX + zoomOffsetTransition.x - abs.x)
+        const mouseY = (e.clientY + zoomOffsetTransition.y - abs.y)
 
-
-        console.log(zoomDelta)
-        zoomOffsetTransition.x += mouseX * (-zoomDelta)
-        zoomOffsetTransition.y += mouseY * (-zoomDelta)
-
-
-
-        console.log(zoomOffsetTransition)
-
-
-
+        zoomOffsetTransition.x += mouseX * (zoom - 1)
+        zoomOffsetTransition.y += mouseY * (zoom - 1)
 
       }
 
@@ -178,23 +167,34 @@ export default class AdminPage extends Page {
 
 
     animationFrameDelta(() => {
-      howFarOutOfBounds.x = abs.x > 0 ? -abs.x : abs.x < target.width() - child.width() ? target.width() - child.width() - abs.x : 0
-      howFarOutOfBounds.y = abs.y > 0 ? -abs.y : abs.y < target.height() - child.height() ? target.height() - child.height() - abs.y : 0
 
-      if (Math.abs(howFarOutOfBounds.x) > .4) abs.x += howFarOutOfBounds.x * .4
-      if (Math.abs(howFarOutOfBounds.y) > .4) abs.y += howFarOutOfBounds.y * .4
+      let x = abs.x - zoomOffsetTransition.x
+      let y = abs.y - zoomOffsetTransition.y
+      const z = abs.z
+
+      const w = x - target.width() + child.width() * z
+      const h = y - target.height() + child.height() * z
+      
+      howFarOutOfBounds.x = x > 0 ? -x : w < 0 ? -w : 0
+      howFarOutOfBounds.y = y > 0 ? -y : h < 0 ? -h : 0
+
+      if (Math.abs(howFarOutOfBounds.x) > .4) {
+        const w = howFarOutOfBounds.x * .4
+        x += w
+        abs.x += w
+      }
+      if (Math.abs(howFarOutOfBounds.y) > .4) {
+        const w = howFarOutOfBounds.y * .4
+        y += w
+        abs.y += w
+      }
 
 
       target.css({
-        translateX: abs.x - zoomOffsetTransition.x,
-        translateY: abs.y - zoomOffsetTransition.y,
-        scale: abs.z
-      })
-      // child.css({
-      //   translateX: zoomOffsetTransition.x,
-      //   translateY: zoomOffsetTransition.y
-      // })
-      
+        translateX: x,
+        translateY: y,
+        scale: z
+      })      
     })
 
 
