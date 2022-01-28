@@ -5,7 +5,9 @@ import adminSession from "../../../../../lib/adminSession"
 
 import ContactPage from "./../contactPage/contactPage"
 import { ElementList } from "extended-dom"
-import animationFrameDelta from "animation-frame-delta"
+import animationFrameDelta, { stats } from "animation-frame-delta"
+import Easing from "waapi-easing"
+const scrollWheelEasingFunc = (new Easing("easeInOut")).function
 
 
 const dragMouseButton = 1
@@ -75,12 +77,15 @@ export default class AdminPage extends Page {
     }
 
 
+    const distributeExplicitWheelEventOverXFrames = 12 // in 60fps
+    const distributeExplicitWheelEventOverXFramesAtThisMovement = 125 // in chrome 125
+    const normalizedDistributeExplicitWheelEventOverXFrames = distributeExplicitWheelEventOverXFrames / distributeExplicitWheelEventOverXFramesAtThisMovement
 
     container.on("wheel", (e: WheelEvent) => {
       e.preventDefault();
-        if (!e.ctrlKey && !holdingControl) {
-        // pan
+      if (!e.ctrlKey && !holdingControl) {
 
+        // pan
         if (e.shiftKey) {
           delta.x = e.deltaY
           delta.y = 0
@@ -89,6 +94,66 @@ export default class AdminPage extends Page {
           delta.x = e.deltaX
           delta.y = e.deltaY
         }
+
+
+        if (Math.abs(delta.y) > 50 && Math.round(delta.y) === delta.y) {
+          // assume mousewheel scroll
+          console.log("mousewheel scroll", delta.y)
+          const maxAbs = normalizedDistributeExplicitWheelEventOverXFrames * Math.abs(delta.y)
+          
+          let prog = stats.delta
+          let easedProg = scrollWheelEasingFunc(prog / maxAbs)
+          const fullMovement = delta.y
+          
+          delta.y = fullMovement * easedProg
+          
+          const e = animationFrameDelta((del) => {
+            prog += del
+            let linearProg = prog / maxAbs
+            if (linearProg > 1) linearProg = 1
+            let easedProgDelta = easedProg
+            easedProg = scrollWheelEasingFunc(linearProg)
+            easedProgDelta = easedProg - easedProgDelta
+            const easedFraction = fullMovement * easedProgDelta
+            abs.y -= easedFraction
+            delta.y += easedFraction
+            if (prog >= maxAbs) {
+              console.log("mousewheel scroll end")
+              e.cancel()
+            }
+          })
+        }
+        // copy the same code for the other axis
+        else if (Math.abs(delta.x) > 50 && Math.round(delta.x) === delta.x) {
+          // assume mousewheel scroll
+          console.log("mousewheel scroll", delta.x)
+          const maxAbs = normalizedDistributeExplicitWheelEventOverXFrames * Math.abs(delta.x)
+          
+          let prog = stats.delta
+          let easedProg = scrollWheelEasingFunc(prog / maxAbs)
+          const fullMovement = delta.x
+          
+          delta.x = fullMovement * easedProg
+
+          const e = animationFrameDelta((del) => {
+            prog += del
+            let linearProg = prog / maxAbs
+            if (linearProg > 1) linearProg = 1
+            let easedProgDelta = easedProg
+            easedProg = scrollWheelEasingFunc(linearProg)
+            easedProgDelta = easedProg - easedProgDelta
+            const easedFraction = fullMovement * easedProgDelta
+            abs.x -= easedFraction
+            delta.x += easedFraction
+            if (prog >= maxAbs) {
+              console.log("mousewheel scroll end")
+              e.cancel()
+            }
+          })
+        }
+
+          
+
 
         abs.x -= delta.x
         abs.y -= delta.y
@@ -100,7 +165,6 @@ export default class AdminPage extends Page {
 
         // zoom
         const zoom = 1 - ((Math.abs(e.deltaY) > maxZoomStep ? Math.sign(e.deltaY) * maxZoomStep : e.deltaY) / 100)
-        console.log(zoom)
         abs.z *= zoom
 
         // keep the zoom around the pointer
@@ -172,7 +236,6 @@ export default class AdminPage extends Page {
 
     const minMove = .1 / abs.z
     const inertiaRender = animationFrameDelta(() => {
-      console.log("inertiaRender", delta.x)
       if (Math.abs(delta.x) > minMove || Math.abs(delta.y) > minMove) {
         delta.x *= 0.955
         delta.y *= 0.955
@@ -210,15 +273,13 @@ export default class AdminPage extends Page {
     }
 
 
-    const moveWithoutSmooth = 40
+    const moveWithoutSmooth = 5
     function cappedSmooth(soll: number, ist: number) {
       let diff = soll - ist
       if (Math.abs(diff) > moveWithoutSmooth) {
-        console.log("nomin")
         return diff * .2 + (Math.sign(diff) * moveWithoutSmooth)
       }
       else {
-        console.log("min")
         return diff
       }
     }
@@ -231,7 +292,7 @@ export default class AdminPage extends Page {
     animationFrameDelta(() => {
 
       // smooths the panning by approaching the target coordinates (abs)
-
+      // console.log(c/*  */appedSmooth(abs.y, renderedCoords.y))
       
       renderedCoords.x += cappedSmooth(abs.x, renderedCoords.x)
       renderedCoords.y += cappedSmooth(abs.y, renderedCoords.y)
