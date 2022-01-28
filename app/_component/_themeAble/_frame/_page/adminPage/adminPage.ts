@@ -77,6 +77,7 @@ export default class AdminPage extends Page {
 
 
     container.on("wheel", (e: WheelEvent) => {
+      console.log(e.deltaY)
       e.preventDefault();
       if (!e.ctrlKey) {
         // pan
@@ -194,11 +195,32 @@ export default class AdminPage extends Page {
       }
     })
 
+    const renderedCoords = {
+      x: 0,
+      y: 0,
+      z: 0
+    }
+
+    function absCoordsToRenderedCoords() {
+      
+    }
+
+
 
     animationFrameDelta(() => {
 
-      let x = abs.x - zoomOffsetTransition.x
-      let y = abs.y - zoomOffsetTransition.y
+      // smooths the panning by approaching the target coordinates (abs)
+
+      
+      // renderedCoords.x += (abs.x - renderedCoords.x) * 0.1
+      // renderedCoords.y += (abs.y - renderedCoords.y) * 0.1
+      // renderedCoords.z += (abs.z - renderedCoords.z) * 0.1
+      renderedCoords.x = abs.x
+      renderedCoords.y = abs.y
+      renderedCoords.z = abs.z
+
+      let x = renderedCoords.x - zoomOffsetTransition.x
+      let y = renderedCoords.y - zoomOffsetTransition.y
       const z = abs.z
 
       const w = x - target.width() + child.width() * z
@@ -211,11 +233,13 @@ export default class AdminPage extends Page {
         const w = howFarOutOfBounds.x * .4
         x += w
         abs.x += w
+        renderedCoords.x += w
       }
       if (Math.abs(howFarOutOfBounds.y) > .4) {
         const w = howFarOutOfBounds.y * .4
         y += w
         abs.y += w
+        renderedCoords.y += w
       }
 
 
