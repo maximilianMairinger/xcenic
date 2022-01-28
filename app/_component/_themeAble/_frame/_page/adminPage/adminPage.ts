@@ -79,34 +79,37 @@ export default class AdminPage extends Page {
     container.on("wheel", (e: WheelEvent) => {
       console.log(e.deltaY)
       e.preventDefault();
-      console.log(holdingControl)
-      if (!e.ctrlKey && !holdingControl) {
+        if (!e.ctrlKey && !holdingControl) {
         // pan
-        delta.x = e.deltaX
-        delta.y = e.deltaY
+
+        if (e.shiftKey) {
+          delta.x = e.deltaY
+          delta.y = 0
+        }
+        else {
+          delta.x = e.deltaX
+          delta.y = e.deltaY
+        }
 
         abs.x -= delta.x
         abs.y -= delta.y
 
-
+        inertiaRender.cancel()
         e.stopPropagation()  
       }
       else {
-        // if (holdingControl) {
 
-        // }
-        // else {
-          // zoom
-          const zoom = 1 - (e.deltaY / 100)
-          abs.z *= zoom
+        // zoom
+        const zoom = 1 - (e.deltaY / 100)
+        abs.z *= zoom
 
-          // keep the zoom around the pointer
-          const mouseX = (e.clientX + zoomOffsetTransition.x - abs.x)
-          const mouseY = (e.clientY + zoomOffsetTransition.y - abs.y)
+        // keep the zoom around the pointer
+        const mouseX = (e.clientX + zoomOffsetTransition.x - abs.x)
+        const mouseY = (e.clientY + zoomOffsetTransition.y - abs.y)
 
-          zoomOffsetTransition.x += mouseX * (zoom - 1)
-          zoomOffsetTransition.y += mouseY * (zoom - 1)
-        // }
+        zoomOffsetTransition.x += mouseX * (zoom - 1)
+        zoomOffsetTransition.y += mouseY * (zoom - 1)
+
         
 
       }
@@ -202,10 +205,6 @@ export default class AdminPage extends Page {
       z: 0
     }
 
-    function absCoordsToRenderedCoords() {
-      
-    }
-
 
 
     animationFrameDelta(() => {
@@ -213,12 +212,12 @@ export default class AdminPage extends Page {
       // smooths the panning by approaching the target coordinates (abs)
 
       
-      // renderedCoords.x += (abs.x - renderedCoords.x) * 0.1
-      // renderedCoords.y += (abs.y - renderedCoords.y) * 0.1
-      // renderedCoords.z += (abs.z - renderedCoords.z) * 0.1
-      renderedCoords.x = abs.x
-      renderedCoords.y = abs.y
-      renderedCoords.z = abs.z
+      renderedCoords.x += (abs.x - renderedCoords.x) * 0.2
+      renderedCoords.y += (abs.y - renderedCoords.y) * 0.2
+      renderedCoords.z += (abs.z - renderedCoords.z) * 0.2
+      // renderedCoords.x = abs.x
+      // renderedCoords.y = abs.y
+      // renderedCoords.z = abs.z
 
       let x = renderedCoords.x - zoomOffsetTransition.x
       let y = renderedCoords.y - zoomOffsetTransition.y
