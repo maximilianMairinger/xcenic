@@ -5,7 +5,7 @@ import adminSession from "../../../../../lib/adminSession"
 
 import ContactPage from "./../contactPage/contactPage"
 import { ElementList } from "extended-dom"
-import animationFrameDelta, { stats } from "animation-frame-delta"
+import animationFrameDelta from "animation-frame-delta"
 
 
 const dragMouseButton = 1
@@ -78,7 +78,8 @@ export default class AdminPage extends Page {
 
     container.on("wheel", (e: WheelEvent) => {
       e.preventDefault();
-      if (!e.ctrlKey) {
+      console.log(holdingControl)
+      if (!e.ctrlKey && !holdingControl) {
         // pan
         delta.x = e.deltaX
         delta.y = e.deltaY
@@ -90,10 +91,10 @@ export default class AdminPage extends Page {
         e.stopPropagation()  
       }
       else {
-        if (holdingControl) {
+        // if (holdingControl) {
 
-        }
-        else {
+        // }
+        // else {
           // zoom
           const zoom = 1 - (e.deltaY / 100)
           abs.z *= zoom
@@ -104,7 +105,7 @@ export default class AdminPage extends Page {
 
           zoomOffsetTransition.x += mouseX * (zoom - 1)
           zoomOffsetTransition.y += mouseY * (zoom - 1)
-        }
+        // }
         
 
       }
@@ -183,7 +184,7 @@ export default class AdminPage extends Page {
     
     let holdingControl = false
     const ctrlKey = getCtrlKey()
-    container.on("keydown", (e) => {
+    document.body.on("keydown", (e) => {
       if (e.key === ctrlKey) {
         holdingControl = true  
       }
