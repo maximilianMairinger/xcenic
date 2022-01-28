@@ -7,7 +7,6 @@ import ContactPage from "./../contactPage/contactPage"
 import { ElementList } from "extended-dom"
 import animationFrameDelta, { stats } from "animation-frame-delta"
 
-import PanZ from "@thesoulfresh/pan-z"
 import { Data } from "josm"
 
 
@@ -16,88 +15,15 @@ export default class AdminPage extends Page {
   constructor() {
     super()
 
+    const ar = []
+    for (let i = 0; i < 1000; i++) {
+      ar.add(ce("test-box"))
+      
+    }
+
     this.body.canvas.apd(
       ce("page-frame").apd(
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box"),
-        ce("test-box")
+        ...ar
       )
     )
 
@@ -165,7 +91,7 @@ export default class AdminPage extends Page {
     }, true)
 
 
-    const dragMouseButton = 0
+    const dragMouseButton = 1
 
 
     let dragging = false
@@ -213,15 +139,14 @@ export default class AdminPage extends Page {
       }
     })
 
-    const minMove = .4 / abs.z
-    const inertiaRender = animationFrameDelta((timingDelta) => {
+    const minMove = .1 / abs.z
+    const inertiaRender = animationFrameDelta(() => {
       console.log("inertiaRender", delta.x)
-      const deltaedMinMove = minMove * timingDelta
-      if (Math.abs(delta.x) > deltaedMinMove || Math.abs(delta.y) > deltaedMinMove) {
+      if (Math.abs(delta.x) > minMove || Math.abs(delta.y) > minMove) {
         delta.x *= 0.955
         delta.y *= 0.955
-        abs.x += delta.x * timingDelta
-        abs.y += delta.y * timingDelta
+        abs.x += delta.x
+        abs.y += delta.y
       }
       else {
         inertiaRender.cancel()
