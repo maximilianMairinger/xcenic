@@ -234,6 +234,50 @@ export default class AdminPage extends Page {
       }
     })
 
+
+    // touch
+    container.on("touchstart", (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        dragging = true
+        curCoords.x = e.touches[0].clientX
+        curCoords.y = e.touches[0].clientY
+        inertiaRender.cancel()
+        e.stopPropagation()
+        e.preventDefault()
+      }
+    })
+
+    const noMoreTouchEventHandler = (e: TouchEvent) => {
+      if (e.touches.length === 0) {
+        dragging = false
+        inertiaRender.resume()
+        e.stopPropagation()
+        e.preventDefault()
+      }
+    }
+
+    document.body.on("touchend", noMoreTouchEventHandler)
+    document.body.on("touchcancel", noMoreTouchEventHandler)
+    // document.body.on("touchleave", noMoreTouchEventHandler)
+    document.body.on("touchmove", (e: TouchEvent) => {
+      if (dragging) {
+        delta.x = e.touches[0].clientX - curCoords.x
+        delta.y = e.touches[0].clientY - curCoords.y
+
+        abs.x += delta.x
+        abs.y += delta.y
+
+        curCoords.x = e.touches[0].clientX
+        curCoords.y = e.touches[0].clientY
+
+        e.stopPropagation()
+        e.preventDefault()
+      }
+    })
+
+
+
+
     const minMove = .1 / abs.z
     const inertiaRender = animationFrameDelta(() => {
       if (Math.abs(delta.x) > minMove || Math.abs(delta.y) > minMove) {
@@ -261,6 +305,16 @@ export default class AdminPage extends Page {
         holdingControl = false
       }
     })
+
+
+
+    
+
+
+
+
+
+
 
     const renderedCoords = {
       x: 0,
@@ -344,7 +398,7 @@ export default class AdminPage extends Page {
   }
 
   protected tryNavigationCallback(domainFragment: string): boolean | void | Promise<boolean | void> {
-    return adminSession.get() !== ""
+    // return adminSession.get() !== ""
   }
   
   // private pageLs: ElementList<Page>
