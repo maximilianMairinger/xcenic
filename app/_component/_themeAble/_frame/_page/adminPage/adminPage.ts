@@ -9,7 +9,7 @@ import animationFrameDelta from "animation-frame-delta"
 
 
 const dragMouseButton = 1
-const zoomStep = 1.1
+const maxZoomStep = 20 // percent
 
 
 
@@ -77,7 +77,6 @@ export default class AdminPage extends Page {
 
 
     container.on("wheel", (e: WheelEvent) => {
-      console.log(e.deltaY)
       e.preventDefault();
         if (!e.ctrlKey && !holdingControl) {
         // pan
@@ -100,7 +99,8 @@ export default class AdminPage extends Page {
       else {
 
         // zoom
-        const zoom = 1 - (e.deltaY / 100)
+        const zoom = 1 - ((Math.abs(e.deltaY) > maxZoomStep ? Math.sign(e.deltaY) * maxZoomStep : e.deltaY) / 100)
+        console.log(zoom)
         abs.z *= zoom
 
         // keep the zoom around the pointer
@@ -202,7 +202,11 @@ export default class AdminPage extends Page {
     const renderedCoords = {
       x: 0,
       y: 0,
-      z: 0
+      z: 0,
+      zoomOffset: {
+        x: 0,
+        y: 0
+      }
     }
 
 
@@ -215,13 +219,16 @@ export default class AdminPage extends Page {
       renderedCoords.x += (abs.x - renderedCoords.x) * 0.2
       renderedCoords.y += (abs.y - renderedCoords.y) * 0.2
       renderedCoords.z += (abs.z - renderedCoords.z) * 0.2
+      renderedCoords.zoomOffset.x += (zoomOffsetTransition.x - renderedCoords.zoomOffset.x) * 0.2
+      renderedCoords.zoomOffset.y += (zoomOffsetTransition.y - renderedCoords.zoomOffset.y) * 0.2
       // renderedCoords.x = abs.x
       // renderedCoords.y = abs.y
       // renderedCoords.z = abs.z
 
-      let x = renderedCoords.x - zoomOffsetTransition.x
-      let y = renderedCoords.y - zoomOffsetTransition.y
-      const z = abs.z
+      
+      let x = renderedCoords.x - renderedCoords.zoomOffset.x
+      let y = renderedCoords.y - renderedCoords.zoomOffset.y
+      const z = renderedCoords.z
 
       const w = x - target.width() + child.width() * z
       const h = y - target.height() + child.height() * z
