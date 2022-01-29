@@ -3,10 +3,16 @@ import Page from "../page"
 
 import adminSession from "../../../../../lib/adminSession"
 
-import ContactPage from "./../contactPage/contactPage"
 import { ElementList } from "extended-dom"
 import animationFrameDelta, { ignoreUnsubscriptionError, stats } from "animation-frame-delta"
 import Easing from "waapi-easing"
+
+
+import ContactPage from "./../contactPage/contactPage"
+import HomePage from "./../_sectionedPage/_lazySectionedPage/homepage/homepage"
+
+
+
 const scrollWheelEasingFunc = (new Easing("easeInOut")).function
 
 
@@ -37,6 +43,7 @@ export default class AdminPage extends Page {
     this.body.canvas.apd(
       ce("page-frame").apd(ce("test-box")),
       ce("page-frame").apd(new ContactPage()),
+      ce("page-frame").apd(new HomePage("admin")),
     )
 
 
@@ -44,7 +51,7 @@ export default class AdminPage extends Page {
 
 
     const container = this.body.canvasContainer as HTMLElement
-    const target = this.body.panArea as HTMLElement
+    const target = this.body.moveArea as HTMLElement
     const child = target.children[0] as HTMLElement
 
 

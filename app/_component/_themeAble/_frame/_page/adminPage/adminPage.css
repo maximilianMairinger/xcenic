@@ -2,7 +2,7 @@ component-body {
   height: 100%;
 }
 
-.moveArea, page-canvas, page-canvas-container {
+move-area, page-canvas, page-canvas-container {
   display: block;
   position: relative;
   width: 100%;
@@ -13,8 +13,9 @@ page-canvas-container {
   overflow: hidden;
 }
 
-pan-area.moveArea {
+move-area {
   transform-origin: 0 0;
+  will-change: transform; /* this is the magic performance improving line */
 }
 
 
@@ -34,7 +35,7 @@ page-frame {
   margin: 100px;
   float: left;
   width: 100vw;
-  height: 100vw;
+  height: max-content;
   border: 5px solid black;
 }
 
