@@ -10,6 +10,7 @@ import Easing from "waapi-easing"
 
 import ContactPage from "./../contactPage/contactPage"
 import HomePage from "./../_sectionedPage/_lazySectionedPage/homepage/homepage"
+import SectionedPage from "../_sectionedPage/sectionedPage"
 
 
 
@@ -33,18 +34,28 @@ function getCtrlKey() {
 }
 
 
+
 export default class AdminPage extends Page {
+
+
+  private appendPageToCanvas(...pages: HTMLElement[]) {
+    this.body.canvas.apd(pages.map(page => {
+      if ("disableContentVisibilityOptimisation" in (page as SectionedPage)) (page as SectionedPage).disableContentVisibilityOptimisation()
+      return ce("page-frame").apd(page)
+    }))
+  }
 
   constructor() {
     super()
 
 
 
-    this.body.canvas.apd(
-      ce("page-frame").apd(ce("test-box")),
-      ce("page-frame").apd(new ContactPage()),
-      ce("page-frame").apd(new HomePage("admin")),
+    this.appendPageToCanvas(
+      ce("test-box"),
+      new ContactPage(),
+      new HomePage("admin"),
     )
+
 
 
     

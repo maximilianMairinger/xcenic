@@ -464,7 +464,7 @@ export default abstract class SectionedPage extends Page {
 
 
       let first = true
-      section.on("resize", ({height}) => {
+      this.contentVisSubs.add(section.on("resize", ({height}) => {
         if (first) {
           first = false
           return 
@@ -483,7 +483,7 @@ export default abstract class SectionedPage extends Page {
   
   
         
-      })
+      }))
     })
     
     const sec = {rendered, dimensions: {top, bot: top + section.offsetHeight}, section, isInWantedPos, isInPos, wantedPos}
@@ -624,6 +624,13 @@ export default abstract class SectionedPage extends Page {
 
   }
 
+  private contentVisSubs: {deactivate: () => {}}[] = []
+  public disableContentVisibilityOptimisation() {
+    this.sra(ce("style").html(`component-body>*{content-visibility: visible !important}`))
+    this.contentVisSubs.Inner("deactivate", [])
+    return this
+  }
+
   private scrollDiffCompensator = new ScrollDiffCompensator(this)
 
   private sectionRenderingMargin = 0
@@ -675,6 +682,7 @@ export default abstract class SectionedPage extends Page {
         // this.
         this.calculateSectionRenderingStatus(p)
       }, false)
+      this.contentVisSubs.add(subScrollUpdate)
       subScrollUpdate.deactivate()
       setTimeout(() => {
         this.allSectionsReady.get((rdy) => {
