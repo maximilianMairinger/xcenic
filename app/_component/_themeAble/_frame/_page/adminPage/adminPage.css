@@ -2,54 +2,56 @@ component-body {
   height: 100%;
 }
 
-page-canvas-container {
+.moveArea, page-canvas, page-canvas-container {
   display: block;
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+page-canvas-container {
   overflow: hidden;
 }
 
-.moveArea, page-canvas {
-  display: block;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
+pan-area.moveArea {
+  transform-origin: 0 0;
+}
+
+
+
+page-canvas {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+  height: max-content;
+  min-width: 15000px;
+  min-height: 15000px;
 }
 
 page-frame {
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: visible;
-  overflow-y: hidden;
   display: block;
+  position: relative;
+  margin: 100px;
+  float: left;
+  width: 100vw;
+  height: 100vw;
+  border: 5px solid black;
 }
 
 page-frame > * {
   opacity: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 test-box {
-  width: 50px;
-  height: 70px;
+  width: 200px;
+  height: 200px;
   display: block;
   position: relative;
-  margin-top: 100px;
-  margin-left: 150px;
-  float: left;
+  margin: 300px;
   background-color: red;
 }
 
-zoom-area.moveArea {
-  background-color: green;
-  width: 400%;
-  height: 400%;
 
-
-}
-pan-area.moveArea {
-  transform-origin: 0 0;
-  /* transform-origin: center; */
-}

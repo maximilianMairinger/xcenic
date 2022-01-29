@@ -32,16 +32,11 @@ export default class AdminPage extends Page {
   constructor() {
     super()
 
-    const ar = []
-    for (let i = 0; i < 1000; i++) {
-      ar.add(ce("test-box"))
-      
-    }
+
 
     this.body.canvas.apd(
-      ce("page-frame").apd(
-        ...ar
-      )
+      ce("page-frame").apd(ce("test-box")),
+      ce("page-frame").apd(new ContactPage()),
     )
 
 
@@ -98,7 +93,6 @@ export default class AdminPage extends Page {
 
         if (Math.abs(delta.y) > 50 && Math.round(delta.y) === delta.y) {
           // assume mousewheel scroll
-          console.log("mousewheel scroll", delta.y)
           const maxAbs = normalizedDistributeExplicitWheelEventOverXFrames * Math.abs(delta.y)
           
           let prog = stats.delta
@@ -118,15 +112,13 @@ export default class AdminPage extends Page {
             abs.y -= easedFraction
             delta.y += easedFraction
             if (prog >= maxAbs) {
-              console.log("mousewheel scroll end")
               e.cancel()
             }
           })
         }
-        // copy the same code for the other axis
+        // copy the same code for the other axis (maybe abstract)
         else if (Math.abs(delta.x) > 50 && Math.round(delta.x) === delta.x) {
           // assume mousewheel scroll
-          console.log("mousewheel scroll", delta.x)
           const maxAbs = normalizedDistributeExplicitWheelEventOverXFrames * Math.abs(delta.x)
           
           let prog = stats.delta
@@ -146,7 +138,6 @@ export default class AdminPage extends Page {
             abs.x -= easedFraction
             delta.x += easedFraction
             if (prog >= maxAbs) {
-              console.log("mousewheel scroll end")
               e.cancel()
             }
           })
@@ -164,8 +155,20 @@ export default class AdminPage extends Page {
       else {
 
         // zoom
-        const zoom = 1 - ((Math.abs(e.deltaY) > maxZoomStep ? Math.sign(e.deltaY) * maxZoomStep : e.deltaY) / 100)
+        let zoom = 1 - ((Math.abs(e.deltaY) > maxZoomStep ? Math.sign(e.deltaY) * maxZoomStep : e.deltaY) / 100)
         abs.z *= zoom
+        if (child.width() * abs.z < target.width()) {
+          const maxZ = target.width() / child.width()
+          zoom = maxZ / abs.z
+          abs.z = maxZ
+        }
+        if (child.height() * abs.z < target.height()) {
+          const maxZ = target.height() / child.height()
+          zoom = maxZ / abs.z
+          abs.z = maxZ
+        }
+
+
 
         // keep the zoom around the pointer
         const pointerX = (e.clientX + zoomOffsetTransition.x - abs.x)
@@ -250,19 +253,19 @@ export default class AdminPage extends Page {
     }
 
 
-    const redDot = ce("red-dot")
-    redDot.css({
-      position: "absolute",
-      left: 0,
-      right: 0,
-      width: "50px",
-      height: "50px",
-      borderRadius: "50%",
-      background: "red",
-      opacity: 0.5,
-      transform: "translate(-50%, -50%)"
-    })
-    container.append(redDot)
+    // const redDot = ce("red-dot")
+    // redDot.css({
+    //   position: "absolute",
+    //   left: 0,
+    //   right: 0,
+    //   width: "50px",
+    //   height: "50px",
+    //   borderRadius: "50%",
+    //   background: "red",
+    //   opacity: 0.5,
+    //   transform: "translate(-50%, -50%)"
+    // })
+    // container.append(redDot)
 
 
     document.body.on("touchend", noMoreTouchEventHandler)
@@ -280,14 +283,6 @@ export default class AdminPage extends Page {
       }
     })
 
-    const debugElem = ce("span").html("hello")
-    debugElem.css({
-      color: "white",
-      fontSize: "30px",
-      padding: 100,
-      display: "block",
-    })
-    this.body.canvas.prepend(debugElem)
 
 
 
@@ -315,7 +310,6 @@ export default class AdminPage extends Page {
           const dist = Math.hypot(coordDiffs.x, coordDiffs.y)
           if (Math.abs(dist) > 30) touchOffset = coordDiffs
 
-          debugElem.html("offset: " + JSON.stringify(touchOffset))
         }
 
         const clientX = e.touches[0].clientX - touchOffset.x
@@ -411,7 +405,7 @@ export default class AdminPage extends Page {
     const renderedCoords = {
       x: 0,
       y: 0,
-      z: 0,
+      z: 1,
       zoomOffset: {
         x: 0,
         y: 0
@@ -423,7 +417,8 @@ export default class AdminPage extends Page {
     function cappedSmooth(soll: number, ist: number) {
       let diff = soll - ist
       if (Math.abs(diff) > moveWithoutSmooth) {
-        return diff * .2 + (Math.sign(diff) * moveWithoutSmooth)
+        const move = (Math.sign(diff) * moveWithoutSmooth)
+        return (diff - move) * .3 + move
       }
       else {
         return diff
@@ -457,13 +452,13 @@ export default class AdminPage extends Page {
       howFarOutOfBounds.x = x > 0 ? -x : w < 0 ? -w : 0
       howFarOutOfBounds.y = y > 0 ? -y : h < 0 ? -h : 0
 
-      if (Math.abs(howFarOutOfBounds.x) > .4) {
+      if (Math.abs(howFarOutOfBounds.x) > .1) {
         const w = howFarOutOfBounds.x * .4
         x += w
         abs.x += w
         renderedCoords.x += w
       }
-      if (Math.abs(howFarOutOfBounds.y) > .4) {
+      if (Math.abs(howFarOutOfBounds.y) > .1) {
         const w = howFarOutOfBounds.y * .4
         y += w
         abs.y += w
@@ -479,13 +474,6 @@ export default class AdminPage extends Page {
     })
 
 
-    // const pz = new PanZ({
-    //   minZoom: .001,
-    //   zoomSpeed: .5,
-    //   // bounds: 1
-    // });
-    // pz.init(this.body.zoomArea);
-
 
   }
 
@@ -493,22 +481,22 @@ export default class AdminPage extends Page {
     // return adminSession.get() !== ""
   }
   
-  // private pageLs: ElementList<Page>
-  // public async minimalContentPaint(): Promise<void> {
-  //   this.pageLs = this.body.canvas.childs("page-frame > *", true) as ElementList<Page>
-  //   await Promise.all([this.pageLs.map((page: Page) => page.minimalContentPaint())])
-  //   await super.minimalContentPaint()
-  // }
+  private pageLs: ElementList<Page>
+  public async minimalContentPaint(): Promise<void> {
+    this.pageLs = this.body.canvas.childs("page-frame > *", true) as ElementList<Page>
+    await Promise.all([this.pageLs.map((page: Page) => page.minimalContentPaint ? page.minimalContentPaint() : undefined)])
+    await super.minimalContentPaint()
+  }
 
-  // public async fullContentPaint(): Promise<void> {
-  //   await Promise.all([this.pageLs.map((page: Page) => page.fullContentPaint())])
-  //   await super.fullContentPaint()
-  // }
+  public async fullContentPaint(): Promise<void> {
+    await Promise.all([this.pageLs.map((page: Page) => page.fullContentPaint ? page.fullContentPaint() : undefined)])
+    await super.fullContentPaint()
+  }
 
-  // public async completePaint(): Promise<void> {
-  //   await Promise.all([this.pageLs.map((page: Page) => page.completePaint())])
-  //   await super.completePaint()
-  // }
+  public async completePaint(): Promise<void> {
+    await Promise.all([this.pageLs.map((page: Page) => page.completePaint ? page.completePaint() : undefined)])
+    await super.completePaint()
+  }
 
 
 
