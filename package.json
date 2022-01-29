@@ -87,6 +87,7 @@
     "css-simple-parser": "^2.0.1",
     "delay": "^4.4.1",
     "extended-dom": "^4.0.13",
+    "fast-copy": "^2.1.1",
     "fast-decode-uri-component": "^1.0.1",
     "get-base-url": "^3.0.1",
     "image-web": "^1.2.2",

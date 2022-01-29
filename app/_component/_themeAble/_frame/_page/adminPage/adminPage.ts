@@ -2,10 +2,12 @@ import { declareComponent } from "../../../../../lib/declareComponent"
 import Page from "../page"
 
 import adminSession from "../../../../../lib/adminSession"
-
+import localSettings from "./../../../../../lib/localSettings"
 import { ElementList } from "extended-dom"
 import animationFrameDelta, { ignoreUnsubscriptionError, stats } from "animation-frame-delta"
 import Easing from "waapi-easing"
+import clone from "fast-copy"
+
 
 
 import ContactPage from "./../contactPage/contactPage"
@@ -14,12 +16,25 @@ import SectionedPage from "../_sectionedPage/sectionedPage"
 
 
 
-const scrollWheelEasingFunc = (new Easing("easeInOut")).function
+
 
 
 const dragMouseButton = 1
 const maxZoomStep = 20 // percent
+const scrollWheelEasingFunc = (new Easing("easeInOut")).function
 
+
+
+
+export const adminPos = localSettings("adminPos", {
+  x: 0,
+  y: 0,
+  z: 1,
+  zoomOffset: {
+    x: 0,
+    y: 0
+  }
+})
 
 
 
@@ -66,11 +81,16 @@ export default class AdminPage extends Page {
     const child = target.children[0] as HTMLElement
 
 
-    const abs = {
-      x: target.css("translateX") as number,
-      y: target.css("translateY") as number,
-      z: 1
+    const abs = clone(adminPos()) as {
+      x: number;
+      y: number;
+      z: number;
+      zoomOffset: {
+          x: number;
+          y: number;
+      }
     }
+
 
 
 
@@ -84,10 +104,7 @@ export default class AdminPage extends Page {
       y: 0
     }
 
-    const zoomOffsetTransition = {
-      x: 0,
-      y: 0
-    }
+    
 
 
     const distributeExplicitWheelEventOverXFrames = 12 // in 60fps
@@ -189,11 +206,11 @@ export default class AdminPage extends Page {
 
 
         // keep the zoom around the pointer
-        const pointerX = (e.clientX + zoomOffsetTransition.x - abs.x)
-        const pointerY = (e.clientY + zoomOffsetTransition.y - abs.y)
+        const pointerX = (e.clientX + abs.zoomOffset.x - abs.x)
+        const pointerY = (e.clientY + abs.zoomOffset.y - abs.y)
 
-        zoomOffsetTransition.x += pointerX * (zoom - 1)
-        zoomOffsetTransition.y += pointerY * (zoom - 1)
+        abs.zoomOffset.x += pointerX * (zoom - 1)
+        abs.zoomOffset.y += pointerY * (zoom - 1)
 
         
 
@@ -359,11 +376,11 @@ export default class AdminPage extends Page {
           y: (touch1.clientY + touch2.clientY) / 2
         }
 
-        const pointerX = (centerOfZoom.x + zoomOffsetTransition.x - abs.x)
-        const pointerY = (centerOfZoom.y + zoomOffsetTransition.y - abs.y)
+        const pointerX = (centerOfZoom.x + abs.zoomOffset.x - abs.x)
+        const pointerY = (centerOfZoom.y + abs.zoomOffset.y - abs.y)
 
-        zoomOffsetTransition.x += pointerX * (zoom - 1)
-        zoomOffsetTransition.y += pointerY * (zoom - 1)
+        abs.zoomOffset.x += pointerX * (zoom - 1)
+        abs.zoomOffset.y += pointerY * (zoom - 1)
 
 
         // // draw a red dot at centerOfZoom
@@ -420,15 +437,7 @@ export default class AdminPage extends Page {
 
 
 
-    const renderedCoords = {
-      x: 0,
-      y: 0,
-      z: 1,
-      zoomOffset: {
-        x: 0,
-        y: 0
-      }
-    }
+    const renderedCoords = clone(abs)
 
 
     const moveWithoutSmooth = 5
@@ -436,7 +445,7 @@ export default class AdminPage extends Page {
       let diff = soll - ist
       if (Math.abs(diff) > moveWithoutSmooth) {
         const move = (Math.sign(diff) * moveWithoutSmooth)
-        return (diff - move) * .3 + move
+        return smooth(diff, move) + move
       }
       else {
         return diff
@@ -444,20 +453,20 @@ export default class AdminPage extends Page {
     }
 
     function smooth(soll: number, ist: number) {
-      return (soll - ist) * .2
+      return (soll - ist) * .3
     }
 
 
     animationFrameDelta(() => {
 
       // smooths the panning by approaching the target coordinates (abs)
-      // console.log(c/*  */appedSmooth(abs.y, renderedCoords.y))
+      // console.log(cappedSmooth(abs.y, renderedCoords.y))
       
       renderedCoords.x += cappedSmooth(abs.x, renderedCoords.x)
       renderedCoords.y += cappedSmooth(abs.y, renderedCoords.y)
       renderedCoords.z += smooth(abs.z, renderedCoords.z)
-      renderedCoords.zoomOffset.x += smooth(zoomOffsetTransition.x, renderedCoords.zoomOffset.x)
-      renderedCoords.zoomOffset.y += smooth(zoomOffsetTransition.y, renderedCoords.zoomOffset.y)
+      renderedCoords.zoomOffset.x += smooth(abs.zoomOffset.x, renderedCoords.zoomOffset.x)
+      renderedCoords.zoomOffset.y += smooth(abs.zoomOffset.y, renderedCoords.zoomOffset.y)
 
       
       let x = renderedCoords.x - renderedCoords.zoomOffset.x
@@ -488,7 +497,11 @@ export default class AdminPage extends Page {
         translateX: x,
         translateY: y,
         scale: z
-      })      
+      }) 
+
+
+      // set abs coordinates to localstorage
+      adminPos(abs)
     })
 
 
