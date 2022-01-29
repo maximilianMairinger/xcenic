@@ -23,6 +23,7 @@ page-frame {
   height: 100%;
   overflow-x: hidden;
   overflow-y: visible;
+  overflow-y: hidden;
   display: block;
 }
 

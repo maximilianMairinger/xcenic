@@ -5,7 +5,7 @@ import adminSession from "../../../../../lib/adminSession"
 
 import ContactPage from "./../contactPage/contactPage"
 import { ElementList } from "extended-dom"
-import animationFrameDelta, { stats } from "animation-frame-delta"
+import animationFrameDelta, { ignoreUnsubscriptionError, stats } from "animation-frame-delta"
 import Easing from "waapi-easing"
 const scrollWheelEasingFunc = (new Easing("easeInOut")).function
 
@@ -168,11 +168,11 @@ export default class AdminPage extends Page {
         abs.z *= zoom
 
         // keep the zoom around the pointer
-        const mouseX = (e.clientX + zoomOffsetTransition.x - abs.x)
-        const mouseY = (e.clientY + zoomOffsetTransition.y - abs.y)
+        const pointerX = (e.clientX + zoomOffsetTransition.x - abs.x)
+        const pointerY = (e.clientY + zoomOffsetTransition.y - abs.y)
 
-        zoomOffsetTransition.x += mouseX * (zoom - 1)
-        zoomOffsetTransition.y += mouseY * (zoom - 1)
+        zoomOffsetTransition.x += pointerX * (zoom - 1)
+        zoomOffsetTransition.y += pointerY * (zoom - 1)
 
         
 
@@ -238,42 +238,134 @@ export default class AdminPage extends Page {
     // touch
     container.on("touchstart", (e: TouchEvent) => {
       if (e.touches.length === 1) {
-        dragging = true
+        touchOffset = {x: 0, y: 0}
         curCoords.x = e.touches[0].clientX
         curCoords.y = e.touches[0].clientY
         inertiaRender.cancel()
-        e.stopPropagation()
-        e.preventDefault()
       }
     })
 
     const noMoreTouchEventHandler = (e: TouchEvent) => {
-      if (e.touches.length === 0) {
-        dragging = false
-        inertiaRender.resume()
-        e.stopPropagation()
-        e.preventDefault()
-      }
+      if (e.touches.length === 0) inertiaRender.resume()
     }
+
+
+    const redDot = ce("red-dot")
+    redDot.css({
+      position: "absolute",
+      left: 0,
+      right: 0,
+      width: "50px",
+      height: "50px",
+      borderRadius: "50%",
+      background: "red",
+      opacity: 0.5,
+      transform: "translate(-50%, -50%)"
+    })
+    container.append(redDot)
+
 
     document.body.on("touchend", noMoreTouchEventHandler)
     document.body.on("touchcancel", noMoreTouchEventHandler)
-    // document.body.on("touchleave", noMoreTouchEventHandler)
-    document.body.on("touchmove", (e: TouchEvent) => {
-      if (dragging) {
-        delta.x = e.touches[0].clientX - curCoords.x
-        delta.y = e.touches[0].clientY - curCoords.y
+
+
+    let lastZoomDist: number
+
+    
+    container.on("touchstart", (e) => {
+      if (e.touches.length === 2) {
+        const touch1 = e.touches[0]
+        const touch2 = e.touches[1] || {clientX: 0, clientY: 0}
+        lastZoomDist = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY)
+      }
+    })
+
+    const debugElem = ce("span").html("hello")
+    debugElem.css({
+      color: "white",
+      fontSize: "30px",
+      padding: 100,
+      display: "block",
+    })
+    this.body.canvas.prepend(debugElem)
+
+
+
+    let wasZoomingJustBefore = false
+    let touch2Cache: {clientX: number, clientY: number}
+    let touchOffset = {
+      x: 0,
+      y: 0
+    }
+
+    container.on("touchmove", (e: TouchEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      if (e.touches.length === 1) {
+
+        if (wasZoomingJustBefore) {
+          wasZoomingJustBefore = false
+
+          
+
+          const coordDiffs = {
+            x: e.touches[0].clientX - touch2Cache.clientX,
+            y: e.touches[0].clientY - touch2Cache.clientY
+          }
+          const dist = Math.hypot(coordDiffs.x, coordDiffs.y)
+          if (Math.abs(dist) > 30) touchOffset = coordDiffs
+
+          debugElem.html("offset: " + JSON.stringify(touchOffset))
+        }
+
+        const clientX = e.touches[0].clientX - touchOffset.x
+        const clientY = e.touches[0].clientY - touchOffset.y
+
+
+        delta.x = clientX - curCoords.x
+        delta.y = clientY - curCoords.y
 
         abs.x += delta.x
         abs.y += delta.y
 
-        curCoords.x = e.touches[0].clientX
-        curCoords.y = e.touches[0].clientY
-
-        e.stopPropagation()
-        e.preventDefault()
+        curCoords.x = clientX
+        curCoords.y = clientY
       }
-    })
+      if (e.touches.length === 2) {
+        wasZoomingJustBefore = true
+        const touch1 = touch2Cache = e.touches[0]
+        const touch2 = e.touches[1]
+        const dist = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY)
+        const zoom = 1 + ((dist - lastZoomDist) / 200)
+        abs.z *= zoom
+        lastZoomDist = dist
+
+
+
+        const centerOfZoom = {
+          x: (touch1.clientX + touch2.clientX) / 2,
+          y: (touch1.clientY + touch2.clientY) / 2
+        }
+
+        const pointerX = (centerOfZoom.x + zoomOffsetTransition.x - abs.x)
+        const pointerY = (centerOfZoom.y + zoomOffsetTransition.y - abs.y)
+
+        zoomOffsetTransition.x += pointerX * (zoom - 1)
+        zoomOffsetTransition.y += pointerY * (zoom - 1)
+
+
+        // // draw a red dot at centerOfZoom
+        // redDot.css({
+        //   left: centerOfZoom.x,
+        //   top: centerOfZoom.y
+        // })
+      }
+    }, {passive: false})
+
+    // zoom touch
+
+
+
 
 
 
