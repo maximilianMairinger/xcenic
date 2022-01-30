@@ -26,9 +26,28 @@ export default class PageManager extends Manager {
         ), val: () => import(/* webpackChunkName: "contactPage" */"../../_page/contactPage/contactPage")
       },
       {
-        key: new Import("admin", 10, (adminPage: typeof AdminPage) =>
-            new adminPage()
-        ), val: () => import(/* webpackChunkName: "adminPage" */"../../_page/adminPage/adminPage")
+        key: new Import("admin", 10, (adminPage: typeof AdminPage) => {
+          const instance = new adminPage();
+
+          const proxyFunc = (active: boolean) => {
+            // make the url bar blurry no matter where we are
+            if (active) setTimeout(() => {
+              if (instance.active) onScroll(300)
+            })
+          }
+
+          if ((instance as any).activationCallback) {
+            const activationCallback = (instance as any).activationCallback.bind(instance);
+            (instance as any).activationCallback = (active: boolean) => {
+              proxyFunc(active)
+              return activationCallback(active)
+            }
+          }
+          else (instance as any).activationCallback = proxyFunc
+          
+
+          return instance
+        }), val: () => import(/* webpackChunkName: "adminPage" */"../../_page/adminPage/adminPage")
       },
       {
         key: new Import("admin", 10, (loginPage: typeof LoginPage) =>

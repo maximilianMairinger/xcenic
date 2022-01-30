@@ -3,6 +3,8 @@ export default {
     longName: "Xcenic"
   },
   copiedFeedback: "Copied to clipboard",
+  cannotChangeUrl: "Cannot change URL. Would be a duplicate.",
+
   links: {
     philosophy: "Philosophy",
     services: "Services",

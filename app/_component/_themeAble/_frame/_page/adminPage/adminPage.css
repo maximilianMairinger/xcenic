@@ -11,13 +11,14 @@ move-area, page-canvas, page-canvas-container {
 
 page-canvas-container {
   overflow: hidden;
+  background-color: rgb(250, 250, 250);
 }
+
 
 move-area {
   transform-origin: 0 0;
   will-change: transform; /* this is the magic performance improving line */
 }
-
 
 
 page-canvas {
@@ -27,23 +28,24 @@ page-canvas {
   height: max-content;
   min-width: 15000px;
   min-height: 15000px;
+  margin-top: 55px;
 }
 
-page-frame {
+c-page-frame {
   display: block;
   position: relative;
-  margin: 100px;
+  margin: 300px;
   float: left;
   width: 100vw;
   height: max-content;
-  border: 5px solid black;
 }
 
-page-frame > * {
+c-page-frame > * {
   opacity: 1;
   width: 100%;
   height: 100%;
   display: block;
+  overflow: hidden;
 }
 
 test-box {

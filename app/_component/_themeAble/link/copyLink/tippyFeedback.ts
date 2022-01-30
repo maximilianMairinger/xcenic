@@ -1,8 +1,6 @@
 
 import delay from "delay"
-import tippy from "tippy.js"
-document.head.insertAdjacentHTML("beforeend", `<style name="tippyStyles">${require("tippy.js/dist/tippy.css").toString() + require('tippy.js/animations/shift-away-subtle.css').toString()}</style>`)
-
+import tippy from "../../../../lib/tippy"
 import lang from "../../../../lib/lang"
 
 export default function(root: HTMLElement) {

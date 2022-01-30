@@ -7,12 +7,16 @@ import { ElementList } from "extended-dom"
 import animationFrameDelta, { ignoreUnsubscriptionError, stats } from "animation-frame-delta"
 import Easing from "waapi-easing"
 import clone from "fast-copy"
+import isIdle from "is-idle"
+import LinkedList from "fast-linked-list"
 
 
 
 import ContactPage from "./../contactPage/contactPage"
 import HomePage from "./../_sectionedPage/_lazySectionedPage/homepage/homepage"
 import SectionedPage from "../_sectionedPage/sectionedPage"
+import PageFrame, { UrlDuplicateError } from "./pageFrame/pageFrame"
+import { Data } from "josm"
 
 
 
@@ -25,16 +29,6 @@ const scrollWheelEasingFunc = (new Easing("easeInOut")).function
 
 
 
-
-export const adminPos = localSettings("adminPos", {
-  x: 0,
-  y: 0,
-  z: 1,
-  zoomOffset: {
-    x: 0,
-    y: 0
-  }
-})
 
 
 
@@ -50,18 +44,52 @@ function getCtrlKey() {
 
 
 
+
 export default class AdminPage extends Page {
 
 
   private appendPageToCanvas(...pages: HTMLElement[]) {
     this.body.canvas.apd(pages.map(page => {
       if ("disableContentVisibilityOptimisation" in (page as SectionedPage)) (page as SectionedPage).disableContentVisibilityOptimisation()
-      return ce("page-frame").apd(page)
+
+      const d = new Data("hello")
+      d.get(() => {
+        throw new UrlDuplicateError()
+      }, false)
+
+      const frame = new PageFrame(page, d)
+      this.addNoScaleAddons(frame.heading)
+      // @ts-ignore
+      frame.heading.css({
+        transformOrigin: "left bottom",
+        willChange: "transform"
+      })
+      return frame
     }))
   }
 
-  constructor() {
+  private specialAddonList: LinkedList<HTMLElement> = new LinkedList()
+  private addNoScaleAddons(addon: HTMLElement) {
+    return this.specialAddonList.push(addon) as { remove: () => void }
+  }
+
+  constructor(posStoreName = "") {
     super()
+
+
+    const adminPos = localSettings("adminPos" + posStoreName, {
+      x: 0,
+      y: 0,
+      z: 1,
+      zoomOffset: {
+        x: 0,
+        y: 0
+      }
+    })
+
+    window.addEventListener("beforeunload", function (e) {
+      adminPos(abs)
+    });
 
 
 
@@ -92,6 +120,14 @@ export default class AdminPage extends Page {
     }
 
 
+    const wheelIdle = isIdle()
+
+
+    let startedWheelWithControl = false
+    wheelIdle.get((isIdle) => {
+      if (!isIdle) startedWheelWithControl = holdingControl
+    }, false)
+
 
 
     const howFarOutOfBounds = {
@@ -104,16 +140,16 @@ export default class AdminPage extends Page {
       y: 0
     }
 
-    
-
 
     const distributeExplicitWheelEventOverXFrames = 12 // in 60fps
     const distributeExplicitWheelEventOverXFramesAtThisMovement = 125 // in chrome 125
     const normalizedDistributeExplicitWheelEventOverXFrames = distributeExplicitWheelEventOverXFrames / distributeExplicitWheelEventOverXFramesAtThisMovement
 
     container.on("wheel", (e: WheelEvent) => {
-      e.preventDefault();
-      if (!e.ctrlKey && !holdingControl) {
+      wheelIdle.stillActive()
+
+      e.preventDefault()
+      if (!e.ctrlKey && !startedWheelWithControl) {
 
         // pan
         if (e.shiftKey) {
@@ -206,8 +242,8 @@ export default class AdminPage extends Page {
 
 
         // keep the zoom around the pointer
-        const pointerX = (e.clientX + abs.zoomOffset.x - abs.x)
-        const pointerY = (e.clientY + abs.zoomOffset.y - abs.y)
+        const pointerX = e.clientX + abs.zoomOffset.x - abs.x
+        const pointerY = e.clientY + abs.zoomOffset.y - abs.y
 
         abs.zoomOffset.x += pointerX * (zoom - 1)
         abs.zoomOffset.y += pointerY * (zoom - 1)
@@ -376,8 +412,8 @@ export default class AdminPage extends Page {
           y: (touch1.clientY + touch2.clientY) / 2
         }
 
-        const pointerX = (centerOfZoom.x + abs.zoomOffset.x - abs.x)
-        const pointerY = (centerOfZoom.y + abs.zoomOffset.y - abs.y)
+        const pointerX = centerOfZoom.x + abs.zoomOffset.x - abs.x
+        const pointerY = centerOfZoom.y + abs.zoomOffset.y - abs.y
 
         abs.zoomOffset.x += pointerX * (zoom - 1)
         abs.zoomOffset.y += pointerY * (zoom - 1)
@@ -500,8 +536,15 @@ export default class AdminPage extends Page {
       }) 
 
 
-      // set abs coordinates to localstorage
-      adminPos(abs)
+      for (const addon of this.specialAddonList) {
+        addon.css({
+          scale: 1 / z
+        }) 
+      }
+
+
+      // set abs coordinates to localstorage on every frame (not needed as we save them on pageunload)
+      // adminPos(abs)
     })
 
 
@@ -514,7 +557,7 @@ export default class AdminPage extends Page {
   
   private pageLs: ElementList<Page>
   public async minimalContentPaint(): Promise<void> {
-    this.pageLs = this.body.canvas.childs("page-frame > *", true) as ElementList<Page>
+    this.pageLs = this.body.canvas.childs("c-page-frame > *", true) as ElementList<Page>
     await Promise.all([this.pageLs.map((page: Page) => page.minimalContentPaint ? page.minimalContentPaint() : undefined)])
     await super.minimalContentPaint()
   }
