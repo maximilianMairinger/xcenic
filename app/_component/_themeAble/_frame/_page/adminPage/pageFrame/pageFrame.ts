@@ -2,6 +2,7 @@ import { Data } from "josm"
 import { declareComponent } from "../../../../../../lib/declareComponent"
 import Component from "../../../../../component"
 import lang from "../../../../../../lib/lang"
+import selectText from "select-text"
 
 
 import tippy, {sticky} from "tippy.js"
@@ -24,7 +25,10 @@ export default class PageFrame extends Component {
     this.sra(ce("style").html(require("tippy.js/dist/tippy.css").toString() + require('tippy.js/animations/shift-away-subtle.css').toString()))
 
 
-    const tip = tippy(this.body.heading as HTMLElement, {
+    const headingElem = this.body.heading as HTMLElement
+
+
+    const tip = tippy(headingElem, {
       content: lang.cannotChangeUrl.get(),
       trigger: "manual",
       placement: "top",
@@ -47,27 +51,37 @@ export default class PageFrame extends Component {
       }
     })
 
+    headingElem.on("dblclick", () => {
+      headingElem.css({cursor: "text"})
+      headingElem.setAttribute("contenteditable", "true")
+      selectText(headingElem)
+    })
 
-    this.body.heading.setAttribute("contenteditable", "true")
     
     
     const submitTextEdit = () => {
-      console.log("submit")
+      headingElem.css({cursor: "pointer"})
+      headingElem.setAttribute("contenteditable", "false")
+
+
+
       setHeadingSub.deactivate()
+      const beforeSet = this.nameData.get()
       try {
-        this.nameData.set(this.body.heading.text())
+        this.nameData.set(headingElem.text())
       }
       catch (e) {
         if (e instanceof UrlDuplicateError) {
           tip.show()
-
+          headingElem.text(beforeSet, false)
+          this.nameData.set(beforeSet)
         }
         else throw e
       }
       setHeadingSub.activate(false)
     }
 
-    this.body.heading.on("keydown", (e) => {
+    headingElem.on("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
 
@@ -75,13 +89,15 @@ export default class PageFrame extends Component {
       }
     })
 
-    this.body.heading.on("blur", () => {
+    headingElem.on("blur", () => {
       submitTextEdit()
+
     })
 
     const setHeadingSub = this.nameData.get((name) => {
-      this.body.heading.text(name)
+      headingElem.text(name)
     })
+
 
 
 

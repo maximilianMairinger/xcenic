@@ -10,7 +10,8 @@ page-heading {
   left: 20px;
   font-weight: bold;
   font-size: 1.2em;
-  cursor: text;
+  cursor: pointer;
+  user-select: none;
   width: 100%;
 }
 
