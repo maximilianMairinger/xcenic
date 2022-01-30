@@ -17,10 +17,10 @@ export default class PageFrame extends Component {
 
   public readonly heading = this.body.masterHeader as HTMLElement
 
-  constructor(page?: HTMLElement, private nameData?: Data<string>) {
+
+  constructor(page: HTMLElement, private nameData: Data<string>, dragingCb: (pos: {x: number, y: number}) => void, abs: {z: number}) {
     super(false as any)
     this.append(page)
-    if (this.nameData === undefined) this.nameData = new Data("Page " + nth++)
 
     this.sra(ce("style").html(require("tippy.js/dist/tippy.css").toString() + require('tippy.js/animations/shift-away-subtle.css').toString()))
 
@@ -52,14 +52,17 @@ export default class PageFrame extends Component {
     })
 
     headingElem.on("dblclick", () => {
+      dragStartListener.deactivate()
       headingElem.css({cursor: "text"})
       headingElem.setAttribute("contenteditable", "true")
       selectText(headingElem)
     })
 
+
     
     
     const submitTextEdit = () => {
+      dragStartListener.activate()
       headingElem.css({cursor: "pointer"})
       headingElem.setAttribute("contenteditable", "false")
 
@@ -100,8 +103,42 @@ export default class PageFrame extends Component {
 
 
 
+    const offset = {
+      x: 0,
+      y: 0
+    }
 
+    const dragStartListener = headingElem.on("mousedown", (e) => {
+      if (e.button === 0) {
+        dragListener.activate()
+        const zInv = 1 / abs.z
+        offset.x = e.clientX * zInv - this.css("translateX")
+        offset.y = e.clientY * zInv - this.css("translateY")
+      }
+    })
+
+    const dragListener = document.body.on("mousemove", (e) => {
+      const zInv = 1 / abs.z
+      dragingCb({
+        x: e.clientX * zInv - offset.x,
+        y: e.clientY * zInv - offset.y
+      })
+    })
+    dragListener.deactivate()
+
+    const cancelDragF = () => {
+      dragListener.deactivate()
+    }
+
+    document.body.on("mouseup", (e) => {
+      if (e.button === 0) cancelDragF()
+    })
+    document.body.on("blur", cancelDragF)
   }
+
+    
+
+
 
   name(to?: string) {
     if (to !== undefined) {

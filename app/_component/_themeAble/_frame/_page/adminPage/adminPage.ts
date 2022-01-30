@@ -47,18 +47,43 @@ function getCtrlKey() {
 
 export default class AdminPage extends Page {
 
-
+  private addedPagesCount = 0
   private appendPageToCanvas(...pages: HTMLElement[]) {
+    const abs = this.abs
     this.body.canvas.apd(pages.map(page => {
       if ("disableContentVisibilityOptimisation" in (page as SectionedPage)) (page as SectionedPage).disableContentVisibilityOptimisation()
+
+
 
       const d = new Data("hello")
       d.get(() => {
         throw new UrlDuplicateError()
       }, false)
 
-      const frame = new PageFrame(page, d)
+
+      const frame = new PageFrame(page, d, (pos) => {
+        frame.css({
+          translateX: pos.x,
+          translateY: pos.y
+        })
+      }, abs)
+
+
+      frame.css({
+        translateX: 300 + this.addedPagesCount * 2000,
+        translateY: 300
+      })
+
+      
+      this.addedPagesCount++
+
+
+      
       this.addNoScaleAddons(frame.heading)
+      //@ts-ignore
+      frame.css({
+        willChange: "transform"
+      })
       // @ts-ignore
       frame.heading.css({
         transformOrigin: "left bottom",
@@ -72,6 +97,8 @@ export default class AdminPage extends Page {
   private addNoScaleAddons(addon: HTMLElement) {
     return this.specialAddonList.push(addon) as { remove: () => void }
   }
+
+  private abs: {x: number, y: number, z: number, zoomOffset: {x: number, y: number}}
 
   constructor(posStoreName = "") {
     super()
@@ -93,6 +120,17 @@ export default class AdminPage extends Page {
 
 
 
+    const abs = this.abs = clone(adminPos()) as {
+      x: number;
+      y: number;
+      z: number;
+      zoomOffset: {
+          x: number;
+          y: number;
+      }
+    }
+
+
     this.appendPageToCanvas(
       ce("test-box"),
       new ContactPage(),
@@ -109,15 +147,6 @@ export default class AdminPage extends Page {
     const child = target.children[0] as HTMLElement
 
 
-    const abs = clone(adminPos()) as {
-      x: number;
-      y: number;
-      z: number;
-      zoomOffset: {
-          x: number;
-          y: number;
-      }
-    }
 
 
     const wheelIdle = isIdle()
@@ -535,10 +564,10 @@ export default class AdminPage extends Page {
         scale: z
       }) 
 
-
+      const invZ = 1 / z
       for (const addon of this.specialAddonList) {
         addon.css({
-          scale: 1 / z
+          scale: invZ
         }) 
       }
 

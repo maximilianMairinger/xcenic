@@ -28,14 +28,13 @@ page-canvas {
   height: max-content;
   min-width: 15000px;
   min-height: 15000px;
-  margin-top: 55px;
 }
 
 c-page-frame {
   display: block;
-  position: relative;
-  margin: 300px;
-  float: left;
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 100vw;
   height: max-content;
 }
