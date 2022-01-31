@@ -1,4 +1,4 @@
-import { Data } from "josm"
+import { Data, DataBase, DataCollection } from "josm"
 import { declareComponent } from "../../../../../../lib/declareComponent"
 import Component from "../../../../../component"
 import lang from "../../../../../../lib/lang"
@@ -18,7 +18,7 @@ export default class PageFrame extends Component {
   public readonly heading = this.body.masterHeader as HTMLElement
 
 
-  constructor(page: HTMLElement, private nameData: Data<string>, dragingCb: (pos: {x: number, y: number}) => void, abs: {z: number}) {
+  constructor(page: HTMLElement, private nameData: Data<string>, initPos: {x: number, y: number}, abs: {z: number}, widthData: Data<number>) {
     super(false as any)
     this.append(page)
 
@@ -67,13 +67,11 @@ export default class PageFrame extends Component {
       headingElem.setAttribute("contenteditable", "false")
 
 
-
-      setHeadingSub.deactivate()
       const beforeSet = this.nameData.get()
       try {
-        this.nameData.set(headingElem.text())
+        setHeadingSub.setToData(headingElem.text())
       }
-      catch (e) {
+      catch(e) {
         if (e instanceof UrlDuplicateError) {
           tip.show()
           headingElem.text(beforeSet, false)
@@ -81,7 +79,7 @@ export default class PageFrame extends Component {
         }
         else throw e
       }
-      setHeadingSub.activate(false)
+
     }
 
     headingElem.on("keydown", (e) => {
@@ -102,32 +100,41 @@ export default class PageFrame extends Component {
     })
 
 
+    
 
-    const offset = {
-      x: 0,
-      y: 0
-    }
+
+    const pos = this.pos = new DataBase(initPos)
+
+    new DataCollection(pos.x, widthData).get((x, w) => {
+      console.log(x, w)
+      this.css({translateX: x * w})
+    })
+
+    pos.y.get((y) => {
+      this.css({translateY: y})
+    })
+
+
+
 
     const dragStartListener = headingElem.on("mousedown", (e) => {
       if (e.button === 0) {
         dragListener.activate()
-        const zInv = 1 / abs.z
-        offset.x = e.clientX * zInv - this.css("translateX")
-        offset.y = e.clientY * zInv - this.css("translateY")
+        this.currentlyMoving.set(true)
       }
     })
 
     const dragListener = document.body.on("mousemove", (e) => {
       const zInv = 1 / abs.z
-      dragingCb({
-        x: e.clientX * zInv - offset.x,
-        y: e.clientY * zInv - offset.y
-      })
+
+      pos.x.set(pos.x.get() + (e.movementX * zInv / widthData.get()))
+      pos.y.set(pos.y.get() + (e.movementY * zInv))
     })
     dragListener.deactivate()
 
     const cancelDragF = () => {
       dragListener.deactivate()
+      this.currentlyMoving.set(false)
     }
 
     document.body.on("mouseup", (e) => {
@@ -136,6 +143,9 @@ export default class PageFrame extends Component {
     document.body.on("blur", cancelDragF)
   }
 
+
+  public pos: DataBase<{x: number, y: number}>
+  public currentlyMoving: Data<boolean> = new Data(false) as Data<boolean>
     
 
 

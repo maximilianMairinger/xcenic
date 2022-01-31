@@ -16,7 +16,7 @@ import ContactPage from "./../contactPage/contactPage"
 import HomePage from "./../_sectionedPage/_lazySectionedPage/homepage/homepage"
 import SectionedPage from "../_sectionedPage/sectionedPage"
 import PageFrame, { UrlDuplicateError } from "./pageFrame/pageFrame"
-import { Data } from "josm"
+import { Data, DataCollection } from "josm"
 
 
 
@@ -47,6 +47,9 @@ function getCtrlKey() {
 
 export default class AdminPage extends Page {
 
+  private widthData = this.resizeData().tunnel((e) => e.width / 2000)
+
+
   private addedPagesCount = 0
   private appendPageToCanvas(...pages: HTMLElement[]) {
     const abs = this.abs
@@ -60,19 +63,11 @@ export default class AdminPage extends Page {
         throw new UrlDuplicateError()
       }, false)
 
-
-      const frame = new PageFrame(page, d, (pos) => {
-        frame.css({
-          translateX: pos.x,
-          translateY: pos.y
-        })
-      }, abs)
+      
+      const frame = new PageFrame(page, d, {x: 0, y: 0}, abs, this.widthData)
 
 
-      frame.css({
-        translateX: 300 + this.addedPagesCount * 2000,
-        translateY: 300
-      })
+    
 
       
       this.addedPagesCount++
@@ -81,9 +76,6 @@ export default class AdminPage extends Page {
       
       this.addNoScaleAddons(frame.heading)
       //@ts-ignore
-      frame.css({
-        willChange: "transform"
-      })
       // @ts-ignore
       frame.heading.css({
         transformOrigin: "left bottom",
