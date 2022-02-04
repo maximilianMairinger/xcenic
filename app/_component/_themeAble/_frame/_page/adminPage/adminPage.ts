@@ -874,17 +874,17 @@ export default class AdminPage extends Page {
         let localX = myX
         let localY = myY
         
-        // if (-x > myX) localX = -x
-        // if (-y > myY) localY = -y
+        if (-x * invZ > myX) localX = -x * invZ
+        if (-y * invZ > myY) localY = -y * invZ
 
         // consider scale
-        if (-x + target.width() < myX + addon.width()) localX = -x + target.width() - addon.width()
-        // if (-y + target.height() < myY + addon.height()) localY = -y + target.height() - (myY + addon.height())
+        if (-x + target.width() < myX * z + addon.width()) localX = (-x + target.width() - addon.width()) * invZ
+
         
         addon.css({
           scale: invZ,
-          translateX: localX * invZ,
-          translateY: localY * invZ
+          translateX: localX,
+          translateY: localY
         }) 
         
       }

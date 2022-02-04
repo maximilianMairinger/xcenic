@@ -86,7 +86,7 @@ export default class PageFrame extends Component {
     })
 
 
-    addNoScaleBoundAddon(makePopperIndecator(), {x: 1000, y: 100})
+    addNoScaleBoundAddon(makePopperIndecator(), {x: 10000, y: 100})
  
     
     const submitTextEdit = () => {
