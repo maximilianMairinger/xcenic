@@ -13,7 +13,14 @@ page-heading {
   font-size: 1.2em;
   cursor: pointer;
   user-select: none;
-  width: 100%;
+  width: max-content;
+  max-width: calc(calc(100% - 40px) * var(--scale));
+}
+
+page-heading span {
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  white-space: nowrap;
 }
 
 page-wrapper {
@@ -24,3 +31,4 @@ page-wrapper {
 
   display: block;
 }
+

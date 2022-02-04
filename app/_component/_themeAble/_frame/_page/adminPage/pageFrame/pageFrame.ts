@@ -7,8 +7,20 @@ import selectText from "select-text"
 
 import tippy, {sticky} from "tippy.js"
 
+function makePopperIndecator() {
+  const indecator = ce("popper-indecator")
+  // @ts-ignore
+  indecator.css({
+    width: 100,
+    height: 100,
+    borderRadius: "50%",
+    backgroundColor: "red",
+    transformOrigin: "left top",
+    willChange: "transform"
+  })
+  return indecator
+}
 
-let nth = 1
 
 export class UrlDuplicateError extends Error {}
 
@@ -16,9 +28,9 @@ export class UrlDuplicateError extends Error {}
 export default class PageFrame extends Component {
 
   public readonly heading = this.body.masterHeader as HTMLElement
+  public currentlyMoving: Data<boolean> = new Data(false) as Data<boolean>
 
-
-  constructor(page: HTMLElement, private nameData: Data<string>, initPos: {x: number, y: number}, abs: {z: number}, widthData: Data<number>) {
+  constructor(page: HTMLElement, private nameData: Data<string>, public pos: DataBase<{x: number, y: number}>, abs: {z: number}, widthData: Data<number>, addNoScaleBoundAddon: (addon: HTMLElement, pos: {x: number, y: number}) => {remove(): void}) {
     super(false as any)
     this.append(page)
 
@@ -35,7 +47,7 @@ export default class PageFrame extends Component {
       animation: 'shift-away-subtle',
       appendTo: "parent",
       arrow: true,
-      maxWidth: "none",
+      maxWidth: 400,
       sticky: true,
       plugins: [sticky],
       
@@ -50,21 +62,35 @@ export default class PageFrame extends Component {
         ]
       }
     })
+    tip.popper.css({width: "max-content"})
+
+
+    const editing = new Data(false)
+    editing.get((editing) => {
+      if (editing) {
+        dragStartListener.deactivate()
+        headingElem.css({cursor: "text", overflow: "visible"})
+        headingElem.setAttribute("contenteditable", "true")
+  
+        selectText(headingElem)
+      }
+      else {
+        dragStartListener.activate()
+        headingElem.css({cursor: "pointer", overflow: "hidden"})
+        headingElem.setAttribute("contenteditable", "false")
+      }
+    }, false)
 
     headingElem.on("dblclick", () => {
-      dragStartListener.deactivate()
-      headingElem.css({cursor: "text"})
-      headingElem.setAttribute("contenteditable", "true")
-      selectText(headingElem)
+      editing.set(true)
     })
 
 
-    
+    addNoScaleBoundAddon(makePopperIndecator(), {x: 1000, y: 100})
+ 
     
     const submitTextEdit = () => {
-      dragStartListener.activate()
-      headingElem.css({cursor: "pointer"})
-      headingElem.setAttribute("contenteditable", "false")
+      editing.set(false)
 
 
       const beforeSet = this.nameData.get()
@@ -74,6 +100,7 @@ export default class PageFrame extends Component {
       catch(e) {
         if (e instanceof UrlDuplicateError) {
           tip.show()
+          addNoScaleBoundAddon(makePopperIndecator(), {x: 400, y: 400})
           headingElem.text(beforeSet, false)
           this.nameData.set(beforeSet)
         }
@@ -92,7 +119,6 @@ export default class PageFrame extends Component {
 
     headingElem.on("blur", () => {
       submitTextEdit()
-
     })
 
     const setHeadingSub = this.nameData.get((name) => {
@@ -103,14 +129,12 @@ export default class PageFrame extends Component {
     
 
 
-    const pos = this.pos = new DataBase(initPos)
-
     new DataCollection(pos.x, widthData).get((x, w) => {
-      console.log(x, w)
-      this.css({translateX: x * w})
+      this.css({translateX: x})
     })
 
     pos.y.get((y) => {
+      if (y < 30 / abs.z) y = 30 / abs.z
       this.css({translateY: y})
     })
 
@@ -126,9 +150,8 @@ export default class PageFrame extends Component {
 
     const dragListener = document.body.on("mousemove", (e) => {
       const zInv = 1 / abs.z
-
-      pos.x.set(pos.x.get() + (e.movementX * zInv / widthData.get()))
-      pos.y.set(pos.y.get() + (e.movementY * zInv))
+      pos.x.set(pos.x.get() + (e.movementX * zInv))
+      pos.y.set(pos.y.get() + (e.movementY * zInv) )
     })
     dragListener.deactivate()
 
@@ -144,8 +167,6 @@ export default class PageFrame extends Component {
   }
 
 
-  public pos: DataBase<{x: number, y: number}>
-  public currentlyMoving: Data<boolean> = new Data(false) as Data<boolean>
     
 
 

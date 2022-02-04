@@ -6,7 +6,6 @@ import localSettings from "./../../../../../lib/localSettings"
 import { ElementList } from "extended-dom"
 import animationFrameDelta, { ignoreUnsubscriptionError, stats } from "animation-frame-delta"
 import Easing from "waapi-easing"
-import clone from "fast-copy"
 import isIdle from "is-idle"
 import LinkedList from "fast-linked-list"
 
@@ -16,11 +15,14 @@ import ContactPage from "./../contactPage/contactPage"
 import HomePage from "./../_sectionedPage/_lazySectionedPage/homepage/homepage"
 import SectionedPage from "../_sectionedPage/sectionedPage"
 import PageFrame, { UrlDuplicateError } from "./pageFrame/pageFrame"
-import { Data, DataCollection } from "josm"
+import { Data, DataBase, DataCollection } from "josm"
+import clone from "fast-copy"
 
 
 
-
+type Mutable<T> = {
+  -readonly[P in keyof T]: T[P]
+};
 
 
 const dragMouseButton = 1
@@ -28,7 +30,15 @@ const maxZoomStep = 20 // percent
 const scrollWheelEasingFunc = (new Easing("easeInOut")).function
 
 
-
+const oneSideTemplate = {
+  pages: [] as PageFrame[],
+  distancesPerSide: {
+    left: [] as number[],
+    right: [] as number[],
+    top: [] as number[],
+    bottom: [] as number[]
+  }
+}
 
 
 
@@ -42,13 +52,259 @@ function getCtrlKey() {
   return getPlatform() === "mac" ? "Meta" : "Control"
 }
 
+type Side = "left" | "right" | "top" | "bottom"
 
 
+const oppisiteSideIndex = {
+  left: "right",
+  right: "left",
+  top: "bottom",
+  bottom: "top"
+}
+
+const rightAngleSideIndex = {
+  left: ["top", "bottom"],
+  right: ["top", "bottom"],
+  top: ["left", "right"],
+  bottom: ["left", "right"]
+}
+
+const sideToDirIndex = {
+  left: 1,
+  right: -1,
+  top: 1,
+  bottom: -1
+}
+
+const boundAddonInitPosSymbol = Symbol("addonInitPos")
+
+type Rect = {top: number, left: number, right: number, bottom: number}
 
 export default class AdminPage extends Page {
 
-  private widthData = this.resizeData().tunnel((e) => e.width / 2000)
+  private normalizedWidthData = this.resizeData().tunnel(e => e.width / 1500) 
 
+
+  private getBoundingRectOfFrame(element: PageFrame) {
+    const pos = element.pos
+    const margin = 50
+    const width = document.body.width()
+    const height = element.height()
+    return {
+      top: pos.y.get(),
+      left: pos.x.get(),
+      right: pos.x.get() + width,
+      bottom: pos.y.get() + height,
+      width,
+      height
+    }
+
+  }
+     
+
+  // find out if the page is colliding with another page and if so return the side where they colliding in decrasing order
+  private pageIsCollidingWith(myBounds: Rect, otherBounds: Rect) {
+    // calculate how far we are colliding on each side.
+    const left = {distance: myBounds.left - otherBounds.right, side: "left"}
+    const right = {distance: otherBounds.left - myBounds.right, side: "right"}
+    const top = {distance: myBounds.top - otherBounds.bottom, side: "top"}
+    const bottom = {distance: otherBounds.top - myBounds.bottom, side: "bottom"}
+
+
+    // return false when not colliding
+    if (!(left.distance < 0 && top.distance < 0 && right.distance < 0 && bottom.distance < 0)) return false
+
+    const where = () => {
+      const collidingSides = [left, right, top, bottom].filter(side => side.distance < 0) as {distance: number, side: Side}[]
+      // sort by colliding value in ascending order (closest from myBounds)
+      collidingSides.sort((a, b) => b.distance - a.distance)
+  
+      return collidingSides
+    }
+    return where
+  }
+
+  private findNextFreeSpace(pageToFit: PageFrame, collidingPages: PageFrame[], trySides: {distance: number, side: Side}[]) {
+    const pageToFitBounds = this.getBoundingRectOfFrame(pageToFit)
+
+
+    const collisionsPerSide = {
+      left: clone(oneSideTemplate),
+      right: clone(oneSideTemplate),
+      top: clone(oneSideTemplate),
+      bottom: clone(oneSideTemplate)
+    }
+
+
+    for (const side of trySides) {
+      const tryBounds = clone(pageToFitBounds) as Mutable<DOMRect>
+      const dir = sideToDirIndex[side.side]
+      tryBounds[side.side] += Math.abs(side.distance) * dir
+      tryBounds[oppisiteSideIndex[side.side]] += Math.abs(side.distance) * dir
+
+
+      const col = collisionsPerSide[side.side]
+      for (const p of this.pages) {
+        if (p === pageToFit || collidingPages.includes(p)) continue
+        const collision = this.pageIsCollidingWith(tryBounds, this.getBoundingRectOfFrame(p))
+        if (collision) {
+          col.pages.push(p)
+
+          const newCols = collision()
+          for (const newCol of newCols) {
+            col.distancesPerSide[newCol.side].push(newCol.distance)
+          }
+        }
+      }
+
+      if (col.pages.empty) return tryBounds
+    }
+
+
+    const recursivelyTryAgain = () => {
+
+      const tryDeeper = [] as Function[]
+      for (const side in trySides.Inner("side")) {
+        const newCollision = collisionsPerSide[side as Side]
+        if (!newCollision.pages.empty) {
+          const newSides = this.calculateBoundingSides(newCollision.distancesPerSide)
+          // order newSides so that the closest right angle is first, then the other right angle second, then the same direction as last time third, then the direction backwards fourth
+          const rightAngleSides = rightAngleSideIndex[trySides.first.side]
+          const rightAngleSidesInOrder = [] as Side[]
+          for (const newSide of newSides) {
+            if (newSide.side === rightAngleSides[0]) {
+              rightAngleSidesInOrder.push(trySides[0].side, trySides[1].side)
+              break
+            }
+            else if (newSide.side === rightAngleSides[1]) {
+              rightAngleSidesInOrder.push(trySides[1].side, trySides[0].side)
+              break
+            }
+          }
+
+          const newSidesInOrder = [...rightAngleSidesInOrder, oppisiteSideIndex[trySides.first.side], trySides.first.side]
+          // order newSides to fit newSidesInOrder
+          newSides.sort((a, b) => {
+            const aIndex = newSidesInOrder.indexOf(a.side)
+            const bIndex = newSidesInOrder.indexOf(b.side)
+            return aIndex - bIndex
+          })
+          
+
+
+          const ret = this.findNextFreeSpace(pageToFit, newCollision.pages, newSides)
+          if (!(ret instanceof Function)) return ret
+          else tryDeeper.push(ret)
+        }
+      }
+
+
+      const evenDeeper = () => {
+        const againDeeper = [] as Function[]
+        for (const deep of tryDeeper) {
+          const ret = deep()
+          if (!(ret instanceof Function)) return ret
+          againDeeper.push(ret)
+        }
+        tryDeeper.clear().push(...againDeeper)
+        return evenDeeper
+      }
+
+      return evenDeeper
+    }
+
+    return recursivelyTryAgain
+  }
+
+
+  private async ensurePageIsInFreeSpace(page: PageFrame) {
+    const collisions: {page: PageFrame, cols: {side: Side, distance: number}[]}[] = []
+    for (const p of this.pages) {
+      if (p === page) continue
+      let collision = this.pageIsCollidingWith(this.getBoundingRectOfFrame(page), this.getBoundingRectOfFrame(p))
+      if (collision) {
+        const colly = {page: p, cols: [] as {side: Side, distance: number}[]}
+        collisions.push(colly)
+        const cols = collision()
+        colly.cols.push(...cols)
+        colly.page = p
+      }
+    }
+
+    if (!collisions.empty) {
+      console.log("collision with", collisions)
+      // const boundingSides = this.calculateBoundingSides(collisions.distancesPerSide)
+      const callAgainLs = [] as Function[]
+
+      for (const collision of collisions) {
+        const freeSpace = this.findNextFreeSpace(page, [collision.page], collision.cols)
+        if (freeSpace instanceof Function) {
+          callAgainLs.push(freeSpace)
+        }
+        else {
+          page.pos({x: freeSpace.left, y: freeSpace.top})
+          return
+        }
+      }
+
+      let nthTry = 0
+      while (nthTry > 50) {
+        nthTry++
+
+        let solutions = [] as {left: number, top: number}[]
+        for (const callAgain of callAgainLs) {
+          let freeSpace = callAgain()
+
+          let innerTry = 0
+          
+          while(innerTry < 10) {
+            innerTry++
+            if (freeSpace instanceof Function) {
+              freeSpace = freeSpace()
+            }
+            else {
+              solutions.push(freeSpace)
+              break
+            }
+          }
+          callAgainLs.push(freeSpace)
+          
+        }
+
+        if (!solutions.empty) {
+          // weight solutions by distance from original position
+          const originalPos = page.pos()
+          solutions.sort((a, b) => {
+            // pytagoras
+            const aDist = Math.sqrt(Math.pow(a.left - originalPos.x, 2) + Math.pow(originalPos.y, 2))
+            const bDist = Math.sqrt(Math.pow(b.left - originalPos.x, 2) + Math.pow(originalPos.y, 2))
+            return aDist - bDist
+          })
+          const bestSolution = solutions.first
+          page.pos({x: bestSolution.left, y: bestSolution.top})
+        }
+
+
+        callAgainLs.clear()
+      }
+      console.error("Could not find free space for page", page)
+    }
+  }
+
+  private calculateBoundingSides(collisions: {[side in Side]: number[]}): {distance: number, side: Side}[] {
+    const boundingSides = [] as {distance: number, side: Side}[]
+    for (const side in collisions) {
+      // take the one that overlaps the most
+      const distance = Math.min(...collisions[side])
+      boundingSides.push({distance, side: side as Side})
+    }
+    boundingSides.sort((a, b) => b.distance - a.distance)
+    return boundingSides
+  }
+
+
+      
+  private pages = [] as PageFrame[]
 
   private addedPagesCount = 0
   private appendPageToCanvas(...pages: HTMLElement[]) {
@@ -64,18 +320,27 @@ export default class AdminPage extends Page {
       }, false)
 
       
-      const frame = new PageFrame(page, d, {x: 0, y: 0}, abs, this.widthData)
 
 
-    
 
+      const frame = new PageFrame(page, d, localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 0}), abs, this.normalizedWidthData, this.addNoScaleBoundAddon.bind(this))
+      frame.currentlyMoving.get((moving) => {
+        if (moving) {
+          frame.css({zIndex: 1})
+        }
+        else {
+          // frame.css({zIndex: "initial"})
+          this.ensurePageIsInFreeSpace(frame)
+        }
+      }, false)
       
-      this.addedPagesCount++
+      this.pages.push(frame)
 
+
+      this.addedPagesCount++
 
       
       this.addNoScaleAddons(frame.heading)
-      //@ts-ignore
       // @ts-ignore
       frame.heading.css({
         transformOrigin: "left bottom",
@@ -85,11 +350,39 @@ export default class AdminPage extends Page {
     }))
   }
 
-  private specialAddonList: LinkedList<HTMLElement> = new LinkedList()
+  private noScaleElementList: LinkedList<HTMLElement> = new LinkedList()
+  private noScaleBoundElementList: LinkedList<HTMLElement> = new LinkedList()
+
   private addNoScaleAddons(addon: HTMLElement) {
-    return this.specialAddonList.push(addon) as { remove: () => void }
+    return this.noScaleElementList.push(addon) as { remove: () => void }
   }
 
+
+  private addNoScaleBoundAddon(addon: HTMLElement, initPos?: {x: number, y: number}) {
+    if (initPos) {
+      addon.css({
+        position: "absolute",
+        top: 0,
+        left: 0
+      })
+      this.body.canvas.apd(addon)
+      addon[boundAddonInitPosSymbol] = initPos
+
+      const tok = this.noScaleBoundElementList.push(addon) as { remove: () => void }
+      return {remove: () => {
+        addon.remove()
+        tok.remove()
+      }}
+    }
+    else {
+      initPos = addon.getBoundingClientRect()
+      addon[boundAddonInitPosSymbol] = initPos
+      return this.noScaleBoundElementList.push(addon) as { remove: () => void }
+    }
+
+    
+  }
+  
   private abs: {x: number, y: number, z: number, zoomOffset: {x: number, y: number}}
 
   constructor(posStoreName = "") {
@@ -97,9 +390,9 @@ export default class AdminPage extends Page {
 
 
     const adminPos = localSettings("adminPos" + posStoreName, {
-      x: 0,
-      y: 0,
-      z: 1,
+      x: 400,
+      y: 400,
+      z: .5,
       zoomOffset: {
         x: 0,
         y: 0
@@ -125,8 +418,14 @@ export default class AdminPage extends Page {
 
     this.appendPageToCanvas(
       ce("test-box"),
-      new ContactPage(),
-      new HomePage("admin"),
+      ce("test-box"),
+      ce("test-box"),
+      ce("test-box"),
+      ce("test-box"),
+      ce("test-box"),
+      ce("test-box"),
+      // new ContactPage(),
+      // new HomePage("admin"),
     )
 
 
@@ -263,8 +562,8 @@ export default class AdminPage extends Page {
 
 
         // keep the zoom around the pointer
-        const pointerX = e.clientX + abs.zoomOffset.x - abs.x
-        const pointerY = e.clientY + abs.zoomOffset.y - abs.y
+        const pointerX = e.clientX * 0 + abs.zoomOffset.x - abs.x
+        const pointerY = e.clientY * 0 + abs.zoomOffset.y - abs.y
 
         abs.zoomOffset.x += pointerX * (zoom - 1)
         abs.zoomOffset.y += pointerY * (zoom - 1)
@@ -513,6 +812,11 @@ export default class AdminPage extends Page {
       return (soll - ist) * .3
     }
 
+    const marginOfFrame = {
+      top: child.css("marginTop"),
+      left: child.css("marginLeft")
+    }
+
 
     animationFrameDelta(() => {
 
@@ -549,19 +853,42 @@ export default class AdminPage extends Page {
         renderedCoords.y += w
       }
 
-
       target.css({
         translateX: x,
         translateY: y,
         scale: z
       }) 
 
+      target.style.setProperty("--scale", z.toString())
+
       const invZ = 1 / z
-      for (const addon of this.specialAddonList) {
+      for (const addon of this.noScaleElementList) {
         addon.css({
           scale: invZ
         }) 
       }
+      for (const addon of this.noScaleBoundElementList) {
+
+        const { x: myX, y: myY } = addon[boundAddonInitPosSymbol]
+        
+        let localX = myX
+        let localY = myY
+        
+        // if (-x > myX) localX = -x
+        // if (-y > myY) localY = -y
+
+        // consider scale
+        if (-x + target.width() < myX + addon.width()) localX = -x + target.width() - addon.width()
+        // if (-y + target.height() < myY + addon.height()) localY = -y + target.height() - (myY + addon.height())
+        
+        addon.css({
+          scale: invZ,
+          translateX: localX * invZ,
+          translateY: localY * invZ
+        }) 
+        
+      }
+
 
 
       // set abs coordinates to localstorage on every frame (not needed as we save them on pageunload)
