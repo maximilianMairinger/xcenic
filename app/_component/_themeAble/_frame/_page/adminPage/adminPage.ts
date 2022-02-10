@@ -315,9 +315,8 @@ export default class AdminPage extends Page {
           // weight solutions by distance from original position
           const originalPos = page.pos()
           solutions.sort((a, b) => {
-            // pytagoras
-            const aDist = Math.sqrt(Math.pow(a.left - originalPos.x, 2) + Math.pow(a.top - originalPos.y, 2))
-            const bDist = Math.sqrt(Math.pow(b.left - originalPos.x, 2) + Math.pow(b.top - originalPos.y, 2))
+            const aDist = Math.hypot(a.left - originalPos.x, a.top - originalPos.y)
+            const bDist = Math.hypot(b.left - originalPos.x, b.top - originalPos.y)
             return aDist - bDist
           })
           const bestSolution = solutions.first
@@ -603,8 +602,8 @@ export default class AdminPage extends Page {
 
 
         // keep the zoom around the pointer
-        const pointerX = e.clientX * 0 + abs.zoomOffset.x - abs.x
-        const pointerY = e.clientY * 0 + abs.zoomOffset.y - abs.y
+        const pointerX = e.clientX + abs.zoomOffset.x - abs.x
+        const pointerY = e.clientY + abs.zoomOffset.y - abs.y
 
         abs.zoomOffset.x += pointerX * (zoom - 1)
         abs.zoomOffset.y += pointerY * (zoom - 1)
@@ -853,10 +852,6 @@ export default class AdminPage extends Page {
       return (soll - ist) * .3
     }
 
-    const marginOfFrame = {
-      top: child.css("marginTop"),
-      left: child.css("marginLeft")
-    }
 
 
     animationFrameDelta(() => {
