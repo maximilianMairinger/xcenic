@@ -21,6 +21,8 @@ function makePopperIndecator() {
   return indecator
 }
 
+const minDistanceTop = 30
+
 
 export class UrlDuplicateError extends Error {}
 
@@ -30,7 +32,7 @@ export default class PageFrame extends Component {
   public readonly heading = this.body.masterHeader as HTMLElement
   public currentlyMoving: Data<boolean> = new Data(false) as Data<boolean>
 
-  constructor(page: HTMLElement, private nameData: Data<string>, public pos: DataBase<{x: number, y: number}>, abs: {z: number}, widthData: Data<number>, addNoScaleBoundAddon: (addon: HTMLElement, pos: {x: number, y: number}) => {remove(): void}) {
+  constructor(page: HTMLElement, private nameData: Data<string>, public pos: DataBase<{x: number, y: number}>, zData: Data<number>, widthData: Data<number>, addNoScaleBoundAddon: (addon: HTMLElement, pos: {x: number, y: number}) => {remove(): void}) {
     super(false as any)
     this.append(page)
 
@@ -86,7 +88,7 @@ export default class PageFrame extends Component {
     })
 
 
-    addNoScaleBoundAddon(makePopperIndecator(), {x: 10000, y: 100})
+    // addNoScaleBoundAddon(makePopperIndecator(), {x: 10000, y: 100})
  
     
     const submitTextEdit = () => {
@@ -133,23 +135,26 @@ export default class PageFrame extends Component {
       this.css({translateX: x})
     })
 
-    pos.y.get((y) => {
-      if (y < 30 / abs.z) y = 30 / abs.z
+
+    new DataCollection(pos.y, zData).get((y, z) => {
+      if (y < minDistanceTop / z + minDistanceTop) y = minDistanceTop / z + minDistanceTop
       this.css({translateY: y})
     })
 
 
 
 
+
     const dragStartListener = headingElem.on("mousedown", (e) => {
       if (e.button === 0) {
+        if (pos.y.get() < minDistanceTop / zData.get() + minDistanceTop) pos.y.set(minDistanceTop / zData.get() + minDistanceTop)
         dragListener.activate()
         this.currentlyMoving.set(true)
       }
     })
 
     const dragListener = document.body.on("mousemove", (e) => {
-      const zInv = 1 / abs.z
+      const zInv = 1 / zData.get()
       pos.x.set(pos.x.get() + (e.movementX * zInv))
       pos.y.set(pos.y.get() + (e.movementY * zInv) )
     })

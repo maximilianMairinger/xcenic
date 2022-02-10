@@ -7,8 +7,8 @@
 page-heading {
   display: flex;
   position: absolute;
-  top: -35px;
-  left: 20px;
+  bottom: calc(100% + calc(3px / var(--scale)));
+  left: 30px;
   font-weight: bold;
   font-size: 1.2em;
   cursor: pointer;

@@ -84,17 +84,26 @@ export default class AdminPage extends Page {
 
   private normalizedWidthData = this.resizeData().tunnel(e => e.width / 1500) 
 
+  private getMargin() {
+     /* p / this.abs.z */
+    return {
+      top: 90,
+      left: 20,
+      right: 20,
+      bottom: 90
+    }
+  }
 
   private getBoundingRectOfFrame(element: PageFrame) {
     const pos = element.pos
-    const margin = 50
+    const margin = this.getMargin()
     const width = document.body.width()
     const height = element.height()
     return {
-      top: pos.y.get(),
-      left: pos.x.get(),
-      right: pos.x.get() + width,
-      bottom: pos.y.get() + height,
+      top: pos.y.get() - margin.top,
+      left: pos.x.get() - margin.left,
+      right: pos.x.get() + width + margin.right,
+      bottom: pos.y.get() + height + margin.bottom,
       width,
       height
     }
@@ -135,6 +144,8 @@ export default class AdminPage extends Page {
       bottom: clone(oneSideTemplate)
     }
 
+    const solutions = []
+
 
     for (const side of trySides) {
       const tryBounds = clone(pageToFitBounds) as Mutable<DOMRect>
@@ -157,11 +168,20 @@ export default class AdminPage extends Page {
         }
       }
 
-      if (col.pages.empty) return tryBounds
+      if (col.pages.empty) solutions.push(tryBounds)
     }
 
 
+    let allEmpty = true
+    for (const side in collisionsPerSide) if (!collisionsPerSide[side].pages.empty) allEmpty = false
+
+    if (allEmpty) return {
+      solutions
+    }
+
     const recursivelyTryAgain = () => {
+
+      const solutions = [] 
 
       const tryDeeper = [] as Function[]
       for (const side in trySides.Inner("side")) {
@@ -193,27 +213,44 @@ export default class AdminPage extends Page {
 
 
           const ret = this.findNextFreeSpace(pageToFit, newCollision.pages, newSides)
-          if (!(ret instanceof Function)) return ret
-          else tryDeeper.push(ret)
+          solutions.push(...ret.solutions)
+          if (ret.tryDeeper !== undefined) tryDeeper.push(ret.tryDeeper)
         }
+      }
+
+      let allEmpty = true
+      for (const side in collisionsPerSide) if (!collisionsPerSide[side].pages.empty) allEmpty = false
+  
+      if (allEmpty) return {
+        solutions
       }
 
 
       const evenDeeper = () => {
         const againDeeper = [] as Function[]
+        const solutions = []
         for (const deep of tryDeeper) {
           const ret = deep()
-          if (!(ret instanceof Function)) return ret
-          againDeeper.push(ret)
+          solutions.push(...ret.solutions)
+          if (ret.tryDeeper !== undefined) againDeeper.push(ret.tryDeeper)
         }
         tryDeeper.clear().push(...againDeeper)
-        return evenDeeper
+        return {
+          solutions,
+          tryDeeper: evenDeeper
+        } 
       }
 
-      return evenDeeper
+      return {
+        tryDeeper: evenDeeper,
+        solutions
+      }
     }
 
-    return recursivelyTryAgain
+    return {
+      tryDeeper: recursivelyTryAgain,
+      solutions
+    }
   }
 
 
@@ -231,32 +268,33 @@ export default class AdminPage extends Page {
       }
     }
 
+
     if (!collisions.empty) {
       console.log("collision with", collisions)
+
+      const setToPage = (x: number, y: number) => {
+        const margin = this.getMargin()
+        x += margin.left
+        y += margin.top
+        page.pos({x, y})
+      }
       // const boundingSides = this.calculateBoundingSides(collisions.distancesPerSide)
       const callAgainLs = [] as Function[]
 
       for (const collision of collisions) {
-        const freeSpace = this.findNextFreeSpace(page, [collision.page], collision.cols)
-        if (freeSpace instanceof Function) {
-          callAgainLs.push(freeSpace)
-        }
-        else {
-          page.pos({x: freeSpace.left, y: freeSpace.top})
-          return
-        }
+        callAgainLs.push(() => this.findNextFreeSpace(page, [collision.page], collision.cols))
       }
 
       let nthTry = 0
-      while (nthTry > 50) {
+      while (nthTry < 50) {
         nthTry++
 
         let solutions = [] as {left: number, top: number}[]
         for (const callAgain of callAgainLs) {
+          
           let freeSpace = callAgain()
 
           let innerTry = 0
-          
           while(innerTry < 10) {
             innerTry++
             if (freeSpace instanceof Function) {
@@ -267,7 +305,8 @@ export default class AdminPage extends Page {
               break
             }
           }
-          callAgainLs.push(freeSpace)
+
+          if (!(innerTry < 10))callAgainLs.push(freeSpace)
           
         }
 
@@ -281,7 +320,7 @@ export default class AdminPage extends Page {
             return aDist - bDist
           })
           const bestSolution = solutions.first
-          page.pos({x: bestSolution.left, y: bestSolution.top})
+          setToPage(bestSolution.left, bestSolution.top)
         }
 
 
@@ -307,8 +346,8 @@ export default class AdminPage extends Page {
   private pages = [] as PageFrame[]
 
   private addedPagesCount = 0
+  private absZData = new Data(1)
   private appendPageToCanvas(...pages: HTMLElement[]) {
-    const abs = this.abs
     this.body.canvas.apd(pages.map(page => {
       if ("disableContentVisibilityOptimisation" in (page as SectionedPage)) (page as SectionedPage).disableContentVisibilityOptimisation()
 
@@ -323,13 +362,13 @@ export default class AdminPage extends Page {
 
 
 
-      const frame = new PageFrame(page, d, localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 0}), abs, this.normalizedWidthData, this.addNoScaleBoundAddon.bind(this))
+      const frame = new PageFrame(page, d, localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 0}), this.absZData, this.normalizedWidthData, this.addNoScaleBoundAddon.bind(this))
       frame.currentlyMoving.get((moving) => {
         if (moving) {
           frame.css({zIndex: 1})
         }
         else {
-          // frame.css({zIndex: "initial"})
+          frame.css({zIndex: "initial"})
           this.ensurePageIsInFreeSpace(frame)
         }
       }, false)
@@ -860,6 +899,7 @@ export default class AdminPage extends Page {
       }) 
 
       target.style.setProperty("--scale", z.toString())
+      this.absZData.set(z)
 
       const invZ = 1 / z
       for (const addon of this.noScaleElementList) {
