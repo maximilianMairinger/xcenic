@@ -603,7 +603,7 @@ export default class AdminPage extends Page {
 
         // keep the zoom around the pointer
         const pointerX = e.clientX + abs.zoomOffset.x - abs.x
-        const pointerY = e.clientY + abs.zoomOffset.y - abs.y
+        const pointerY = e.clientY - 55 + abs.zoomOffset.y - abs.y
 
         abs.zoomOffset.x += pointerX * (zoom - 1)
         abs.zoomOffset.y += pointerY * (zoom - 1)
@@ -757,6 +757,8 @@ export default class AdminPage extends Page {
         curCoords.y = clientY
       }
       if (e.touches.length === 2) {
+        // zoom touch
+
         wasZoomingJustBefore = true
         const touch1 = touch2Cache = e.touches[0]
         const touch2 = e.touches[1]
@@ -769,7 +771,7 @@ export default class AdminPage extends Page {
 
         const centerOfZoom = {
           x: (touch1.clientX + touch2.clientX) / 2,
-          y: (touch1.clientY + touch2.clientY) / 2
+          y: (touch1.clientY + touch2.clientY) / 2 - 55 // not sure if -55 is correct (analog zu mousezoom)
         }
 
         const pointerX = centerOfZoom.x + abs.zoomOffset.x - abs.x
@@ -787,7 +789,6 @@ export default class AdminPage extends Page {
       }
     }, {passive: false})
 
-    // zoom touch
 
 
 
