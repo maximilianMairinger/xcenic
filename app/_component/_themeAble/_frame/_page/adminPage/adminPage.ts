@@ -279,7 +279,10 @@ export default class AdminPage extends Page {
         page.pos({x, y})
       }
       // const boundingSides = this.calculateBoundingSides(collisions.distancesPerSide)
-      const callAgainLs = [] as Function[]
+      const callAgainLs = [] as (() => {
+        solutions: {left: number, top: number}[];
+        tryDeeper?: Function;
+      })[]
 
       for (const collision of collisions) {
         callAgainLs.push(() => this.findNextFreeSpace(page, [collision.page], collision.cols))
@@ -297,16 +300,14 @@ export default class AdminPage extends Page {
           let innerTry = 0
           while(innerTry < 10) {
             innerTry++
-            if (freeSpace instanceof Function) {
-              freeSpace = freeSpace()
+            solutions.push(...freeSpace.solutions)
+            if (freeSpace.tryDeeper !== undefined) {
+              freeSpace = freeSpace.tryDeeper()
             }
-            else {
-              solutions.push(freeSpace)
-              break
-            }
+            else break
           }
 
-          if (!(innerTry < 10))callAgainLs.push(freeSpace)
+          if (!(innerTry < 10)) callAgainLs.push(freeSpace.tryDeeper as any)
           
         }
 
@@ -315,12 +316,13 @@ export default class AdminPage extends Page {
           const originalPos = page.pos()
           solutions.sort((a, b) => {
             // pytagoras
-            const aDist = Math.sqrt(Math.pow(a.left - originalPos.x, 2) + Math.pow(originalPos.y, 2))
-            const bDist = Math.sqrt(Math.pow(b.left - originalPos.x, 2) + Math.pow(originalPos.y, 2))
+            const aDist = Math.sqrt(Math.pow(a.left - originalPos.x, 2) + Math.pow(a.top - originalPos.y, 2))
+            const bDist = Math.sqrt(Math.pow(b.left - originalPos.x, 2) + Math.pow(b.top - originalPos.y, 2))
             return aDist - bDist
           })
           const bestSolution = solutions.first
           setToPage(bestSolution.left, bestSolution.top)
+          return
         }
 
 
