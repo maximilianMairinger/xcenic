@@ -32,12 +32,22 @@ const scrollWheelEasingFunc = (new Easing("easeInOut")).function
 
 const oneSideTemplate = {
   pages: [] as PageFrame[],
+  tryBounds: {} as Partial<Bounds>,
   distancesPerSide: {
     left: [] as number[],
     right: [] as number[],
     top: [] as number[],
     bottom: [] as number[]
   }
+}
+
+type Bounds = {
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+  width: number;
+  height: number;
 }
 
 
@@ -97,7 +107,7 @@ export default class AdminPage extends Page {
   private getBoundingRectOfFrame(element: PageFrame) {
     const pos = element.pos
     const margin = this.getMargin()
-    const width = document.body.width()
+    const width = document.body.width() // takes very long maybo optimize
     const height = element.height()
     return {
       top: pos.y.get() - margin.top,
@@ -124,6 +134,7 @@ export default class AdminPage extends Page {
     if (!(left.distance < 0 && top.distance < 0 && right.distance < 0 && bottom.distance < 0)) return false
 
     const where = () => {
+      console.log(myBounds, otherBounds)
       const collidingSides = [left, right, top, bottom].filter(side => side.distance < 0) as {distance: number, side: Side}[]
       // sort by colliding value in ascending order (closest from myBounds)
       collidingSides.sort((a, b) => b.distance - a.distance)
@@ -133,8 +144,7 @@ export default class AdminPage extends Page {
     return where
   }
 
-  private findNextFreeSpace(pageToFit: PageFrame, collidingPages: PageFrame[], trySides: {distance: number, side: Side}[]) {
-    const pageToFitBounds = this.getBoundingRectOfFrame(pageToFit)
+  private findNextFreeSpace(pageToFit: PageFrame, collidingPages: PageFrame[], pageToFitBounds: Bounds, trySides: {distance: number, side: Side}[]) {
 
 
     const collisionsPerSide = {
@@ -150,11 +160,12 @@ export default class AdminPage extends Page {
     for (const side of trySides) {
       const tryBounds = clone(pageToFitBounds) as Mutable<DOMRect>
       const dir = sideToDirIndex[side.side]
-      tryBounds[side.side] += Math.abs(side.distance) * dir
-      tryBounds[oppisiteSideIndex[side.side]] += Math.abs(side.distance) * dir
+      const dif = Math.abs(side.distance) * dir
+      tryBounds[side.side] += dif
+      tryBounds[oppisiteSideIndex[side.side]] += dif
 
-
-      const col = collisionsPerSide[side.side]
+      const col = collisionsPerSide[oppisiteSideIndex[side.side]] as typeof oneSideTemplate
+      col.tryBounds = tryBounds
       for (const p of this.pages) {
         if (p === pageToFit || collidingPages.includes(p)) continue
         const collision = this.pageIsCollidingWith(tryBounds, this.getBoundingRectOfFrame(p))
@@ -184,27 +195,27 @@ export default class AdminPage extends Page {
       const solutions = [] 
 
       const tryDeeper = [] as Function[]
-      for (const side in trySides.Inner("side")) {
+      for (const side of trySides.Inner("side")) {
         const newCollision = collisionsPerSide[side as Side]
         if (!newCollision.pages.empty) {
-          const newSides = this.calculateBoundingSides(newCollision.distancesPerSide)
+          const boundingCollisionDiffs = this.calculateBoundingSides(newCollision.distancesPerSide)
           // order newSides so that the closest right angle is first, then the other right angle second, then the same direction as last time third, then the direction backwards fourth
-          const rightAngleSides = rightAngleSideIndex[trySides.first.side]
+          const rightAngleSides = rightAngleSideIndex[trySides.first.side] as Side[]
           const rightAngleSidesInOrder = [] as Side[]
-          for (const newSide of newSides) {
-            if (newSide.side === rightAngleSides[0]) {
-              rightAngleSidesInOrder.push(trySides[0].side, trySides[1].side)
+          for (const boundingCollisionDiff of boundingCollisionDiffs) {
+            if (boundingCollisionDiff.side === rightAngleSides[0]) {
+              rightAngleSidesInOrder.push(...rightAngleSides)
               break
             }
-            else if (newSide.side === rightAngleSides[1]) {
-              rightAngleSidesInOrder.push(trySides[1].side, trySides[0].side)
+            else if (boundingCollisionDiff.side === rightAngleSides[1]) {
+              rightAngleSidesInOrder.push(rightAngleSides[1], rightAngleSides[0])
               break
             }
           }
 
           const newSidesInOrder = [...rightAngleSidesInOrder, oppisiteSideIndex[trySides.first.side], trySides.first.side]
           // order newSides to fit newSidesInOrder
-          newSides.sort((a, b) => {
+          boundingCollisionDiffs.sort((a, b) => {
             const aIndex = newSidesInOrder.indexOf(a.side)
             const bIndex = newSidesInOrder.indexOf(b.side)
             return aIndex - bIndex
@@ -212,7 +223,7 @@ export default class AdminPage extends Page {
           
 
 
-          const ret = this.findNextFreeSpace(pageToFit, newCollision.pages, newSides)
+          const ret = this.findNextFreeSpace(pageToFit, newCollision.pages, newCollision.tryBounds as Bounds, boundingCollisionDiffs)
           solutions.push(...ret.solutions)
           if (ret.tryDeeper !== undefined) tryDeeper.push(ret.tryDeeper)
         }
@@ -285,20 +296,22 @@ export default class AdminPage extends Page {
       })[]
 
       for (const collision of collisions) {
-        callAgainLs.push(() => this.findNextFreeSpace(page, [collision.page], collision.cols))
+        callAgainLs.push(() => this.findNextFreeSpace(page, [collision.page], this.getBoundingRectOfFrame(page), collision.cols))
       }
 
       let nthTry = 0
-      while (nthTry < 50) {
+      while (nthTry < 10) {
+        debugger
         nthTry++
 
         let solutions = [] as {left: number, top: number}[]
-        for (const callAgain of callAgainLs) {
+        for (let i = 0; i < callAgainLs.length; i++) {
+          const callAgain = callAgainLs[i]
           
           let freeSpace = callAgain()
 
           let innerTry = 0
-          while(innerTry < 10) {
+          while(innerTry < 2) {
             innerTry++
             solutions.push(...freeSpace.solutions)
             if (freeSpace.tryDeeper !== undefined) {
@@ -307,7 +320,7 @@ export default class AdminPage extends Page {
             else break
           }
 
-          if (!(innerTry < 10)) callAgainLs.push(freeSpace.tryDeeper as any)
+          if (!(innerTry < 2)) callAgainLs[i] = freeSpace.tryDeeper as any
           
         }
 
@@ -323,13 +336,11 @@ export default class AdminPage extends Page {
           setToPage(bestSolution.left, bestSolution.top)
           return
         }
-
-
-        callAgainLs.clear()
       }
       console.error("Could not find free space for page", page)
     }
   }
+
 
   private calculateBoundingSides(collisions: {[side in Side]: number[]}): {distance: number, side: Side}[] {
     const boundingSides = [] as {distance: number, side: Side}[]

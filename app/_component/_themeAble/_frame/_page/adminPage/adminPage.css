@@ -1,5 +1,7 @@
 component-body {
   height: 100%;
+  user-drag: none;
+  -webkit-user-drag: none;
 }
 
 move-area, page-canvas, page-canvas-container {
