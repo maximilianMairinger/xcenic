@@ -21,7 +21,7 @@ function makePopperIndecator() {
   return indecator
 }
 
-const minDistanceTop = 30 + 55
+export const minDistanceTop = 30 + 55
 
 
 export class UrlDuplicateError extends Error {}
@@ -136,9 +136,16 @@ export default class PageFrame extends Component {
     })
 
 
-    new DataCollection(pos.y, zData).get((y, z) => {
+    pos.y.get((y) => {
+      const z = zData.get()
       if (y < minDistanceTop / z + minDistanceTop) y = minDistanceTop / z + minDistanceTop
       this.css({translateY: y})
+    })
+
+    zData.get((z) => {  
+      let y = pos.y.get()
+      if (y < minDistanceTop / z + minDistanceTop) y = minDistanceTop / z + minDistanceTop
+      pos.y.set(y)
     })
 
 
