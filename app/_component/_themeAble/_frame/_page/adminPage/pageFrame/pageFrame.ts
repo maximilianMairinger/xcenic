@@ -21,7 +21,7 @@ function makePopperIndecator() {
   return indecator
 }
 
-const minDistanceTop = 30
+const minDistanceTop = 30 + 55
 
 
 export class UrlDuplicateError extends Error {}
@@ -102,7 +102,7 @@ export default class PageFrame extends Component {
       catch(e) {
         if (e instanceof UrlDuplicateError) {
           tip.show()
-          addNoScaleBoundAddon(makePopperIndecator(), {x: 400, y: 400})
+          // addNoScaleBoundAddon(makePopperIndecator(), {x: 400, y: 400})
           headingElem.text(beforeSet, false)
           this.nameData.set(beforeSet)
         }

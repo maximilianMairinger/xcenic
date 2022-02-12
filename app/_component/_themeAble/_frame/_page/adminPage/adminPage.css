@@ -20,6 +20,8 @@ page-canvas-container {
 move-area {
   transform-origin: 0 0;
   will-change: transform; /* this is the magic performance improving line */
+  margin-bottom: 55px;
+
 }
 
 
@@ -28,9 +30,12 @@ page-canvas {
   flex-wrap: nowrap;
   width: max-content;
   height: max-content;
-  min-width: 15000px;
-  min-height: 15000px;
-  margin-top: 55px;   /* header height */
+  /* min-width: 15000px;
+  min-height: 15000px; */
+  /* margin-top: 55px;   header height */
+  /* margin-bottom: -55px;  */
+  /* margin-top: 55px;
+  padding-bottom: 55px; */
 }
 
 c-page-frame {
@@ -57,5 +62,26 @@ test-box {
   margin: 300px;
   background-color: red;
 }
+
+border-box {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+
+}
+
+
+
+/* border-box.top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: black;
+} */
 
 

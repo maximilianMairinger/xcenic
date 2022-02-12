@@ -31,7 +31,7 @@ const scrollWheelEasingFunc = (new Easing("easeInOut")).function
 
 
 const oneSideTemplate = {
-  pages: [] as PageFrame[],
+  pages: [] as HTMLElement[],
   tryBounds: {} as Partial<Bounds>,
   distancesPerSide: {
     left: [] as number[],
@@ -104,10 +104,10 @@ export default class AdminPage extends Page {
     }
   }
 
-  private getBoundingRectOfFrame(element: PageFrame) {
+  private getBoundingRectOfFrame(element: PageFrame | (HTMLElement & {pos: DataBase<{x: number, y: number}>})) {
     const pos = element.pos
     const margin = this.getMargin()
-    const width = document.body.width() // takes very long maybo optimize
+    const width = element.width() // takes very long maybo optimize
     const height = element.height()
     return {
       top: pos.y.get() - margin.top,
@@ -134,7 +134,6 @@ export default class AdminPage extends Page {
     if (!(left.distance < 0 && top.distance < 0 && right.distance < 0 && bottom.distance < 0)) return false
 
     const where = () => {
-      console.log(myBounds, otherBounds)
       const collidingSides = [left, right, top, bottom].filter(side => side.distance < 0) as {distance: number, side: Side}[]
       // sort by colliding value in ascending order (closest from myBounds)
       collidingSides.sort((a, b) => b.distance - a.distance)
@@ -144,7 +143,7 @@ export default class AdminPage extends Page {
     return where
   }
 
-  private findNextFreeSpace(pageToFit: PageFrame, collidingPages: PageFrame[], pageToFitBounds: Bounds, trySides: {distance: number, side: Side}[]) {
+  private findNextFreeSpace(pageToFit: PageFrame, collidingPages: HTMLElement[], pageToFitBounds: Bounds, trySides: {distance: number, side: Side}[]) {
 
 
     const collisionsPerSide = {
@@ -166,7 +165,7 @@ export default class AdminPage extends Page {
 
       const col = collisionsPerSide[oppisiteSideIndex[side.side]] as typeof oneSideTemplate
       col.tryBounds = tryBounds
-      for (const p of this.pages) {
+      for (const p of this.canvasees) {
         if (p === pageToFit || collidingPages.includes(p)) continue
         const collision = this.pageIsCollidingWith(tryBounds, this.getBoundingRectOfFrame(p))
         if (collision) {
@@ -266,10 +265,11 @@ export default class AdminPage extends Page {
 
 
   private async ensurePageIsInFreeSpace(page: PageFrame) {
-    const collisions: {page: PageFrame, cols: {side: Side, distance: number}[]}[] = []
-    for (const p of this.pages) {
+    const boundsOfPage = this.getBoundingRectOfFrame(page)
+    const collisions: {page: HTMLElement, cols: {side: Side, distance: number}[]}[] = []
+    for (const p of this.canvasees) {
       if (p === page) continue
-      let collision = this.pageIsCollidingWith(this.getBoundingRectOfFrame(page), this.getBoundingRectOfFrame(p))
+      let collision = this.pageIsCollidingWith(boundsOfPage, this.getBoundingRectOfFrame(p))
       if (collision) {
         const colly = {page: p, cols: [] as {side: Side, distance: number}[]}
         collisions.push(colly)
@@ -281,7 +281,6 @@ export default class AdminPage extends Page {
 
 
     if (!collisions.empty) {
-      console.log("collision with", collisions)
 
       const setToPage = (x: number, y: number) => {
         const margin = this.getMargin()
@@ -301,7 +300,6 @@ export default class AdminPage extends Page {
 
       let nthTry = 0
       while (nthTry < 10) {
-        debugger
         nthTry++
 
         let solutions = [] as {left: number, top: number}[]
@@ -355,12 +353,12 @@ export default class AdminPage extends Page {
 
 
       
-  private pages = [] as PageFrame[]
+  private canvasees = [] as (PageFrame | (HTMLElement & {pos: DataBase<{x: number, y: number}>}))[]
 
   private addedPagesCount = 0
   private absZData = new Data(1)
   private appendPageToCanvas(...pages: HTMLElement[]) {
-    this.body.canvas.apd(pages.map(page => {
+    pages.forEach(page => {
       if ("disableContentVisibilityOptimisation" in (page as SectionedPage)) (page as SectionedPage).disableContentVisibilityOptimisation()
 
 
@@ -380,12 +378,13 @@ export default class AdminPage extends Page {
           frame.css({zIndex: 1})
         }
         else {
+          // frames located lower on the canvas should recive higher z-index, so that the title is always on top
           frame.css({zIndex: "initial"})
           this.ensurePageIsInFreeSpace(frame)
         }
       }, false)
       
-      this.pages.push(frame)
+      this.forceAppendToCanvas(frame)
 
 
       this.addedPagesCount++
@@ -398,7 +397,11 @@ export default class AdminPage extends Page {
         willChange: "transform"
       })
       return frame
-    }))
+    })
+  }
+  private forceAppendToCanvas(...anything: (HTMLElement & {pos: DataBase<{x: number, y: number}>})[]) {
+    this.canvasees.push(...anything)
+    this.body.canvas.apd(...anything)
   }
 
   private noScaleElementList: LinkedList<HTMLElement> = new LinkedList()
@@ -466,6 +469,63 @@ export default class AdminPage extends Page {
       }
     }
 
+    const container = this.body.canvasContainer as HTMLElement
+    const target = this.body.moveArea as HTMLElement
+    const canvas = target.children[0] as HTMLElement
+
+    const canvasDimensions = {
+      width: 15000,
+      height: 15000
+    }
+
+    const borderSize = 10000
+
+    canvas.css({
+      minWidth: canvasDimensions.width,
+      minHeight: canvasDimensions.height,
+    })
+
+    // canvasDimensions.height += 
+
+
+
+    const topBorder = ce("border-box").addClass("top") as HTMLElement & {pos: DataBase<{x: number, y: number}>}
+    topBorder.pos = new DataBase({x: 0, y: -borderSize})
+    topBorder.css({
+      width: "100%",
+      height: borderSize,
+    })
+
+    const bottomBorder = ce("border-box").addClass("bottom") as HTMLElement & {pos: DataBase<{x: number, y: number}>}
+    bottomBorder.pos = new DataBase({x: 0, y: canvasDimensions.height})
+    bottomBorder.css({
+      width: "100%",
+      height: borderSize
+    })
+
+    const leftBorder = ce("border-box").addClass("left") as HTMLElement & {pos: DataBase<{x: number, y: number}>}
+    leftBorder.pos = new DataBase({x: -borderSize, y: 0})
+    leftBorder.css({
+      width: borderSize,
+      height: "100%"
+    })
+
+
+    const rightBorder = ce("border-box").addClass("right") as HTMLElement & {pos: DataBase<{x: number, y: number}>}
+    rightBorder.pos = new DataBase({x: canvasDimensions.width, y: 0})
+    rightBorder.css({
+      width: borderSize,
+      height: "100%"
+    })
+
+
+    this.forceAppendToCanvas(
+      topBorder,
+      bottomBorder,
+      leftBorder,
+      rightBorder
+    )
+
 
     this.appendPageToCanvas(
       ce("test-box"),
@@ -484,9 +544,6 @@ export default class AdminPage extends Page {
     
 
 
-    const container = this.body.canvasContainer as HTMLElement
-    const target = this.body.moveArea as HTMLElement
-    const child = target.children[0] as HTMLElement
 
 
 
@@ -599,13 +656,13 @@ export default class AdminPage extends Page {
         // zoom
         let zoom = 1 - ((Math.abs(e.deltaY) > maxZoomStep ? Math.sign(e.deltaY) * maxZoomStep : e.deltaY) / 100)
         abs.z *= zoom
-        if (child.width() * abs.z < target.width()) {
-          const maxZ = target.width() / child.width()
+        if (canvas.width() * abs.z < target.width()) {
+          const maxZ = target.width() / canvas.width()
           zoom = maxZ / abs.z
           abs.z = maxZ
         }
-        if (child.height() * abs.z < target.height()) {
-          const maxZ = target.height() / child.height()
+        if (canvas.height() * abs.z < target.height()) {
+          const maxZ = target.height() / canvas.height()
           zoom = maxZ / abs.z
           abs.z = maxZ
         }
@@ -882,8 +939,8 @@ export default class AdminPage extends Page {
       let y = renderedCoords.y - renderedCoords.zoomOffset.y
       const z = renderedCoords.z
 
-      const w = x - target.width() + child.width() * z
-      const h = y - target.height() + child.height() * z
+      const w = x - target.width() + canvas.width() * z
+      const h = y - target.height() + canvas.height() * z
       
       howFarOutOfBounds.x = x > 0 ? -x : w < 0 ? -w : 0
       howFarOutOfBounds.y = y > 0 ? -y : h < 0 ? -h : 0
