@@ -490,13 +490,14 @@ export default class AdminPage extends Page {
 
 
     const topBorder = ce("border-box").addClass("top") as HTMLElement & {pos: DataBase<{x: number, y: number}>}
-    topBorder.pos = new DataBase({x: 0, y: -borderSize})
+    topBorder.pos = new DataBase({x: 0, y: -borderSize + minDistanceTop})
     topBorder.css({
       width: "100%",
       height: borderSize,
     })
+    const margin = this.getMargin()
     this.absZData.get((z) => {
-      topBorder.pos.y.set(minDistanceTop / z + minDistanceTop + borderSize)
+      topBorder.pos.y.set(-borderSize + (minDistanceTop / z + minDistanceTop) - margin.top - margin.bottom)
     })
 
     const bottomBorder = ce("border-box").addClass("bottom") as HTMLElement & {pos: DataBase<{x: number, y: number}>}
@@ -538,8 +539,8 @@ export default class AdminPage extends Page {
       ce("test-box"),
       ce("test-box"),
       ce("test-box"),
-      new ContactPage(),
-      new HomePage("admin")
+      // new ContactPage(),
+      // new HomePage("admin")
     )
 
 
