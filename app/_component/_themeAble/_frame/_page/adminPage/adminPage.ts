@@ -4,7 +4,7 @@ import Page from "../page"
 import adminSession from "../../../../../lib/adminSession"
 import localSettings from "./../../../../../lib/localSettings"
 import { ElementList } from "extended-dom"
-import animationFrameDelta, { ignoreUnsubscriptionError, stats } from "animation-frame-delta"
+import animationFrameDelta, { absoluteDeltaAt60FPS, ignoreUnsubscriptionError, stats } from "animation-frame-delta"
 import Easing from "waapi-easing"
 import isIdle from "is-idle"
 import LinkedList from "fast-linked-list"
@@ -20,6 +20,34 @@ import clone from "fast-copy"
 
 
 
+
+
+export function smoothWith(fac: number = .3) {
+  return function smooth(soll: number, ist: number) {
+    return (soll - ist) * fac
+  }
+}
+
+export const smooth = smoothWith()
+
+export function cappedSmoothAt(moveWithoutSmooth: number = 5, smoothFac = .3) {
+  return function cappedSmooth(soll: number, ist: number) {
+    let diff = soll - ist
+    if (Math.abs(diff) > moveWithoutSmooth) {
+      const move = (Math.sign(diff) * moveWithoutSmooth)
+      return (diff - move) * smoothFac + move
+    }
+    else {
+      return diff
+    }
+  }
+}
+
+export const cappedSmooth = cappedSmoothAt()
+
+
+
+
 type Mutable<T> = {
   -readonly[P in keyof T]: T[P]
 };
@@ -28,6 +56,8 @@ type Mutable<T> = {
 const dragMouseButton = 1
 const maxZoomStep = 20 // percent
 const scrollWheelEasingFunc = (new Easing("easeInOut")).function
+const collisionResolveEasingFunc = (new Easing("easeOut")).function
+
 
 
 const oneSideTemplate = {
@@ -286,7 +316,20 @@ export default class AdminPage extends Page {
         const margin = this.getMargin()
         x += margin.left
         y += margin.top
-        page.pos({x, y})
+
+        const beginCoords = clone(page.pos()) as {x: number, y: number}
+        const deltaCoords = {
+          x: x - beginCoords.x,
+          y: y - beginCoords.y
+        }
+
+        const totalTime = Math.hypot(x - page.pos.x.get(), y - page.pos.y.get()) / 4 + 100
+        animationFrameDelta((timePassed) => {
+          const absProg = timePassed / totalTime
+          const prog = collisionResolveEasingFunc(absProg)
+          
+          page.pos({x: beginCoords.x + deltaCoords.x * prog, y: beginCoords.y + deltaCoords.y * prog})
+        }, totalTime)
       }
       // const boundingSides = this.calculateBoundingSides(collisions.distancesPerSide)
       const callAgainLs = [] as (() => {
@@ -909,21 +952,7 @@ export default class AdminPage extends Page {
     const renderedCoords = clone(abs)
 
 
-    const moveWithoutSmooth = 5
-    function cappedSmooth(soll: number, ist: number) {
-      let diff = soll - ist
-      if (Math.abs(diff) > moveWithoutSmooth) {
-        const move = (Math.sign(diff) * moveWithoutSmooth)
-        return smooth(diff, move) + move
-      }
-      else {
-        return diff
-      }
-    }
-
-    function smooth(soll: number, ist: number) {
-      return (soll - ist) * .3
-    }
+    
 
 
 
@@ -932,11 +961,20 @@ export default class AdminPage extends Page {
       // smooths the panning by approaching the target coordinates (abs)
       // console.log(cappedSmooth(abs.y, renderedCoords.y))
       
-      renderedCoords.x += cappedSmooth(abs.x, renderedCoords.x)
-      renderedCoords.y += cappedSmooth(abs.y, renderedCoords.y)
-      renderedCoords.z += smooth(abs.z, renderedCoords.z)
-      renderedCoords.zoomOffset.x += smooth(abs.zoomOffset.x, renderedCoords.zoomOffset.x)
-      renderedCoords.zoomOffset.y += smooth(abs.zoomOffset.y, renderedCoords.zoomOffset.y)
+      // renderedCoords.x += cappedSmooth(abs.x, renderedCoords.x)
+      // renderedCoords.y += cappedSmooth(abs.y, renderedCoords.y)
+      // renderedCoords.z += smooth(abs.z, renderedCoords.z)
+      // renderedCoords.zoomOffset.x += smooth(abs.zoomOffset.x, renderedCoords.zoomOffset.x)
+      // renderedCoords.zoomOffset.y += smooth(abs.zoomOffset.y, renderedCoords.zoomOffset.y)
+
+
+
+      // reevaluate if the above is neccecary (maybe on desktop...), but if so may there be another way to do it. If not, we should consider the hypot delta and not x and y coords indicidually
+      renderedCoords.x = abs.x
+      renderedCoords.y = abs.y
+      renderedCoords.z = abs.z
+      renderedCoords.zoomOffset.x = abs.zoomOffset.x
+      renderedCoords.zoomOffset.y = abs.zoomOffset.y
 
       
       let x = renderedCoords.x - renderedCoords.zoomOffset.x
