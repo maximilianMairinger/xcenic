@@ -424,10 +424,18 @@ export default class AdminPage extends Page {
         throw new UrlDuplicateError()
       }, false)
 
+
       
       
 
-      const frame = new PageFrame(page, d, localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 300}), this.absZData, this.normalizedWidthData, this.addNoScaleBoundAddon.bind(this))
+      const storePos = localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 300})
+      const pos = new DataBase(storePos())
+
+      window.addEventListener("beforeunload", function (e) {
+        storePos(pos())
+      });
+
+      const frame = new PageFrame(page, d, pos, this.absZData, this.normalizedWidthData, this.addNoScaleBoundAddon.bind(this))
 
       setTimeout(() => {
         frame.css({zIndex: Math.floor(frame.getScaledY() / this.body.canvas.height() * maxZIndex)})

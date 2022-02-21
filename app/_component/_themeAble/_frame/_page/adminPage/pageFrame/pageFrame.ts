@@ -24,7 +24,7 @@ function makePopperIndecator() {
 export const minDistanceTop = 30 + 55
 
 
-// todo: only save pos data when unload. TODO: reload while resolveing collision in animation...
+// TODO: reload while resolveing collision in animation...
 
 export class UrlDuplicateError extends Error {}
 
