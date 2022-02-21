@@ -61,6 +61,10 @@ test-box {
   position: relative;
   margin: 300px;
   background-color: red;
+  color: white;
+  font-size: 130px;
+  padding-left: 30px;
+  box-sizing: border-box;
 }
 
 border-box {

@@ -32,7 +32,7 @@ export default class PageFrame extends Component {
   public readonly heading = this.body.masterHeader as HTMLElement
   public currentlyMoving: Data<boolean> = new Data(false) as Data<boolean>
 
-  constructor(page: HTMLElement, private nameData: Data<string>, public pos: DataBase<{x: number, y: number}>, zData: Data<number>, widthData: Data<number>, addNoScaleBoundAddon: (addon: HTMLElement, pos: {x: number, y: number}) => {remove(): void}) {
+  constructor(page: HTMLElement, private nameData: Data<string>, private pos: DataBase<{x: number, y: number}>, zData: Data<number>, private widthData: Data<number>, addNoScaleBoundAddon: (addon: HTMLElement, pos: {x: number, y: number}) => {remove(): void}) {
     super(false as any)
     this.append(page)
 
@@ -68,20 +68,7 @@ export default class PageFrame extends Component {
 
 
     const editing = new Data(false)
-    editing.get((editing) => {
-      if (editing) {
-        dragStartListener.deactivate()
-        headingElem.css({cursor: "text", overflow: "visible"})
-        headingElem.setAttribute("contenteditable", "true")
-  
-        selectText(headingElem)
-      }
-      else {
-        dragStartListener.activate()
-        headingElem.css({cursor: "pointer", overflow: "hidden"})
-        headingElem.setAttribute("contenteditable", "false")
-      }
-    }, false)
+    
 
     headingElem.on("dblclick", () => {
       editing.set(true)
@@ -130,70 +117,149 @@ export default class PageFrame extends Component {
 
     
 
-
-    new DataCollection(pos.x, widthData).get((x, w) => {
-      this.css({translateX: x})
-    })
-
-    let intentionalY = pos.y.get()
+    
 
 
-    zData.get((z) => {
+
+
+
+
+      new DataCollection(pos.x, widthData).get((x, w) => {
+        this.css({translateX: x * w})
+      })
+
+      let intentionalY = pos.y.get()
+
+
       const y = intentionalY
-      const max = minDistanceTop / z + minDistanceTop
+      const max = minDistanceTop / zData.get() + minDistanceTop
       if (y < max) {
-        ySub.setToData(max)
+        pos.y.set(max)
         this.css({translateY: max})
       }
       else this.css({translateY: y})
-    })
-    const ySub = pos.y.get((y) => {
-      const z = zData.get()
-      const max = minDistanceTop / z + minDistanceTop
-      if (y < max) {
-        ySub.setToData(max)
-        this.css({translateY: max})
-        intentionalY = max
-      }
-      else {
-        this.css({translateY: y})
-        intentionalY = y
-      }
-      
-    })
+
+      zData.get((z) => {
+        const y = intentionalY
+        const max = minDistanceTop / z + minDistanceTop
+        if (y < max) {
+          ySub.setToData(max)
+          this.css({translateY: max})
+        }
+        else this.css({translateY: y})
+      }, false)
+      const ySub = pos.y.get((y) => {
+        const z = zData.get()
+        const max = minDistanceTop / z + minDistanceTop
+        if (y < max) {
+          ySub.setToData(max)
+          this.css({translateY: max})
+          intentionalY = max
+        }
+        else {
+          this.css({translateY: y})
+          intentionalY = y
+        }
+        
+      }, false)
 
 
 
 
-
-    const dragStartListener = headingElem.on("mousedown", (e) => {
-      if (e.button === 0) {
-        if (pos.y.get() < minDistanceTop / zData.get() + minDistanceTop) pos.y.set(minDistanceTop / zData.get() + minDistanceTop)
-        dragListener.activate()
-        this.currentlyMoving.set(true)
-      }
-    })
-
-    const dragListener = document.body.on("mousemove", (e) => {
-      const zInv = 1 / zData.get()
-      pos.x.set(pos.x.get() + (e.movementX * zInv))
-      pos.y.set(pos.y.get() + (e.movementY * zInv) )
-    })
-    dragListener.deactivate()
-
-    const cancelDragF = () => {
+      const dragStartListener = headingElem.on("mousedown", (e) => {
+        if (e.button === 0) {
+          if (pos.y.get() < minDistanceTop / zData.get() + minDistanceTop) pos.y.set(minDistanceTop / zData.get() + minDistanceTop)
+          dragListener.activate()
+          this.currentlyMoving.set(true)
+        }
+      })
+  
+      const dragListener = document.body.on("mousemove", (e) => {
+        const zInv = 1 / zData.get()
+        this.addUnscaledX(e.movementX * zInv)
+        this.addUnscaledY(e.movementY * zInv)
+      })
       dragListener.deactivate()
-      this.currentlyMoving.set(false)
-    }
+  
+      const cancelDragF = () => {
+        dragListener.deactivate()
+        this.currentlyMoving.set(false)
+      }
+  
+      document.body.on("mouseup", (e) => {
+        if (e.button === 0) cancelDragF()
+      })
+      document.body.on("blur", cancelDragF)
 
-    document.body.on("mouseup", (e) => {
-      if (e.button === 0) cancelDragF()
-    })
-    document.body.on("blur", cancelDragF)
-  }
+
+
+
+      editing.get((editing) => {
+        if (editing) {
+          dragStartListener.deactivate()
+          headingElem.css({cursor: "text", overflow: "visible"})
+          headingElem.setAttribute("contenteditable", "true")
+    
+          selectText(headingElem)
+        }
+        else {
+          dragStartListener.activate()
+          headingElem.css({cursor: "pointer", overflow: "hidden"})
+          headingElem.setAttribute("contenteditable", "false")
+        }
+      }, false)
+
+      
+
+
+
 
 
     
+    
+    
+
+
+    
+
+
+
+
+
+    
+  }
+
+
+    addUnscaledX(x: number) {
+      this.pos.x.set(this.pos.x.get() + x / this.widthData.get())
+
+    }
+    addUnscaledY(y: number) {
+      this.pos.y.set(this.pos.y.get() + y)
+    }
+    setScaledX(x: number) {
+      this.pos.x.set(x)
+    }
+    setScaledY(y: number) {
+      this.pos.y.set(y)
+    }
+    setScaledPos(pos: {x: number, y: number}) {
+      this.pos(pos)
+    }
+
+    getScaledX() {
+      return this.pos.x.get()
+    }
+    getScaledY() {
+      return this.pos.y.get()
+    }
+
+    getScaledPos() {
+      return {
+        x: this.pos.x.get(),
+        y: this.pos.y.get()
+      }
+    }
 
 
 

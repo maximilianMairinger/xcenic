@@ -46,6 +46,13 @@ export function cappedSmoothAt(moveWithoutSmooth: number = 5, smoothFac = .3) {
 export const cappedSmooth = cappedSmoothAt()
 
 
+type PositionalHTMLElement = HTMLElement & {
+  getScaledX(): number
+  getScaledY(): number
+  addUnscaledX(x: number): void
+  addUnscaledY(y: number): void
+  getScaledPos(): { x: number, y: number }
+}
 
 
 type Mutable<T> = {
@@ -116,6 +123,9 @@ const sideToDirIndex = {
   bottom: -1
 }
 
+
+const maxZIndex = 100000
+
 const boundAddonInitPosSymbol = Symbol("addonInitPos")
 
 type Rect = {top: number, left: number, right: number, bottom: number}
@@ -127,23 +137,25 @@ export default class AdminPage extends Page {
   private getMargin() {
      /* p / this.abs.z */
     return {
-      top: 90,
+      top: 0,
       left: 20,
       right: 20,
-      bottom: 90
+      bottom: 0
     }
   }
 
-  private getBoundingRectOfFrame(element: PageFrame | (HTMLElement & {pos: DataBase<{x: number, y: number}>})) {
-    const pos = element.pos
+
+  private getBoundingRectOfFrame(element: PositionalHTMLElement) {
+    const posX = element.getScaledX()
+    const posY = element.getScaledY()
     const margin = this.getMargin()
-    const width = element.width() // takes very long maybo optimize
-    const height = element.height()
+    const width = 1500
+    const height = element.height() // takes very long maybo optimize
     return {
-      top: pos.y.get() - margin.top,
-      left: pos.x.get() - margin.left,
-      right: pos.x.get() + width + margin.right,
-      bottom: pos.y.get() + height + margin.bottom,
+      top: posY - margin.top,
+      left: posX - margin.left,
+      right: posX + width + margin.right,
+      bottom: posY + height + margin.bottom,
       width,
       height
     }
@@ -162,6 +174,7 @@ export default class AdminPage extends Page {
 
     // return false when not colliding
     if (!(left.distance < 0 && top.distance < 0 && right.distance < 0 && bottom.distance < 0)) return false
+    debugger
 
     const where = () => {
       const collidingSides = [left, right, top, bottom].filter(side => side.distance < 0) as {distance: number, side: Side}[]
@@ -317,18 +330,18 @@ export default class AdminPage extends Page {
         x += margin.left
         y += margin.top
 
-        const beginCoords = clone(page.pos()) as {x: number, y: number}
+        const beginCoords = clone(page.getScaledPos()) as {x: number, y: number}
         const deltaCoords = {
           x: x - beginCoords.x,
           y: y - beginCoords.y
         }
 
-        const totalTime = Math.hypot(x - page.pos.x.get(), y - page.pos.y.get()) / 4 + 100
-        animationFrameDelta((timePassed) => {
+        const totalTime = Math.hypot(x - beginCoords.x, y - beginCoords.y) / 4 + 100
+        return animationFrameDelta((timePassed) => {
           const absProg = timePassed / totalTime
           const prog = collisionResolveEasingFunc(absProg)
-          
-          page.pos({x: beginCoords.x + deltaCoords.x * prog, y: beginCoords.y + deltaCoords.y * prog})
+
+          page.setScaledPos({x: beginCoords.x + deltaCoords.x * prog, y: beginCoords.y + deltaCoords.y * prog})
         }, totalTime)
       }
       // const boundingSides = this.calculateBoundingSides(collisions.distancesPerSide)
@@ -367,15 +380,14 @@ export default class AdminPage extends Page {
 
         if (!solutions.empty) {
           // weight solutions by distance from original position
-          const originalPos = page.pos()
+          const originalPos = page.getScaledPos()
           solutions.sort((a, b) => {
             const aDist = Math.hypot(a.left - originalPos.x, a.top - originalPos.y)
             const bDist = Math.hypot(b.left - originalPos.x, b.top - originalPos.y)
             return aDist - bDist
           })
           const bestSolution = solutions.first
-          setToPage(bestSolution.left, bestSolution.top)
-          return
+          return setToPage(bestSolution.left, bestSolution.top)
         }
       }
       console.error("Could not find free space for page", page)
@@ -396,7 +408,7 @@ export default class AdminPage extends Page {
 
 
       
-  private canvasees = [] as (PageFrame | (HTMLElement & {pos: DataBase<{x: number, y: number}>}))[]
+  private canvasees = [] as PositionalHTMLElement[]
 
   private addedPagesCount = 0
   private absZData = new Data(1)
@@ -412,18 +424,18 @@ export default class AdminPage extends Page {
       }, false)
 
       
+      
 
-
-
-      const frame = new PageFrame(page, d, localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 0}), this.absZData, this.normalizedWidthData, this.addNoScaleBoundAddon.bind(this))
-      frame.currentlyMoving.get((moving) => {
+      const frame = new PageFrame(page, d, localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 300}), this.absZData, this.normalizedWidthData, this.addNoScaleBoundAddon.bind(this))
+      frame.currentlyMoving.get(async (moving) => {
         if (moving) {
-          frame.css({zIndex: 1})
+          frame.css({zIndex: 10000})
         }
         else {
-          // frames located lower on the canvas should recive higher z-index, so that the title is always on top
-          frame.css({zIndex: "initial"})
-          this.ensurePageIsInFreeSpace(frame)
+          await this.ensurePageIsInFreeSpace(frame)
+          frame.css({zIndex: Math.floor(frame.getScaledY() / this.body.canvas.height() * this.body.canvas.height())})
+
+          // frame.css({zIndex: "unset"})
         }
       }, false)
       
@@ -442,7 +454,7 @@ export default class AdminPage extends Page {
       return frame
     })
   }
-  private forceAppendToCanvas(...anything: (HTMLElement & {pos: DataBase<{x: number, y: number}>})[]) {
+  private forceAppendToCanvas(...anything: PositionalHTMLElement[]) {
     this.canvasees.push(...anything)
     this.body.canvas.apd(...anything)
   }
@@ -480,7 +492,6 @@ export default class AdminPage extends Page {
     
   }
   
-  private abs: {x: number, y: number, z: number, zoomOffset: {x: number, y: number}}
 
   constructor(posStoreName = "") {
     super()
@@ -502,7 +513,7 @@ export default class AdminPage extends Page {
 
 
 
-    const abs = this.abs = clone(adminPos()) as {
+    const abs = clone(adminPos()) as {
       x: number;
       y: number;
       z: number;
@@ -528,38 +539,78 @@ export default class AdminPage extends Page {
       minHeight: canvasDimensions.height,
     })
 
-    // canvasDimensions.height += 
+    
+
+    function addPositionalHTMLElementApiWrapperFromPos(elem: HTMLElement, pos: DataBase<{x: number, y: number}>) {
+      // @ts-ignore
+      elem.getScaledPos = () => {
+        return pos()
+      }
+
+      // @ts-ignore
+      elem.addUnscaledY = (y: number) => {
+        pos.y.set(y + pos.y.get())
+      }
+
+      // @ts-ignore
+      elem.addUnscaledX = (x: number) => {
+        pos.x.set(x + pos.x.get())
+      }
+
+      // @ts-ignore
+      elem.getScaledX = () => {
+        return pos.x.get()
+      }
+
+      // @ts-ignore
+      elem.getScaledY = () => {
+        return pos.y.get()
+      }
+
+
+      return elem as PositionalHTMLElement
+    }
 
 
 
-    const topBorder = ce("border-box").addClass("top") as HTMLElement & {pos: DataBase<{x: number, y: number}>}
-    topBorder.pos = new DataBase({x: 0, y: -borderSize + minDistanceTop})
+
+    const topBorderPos = new DataBase({x: 0, y: -borderSize + minDistanceTop})
+    const topBorder = addPositionalHTMLElementApiWrapperFromPos(
+      ce("border-box").addClass("top"),
+      topBorderPos
+    )
     topBorder.css({
       width: "100%",
       height: borderSize,
     })
     const margin = this.getMargin()
     this.absZData.get((z) => {
-      topBorder.pos.y.set(-borderSize + (minDistanceTop / z + minDistanceTop) - margin.top - margin.bottom)
+      topBorderPos.y.set(-borderSize + (minDistanceTop / z + minDistanceTop) - margin.top - margin.bottom)
     })
 
-    const bottomBorder = ce("border-box").addClass("bottom") as HTMLElement & {pos: DataBase<{x: number, y: number}>}
-    bottomBorder.pos = new DataBase({x: 0, y: canvasDimensions.height})
+    const bottomBorder = addPositionalHTMLElementApiWrapperFromPos(
+      ce("border-box").addClass("bottom"),
+      new DataBase({x: 0, y: canvasDimensions.height})
+    )
     bottomBorder.css({
       width: "100%",
       height: borderSize
     })
 
-    const leftBorder = ce("border-box").addClass("left") as HTMLElement & {pos: DataBase<{x: number, y: number}>}
-    leftBorder.pos = new DataBase({x: -borderSize, y: 0})
+    const leftBorder = addPositionalHTMLElementApiWrapperFromPos(
+      ce("border-box").addClass("left"),
+      new DataBase({x: -borderSize, y: 0})
+    )
     leftBorder.css({
       width: borderSize,
       height: "100%"
     })
 
 
-    const rightBorder = ce("border-box").addClass("right") as HTMLElement & {pos: DataBase<{x: number, y: number}>}
-    rightBorder.pos = new DataBase({x: canvasDimensions.width, y: 0})
+    const rightBorder = addPositionalHTMLElementApiWrapperFromPos(
+      ce("border-box").addClass("right"),
+      new DataBase({x: canvasDimensions.width, y: 0})
+    )
     rightBorder.css({
       width: borderSize,
       height: "100%"
@@ -575,15 +626,13 @@ export default class AdminPage extends Page {
 
 
     this.appendPageToCanvas(
-      ce("test-box"),
-      ce("test-box"),
-      ce("test-box"),
-      ce("test-box"),
-      ce("test-box"),
-      ce("test-box"),
-      ce("test-box"),
-      // new ContactPage(),
-      // new HomePage("admin")
+      ce("test-box").apd("1"),
+      ce("test-box").apd("2"),
+      ce("test-box").apd("3"),
+      ce("test-box").apd("4"),
+      ce("test-box").apd("5"),
+      ce("test-box").apd("6"),
+      ce("test-box").apd("7")
     )
 
 
