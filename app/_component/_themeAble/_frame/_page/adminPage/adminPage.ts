@@ -130,17 +130,19 @@ const boundAddonInitPosSymbol = Symbol("addonInitPos")
 
 type Rect = {top: number, left: number, right: number, bottom: number}
 
+const holyWidthDivider = 1500
+
 export default class AdminPage extends Page {
 
-  private normalizedWidthData = this.resizeData().tunnel(e => e.width / 1500) 
+  private normalizedWidthData = this.resizeData().tunnel(e => e.width / holyWidthDivider) 
 
   private getMargin() {
      /* p / this.abs.z */
     return {
-      top: 0,
+      top: 70,
       left: 20,
       right: 20,
-      bottom: 0
+      bottom: 70
     }
   }
 
@@ -149,7 +151,7 @@ export default class AdminPage extends Page {
     const posX = element.getScaledX()
     const posY = element.getScaledY()
     const margin = this.getMargin()
-    const width = 1500
+    const width = element.width() / this.width() * holyWidthDivider
     const height = element.height() // takes very long maybo optimize
     return {
       top: posY - margin.top,
@@ -174,7 +176,6 @@ export default class AdminPage extends Page {
 
     // return false when not colliding
     if (!(left.distance < 0 && top.distance < 0 && right.distance < 0 && bottom.distance < 0)) return false
-    debugger
 
     const where = () => {
       const collidingSides = [left, right, top, bottom].filter(side => side.distance < 0) as {distance: number, side: Side}[]
@@ -427,6 +428,10 @@ export default class AdminPage extends Page {
       
 
       const frame = new PageFrame(page, d, localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 300}), this.absZData, this.normalizedWidthData, this.addNoScaleBoundAddon.bind(this))
+
+      setTimeout(() => {
+        frame.css({zIndex: Math.floor(frame.getScaledY() / this.body.canvas.height() * maxZIndex)})
+      })
       frame.currentlyMoving.get(async (moving) => {
         if (moving) {
           frame.css({zIndex: maxZIndex})
@@ -572,56 +577,63 @@ export default class AdminPage extends Page {
 
 
 
-    const topBorderPos = new DataBase({x: 0, y: -borderSize + minDistanceTop})
-    const topBorder = addPositionalHTMLElementApiWrapperFromPos(
-      ce("border-box").addClass("top"),
-      topBorderPos
-    )
-    topBorder.css({
-      width: "100%",
-      height: borderSize,
+    setTimeout(() => {
+      const topBorderPos = new DataBase({x: 0, y: -borderSize + minDistanceTop})
+      const topBorder = addPositionalHTMLElementApiWrapperFromPos(
+        ce("border-box").addClass("top"),
+        topBorderPos
+      )
+      topBorder.css({
+        width: "100%",
+        height: borderSize,
+      })
+      const margin = this.getMargin()
+      this.absZData.get((z) => {
+        topBorderPos.y.set(-borderSize + (minDistanceTop / z + minDistanceTop) - margin.top - margin.bottom)
+      })
+  
+      const bottomBorder = addPositionalHTMLElementApiWrapperFromPos(
+        ce("border-box").addClass("bottom"),
+        new DataBase({x: 0, y: canvasDimensions.height})
+      )
+      bottomBorder.css({
+        width: "100%",
+        height: borderSize
+      })
+  
+      console.log("this", this.width())
+  
+      const leftBorder = addPositionalHTMLElementApiWrapperFromPos(
+        ce("border-box").addClass("left"),
+        new DataBase({x: -borderSize / this.width() * holyWidthDivider, y: 0})
+      )
+      leftBorder.css({
+        width: borderSize,
+        height: "100%"
+      })
+  
+  
+      const rightBorder = addPositionalHTMLElementApiWrapperFromPos(
+        ce("border-box").addClass("right"),
+        new DataBase({x: canvasDimensions.width / this.width() * holyWidthDivider, y: 0})
+      )
+      rightBorder.css({
+        width: borderSize,
+        height: "100%"
+      })
+  
+
+      this.forceAppendToCanvas(
+        topBorder,
+        bottomBorder,
+        leftBorder,
+        rightBorder
+      )
+  
     })
-    const margin = this.getMargin()
-    this.absZData.get((z) => {
-      topBorderPos.y.set(-borderSize + (minDistanceTop / z + minDistanceTop) - margin.top - margin.bottom)
-    })
+   
 
-    const bottomBorder = addPositionalHTMLElementApiWrapperFromPos(
-      ce("border-box").addClass("bottom"),
-      new DataBase({x: 0, y: canvasDimensions.height})
-    )
-    bottomBorder.css({
-      width: "100%",
-      height: borderSize
-    })
-
-    const leftBorder = addPositionalHTMLElementApiWrapperFromPos(
-      ce("border-box").addClass("left"),
-      new DataBase({x: -borderSize, y: 0})
-    )
-    leftBorder.css({
-      width: borderSize,
-      height: "100%"
-    })
-
-
-    const rightBorder = addPositionalHTMLElementApiWrapperFromPos(
-      ce("border-box").addClass("right"),
-      new DataBase({x: canvasDimensions.width, y: 0})
-    )
-    rightBorder.css({
-      width: borderSize,
-      height: "100%"
-    })
-
-
-    this.forceAppendToCanvas(
-      topBorder,
-      bottomBorder,
-      leftBorder,
-      rightBorder
-    )
-
+    
 
     this.appendPageToCanvas(
       ce("test-box").apd("1"),
