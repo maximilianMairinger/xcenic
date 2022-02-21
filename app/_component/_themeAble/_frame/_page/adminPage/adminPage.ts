@@ -21,6 +21,20 @@ import clone from "fast-copy"
 
 
 
+const onUnloadAnimationCancelCbs = new LinkedList() as LinkedList<() => void>
+function addOnUnloadAnimationCancelCb(cb: () => void) {
+  return onUnloadAnimationCancelCbs.push(cb)
+}
+window.addEventListener("beforeunload", function (e) {
+  for (const cb of onUnloadAnimationCancelCbs) {
+    cb()
+  }
+})
+
+
+
+
+
 
 export function smoothWith(fac: number = .3) {
   return function smooth(soll: number, ist: number) {
@@ -338,12 +352,29 @@ export default class AdminPage extends Page {
         }
 
         const totalTime = Math.hypot(x - beginCoords.x, y - beginCoords.y) / 4 + 100 * (Math.sqrt(this.absZData.get()) * 3)
-        return animationFrameDelta((timePassed) => {
+        const anim = animationFrameDelta((timePassed) => {
           const absProg = timePassed / totalTime
           const prog = collisionResolveEasingFunc(absProg)
 
           page.setScaledPos({x: beginCoords.x + deltaCoords.x * prog, y: beginCoords.y + deltaCoords.y * prog})
         }, totalTime)
+
+        const originalCancel = anim.cancel.bind(anim)
+        anim.cancel = () => {
+          const suc = originalCancel()
+          if (suc) {
+            page.setScaledPos({x, y})
+          }
+
+          return suc
+        }
+
+        const unloadCbToken = addOnUnloadAnimationCancelCb(anim.cancel)
+        anim.then(() => {
+          unloadCbToken.rm()
+        })
+
+        return anim
       }
       // const boundingSides = this.calculateBoundingSides(collisions.distancesPerSide)
       const callAgainLs = [] as (() => {

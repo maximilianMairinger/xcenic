@@ -21,10 +21,9 @@ function makePopperIndecator() {
   return indecator
 }
 
-export const minDistanceTop = 30 + 55
 
 
-// TODO: reload while resolveing collision in animation...
+// TODO: going out of bounds while dragging must be handled properly. Maybe using the drag api, to detect droped elements even when out of bpunds. Otherwise mouseups wont get recoginced. This is especially bad in combination with reloading when out of bounds.
 
 export class UrlDuplicateError extends Error {}
 
