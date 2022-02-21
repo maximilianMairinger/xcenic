@@ -130,41 +130,12 @@ export default class PageFrame extends Component {
         this.css({translateX: x * w})
       })
 
-      let intentionalY = pos.y.get()
-      this.css({translateY: intentionalY})
 
-      // const y = intentionalY
-      // const max = minDistanceTop / zData.get() + minDistanceTop
-      // if (y < max) {
-      //   pos.y.set(max)
-      //   this.css({translateY: max})
-      // }
-      // else this.css({translateY: y})
 
-      zData.get((z) => {
-        // const y = intentionalY
-        // const max = minDistanceTop / z + minDistanceTop
-        // if (y < max) {
-        //   ySub.setToData(max)
-        //   this.css({translateY: max})
-        // }
-        // else this.css({translateY: y})
-      }, false)
-      const ySub = pos.y.get((y) => {
-        const z = zData.get()
-        const max = minDistanceTop / z + minDistanceTop
-        // if (y < max) {
-        //   ySub.setToData(max)
-        //   this.css({translateY: max})
-        //   intentionalY = max
-        // }
-        // else {
-          console.log(y)
-          this.css({translateY: y})
-          intentionalY = y
-        // }
-        
-      }, false)
+
+      pos.y.get((y) => {
+        this.css({translateY: y})
+      })
 
 
 
