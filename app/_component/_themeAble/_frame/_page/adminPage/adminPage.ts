@@ -4,10 +4,10 @@ import Page from "../page"
 import adminSession from "../../../../../lib/adminSession"
 import localSettings from "./../../../../../lib/localSettings"
 import { ElementList } from "extended-dom"
-import animationFrameDelta, { absoluteDeltaAt60FPS, ignoreUnsubscriptionError, stats } from "animation-frame-delta"
+import animationFrameDelta, { absoluteDeltaAt60FPS, CancelAbleElapsingSubscriptionPromise, CancelAblePromise, ignoreUnsubscriptionError, stats } from "animation-frame-delta"
 import Easing from "waapi-easing"
 import isIdle from "is-idle"
-import LinkedList from "fast-linked-list"
+import LinkedList, { Token } from "fast-linked-list"
 
 
 
@@ -21,15 +21,25 @@ import clone from "fast-copy"
 
 
 
-const onUnloadAnimationCancelCbs = new LinkedList() as LinkedList<() => void>
-function addOnUnloadAnimationCancelCb(cb: () => void) {
-  return onUnloadAnimationCancelCbs.push(cb)
-}
-window.addEventListener("beforeunload", function (e) {
-  for (const cb of onUnloadAnimationCancelCbs) {
-    cb()
+function makeUnloadSubContext() {
+  const onUnloadAnimationCancelCbs = new LinkedList() as LinkedList<() => void>
+
+  window.addEventListener("beforeunload", function (e) {
+    for (const cb of onUnloadAnimationCancelCbs) {
+      cb()
+    }
+  })
+  return function(cb: () => void) {
+    return onUnloadAnimationCancelCbs.push(cb)
   }
-})
+  
+}
+
+
+export const stopRenderOnUnloadCb = makeUnloadSubContext()
+
+const addOnUnloadAnimationCancelCb = makeUnloadSubContext()
+
 
 
 
@@ -154,8 +164,8 @@ export default class AdminPage extends Page {
      /* p / this.abs.z */
     return {
       top: 70,
-      left: 0,
-      right: 0,
+      left: 20,
+      right: 20,
       bottom: 70
     }
   }
@@ -322,7 +332,7 @@ export default class AdminPage extends Page {
   }
 
 
-  private async ensurePageIsInFreeSpace(page: PageFrame) {
+  private ensurePageIsInFreeSpace(page: PageFrame): CancelAbleElapsingSubscriptionPromise | void {
     const boundsOfPage = this.getBoundingRectOfFrame(page)
     const collisions: {page: HTMLElement, cols: {side: Side, distance: number}[]}[] = []
     for (const p of this.canvasees) {
@@ -459,7 +469,7 @@ export default class AdminPage extends Page {
       
       
 
-      const storePos = localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 300})
+      const storePos = localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 0})
       const pos = new DataBase(storePos())
 
       window.addEventListener("beforeunload", function (e) {
@@ -471,11 +481,18 @@ export default class AdminPage extends Page {
       setTimeout(() => {
         frame.css({zIndex: Math.floor(frame.getScaledY() / this.body.canvas.height() * maxZIndex)})
       })
+
+      let cancelCb: Token<() => void>
       frame.currentlyMoving.get(async (moving) => {
         if (moving) {
+          cancelCb = addOnUnloadAnimationCancelCb(() => {
+            const ret = this.ensurePageIsInFreeSpace(frame)
+            if (ret instanceof CancelAblePromise) ret.cancel()
+          })
           frame.css({zIndex: maxZIndex})
         }
         else {
+          cancelCb.rm()
           await this.ensurePageIsInFreeSpace(frame)
           frame.css({zIndex: Math.floor(frame.getScaledY() / this.body.canvas.height() * maxZIndex)})
         }

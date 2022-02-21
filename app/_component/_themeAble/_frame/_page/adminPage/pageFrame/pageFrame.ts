@@ -6,6 +6,7 @@ import selectText from "select-text"
 
 
 import tippy, {sticky} from "tippy.js"
+import { stopRenderOnUnloadCb } from "../adminPage"
 
 function makePopperIndecator() {
   const indecator = ce("popper-indecator")
@@ -122,18 +123,23 @@ export default class PageFrame extends Component {
 
 
 
+    
 
 
-
-      new DataCollection(pos.x, widthData).get((x, w) => {
+      const xSub = new DataCollection(pos.x, widthData).get((x, w) => {
         this.css({translateX: x * w})
       })
 
 
 
 
-      pos.y.get((y) => {
+      const ySub = pos.y.get((y) => {
         this.css({translateY: y})
+      })
+
+      stopRenderOnUnloadCb(() => {
+        xSub.deactivate()
+        ySub.deactivate()
       })
 
 
