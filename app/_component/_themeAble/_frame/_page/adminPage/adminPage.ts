@@ -605,21 +605,21 @@ export default class AdminPage extends Page {
   
       const leftBorder = addPositionalHTMLElementApiWrapperFromPos(
         ce("border-box").addClass("left"),
-        new DataBase({x: -borderSize / this.width() * holyWidthDivider, y: 0})
+        new DataBase({x: -borderSize / this.width() * holyWidthDivider, y: -borderSize})
       )
       leftBorder.css({
         width: borderSize,
-        height: "100%"
+        height: borderSize * 2 + canvasDimensions.height
       })
   
   
       const rightBorder = addPositionalHTMLElementApiWrapperFromPos(
         ce("border-box").addClass("right"),
-        new DataBase({x: canvasDimensions.width / this.width() * holyWidthDivider, y: 0})
+        new DataBase({x: canvasDimensions.width / this.width() * holyWidthDivider, y: -borderSize})
       )
       rightBorder.css({
         width: borderSize,
-        height: "100%"
+        height: borderSize * 2 + canvasDimensions.height
       })
   
 
