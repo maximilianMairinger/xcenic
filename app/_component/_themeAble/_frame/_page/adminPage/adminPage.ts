@@ -429,13 +429,11 @@ export default class AdminPage extends Page {
       const frame = new PageFrame(page, d, localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 300}), this.absZData, this.normalizedWidthData, this.addNoScaleBoundAddon.bind(this))
       frame.currentlyMoving.get(async (moving) => {
         if (moving) {
-          frame.css({zIndex: 10000})
+          frame.css({zIndex: maxZIndex})
         }
         else {
           await this.ensurePageIsInFreeSpace(frame)
-          frame.css({zIndex: Math.floor(frame.getScaledY() / this.body.canvas.height() * this.body.canvas.height())})
-
-          // frame.css({zIndex: "unset"})
+          frame.css({zIndex: Math.floor(frame.getScaledY() / this.body.canvas.height() * maxZIndex)})
         }
       }, false)
       
