@@ -58,6 +58,7 @@ export default class Header extends ThemeAble {
   private additionalPathDisplay = this.q("additional-path-display")
 
   private atTheTop = new Data(true)
+  private blockingInteractions = new Data(false)
 
   private pathDisplayElementsCount = new Data(0)
   private pathDisplayEmpty = this.pathDisplayElementsCount.tunnel((c) => c === 0)
@@ -72,14 +73,22 @@ export default class Header extends ThemeAble {
 
     this.atTheTop.get((top) => {
       if (top) {
-        this.css("pointerEvents", "none")
         this.background.removeClass(notTopClassName)
       }
       else {
-        this.css("pointerEvents", "all")
         this.background.addClass(notTopClassName)
       }
     }, false)
+
+    this.blockingInteractions.get((blocking) => {
+      if (blocking) {
+        this.css("pointerEvents", "all")
+      }
+      else {
+        this.css("pointerEvents", "none")
+      }
+
+    })
     
     
 
@@ -187,6 +196,13 @@ export default class Header extends ThemeAble {
 
   public notTop() {
     this.atTheTop.set(false)
+  }
+
+  unblockInteractions() {
+    this.blockingInteractions.set(false)
+  }
+  blockInteractions() {
+    this.blockingInteractions.set(true)
   }
 
 

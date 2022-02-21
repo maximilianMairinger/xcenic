@@ -12,6 +12,7 @@ import { linkRecord } from "../_themeAble/link/link"
 
 
 const topLimit = 0
+const topLimitForBlockingInteractions = 55
 const scrollTrendActivationCount = 20
 
 // intentionally never resolve those
@@ -103,13 +104,21 @@ export default class Site extends Component {
         if (prog <= topLimit) {
           header.onTop()
         }
+        if (prog <= topLimitForBlockingInteractions) {
+          header.unblockInteractions()
+        }
       }
-      else if (prog > topLimit) {
-        header.notTop()
+      else {
+        if (prog > topLimit) {
+          header.notTop()
+        }
+        if (prog > topLimitForBlockingInteractions) {
+          header.blockInteractions()
+        }
       }
 
       lastScrollProg = prog
-    },);
+    });
 
     
 

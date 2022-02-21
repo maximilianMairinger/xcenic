@@ -32,7 +32,7 @@ export default class PageManager extends Manager {
           const proxyFunc = (active: boolean) => {
             // make the url bar blurry no matter where we are
             if (active) setTimeout(() => {
-              if (instance.active) onScroll(300)
+              if (instance.active) onScroll(5)
             })
           }
 
