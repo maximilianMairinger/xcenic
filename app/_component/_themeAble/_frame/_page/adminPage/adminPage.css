@@ -20,7 +20,7 @@ page-canvas-container {
 move-area {
   transform-origin: 0 0;
   will-change: transform; /* this is the magic performance improving line */
-  margin-bottom: 55px;
+  margin-top: 95px; /* 55px header + 40px heading of frames */
 
 }
 

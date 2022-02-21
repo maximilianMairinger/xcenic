@@ -14,7 +14,7 @@ import LinkedList from "fast-linked-list"
 import ContactPage from "./../contactPage/contactPage"
 import HomePage from "./../_sectionedPage/_lazySectionedPage/homepage/homepage"
 import SectionedPage from "../_sectionedPage/sectionedPage"
-import PageFrame, { minDistanceTop, UrlDuplicateError } from "./pageFrame/pageFrame"
+import PageFrame, { UrlDuplicateError } from "./pageFrame/pageFrame"
 import { Data, DataBase, DataCollection } from "josm"
 import clone from "fast-copy"
 
@@ -140,8 +140,8 @@ export default class AdminPage extends Page {
      /* p / this.abs.z */
     return {
       top: 70,
-      left: 20,
-      right: 20,
+      left: 0,
+      right: 0,
       bottom: 70
     }
   }
@@ -337,7 +337,7 @@ export default class AdminPage extends Page {
           y: y - beginCoords.y
         }
 
-        const totalTime = Math.hypot(x - beginCoords.x, y - beginCoords.y) / 4 + 100
+        const totalTime = Math.hypot(x - beginCoords.x, y - beginCoords.y) / 4 + 100 * (Math.sqrt(this.absZData.get()) * 3)
         return animationFrameDelta((timePassed) => {
           const absProg = timePassed / totalTime
           const prog = collisionResolveEasingFunc(absProg)
@@ -578,19 +578,16 @@ export default class AdminPage extends Page {
 
 
     setTimeout(() => {
-      const topBorderPos = new DataBase({x: 0, y: -borderSize + minDistanceTop})
+      const margin = this.getMargin()
       const topBorder = addPositionalHTMLElementApiWrapperFromPos(
         ce("border-box").addClass("top"),
-        topBorderPos
+        new DataBase({x: 0, y: -borderSize - margin.top - margin.bottom})
       )
       topBorder.css({
         width: "100%",
         height: borderSize,
       })
-      const margin = this.getMargin()
-      this.absZData.get((z) => {
-        topBorderPos.y.set(-borderSize + (minDistanceTop / z + minDistanceTop) - margin.top - margin.bottom)
-      })
+
   
       const bottomBorder = addPositionalHTMLElementApiWrapperFromPos(
         ce("border-box").addClass("bottom"),
@@ -777,7 +774,7 @@ export default class AdminPage extends Page {
 
         // keep the zoom around the pointer
         const pointerX = e.clientX + abs.zoomOffset.x - abs.x
-        const pointerY = e.clientY + abs.zoomOffset.y - abs.y
+        const pointerY = e.clientY + abs.zoomOffset.y - abs.y - paddingTop
 
         abs.zoomOffset.x += pointerX * (zoom - 1)
         abs.zoomOffset.y += pointerY * (zoom - 1)
@@ -945,7 +942,7 @@ export default class AdminPage extends Page {
 
         const centerOfZoom = {
           x: (touch1.clientX + touch2.clientX) / 2,
-          y: (touch1.clientY + touch2.clientY) / 2
+          y: (touch1.clientY + touch2.clientY) / 2 - paddingTop // analog to mouse. not tested
         }
 
         const pointerX = centerOfZoom.x + abs.zoomOffset.x - abs.x
@@ -1011,9 +1008,10 @@ export default class AdminPage extends Page {
     const renderedCoords = clone(abs)
 
 
-    
-
-
+    let paddingTop = 0
+    setTimeout(() => {
+      paddingTop = this.body.moveArea.css("marginTop")
+    })
 
     animationFrameDelta(() => {
 
@@ -1041,7 +1039,7 @@ export default class AdminPage extends Page {
       const z = renderedCoords.z
 
       const w = x - target.width() + canvas.width() * z
-      const h = y - target.height() + canvas.height() * z
+      const h = y - target.height() + canvas.height() * z + paddingTop // 55px is the height of the header (independent of scale ofc). It is appended as marginTop to the moveArea in css
       
       howFarOutOfBounds.x = x > 0 ? -x : w < 0 ? -w : 0
       howFarOutOfBounds.y = y > 0 ? -y : h < 0 ? -h : 0

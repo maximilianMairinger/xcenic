@@ -24,7 +24,7 @@ function makePopperIndecator() {
 export const minDistanceTop = 30 + 55
 
 
-// todo: only save pos data when unload
+// todo: only save pos data when unload. TODO: reload while resolveing collision in animation...
 
 export class UrlDuplicateError extends Error {}
 
@@ -131,37 +131,38 @@ export default class PageFrame extends Component {
       })
 
       let intentionalY = pos.y.get()
+      this.css({translateY: intentionalY})
 
-
-      const y = intentionalY
-      const max = minDistanceTop / zData.get() + minDistanceTop
-      if (y < max) {
-        pos.y.set(max)
-        this.css({translateY: max})
-      }
-      else this.css({translateY: y})
+      // const y = intentionalY
+      // const max = minDistanceTop / zData.get() + minDistanceTop
+      // if (y < max) {
+      //   pos.y.set(max)
+      //   this.css({translateY: max})
+      // }
+      // else this.css({translateY: y})
 
       zData.get((z) => {
-        const y = intentionalY
-        const max = minDistanceTop / z + minDistanceTop
-        if (y < max) {
-          ySub.setToData(max)
-          this.css({translateY: max})
-        }
-        else this.css({translateY: y})
+        // const y = intentionalY
+        // const max = minDistanceTop / z + minDistanceTop
+        // if (y < max) {
+        //   ySub.setToData(max)
+        //   this.css({translateY: max})
+        // }
+        // else this.css({translateY: y})
       }, false)
       const ySub = pos.y.get((y) => {
         const z = zData.get()
         const max = minDistanceTop / z + minDistanceTop
-        if (y < max) {
-          ySub.setToData(max)
-          this.css({translateY: max})
-          intentionalY = max
-        }
-        else {
+        // if (y < max) {
+        //   ySub.setToData(max)
+        //   this.css({translateY: max})
+        //   intentionalY = max
+        // }
+        // else {
+          console.log(y)
           this.css({translateY: y})
           intentionalY = y
-        }
+        // }
         
       }, false)
 
@@ -170,7 +171,6 @@ export default class PageFrame extends Component {
 
       const dragStartListener = headingElem.on("mousedown", (e) => {
         if (e.button === 0) {
-          if (pos.y.get() < minDistanceTop / zData.get() + minDistanceTop) pos.y.set(minDistanceTop / zData.get() + minDistanceTop)
           dragListener.activate()
           this.currentlyMoving.set(true)
         }
