@@ -7,6 +7,7 @@ import selectText from "select-text"
 
 import tippy, {sticky} from "tippy.js"
 import { stopRenderOnUnloadCb } from "../adminPage"
+import { EventListener } from "extended-dom"
 
 function makePopperIndecator() {
   const indecator = ce("popper-indecator")
@@ -148,12 +149,6 @@ export default class PageFrame extends Component {
 
 
 
-      const dragStartListener = headingElem.on("mousedown", (e) => {
-        if (e.button === 0) {
-          dragListener.activate()
-          this.currentlyMoving.set(true)
-        }
-      })
 
 
       headingElem.draggable = true
@@ -161,59 +156,92 @@ export default class PageFrame extends Component {
 
 
       headingElem.on("dragstart", (e) => {
-        dragListener.activate()
+
+
         this.currentlyMoving.set(true)
         lastX = e.x
         lastY = e.y
 
         e.dataTransfer.setDragImage(dragPrevImg as any as HTMLElement, 0, 0);
+        for (const ls of bodyListeners) ls.activate()
+        e.dataTransfer.effectAllowed = "move";
+
       })
 
-      headingElem.on("dragend", () => {
-        cancelDragF()
-      })
+      
 
 
+      const bodyListeners = [] as Array<EventListener>
+
+
+      
 
       let lastX: number
       let lastY: number
-      const dragListener = document.body.on("dragover", (e) => {
+      bodyListeners.push(document.body.on("dragover", (e) => {
+        e.preventDefault()
+        // e.dataTransfer.dropEffect = "move"
+
+
         const zInv = 1 / zData.get()
         this.addUnscaledX((e.x - lastX) * zInv)
         this.addUnscaledY((e.y - lastY) * zInv)
         lastX = e.x
         lastY = e.y
-      })
-      dragListener.deactivate()
+      }))
 
+
+      bodyListeners.push(document.body.on("drop", (e) => {
+        e.preventDefault()
+        cancelDragF()
+      }, true))
+
+
+
+      headingElem.on("dragend", () => {
+        cancelDragF()
+      }, true)
 
 
   
-      // document.body.on("mousemove", (e) => {
-      //   const zInv = 1 / zData.get()
-      //   this.addUnscaledX(e.movementX * zInv)
-      //   this.addUnscaledY(e.movementY * zInv)
-      // })
+
+
+      for (const ls of bodyListeners) ls.deactivate()
+
+
+
+
   
       const cancelDragF = () => {
-        dragListener.deactivate()
+        for (const ls of bodyListeners) ls.deactivate()
         this.currentlyMoving.set(false)
       }
 
+
+      this.currentlyMoving.get((moving) => {
+        if (moving) {
+          document.body.css({cursor: "grabbing !important"})
+          headingElem.css({cursor: "grabbing !important"})
+
+        }
+        else {
+          document.body.css({cursor: "default"})
+        }
+      })
 
 
 
 
       editing.get((editing) => {
         if (editing) {
-          dragStartListener.deactivate()
+          headingElem.draggable = false
           headingElem.css({cursor: "text", overflow: "visible"})
           headingElem.setAttribute("contenteditable", "true")
     
           selectText(headingElem)
         }
         else {
-          dragStartListener.activate()
+          headingElem.draggable = true
           headingElem.css({cursor: "pointer", overflow: "hidden"})
           headingElem.setAttribute("contenteditable", "false")
         }
