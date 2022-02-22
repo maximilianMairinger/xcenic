@@ -23,8 +23,11 @@ function makePopperIndecator() {
 }
 
 
+const dragPrevImg = document.createElement("img");
+dragPrevImg.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'><rect width='0' height='0' fill='red' /></svg>";
 
-// TODO: going out of bounds while dragging must be handled properly. Maybe using the drag api, to detect droped elements even when out of bpunds. Otherwise mouseups wont get recoginced. This is especially bad in combination with reloading when out of bounds.
+
+
 
 export class UrlDuplicateError extends Error {}
 
@@ -151,23 +154,52 @@ export default class PageFrame extends Component {
           this.currentlyMoving.set(true)
         }
       })
-  
-      const dragListener = document.body.on("mousemove", (e) => {
+
+
+      headingElem.draggable = true
+
+
+
+      headingElem.on("dragstart", (e) => {
+        dragListener.activate()
+        this.currentlyMoving.set(true)
+        lastX = e.x
+        lastY = e.y
+
+        e.dataTransfer.setDragImage(dragPrevImg as any as HTMLElement, 0, 0);
+      })
+
+      headingElem.on("dragend", () => {
+        cancelDragF()
+      })
+
+
+
+      let lastX: number
+      let lastY: number
+      const dragListener = document.body.on("dragover", (e) => {
         const zInv = 1 / zData.get()
-        this.addUnscaledX(e.movementX * zInv)
-        this.addUnscaledY(e.movementY * zInv)
+        this.addUnscaledX((e.x - lastX) * zInv)
+        this.addUnscaledY((e.y - lastY) * zInv)
+        lastX = e.x
+        lastY = e.y
       })
       dragListener.deactivate()
+
+
+
+  
+      // document.body.on("mousemove", (e) => {
+      //   const zInv = 1 / zData.get()
+      //   this.addUnscaledX(e.movementX * zInv)
+      //   this.addUnscaledY(e.movementY * zInv)
+      // })
   
       const cancelDragF = () => {
         dragListener.deactivate()
         this.currentlyMoving.set(false)
       }
-  
-      document.body.on("mouseup", (e) => {
-        if (e.button === 0) cancelDragF()
-      })
-      document.body.on("blur", cancelDragF)
+
 
 
 

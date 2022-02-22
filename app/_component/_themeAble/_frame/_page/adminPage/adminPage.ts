@@ -654,7 +654,6 @@ export default class AdminPage extends Page {
         height: borderSize
       })
   
-      console.log("this", this.width())
   
       const leftBorder = addPositionalHTMLElementApiWrapperFromPos(
         ce("border-box").addClass("left"),
@@ -737,7 +736,6 @@ export default class AdminPage extends Page {
 
       e.preventDefault()
       if (!e.ctrlKey && !startedWheelWithControl) {
-
         // pan
         if (e.shiftKey) {
           delta.x = e.deltaY
