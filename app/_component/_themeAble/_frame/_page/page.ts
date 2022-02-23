@@ -2,7 +2,7 @@ import lazyLoad from "../../../../lib/lazyLoad";
 import { linkRecord } from "../../link/link";
 import { Theme } from "../../themeAble";
 import Frame from "../frame";
-
+import "../../../text/text"
 
 
 
