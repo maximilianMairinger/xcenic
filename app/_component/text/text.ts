@@ -1,5 +1,5 @@
 import { Prim } from "extended-dom";
-import { Data } from "josm";
+import { Data, DataSubscription } from "josm";
 import declareComponent from "../../lib/declareComponent";
 import Component from "../component";
 
@@ -16,7 +16,6 @@ export function disableEditableForAll() {
 
 export default class Text extends Component {
 
-  private data: Data<Prim>
 
   constructor(data: Data<Prim>) {
     super(ce("slot"))
@@ -30,20 +29,29 @@ export default class Text extends Component {
     if (data) this.txt(data)
 
 
+
     this.on("input", () => {
-      this.data.set(this.innerText)
+      this.sub.setToData(this.innerText)
     })
   }
+  private sub = new Data("").get((s) => {
+    super.txt(s)
+  }, false)
   txt(): string
   txt(to: Prim, animOnExplicitChange?: boolean): this
   txt(to?: Data<Prim>, animOnExplicitChange?: boolean, animOnDataChange?: boolean): this
   txt(to?: Data<Prim> | Prim, animOnExplicitChange?: boolean, animOnDataChange?: boolean) {
     if (to !== undefined) {
-      if (!(to instanceof Data)) console.warn("Text.txt(to) is no instance of Data, hence cannot be edited");
-      else this.data = to
+      if (!(to instanceof Data)) {
+        console.warn("Text.txt(to) is no instance of Data, hence cannot be edited");
+        return super.txt(to as any, animOnExplicitChange, animOnDataChange)
+      }
+      else {
+        this.sub.data(to as Data<string>)
+        return this
+      }
     }
-
-    return super.txt(to as any, animOnExplicitChange, animOnDataChange) as any
+    else return super.txt(to as any, animOnExplicitChange, animOnDataChange) as any
   }
 
   enableEditable() {
