@@ -28,11 +28,13 @@ export default class Text extends Component {
 
     if (data) this.txt(data)
 
-
-
     this.on("input", () => {
       this.sub.setToData(this.innerText)
     })
+    
+    Object.defineProperty(this.ownTextNodes().first, "txt", {value: (...a) => {
+      return this.txt(...a)
+    }})
   }
   private sub = new Data("").get((s) => {
     super.txt(s)

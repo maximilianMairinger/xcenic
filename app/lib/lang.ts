@@ -4,7 +4,8 @@ import en from "../res/lang/en"
 
 type Lang = typeof en
 
-
 export const lang = new DataBase<Lang>(en as Lang)
 export default lang
 
+// @ts-ignore
+window.lang = lang
