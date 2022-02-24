@@ -1,0 +1,4 @@
+:host(.edit) {
+  /* z-index: 50; */
+  cursor: text;
+}

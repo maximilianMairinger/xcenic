@@ -133,12 +133,10 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
 
   public addActivationCallback<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB {
     this.callbacks.add(cb);
-    this.enabled.set(true)
     return cb
   }
   public removeActivationCallback<CB extends (e: MouseEvent | KeyboardEvent | undefined) => void>(cb: CB): CB {
     this.callbacks.removeV(cb);
-    if (this.callbacks.empty) this.enabled.set(false)
     return cb
   }
 
@@ -173,7 +171,7 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
       }
       else if (this._hotKey === undefined) {
         this.hotKeyListener = (e) => {
-          if (this.offsetParent !== null) if (e.key === this._hotKey) this.click()
+          if (this.offsetParent !== null) if (e.key === this._hotKey) this.click(e)
         }
         document.on("keydown", this.hotKeyListener)
       }
