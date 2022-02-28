@@ -7,10 +7,17 @@ import Component from "../component";
 export function textify(element: HTMLElement, visualUnit?: HTMLElement) {
   const txtELem = new Text(undefined, visualUnit)
   element.apd(txtELem)
-  element.txt = element.text = txtELem.txt.bind(txtELem);
+  const oriTxt = txtELem.txt.bind(txtELem)
+  // @ts-ignore
+  element.txt = element.text = (...a) => {
+    oriTxt(...a)
+    return element
+  };
   (element as HTMLElement & {textElement: Text}).textElement = txtELem
   return element as HTMLElement & {textElement: Text}
 }
+
+// todo: make it only plaintext
 
 
 const listOfAllTextElems = [] as Text[]
@@ -39,9 +46,16 @@ export default class Text extends Component {
 
     if (data) this.txt(data)
 
+
     this.on("input", () => {
-      this.sub.setToData(this.innerText)
+      if (this.innerText === "") {
+        // set to undefined here, But idk why the defaults dont work rn
+        (this.sub.data() as Data<string>).set("_")
+      }
+      else this.sub.setToData(this.innerText)  
     })
+
+    
 
     const editEventListener = [] as EventListener[]
     const stopPropergationFunc = (e: Event) => {

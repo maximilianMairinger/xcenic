@@ -313,6 +313,12 @@ name-artifact {
   font-weight: bold;
   opacity: .075;
   pointer-events: none;
+  user-select: none;
+}
+
+name-artifact > c-text {
+  pointer-events: none;
+  user-select: none;
 }
 
 grid-legal.head {

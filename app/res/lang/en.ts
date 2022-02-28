@@ -124,10 +124,10 @@ export default {
       note: "Who are we?",
       // WIP
       heading: "A bunch of creative professionals having fun",
-      view: "View",
       quote: [
         {
-          projectName: "TGM Website",
+          // projectName: "TGM Website",
+          cta: "View TGM Website",
           projectLink: "tgmWebsite",
           // WIP
           text: "Very good work. Its super beautiful, I like it alot. In fact it is superb, I would probably bye again if I had enough money. Yes I am sure it is super nice, the collaboration and everything, just nice!",

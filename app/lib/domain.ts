@@ -5,8 +5,9 @@ import getBaseUrl from "get-base-url";
 import lang from "./../lib/lang"
 
 
+
 // todo lang
-const commonTitle = "Xcenic";
+const commonTitle = lang.xcenic.longName;
 const commonTitleSeperator = " - "
 const commonSubtileSeperator = " > "
 const maxCharactersInTitle = 20
@@ -71,8 +72,12 @@ function renderSubtitle(myDomainIndex: string[] = domIndex) {
   }).join(commonSubtileSeperator)
 }
 
+commonTitle.get(() => {
+  updateTitle()
+})
+
 function updateTitle() {
-  let title = commonTitle
+  let title = commonTitle.get()
 
   let originalSubtitle: string, subtitle: string
   originalSubtitle = subtitle = renderSubtitle()

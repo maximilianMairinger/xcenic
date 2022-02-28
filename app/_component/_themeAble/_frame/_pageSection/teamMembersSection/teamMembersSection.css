@@ -101,7 +101,7 @@ details-bar {
 }
 
 heading-elem {
-  font-weight: bold;
+  font-weight: bold !important;
 }
 
 

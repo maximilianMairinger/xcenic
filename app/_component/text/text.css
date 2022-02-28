@@ -2,4 +2,5 @@
   /* z-index: 50; */
   cursor: text;
   user-select: auto !important;
+  pointer-events: all;
 }

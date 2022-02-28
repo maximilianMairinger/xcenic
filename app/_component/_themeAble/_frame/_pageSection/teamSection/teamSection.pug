@@ -11,12 +11,15 @@ quote-section
     quote-box 
       quote-heading 
         heading-line
-          heading-text  $[ home.team.quote.0.author ]
+          heading-text 
+            c-text $[ home.team.quote.0.author ]
           heading-seperator / 
-        heading-subtext $[ home.team.quote.0.authorTitle ]
+        heading-subtext 
+          c-text $[ home.team.quote.0.authorTitle ]
       
-      quote-text $[ home.team.quote.0.text ]
-      c-link(content="$[ home.team.view ] $[ home.team.quote.0.projectName ]" link="team")
+      quote-text 
+        c-text $[ home.team.quote.0.text ]
+      c-link(link="team") $[ home.team.quote.0.cta ]
       
       c-quotation-mark.top
       c-quotation-mark.bot 
