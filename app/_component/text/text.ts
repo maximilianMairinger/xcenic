@@ -1,5 +1,5 @@
 import { EventListener, Prim } from "extended-dom";
-import { Data, DataSubscription } from "josm";
+import { Data, DataCollection, DataSubscription } from "josm";
 import declareComponent from "../../lib/declareComponent";
 import Component from "../component";
 
@@ -52,18 +52,17 @@ export default class Text extends Component {
 
 
     
-
-    this.editMode.get((edit) => {
-      if (edit) {
+    new DataCollection(this.editMode, this.canBeEdited).get((edit, canBeEdited) => {
+      if (edit && canBeEdited) {
         this.addClass("edit")
         this.setAttribute("contenteditable", "true")      
       }
       else {
         this.removeClass("edit")
         this.setAttribute("contenteditable", "false")
-    
       }
     })
+
 
 
 
@@ -83,16 +82,18 @@ export default class Text extends Component {
   private sub = new Data("").get((s) => {
     super.txt(s)
   }, false)
+  private canBeEdited = new Data(false)
   txt(): string
   txt(to: Prim, animOnExplicitChange?: boolean): this
   txt(to?: Data<Prim>, animOnExplicitChange?: boolean, animOnDataChange?: boolean): this
   txt(to?: Data<Prim> | Prim, animOnExplicitChange?: boolean, animOnDataChange?: boolean) {
     if (to !== undefined) {
       if (!(to instanceof Data)) {
-        console.warn("Text.txt(to) is no instance of Data, hence cannot be edited");
+        this.canBeEdited.set(false)
         return super.txt(to as any, animOnExplicitChange, animOnDataChange)
       }
       else {
+        this.canBeEdited.set(true)
         this.sub.data(to as Data<string>)
         return this
       }
