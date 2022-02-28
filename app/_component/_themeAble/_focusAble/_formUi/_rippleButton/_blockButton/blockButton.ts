@@ -9,7 +9,6 @@ export default class BlockButton extends RippleButton {
   constructor(content: string = "", onClick?: ((e?: MouseEvent | KeyboardEvent) => any)) {
     super();
 
-    console.log(this, this.parentElement)
 
     if (onClick) this.click(onClick)
     this.content(content);

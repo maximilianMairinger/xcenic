@@ -5,8 +5,11 @@ import * as domain from "../../../lib/domain"
 import delay from "delay"
 // import ExternalLinkIcon from "../_icon/externalLink/externalLink"
 import { Prim, EventListener } from "extended-dom";
+import { textDataSymbol } from "extended-dom/app/dist/extentions/childs";
 
 import { PrimitiveRecord } from "../../../lib/record";
+import TextElem from "../../text/text";
+
 
 export const linkRecord = new PrimitiveRecord<{link: string, level: number}>()
 
@@ -25,6 +28,8 @@ export default class Link extends ThemeAble {
 
   private eventTargetLs = [] as EventListener[]
 
+  private mutObserver: MutationObserver
+
   constructor(content: string | Data<string>, link?: string | (() => void), public domainLevel: number = 0, public push: boolean = true, public notify?: boolean, underline: boolean = true, eventTarget?: Element) {
     super(false)
 
@@ -40,20 +45,23 @@ export default class Link extends ThemeAble {
     }
 
 
+
+
   
     
 
 
-    const observer = new MutationObserver(this.mutateChildsCb.bind(this))
-
+    this.mutObserver = new MutationObserver(this.mutateChildsCb.bind(this))
+    this.activateMutationObserver()
     
-    observer.observe(this, { attributes: false, childList: true, subtree: false });
 
 
 
 
 
     let ev = async (e: Event, dontSetLocation = false) => {
+      if (this.editMode.get()) return
+
       let link = this.link()
       const linkIsDefined = link !== undefined && link !== null
       let meta = linkIsDefined ? domain.linkMeta(link, this.domainLevel) : null
@@ -271,31 +279,65 @@ export default class Link extends ThemeAble {
   }, false)
 
 
-  private hasIconChilds = false
+  public readonly editMode = new Data(false) as Omit<Data<boolean>, "set">
+
+  private editModeCummulative = new DataCollection<boolean[]>().get((...editable) => {
+    (this.editMode as Data<boolean>).set(editable.some(e => e))
+  }, false)
+
+
   private curChilds: HTMLElement[] = []
   private mutateChildsCb() {
-    const hasIconChildsNow = this.children.length !== 0
-    if (!hasIconChildsNow && !this.hasIconChilds) return
-    this.hasIconChilds = hasIconChildsNow
 
-    const childs = this.childNodes as any
+
+    const childs = [...this.childNodes] as any
     const iconsResizeDatas: Data<any>[] = []
     this.curChilds.clear()
+
+    const textElemsEditable = [] as Data<boolean>[]
+    this.deactivateMuataionObserver()
+
     for (let i = 0; i < childs.length; i++) {
       
       if (childs[i] instanceof Text) {
         this.textNodeIndex = i
+        if (childs[i][textDataSymbol] === undefined) continue
+        const data = childs[i][textDataSymbol].data()
+        if (data) {
+          const textElem = new TextElem(data, this)
+          textElemsEditable.push(textElem.editMode)
+          this.insertBefore(textElem, childs[i])
+          childs[i].remove()
+          childs[i].txt("", false)
+        }
       }
       else {
-        iconsResizeDatas.push(childs[i].resizeData() as Data<DOMRectReadOnly>)
-        this.curChilds.push(childs[i])
+        if (!(childs[i] instanceof TextElem)) {
+          iconsResizeDatas.push(childs[i].resizeData() as Data<DOMRectReadOnly>)
+          this.curChilds.push(childs[i])
+  
+        }
       }
     }
+
+    this.editModeCummulative.data(new DataCollection(...textElemsEditable) as any)
+
+
+
+    this.activateMutationObserver()
+
 
     const e = new DataCollection(...iconsResizeDatas)
     // @ts-ignore
     this.cummulatorListener.data(e)
 
+  }
+
+  activateMutationObserver() {
+    this.mutObserver.observe(this, { attributes: false, childList: true, subtree: false });
+  }
+  deactivateMuataionObserver() {
+    this.mutObserver.disconnect()
   }
 
 

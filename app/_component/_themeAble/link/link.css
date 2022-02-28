@@ -32,7 +32,7 @@ slot {
   align-items: center;
 }
 
-::slotted(*) {
+::slotted(*:not(c-text)) {
   height: min-content;
   width: 1.1119em;
   display: inline-block;
