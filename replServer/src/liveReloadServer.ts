@@ -32,21 +32,39 @@ export default function init(indexUrl: string = "*", wsUrl: string = "/") {
   let clients: Set<WebSocket>
   const ex = configureExpressApp(indexUrl, publicPath, new Promise((res) => {activateSetFileProxy = res}), (app) => {
     let appWss = expressWs(app)
-    clients = appWss.getWss(wsUrl).clients;
+    clients = (appWss as any).getWss(wsUrl).clients;
     (app as any).ws(wsUrl, () => {})
   })
 
   const app = ex as typeof ex & { ws: (route: string, fn: (ws: WebSocket & {on: WebSocket["addEventListener"], off: WebSocket["removeEventListener"]}, req: any) => void) => void }
   
+  const restartingCousOf = []
 
   chokidar.watch(publicPath, { ignoreInitial: true }).on("all", (event, path) => {
     path = formatPath(path)
 
-    console.log("Change at: \"" + path + "\"; Restarting app.")
 
-    clients.forEach((c) => {
-      c.send("reload please")
-    })
+
+
+    console.log("rengo")
+
+    if (restartingCousOf.empty) {
+      setTimeout(() => {
+        console.log("Change at: \"" + restartingCousOf.join(", ") + "\"; Restarting app.")
+        restartingCousOf.clear()
+
+
+
+        clients.forEach((c) => {
+          c.send("reload please")
+        }, 0)
+      })
+    }
+    restartingCousOf.push(path)
+
+
+
+    
   })
 
 
