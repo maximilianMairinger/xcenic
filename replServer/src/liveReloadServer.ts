@@ -43,7 +43,8 @@ export default function init(indexUrl: string = "*", wsUrl: string = "/") {
   chokidar.watch(publicPath, { ignoreInitial: true }).on("all", (event, path) => {
     path = formatPath(path)
 
-
+    // @ts-ignore
+    global.qjwnenqjnewqik = restartingCousOf // quickfix https://github.com/rollup/rollup/issues/4425
 
 
     console.log("rengo")
@@ -52,7 +53,6 @@ export default function init(indexUrl: string = "*", wsUrl: string = "/") {
       setTimeout(() => {
         console.log("Change at: \"" + restartingCousOf.join(", ") + "\"; Restarting app.")
         restartingCousOf.clear()
-
 
 
         clients.forEach((c) => {
