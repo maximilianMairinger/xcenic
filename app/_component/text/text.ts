@@ -51,6 +51,10 @@ export default class Text extends Component {
       if (this.innerText === "") {
         this.sub.setToData(undefined)
         super.txt((this.sub.data() as Data<string>).get())
+        // select all text of this contenteditable element 
+        document.execCommand('selectAll', false, null)
+
+
       }
       else this.sub.setToData(this.innerText)  
     })
@@ -60,16 +64,12 @@ export default class Text extends Component {
         e.preventDefault()
         this.blur()
       }
+      e.stopPropagation()
     }, true)
 
     
 
     const editEventListener = [] as EventListener[]
-    const stopPropergationFunc = (e: Event) => {
-      e.stopPropagation()
-    }
-
-    editEventListener.push(this.on("keydown", stopPropergationFunc, true))
 
 
 

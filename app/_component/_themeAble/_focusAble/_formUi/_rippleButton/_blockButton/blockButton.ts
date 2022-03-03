@@ -17,7 +17,8 @@ export default class BlockButton extends RippleButton {
 
     this.textElem.textElement.editMode.get((edit) => {
       // no ui changes just dont handle click
-      this.button.enabled.set(!edit) 
+      this.button.enabled.set(!edit)
+      this.userFeedbackMode.ripple.set(!edit) 
 
       if (edit) {
         this.button.css({userSelect: "text"})
