@@ -4,8 +4,20 @@ import en from "../res/lang/en"
 
 type Lang = typeof en
 
-export const lang = new DataBase<Lang>(en as Lang)
+export const lang = new DataBase<Lang>(en as Lang, deepDefault(en))
 export default lang
 
 // @ts-ignore
 window.lang = lang
+
+
+
+function deepDefault(ob: any): any {
+  const endOb = {}
+  for (const k in ob) {
+    if (typeof ob[k] === "object") endOb[k] = deepDefault(ob[k])
+    else endOb[k] = k
+  }
+  return endOb
+}
+
