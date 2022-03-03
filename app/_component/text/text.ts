@@ -49,11 +49,16 @@ export default class Text extends Component {
 
     this.on("input", () => {
       if (this.innerText === "") {
-        // set to undefined here, But idk why the defaults dont work rn
-        (this.sub.data() as Data<string>).set("_")
+        this.sub.setToData(undefined)
+        super.txt((this.sub.data() as Data<string>).get())
       }
       else this.sub.setToData(this.innerText)  
     })
+
+    this.on("keydown", (e) => {
+      e.preventDefault()
+      this.blur()
+    }, true)
 
     
 
@@ -65,11 +70,15 @@ export default class Text extends Component {
     editEventListener.push(this.on("keydown", stopPropergationFunc, true))
 
 
+
+
+
+
     
     new DataCollection(this.editMode, this.canBeEdited).get((edit, canBeEdited) => {
       if (edit && canBeEdited) {
         this.addClass("edit")
-        this.setAttribute("contenteditable", "true")      
+        this.setAttribute("contenteditable", "plaintext-only")      
       }
       else {
         this.removeClass("edit")

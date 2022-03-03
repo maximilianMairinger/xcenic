@@ -688,13 +688,15 @@ export default class AdminPage extends Page {
     
 
     this.appendPageToCanvas(
-      ce("test-box").apd("1"),
-      ce("test-box").apd("2"),
-      ce("test-box").apd("3"),
-      ce("test-box").apd("4"),
-      ce("test-box").apd("5"),
-      ce("test-box").apd("6"),
-      ce("test-box").apd("7")
+      // ce("test-box").apd("1"),
+      // ce("test-box").apd("2"),
+      // ce("test-box").apd("3"),
+      // ce("test-box").apd("4"),
+      // ce("test-box").apd("5"),
+      // ce("test-box").apd("6"),
+      // ce("test-box").apd("7"),
+      new HomePage(""),
+      new ContactPage()
     )
 
 
@@ -742,8 +744,8 @@ export default class AdminPage extends Page {
           delta.y = 0
         }
         else {
-          delta.x = e.deltaX
-          delta.y = e.deltaY
+          delta.x = e.deltaX * .5
+          delta.y = e.deltaY * .5
         }
 
 
@@ -811,7 +813,7 @@ export default class AdminPage extends Page {
       else {
 
         // zoom
-        let zoom = 1 - ((Math.abs(e.deltaY) > maxZoomStep ? Math.sign(e.deltaY) * maxZoomStep : e.deltaY) / 100)
+        let zoom = 1 - ((Math.abs(e.deltaY) > maxZoomStep ? Math.sign(e.deltaY) * maxZoomStep : e.deltaY) / 100) * .5
         abs.z *= zoom
         if (canvas.width() * abs.z < target.width()) {
           const maxZ = target.width() / canvas.width()
