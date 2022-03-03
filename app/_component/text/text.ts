@@ -56,8 +56,10 @@ export default class Text extends Component {
     })
 
     this.on("keydown", (e) => {
-      e.preventDefault()
-      this.blur()
+      if (e.key === "Enter") {
+        e.preventDefault()
+        this.blur()
+      }
     }, true)
 
     
