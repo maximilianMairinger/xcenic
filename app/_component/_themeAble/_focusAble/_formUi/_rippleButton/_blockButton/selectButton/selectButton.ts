@@ -64,6 +64,7 @@ export default class SelectButton extends BlockButton {
     }, false)
   }
 
+  // @ts-ignore
   protected ripplePreference(): (typeof this.userFeedbackMode.ripple) extends Data<infer T> ? T : null {
     return "late"
   }

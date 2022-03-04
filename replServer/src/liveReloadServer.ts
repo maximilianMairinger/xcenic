@@ -47,7 +47,6 @@ export default function init(indexUrl: string = "*", wsUrl: string = "/") {
     global.qjwnenqjnewqik = restartingCousOf // quickfix https://github.com/rollup/rollup/issues/4425
 
 
-    console.log("rengo")
 
     if (restartingCousOf.empty) {
       setTimeout(() => {

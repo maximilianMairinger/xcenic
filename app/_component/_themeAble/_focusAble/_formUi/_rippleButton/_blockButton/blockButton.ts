@@ -18,7 +18,7 @@ export default class BlockButton extends RippleButton {
     this.textElem.textElement.editMode.get((edit) => {
       // no ui changes just dont handle click
       this.button.enabled.set(!edit)
-      this.userFeedbackMode.ripple.set(edit ? false : this.ripplePreference()) 
+      this.userFeedbackMode.ripple.set(edit ? false : this.ripplePreference() as any) 
 
       if (edit) {
         this.button.css({userSelect: "text"})
@@ -29,6 +29,7 @@ export default class BlockButton extends RippleButton {
     })
   }
 
+  // @ts-ignore
   protected ripplePreference(): (typeof this.userFeedbackMode.ripple) extends Data<infer T> ? T : null {
     return false
   }
