@@ -19,9 +19,6 @@ export default class SelectButton extends BlockButton {
     })
 
 
-
-    this.userFeedbackMode.ripple.set("late")
-
     this.addActivationCallback(() => {
       (this.selected as Data<boolean>).set(!this.selected.get())
     })
@@ -65,6 +62,10 @@ export default class SelectButton extends BlockButton {
         
       }
     }, false)
+  }
+
+  protected ripplePreference(): (typeof this.userFeedbackMode.ripple) extends Data<infer T> ? T : null {
+    return "late"
   }
   
   stl() {

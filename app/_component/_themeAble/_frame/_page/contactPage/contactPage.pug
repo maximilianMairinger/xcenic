@@ -7,7 +7,8 @@ c-form
   ui-container-content
     initial-view
       c-text-blob(heading="$[ contact.heading ]", note="$[ contact.note ]")
-      h3.request $[ contact.requestQuery ]
+      h3.request 
+        c-text $[ contact.requestQuery ]
       selection-body(name="intrests")
         c-select-button(name="dev" content="$[ contact.requestOptions.0 ]")
         c-select-button(name="design" content="$[ contact.requestOptions.1 ]")
@@ -15,12 +16,14 @@ c-form
         c-select-button(name="photo" content="$[ contact.requestOptions.3 ]")
         c-select-button(name="social" content="$[ contact.requestOptions.4 ]")
         c-select-button(name="other" content="$[ contact.requestOptions.5 ]")
-      h3.details $[ contact.detailsQuery ]
+      h3.details 
+        c-text $[ contact.detailsQuery ]
       c-textarea.details(name="details" placeholder="$[ contact.detailsPlaceholder ]")
       
       seperator-row
         c-line-accent
-        h3.lastThing $[ contact.lastThingQuery ]
+        h3.lastThing 
+          c-text $[ contact.lastThingQuery ]
     after-initial-view
       c-input(name="sender" placeholder="$[ contact.yourName ]")
       c-input(name="email" placeholder="$[ contact.email ]" type="email")

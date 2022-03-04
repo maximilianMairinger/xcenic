@@ -1,4 +1,5 @@
 import { Data, DataCollection } from "josm";
+import { textify } from "../../../../text/text";
 import FormUi from "../formUi";
 
 
@@ -12,7 +13,7 @@ export default class EditAble extends FormUi {
 
   protected placeholderContainer = ce("placeholder-container")
   
-  protected placeholderText = ce("placeholder-text")
+  protected placeholderText = textify(ce("placeholder-text"))
 
   protected placeholderUp: Data<boolean>
   constructor(protected inputElem: HTMLInputElement | HTMLTextAreaElement, placeholder = "") {
@@ -20,24 +21,31 @@ export default class EditAble extends FormUi {
     inputElem.id = "editAble"
     this.moveBody.apd(this.placeholderContainer.apd(this.placeholderText))
     this.moveBody.apd(inputElem as any)
-    
 
     this.userFeedbackMode.ripple.set(false)
 
     this.placeholder(placeholder)
 
-    this.enabled.get((enabled) => {
-      if (enabled) {
-        this.inputElem.tabIndex = 0
+
+    const clickListener = this.on("click", () => {
+      inputElem.focus()
+    })
+
+    const placeholderMoveEnabled = new Data(true)
+
+    new DataCollection(this.enabled, placeholderMoveEnabled).get((enabled, placeholderEnabled) => {
+      if (enabled && placeholderEnabled) {
         clickListener.activate()
-      }
-      else {
-        this.inputElem.tabIndex = -1
+        this.inputElem.tabIndex = 0
+      } else {
         clickListener.deactivate()
+        this.inputElem.tabIndex = -1
       }
     }, false)
 
-    
+    this.placeholderText.textElement.editMode.get((edit) => {
+      placeholderMoveEnabled.set(!edit)
+    })
 
     
     const value = (this as any).value = new Data("")
@@ -54,8 +62,8 @@ export default class EditAble extends FormUi {
 
 
     let globalAnimDone: Symbol
-    this.placeholderUp.get((up) => {
-      
+    new DataCollection(this.placeholderUp, placeholderMoveEnabled).get((up, enabled) => {
+      if (!enabled) return
 
       let localAnimDone = globalAnimDone = Symbol()
       this.componentBody.removeClass("animDone")
@@ -68,9 +76,6 @@ export default class EditAble extends FormUi {
       this.placeholderText.css({fontWeight: isEmpty ? "normal" : "bold"})
     })
 
-    const clickListener = this.on("click", () => {
-      inputElem.focus()
-    })
   }
   focus() {
     this.inputElem.focus()
