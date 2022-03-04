@@ -5,6 +5,8 @@ import { Replayer } from "rrweb"
 export async function init() {
   await global()
   const rr = require("./record")
+
+  
 //   document.body.innerHTML = `
 //   <link
 //   rel="stylesheet"
