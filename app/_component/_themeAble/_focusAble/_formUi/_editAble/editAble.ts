@@ -37,9 +37,11 @@ export default class EditAble extends FormUi {
       if (enabled && placeholderEnabled) {
         clickListener.activate()
         this.inputElem.tabIndex = 0
+        this.inputElem.show()
       } else {
         clickListener.deactivate()
         this.inputElem.tabIndex = -1
+        this.inputElem.hide()
       }
     }, false)
 
