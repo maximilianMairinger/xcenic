@@ -14,6 +14,9 @@ move-area, page-canvas, page-canvas-container {
 page-canvas-container {
   overflow: hidden;
   background-color: rgb(250, 250, 250);
+  width: 80%;
+  max-width: calc(100% - 300px);
+  left: max(20%, 300px);
 }
 
 
@@ -75,6 +78,19 @@ border-box {
   height: 100%;
   width: 100%;
 
+}
+
+c-admin-ui {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: 300px;
+  width: 20%;
+  height: 100%;
+  background-color: rgb(240, 240, 240);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  /* z-index: 1; */
 }
 
 

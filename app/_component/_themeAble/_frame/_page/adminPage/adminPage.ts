@@ -18,6 +18,8 @@ import PageFrame, { UrlDuplicateError } from "./pageFrame/pageFrame"
 import { Data, DataBase, DataCollection } from "josm"
 import clone from "fast-copy"
 
+import "../../../adminUi/adminUi"
+
 
 
 
@@ -170,12 +172,15 @@ export default class AdminPage extends Page {
     }
   }
 
+  // @ts-ignore
+  private containerSize: ReturnType<typeof this.resizeData>
+  private container: HTMLElement
 
   private getBoundingRectOfFrame(element: PositionalHTMLElement) {
     const posX = element.getScaledX()
     const posY = element.getScaledY()
     const margin = this.getMargin()
-    const width = element.width() / this.width() * holyWidthDivider
+    const width = element.width() / this.containerSize.get().width * holyWidthDivider
     const height = element.height() // takes very long maybo optimize
     return {
       top: posY - margin.top,
@@ -582,9 +587,11 @@ export default class AdminPage extends Page {
       }
     }
 
-    const container = this.body.canvasContainer as HTMLElement
+    const container = this.container = this.body.canvasContainer as HTMLElement
     const target = this.body.moveArea as HTMLElement
     const canvas = target.children[0] as HTMLElement
+
+    this.containerSize = container.resizeData()
 
     const canvasDimensions = {
       width: 15000,
@@ -655,9 +662,13 @@ export default class AdminPage extends Page {
       })
   
   
+      const leftBorderPos = new DataBase({x: 0, y: -borderSize})
+      this.containerSize.get(({width}) => {
+        leftBorderPos.x.set(borderSize / width * holyWidthDivider)
+      })
       const leftBorder = addPositionalHTMLElementApiWrapperFromPos(
         ce("border-box").addClass("left"),
-        new DataBase({x: -borderSize / this.width() * holyWidthDivider, y: -borderSize})
+        leftBorderPos
       )
       leftBorder.css({
         width: borderSize,
@@ -665,9 +676,13 @@ export default class AdminPage extends Page {
       })
   
   
+      const rightBorderPos = new DataBase({x: 0, y: -borderSize})
+      this.containerSize.get(({width}) => {
+        rightBorderPos.x.set(canvasDimensions.width / width * holyWidthDivider)
+      })
       const rightBorder = addPositionalHTMLElementApiWrapperFromPos(
         ce("border-box").addClass("right"),
-        new DataBase({x: canvasDimensions.width / this.width() * holyWidthDivider, y: -borderSize})
+        rightBorderPos
       )
       rightBorder.css({
         width: borderSize,
@@ -829,7 +844,7 @@ export default class AdminPage extends Page {
 
 
         // keep the zoom around the pointer
-        const pointerX = e.clientX + abs.zoomOffset.x - abs.x
+        const pointerX = e.clientX + abs.zoomOffset.x - abs.x - this.container.offsetLeft
         const pointerY = e.clientY + abs.zoomOffset.y - abs.y - paddingTop
 
         abs.zoomOffset.x += pointerX * (zoom - 1)
@@ -987,8 +1002,12 @@ export default class AdminPage extends Page {
         // zoom touch
 
         wasZoomingJustBefore = true
-        const touch1 = touch2Cache = e.touches[0]
-        const touch2 = e.touches[1]
+        const touch1 = touch2Cache = {clientX: e.touches[0].clientX, clientY: e.touches[0].clientY}
+        touch1.clientX -= this.container.offsetLeft
+        touch1.clientY -= paddingTop
+        const touch2 = {clientX: e.touches[1].clientX, clientY: e.touches[1].clientY}
+        touch2.clientX -= this.container.offsetLeft
+        touch2.clientY -= paddingTop
         const dist = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY)
         const zoom = 1 + ((dist - lastZoomDist) / 200)
         abs.z *= zoom
