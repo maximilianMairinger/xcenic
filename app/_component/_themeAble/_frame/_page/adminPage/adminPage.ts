@@ -160,7 +160,7 @@ const holyWidthDivider = 1500
 
 export default class AdminPage extends Page {
 
-  private normalizedWidthData = this.resizeData().tunnel(e => e.width / holyWidthDivider) 
+  private normalizedWidthData: Data<number> 
 
   private getMargin() {
      /* p / this.abs.z */
@@ -173,14 +173,14 @@ export default class AdminPage extends Page {
   }
 
   // @ts-ignore
-  private containerSize: ReturnType<typeof this.resizeData>
+  private containerSize: Data<{left: number, width: number, height: number}>
   private container: HTMLElement
 
   private getBoundingRectOfFrame(element: PositionalHTMLElement) {
     const posX = element.getScaledX()
     const posY = element.getScaledY()
     const margin = this.getMargin()
-    const width = element.width() / this.containerSize.get().width * holyWidthDivider
+    const width = element.width() / this.width() * holyWidthDivider
     const height = element.height() // takes very long maybo optimize
     return {
       top: posY - margin.top,
@@ -591,7 +591,16 @@ export default class AdminPage extends Page {
     const target = this.body.moveArea as HTMLElement
     const canvas = target.children[0] as HTMLElement
 
-    this.containerSize = container.resizeData()
+    this.containerSize = new Data({left: 0, width: 0, height: 0})
+    this.normalizedWidthData = new Data(0)
+
+    this.resizeData().get(({width}) => {
+      this.normalizedWidthData.set(width / holyWidthDivider)
+    })
+
+    container.resizeData().get(({width, height}) => {
+      this.containerSize.set({width, height, left: container.offsetLeft})
+    })
 
     const canvasDimensions = {
       width: 15000,
@@ -662,27 +671,30 @@ export default class AdminPage extends Page {
       })
   
   
-      const leftBorderPos = new DataBase({x: 0, y: -borderSize})
-      this.containerSize.get(({width}) => {
-        leftBorderPos.x.set(borderSize / width * holyWidthDivider)
+      console.log(this.containerSize.get().left)
+
+      const leftBorderX = new DataBase({x: -borderSize / this.width() * holyWidthDivider, y: -borderSize})
+      this.resizeData().get(({width}) => {
+        leftBorderX.x.set(-borderSize / width * holyWidthDivider)
       })
       const leftBorder = addPositionalHTMLElementApiWrapperFromPos(
         ce("border-box").addClass("left"),
-        leftBorderPos
+        leftBorderX
       )
       leftBorder.css({
         width: borderSize,
         height: borderSize * 2 + canvasDimensions.height
       })
+
+
   
-  
-      const rightBorderPos = new DataBase({x: 0, y: -borderSize})
-      this.containerSize.get(({width}) => {
-        rightBorderPos.x.set(canvasDimensions.width / width * holyWidthDivider)
+      const rightBorderX = new DataBase({x: canvasDimensions.width / this.width() * holyWidthDivider, y: -borderSize})
+      this.resizeData().get(({width}) => {
+        rightBorderX.x.set(canvasDimensions.width / width * holyWidthDivider)
       })
       const rightBorder = addPositionalHTMLElementApiWrapperFromPos(
         ce("border-box").addClass("right"),
-        rightBorderPos
+        rightBorderX
       )
       rightBorder.css({
         width: borderSize,
@@ -844,7 +856,7 @@ export default class AdminPage extends Page {
 
 
         // keep the zoom around the pointer
-        const pointerX = e.clientX + abs.zoomOffset.x - abs.x - this.container.offsetLeft
+        const pointerX = e.clientX + abs.zoomOffset.x - abs.x - this.containerSize.get().left
         const pointerY = e.clientY + abs.zoomOffset.y - abs.y - paddingTop
 
         abs.zoomOffset.x += pointerX * (zoom - 1)
@@ -1003,10 +1015,10 @@ export default class AdminPage extends Page {
 
         wasZoomingJustBefore = true
         const touch1 = touch2Cache = {clientX: e.touches[0].clientX, clientY: e.touches[0].clientY}
-        touch1.clientX -= this.container.offsetLeft
+        touch1.clientX -= this.containerSize.get().left
         touch1.clientY -= paddingTop
         const touch2 = {clientX: e.touches[1].clientX, clientY: e.touches[1].clientY}
-        touch2.clientX -= this.container.offsetLeft
+        touch2.clientX -= this.containerSize.get().left
         touch2.clientY -= paddingTop
         const dist = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY)
         const zoom = 1 + ((dist - lastZoomDist) / 200)
@@ -1017,7 +1029,7 @@ export default class AdminPage extends Page {
 
         const centerOfZoom = {
           x: (touch1.clientX + touch2.clientX) / 2,
-          y: (touch1.clientY + touch2.clientY) / 2 - paddingTop // analog to mouse. not tested
+          y: (touch1.clientY + touch2.clientY) / 2
         }
 
         const pointerX = centerOfZoom.x + abs.zoomOffset.x - abs.x

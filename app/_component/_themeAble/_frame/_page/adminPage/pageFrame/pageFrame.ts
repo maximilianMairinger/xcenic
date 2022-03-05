@@ -226,6 +226,8 @@ export default class PageFrame extends Component {
         }
         else {
           document.body.css({cursor: "default"})
+          headingElem.css({cursor: "pointer"})
+
         }
       })
 
