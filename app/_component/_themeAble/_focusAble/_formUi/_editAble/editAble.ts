@@ -13,7 +13,7 @@ export default class EditAble extends FormUi {
 
   protected placeholderContainer = ce("placeholder-container")
   
-  protected placeholderText = textify(ce("placeholder-text"))
+  protected placeholderText = textify(ce("placeholder-text"), this)
 
   protected placeholderUp: Data<boolean>
   constructor(protected inputElem: HTMLInputElement | HTMLTextAreaElement, placeholder = "") {
@@ -37,11 +37,11 @@ export default class EditAble extends FormUi {
       if (enabled && placeholderEnabled) {
         clickListener.activate()
         this.inputElem.tabIndex = 0
-        this.inputElem.show()
+        this.inputElem.css({pointerEvents: "all"} as any)
       } else {
         clickListener.deactivate()
         this.inputElem.tabIndex = -1
-        this.inputElem.hide()
+        this.inputElem.css({pointerEvents: "none"} as any)
       }
     }, false)
 

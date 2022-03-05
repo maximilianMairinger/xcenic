@@ -1,3 +1,4 @@
+import { maxZIndex } from "./../adminPage"
 import { Data, DataBase, DataCollection } from "josm"
 import { declareComponent } from "../../../../../../lib/declareComponent"
 import Component from "../../../../../component"
@@ -58,6 +59,7 @@ export default class PageFrame extends Component {
       maxWidth: 400,
       sticky: true,
       plugins: [sticky],
+      zIndex: maxZIndex + 1,
       
       popperOptions: {
         modifiers: [

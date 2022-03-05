@@ -150,7 +150,7 @@ const sideToDirIndex = {
 }
 
 
-const maxZIndex = 100000
+export const maxZIndex = 100000
 
 const boundAddonInitPosSymbol = Symbol("addonInitPos")
 
@@ -478,7 +478,7 @@ export default class AdminPage extends Page {
       
       
 
-      const storePos = localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 100})
+      const storePos = localSettings("pageFrame" + this.addedPagesCount, {x: 70 + 1700 * this.addedPagesCount, y: 70})
       const pos = new DataBase(storePos())
 
       window.addEventListener("beforeunload", function (e) {

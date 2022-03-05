@@ -29,6 +29,18 @@ export function disableEditableForAll() {
   for (const elem of listOfAllTextElems) elem.editMode.set(false)
 }
 
+export function enableEditableForAllNewOnes() {
+  currentlyEditableEnabled = true
+}
+
+export function disableEditableForAllNewOnes() {
+  currentlyEditableEnabled = false
+}
+
+export function getEditableStatus() {
+  return currentlyEditableEnabled
+}
+
 
 export default class Text extends Component {
 
@@ -76,8 +88,8 @@ export default class Text extends Component {
 
 
 
-    
-    new DataCollection(this.editMode, this.canBeEdited).get((edit, canBeEdited) => {
+    let lastVisUnit = this.visualUnit.get() as HTMLElement
+    new DataCollection(this.editMode, this.canBeEdited, this.visualUnit).get((edit, canBeEdited, visualUnit) => {
       if (edit && canBeEdited) {
         this.addClass("edit")
         this.setAttribute("contenteditable", "plaintext-only")      
@@ -86,7 +98,15 @@ export default class Text extends Component {
         this.removeClass("edit")
         this.setAttribute("contenteditable", "false")
       }
-    })
+
+      if (edit && !canBeEdited) {
+        visualUnit.style.cursor = "not-allowed"
+        lastVisUnit = visualUnit
+      }
+      else {
+        lastVisUnit.style.removeProperty("cursor")
+      }
+    }, false)
 
 
 
@@ -107,7 +127,7 @@ export default class Text extends Component {
   private sub = new Data("").get((s) => {
     super.txt(s)
   }, false)
-  private canBeEdited = new Data(false)
+  private canBeEdited = new Data(undefined)
   txt(): string
   txt(to: Prim, animOnExplicitChange?: boolean): this
   txt(to?: Data<Prim>, animOnExplicitChange?: boolean, animOnDataChange?: boolean): this
