@@ -33,6 +33,7 @@ blurry-background {
   border-bottom: 1px solid rgba(0,0,0,0.16);
   box-sizing: border-box;
   opacity: 0;
+  z-index: 101;
 
   /* Only when browser does not support blur */
   background-color: rgba(var(--plain-background), .9);
@@ -79,14 +80,20 @@ left-content {
 
 left-content > * {
   pointer-events: all;
+  z-index: 201;
+
 }
 
 link-animation-wrapper > * {
   pointer-events: all;
+  z-index: 201;
+
 }
 
 additional-path-display > * {
   pointer-events: all;
+  z-index: 201;
+
 }
 
 
@@ -131,6 +138,8 @@ right-content > link-animation-wrapper > c-link {
   transform: translateX(-3px);
   position: relative;
   float: left;
+  pointer-events: all;
+  z-index: 201;
 }
 
 right-content > link-animation-wrapper >  c-link:first-of-type {

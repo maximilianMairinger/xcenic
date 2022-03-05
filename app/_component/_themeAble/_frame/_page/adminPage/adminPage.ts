@@ -760,7 +760,7 @@ export default class AdminPage extends Page {
     const distributeExplicitWheelEventOverXFramesAtThisMovement = 125 // in chrome 125
     const normalizedDistributeExplicitWheelEventOverXFrames = distributeExplicitWheelEventOverXFrames / distributeExplicitWheelEventOverXFramesAtThisMovement
 
-    container.on("wheel", (e: WheelEvent) => {
+    this.on("wheel", (e: WheelEvent) => {
       wheelIdle.stillActive()
 
       e.preventDefault()
