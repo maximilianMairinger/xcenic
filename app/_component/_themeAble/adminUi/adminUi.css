@@ -1,11 +1,18 @@
 :host {
   background-color: rgb(240, 240, 240);
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
-  pointer-events: none;
   z-index: 102;
 }
 
-componen-body > * {
+ui-container {
+  padding-left: 25px;
+  padding-right: 25px;
+  width: calc(100% - 50px);
+  position: relative;
+  float: left;
+}
+
+ui-container > * {
   pointer-events: all;
 }
 
@@ -14,7 +21,7 @@ header-spacer {
   height: 55px;
   width: 100%;
   box-sizing: border-box;
-  margin-bottom: 25px;
+  margin-bottom: 35px;
 
   display: block;
   position: relative;

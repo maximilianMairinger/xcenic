@@ -161,6 +161,10 @@ const holyWidthDivider = 1500
 export default class AdminPage extends Page {
 
   private normalizedWidthData: Data<number> 
+  public preferedLeftBoundry = {
+    desktop: 25,
+    mobile: 25
+  }
 
   private getMargin() {
      /* p / this.abs.z */
@@ -474,7 +478,7 @@ export default class AdminPage extends Page {
       
       
 
-      const storePos = localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 0})
+      const storePos = localSettings("pageFrame" + this.addedPagesCount, {x: 200 + 1700 * this.addedPagesCount, y: 100})
       const pos = new DataBase(storePos())
 
       window.addEventListener("beforeunload", function (e) {

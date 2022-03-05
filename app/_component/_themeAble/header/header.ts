@@ -15,6 +15,7 @@ import keyIndex from "key-index"
 import "xtring"
 import { Data } from "josm"
 import Button from "../../_themeAble/_focusAble/_button/button"
+import copy from "fast-copy"
 
 
 
@@ -154,6 +155,18 @@ export default class Header extends ThemeAble {
     if (this.currentLinkElems) this.currentLinkElems.Inner("theme").Inner("set", [to])
   }
 
+  private leftSideBorder = {
+    mobile: "calc(10% + -12px)",
+    desktop: "6%"
+  } as {
+    mobile: number | string,
+    desktop: number | string
+  }
+  private leftSideBorderDefault = copy(this.leftSideBorder)
+  public setPreferedLeftSideBorderSpacing(leftSideBorder: {mobile: number | string, desktop: number | string} = this.leftSideBorderDefault) {
+    this.leftSideBorder = leftSideBorder
+    this.resizeHandler({width: this.clientWidth})
+  }
 
   private isLinkContainerCurrentlyHidden: boolean
   private initialResize = true
@@ -162,27 +175,28 @@ export default class Header extends ThemeAble {
       let linksLeft: number = !this.currentLinkElems.empty ? this.currentLinkElems.first.getBoundingClientRect().left : q.width - 200
       let logo = this.pathDisplayElem.getBoundingClientRect()
 
+      const func: "css" | "anim" = this.initialResize ? "css" : "anim"
+      this.initialResize = false
+
       
       let margin = this.pathDisplayHeaderMargin.get() + (this.isLinkContainerCurrentlyHidden ? 25 : 0)
       if (linksLeft < logo.right + margin) {
+        this.leftContent[func as any]({marginLeft: this.leftSideBorder.mobile})
+
         if (!this.isLinkContainerCurrentlyHidden) {
           this.isLinkContainerCurrentlyHidden = true
-          let func: "css" | "anim" = this.initialResize ? "css" : "anim"
           this.linkContainerElem[func as any]({opacity: 0})
-          this.leftContent[func as any]({marginLeft: "calc(10% + -12px)"})
           if (this.linksShownChangeCallback) this.linksShownChangeCallback(false, this.initialResize, func)
-          this.initialResize = false
           this.componentBody.addClass("mobile")
         }
       }
       else {
+        this.leftContent[func as any]({marginLeft: this.leftSideBorder.desktop})
+
         if (this.isLinkContainerCurrentlyHidden || this.isLinkContainerCurrentlyHidden === undefined) {
           this.isLinkContainerCurrentlyHidden = false
-          let func: "css" | "anim" = this.initialResize ? "css" : "anim"
           this.linkContainerElem[func as any]({opacity: 1})
-          this.leftContent[func as any]({marginLeft: "6%"})
           if (this.linksShownChangeCallback) this.linksShownChangeCallback(true, this.initialResize, func)
-          this.initialResize = false
           this.componentBody.removeClass("mobile")
         }
       }

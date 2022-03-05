@@ -95,6 +95,9 @@ export default class Site extends Component {
 
       if (currentlyShowingLowerNav) lowerNav.updatePage(sections, domainLevel)
       header.updatePage(sectionNames, domainLevel)
+      
+      
+      header.setPreferedLeftSideBorderSpacing(page.preferedLeftBoundry)
     }, (section) => {
       currentSection = section
       if (currentlyShowingLowerNav) lowerNav.updateSelectedLink(section)

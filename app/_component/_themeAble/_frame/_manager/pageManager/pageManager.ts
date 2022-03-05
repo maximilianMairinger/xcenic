@@ -7,11 +7,12 @@ import { declareComponent } from "../../../../../lib/declareComponent"
 import HighlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon";
 import LoginPage from "../../_page/loginPage/loginPage"
 import AdminPage from "../../_page/adminPage/adminPage"
+import Page from "../../_page/page";
 
 
 
 export default class PageManager extends Manager {
-  constructor(pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, sectionChangeCallback?: (section: string) => void, onScroll?: (scrollProgress: number) => void, onUserScroll?: (scrollProgress: number, userInited: boolean) => void) {
+  constructor(pageChangeCallback?: (page: Page, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number, pageName: string) => void, sectionChangeCallback?: (section: string) => void, onScroll?: (scrollProgress: number) => void, onUserScroll?: (scrollProgress: number, userInited: boolean) => void) {
 
     super(new ImportanceMap<() => Promise<any>, any>(
       

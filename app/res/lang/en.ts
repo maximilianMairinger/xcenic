@@ -188,5 +188,9 @@ export default {
       
 
     }
+  },
+  admin: {
+    subHeading: "Administrate",
+    heading: "Content",
   }
 }
