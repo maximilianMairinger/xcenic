@@ -2,6 +2,7 @@ import declareComponent from "../../../lib/declareComponent"
 import ThemeAble, { Theme } from "../themeAble";
 import "../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
 import "../_focusAble/_formUi/_editAble/_input/input"
+import "../_focusAble/_formUi/_editAble/_input/select/select"
 import { disableEditableForAllNewOnes, enableEditableForAll, enableEditableForAllNewOnes, getEditableStatus } from "../../text/text";
 
 

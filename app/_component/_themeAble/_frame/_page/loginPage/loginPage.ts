@@ -5,7 +5,7 @@ import "../../../../form/form"
 import Form from "../../../../form/form"
 import "../../../../_themeAble/_focusAble/_formUi/_rippleButton/_blockButton/loadButton/loadButton"
 import Button from "../../../../_themeAble/_focusAble/_formUi/_rippleButton/_blockButton/loadButton/loadButton"
-import "../../../../_themeAble/_focusAble/_formUi/_editAble/input/input"
+import "../../../../_themeAble/_focusAble/_formUi/_editAble/_input/input"
 
 
 import adminSession from "../../../../../lib/adminSession"

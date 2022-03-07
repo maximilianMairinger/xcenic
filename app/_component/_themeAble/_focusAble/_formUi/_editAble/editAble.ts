@@ -9,7 +9,7 @@ export default class EditAble extends FormUi {
 
   
   public isEmpty: ReadonlyData<boolean>
-  public value: ReadonlyData<string>
+  public value: Data<string>
 
   protected placeholderContainer = ce("placeholder-container")
   
@@ -50,8 +50,9 @@ export default class EditAble extends FormUi {
     })
 
     
-    const value = (this as any).value = new Data("")
-    this.inputElem.on("input", () => {(this.value as Data<string>).set(this.inputElem.value)})
+    const value = (this as any).value = new Data(undefined, "")
+    const setValueSub = value.get((val) => {this.inputElem.value = val})
+    this.inputElem.on("input", () => {setValueSub.setToData(this.inputElem.value)})
     const isEmpty = (this as any).isEmpty = value.tunnel((v) => v === "")
 
     this.placeholderUp = new Data(false) as any
