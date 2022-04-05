@@ -1,10 +1,11 @@
 import { DataBase } from "josm"
 import ResablePromise from "../../../../../lib/resablePromise"
 
-const attributeFilter = ["style", "class", "id"]
+const attributeFilter = ["class", "id"]
 
 type ElementRecord = {
   attributes: {[key: string]: string},
+  style: {[key: string]: string},
   children: Array<Record>
   tagName: string,
   isShadowHost: boolean,
@@ -31,6 +32,7 @@ export default function record(root: HTMLElement) {
 
     if (!isText) {
       const attributes = (newDataRegister as ElementRecord).attributes = {};
+      const styles = (newDataRegister as ElementRecord).style = {};
       const children = (newDataRegister as ElementRecord).children = [];
 
       (newDataRegister as ElementRecord).tagName = elem.tagName
@@ -59,6 +61,31 @@ export default function record(root: HTMLElement) {
         }
       }
 
+
+
+      for (const key of elem.style) {
+        styles[key] = elem.style[key]
+      }
+
+
+      const proxy = new Proxy(elem.style, {
+        get: function (target, prop) {
+          return target[prop]
+        },
+        set: function (target, prop, value) {
+          const r = target[prop] = value
+          setTimeout(() => {
+            const o = {}
+            o[prop] = value
+            data.then((data) => {
+              data(o)
+            })
+          })
+          return r
+        }
+      });
+    
+      Object.defineProperty(elem, "style", {value: proxy})
 
       const observer = new MutationObserver(async (mutationEvents) => {
         const attributes = {}
