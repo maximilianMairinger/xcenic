@@ -61,7 +61,6 @@ export default function record(root: HTMLElement) {
 
 
       const observer = new MutationObserver(async (mutationEvents) => {
-        const awData = await data
         const attributes = {}
         const children = {}
         const giveDataFuncs = []
@@ -69,13 +68,13 @@ export default function record(root: HTMLElement) {
         for (const mutationEvent of mutationEvents) {
           if (mutationEvent.type === "attributes") {
             const attrbName = mutationEvent.attributeName
-            if (attrbNames.includes(attrbName)) attributes[attrbName] = elem.getAttribute(attrbName)
+            attributes[attrbName] = elem.getAttribute(attrbName)
           }
           else if (mutationEvent.type === "childList") {
             for (const child of mutationEvent.addedNodes) {
               if (child instanceof HTMLElement || child instanceof Text) {
                 const { gimmieData, newDataRegister } = discoverNewElem(child)
-                const id = (awData.children() as any[]).length
+                const id = ((await data).children() as any[]).length
                 childMap.set(child, id)
                 children[id] = newDataRegister
                 giveDataFuncs.add(() => gimmieData(awData.children[id]))
@@ -94,7 +93,7 @@ export default function record(root: HTMLElement) {
             }
           }
         }
-
+        const awData = await data
         awData({attributes, children})
         for (const giveData of giveDataFuncs) giveData()
       })
