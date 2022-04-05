@@ -1,13 +1,19 @@
 import global from "./global"
 
 
+import record from "./_component/_themeAble/_frame/_page/recordPage/record"
 
 
 export async function init() {
-  await global()
+  await global();
+
+  
+  (window as any).rec = record(document.body).data
+
   
   const main = (await import("./main")).default
   main()
+
 
 
   // if ("serviceWorker" in navigator) {
