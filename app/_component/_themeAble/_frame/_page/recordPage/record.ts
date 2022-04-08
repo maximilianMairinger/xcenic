@@ -18,17 +18,20 @@ type TextRecord = {
 type Record = ElementRecord | TextRecord
 
 export default function record(root: HTMLElement) {
-  const data = new DataBase({})
+  const rootData = new DataBase({}) as DataBase<{tree: {}, flat: {}}>
 
   
+  let incUID = 0 as UID
 
-
+  type UID = number
 
   function discoverNewElem(elem: HTMLElement | Text) {
     const isText = elem instanceof Text
     const newDataRegister = {} as Record
-
+    const flatDataRegister = {} as {[key in UID]: Record}
+    flatDataRegister[incUID++] = newDataRegister
     const giveChildrenDataLs = []
+
 
     if (!isText) {
       const attributes = (newDataRegister as ElementRecord).attributes = {};
@@ -54,10 +57,11 @@ export default function record(root: HTMLElement) {
       
       for (const child of childList) {
         if (child instanceof HTMLElement || child instanceof Text) {
-          const { gimmieData, newDataRegister } = discoverNewElem(child)
+          const { gimmieData, newDataRegister, flatDataRegister: flatDataRegisterInner } = discoverNewElem(child)
           childMap.set(child, giveChildrenDataLs.length)
-          giveChildrenDataLs.push(gimmieData);
+          giveChildrenDataLs.push(gimmieData)
           children.push(newDataRegister)
+          for (const key in flatDataRegisterInner) flatDataRegister[key] = flatDataRegisterInner[key]
         }
       }
 
@@ -90,6 +94,7 @@ export default function record(root: HTMLElement) {
       const observer = new MutationObserver(async (mutationEvents) => {
         const attributes = {}
         const children = {}
+        const flatDataRegister = {} as {[key in UID]: Record}
         const giveDataFuncs = []
 
         for (const mutationEvent of mutationEvents) {
@@ -100,11 +105,13 @@ export default function record(root: HTMLElement) {
           else if (mutationEvent.type === "childList") {
             for (const child of mutationEvent.addedNodes) {
               if (child instanceof HTMLElement || child instanceof Text) {
-                const { gimmieData, newDataRegister } = discoverNewElem(child)
+                const { gimmieData, newDataRegister, flatDataRegister: flatDataRegisterInner } = discoverNewElem(child)
                 const id = ((await data).children() as any[]).length
                 childMap.set(child, id)
                 children[id] = newDataRegister
                 giveDataFuncs.add(() => gimmieData(awData.children[id]))
+                for (const key in flatDataRegisterInner) flatDataRegister[key] = flatDataRegisterInner[key]
+
               }
             }
             
@@ -122,6 +129,7 @@ export default function record(root: HTMLElement) {
         }
         const awData = await data
         awData({attributes, children})
+        rootData.flat(flatDataRegister);
         for (const giveData of giveDataFuncs) giveData()
       })
   
@@ -162,6 +170,7 @@ export default function record(root: HTMLElement) {
 
     return {
       newDataRegister,
+      flatDataRegister,
       gimmieData: (dat) => {
         data.res(dat)
 
@@ -172,24 +181,18 @@ export default function record(root: HTMLElement) {
     }
   }
 
-  const { gimmieData, newDataRegister } = discoverNewElem(root)
-  data(newDataRegister)
-  gimmieData(data)
+  const { gimmieData, newDataRegister, flatDataRegister } = discoverNewElem(root)
+  rootData({ tree: newDataRegister, flat: flatDataRegister })
+  gimmieData(rootData.tree)
 
 
-
-
-  
 
 
   return {
-    data,
+    data: rootData,
     // stop() {
     //   observer.disconnect()
     // }
   }
 }
 
-function recordElem(elem: HTMLElement) {
-
-}

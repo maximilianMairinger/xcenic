@@ -8,7 +8,12 @@ export async function init() {
   await global();
 
   
-  (window as any).rec = record(document.body).data
+  const rec = (window as any).rec = record(document.body).data
+
+  rec.flat((e, s) => {
+    console.log(s)
+    let i = 0
+  })
 
   
   const main = (await import("./main")).default
