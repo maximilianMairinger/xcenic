@@ -55,7 +55,7 @@ export default abstract class Manager extends Frame {
   protected busySwaping: boolean = false;
   public currentPage: Page
 
-  protected body: HTMLElement;
+  protected bod: HTMLElement;
 
   private wantedFrame: Page;
 
@@ -70,11 +70,11 @@ export default abstract class Manager extends Frame {
   constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void, public blurCallback?: Function, public preserveFocus?: boolean) {
     super(null);
 
-    this.body = ce("manager-body");
+    this.bod = ce("manager-body");
     this.loadingElem = new LoadingIndecator();
     
-    this.body.apd(this.loadingElem)
-    this.sra(this.body);
+    this.bod.apd(this.loadingElem)
+    this.sra(this.bod);
 
     this.on("keydown", (e) => {
       if (e.code === "Escape") {
@@ -104,7 +104,7 @@ export default abstract class Manager extends Frame {
     }
 
     const { resourcesMap } = lazyLoad(this.importanceMap, e => {
-      this.body.apd(e)
+      this.bod.apd(e)
     })
     this.resourcesMap = resourcesMap
     this.domainSubscription = domain.get(this.domainLevel, this.setDomain.bind(this), false, "")
