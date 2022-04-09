@@ -116,13 +116,14 @@ export default class Site extends Component {
     this.apd(pageManager)
     pageManager.activate()
     pageManager.minimalContentPaint().then(() => {
-      const themeSub = new DataSubscription(new Data(undefined), (theme) => {
-        header.theme.set(theme)
-        lowerNav.theme.set(theme)
+      const themeSub = new DataSubscription(new Data(undefined) as any, (theme) => {
+        header.theme.set(theme as any)
+        lowerNav.theme.set(theme as any)
       }, true, false)
 
+      // @ts-ignore
       const accentThemeSub = new DataSubscription(new Data(undefined), (theme) => {
-        lowerNav.accentTheme.set(theme)
+        lowerNav.accentTheme.set(theme as any)
       }, true, false)
       pageManager.addAccentThemeIntersectionListener(lowerNav, accentThemeSub.data.bind(accentThemeSub))    
       pageManager.addThemeIntersectionListener(header, themeSub.data.bind(themeSub))    
