@@ -62,7 +62,7 @@ export default class ContactPage extends Page {
     
     // @ts-ignore
     const scrollDataSub = new DataSubscription(new Data(0), (scrollPos) => {
-      scrollData.set(scrollPos)
+      scrollData.set(scrollPos as any)
     }, true, false)
 
 

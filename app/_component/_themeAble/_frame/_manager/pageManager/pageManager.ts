@@ -7,6 +7,8 @@ import { declareComponent } from "../../../../../lib/declareComponent"
 import HighlightAbleIcon from "../../../_icon/_highlightAbleIcon/highlightAbleIcon";
 import LoginPage from "../../_page/loginPage/loginPage"
 import AdminPage from "../../_page/adminPage/adminPage"
+import PrivacyPage from "../../_page/_blogPage/privacyPage/privacyPage"
+import LegalPage from "../../_page/_blogPage/legalPage/legalPage"
 
 
 
@@ -19,6 +21,16 @@ export default class PageManager extends Manager {
         key: new Import("", 10, (homepage: typeof HomePage) =>
             new homepage("", sectionChangeCallback)
         ), val: () => import(/* webpackChunkName: "homepage" */"../../_page/_sectionedPage/_lazySectionedPage/homepage/homepage")
+      },
+      {
+        key: new Import("privacy", 10, (termsPage: typeof PrivacyPage) =>
+            new termsPage()
+        ), val: () => import(/* webpackChunkName: "privacyPage" */"../../_page/_blogPage/privacyPage/privacyPage")
+      },
+      {
+        key: new Import("legalNotice", 10, (legalPage: typeof LegalPage) =>
+            new legalPage()
+        ), val: () => import(/* webpackChunkName: "legalPage" */"../../_page/_blogPage/legalPage/legalPage")
       },
       {
         key: new Import("contact/form", 10, (contactPage: typeof ContactPage) =>

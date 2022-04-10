@@ -10,6 +10,8 @@ export default {
     contact: "Contact",
     websites: "Websites",
     contentCreation: "Content creation",
+    privacy: "Privacy",
+    legalNotice: "Legal notice",
 
 
   },
@@ -171,7 +173,7 @@ export default {
         legalNotice: "All rights reserved.",
         terms: {
           // WIP
-          heading: "Terms and Conditions",
+          heading: "Legal Notice",
           text: "Information regarding the liable owner of this site." 
         },
         privacy: {
