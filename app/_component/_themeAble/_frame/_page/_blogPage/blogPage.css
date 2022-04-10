@@ -7,15 +7,22 @@ component-body {
 
 blog-content {
   margin-top: 200px;
-  width: 40%;
+  transition: .3s margin-top;
+  width: calc(15% + 450px);
 }
+
+@media (max-width: 620px) {
+  blog-content {
+    margin-top: 80px;
+    width: 88%; /* 100 - (6 * 2) */
+  }
+}
+
 
 bottom-spacer {
   height: 100px;
   display: block;
 }
-
-
 
 
 h1 {
