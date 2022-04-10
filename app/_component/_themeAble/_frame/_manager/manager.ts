@@ -376,7 +376,7 @@ export default abstract class Manager extends Frame {
     if (this.nextPageToken !== nextPageToken) return
     
     this.currentPageFullyLoaded = new Promise((doneLoading) => {
-      domain.set(domain.dirString + suc.domain + (fullDomainHasTrailingSlash ? domain.dirString : ""), suc.level, false).then(() => {
+      domain.set(domain.dirString + suc.domain + (fullDomainHasTrailingSlash && suc.domain !== "" ? domain.dirString : ""), suc.level, false).then(() => {
 
         pageProm.priorityThen(() => {
           if (this.currentUrl !== to) {

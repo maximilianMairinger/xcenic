@@ -5,7 +5,7 @@ import getBaseUrl from "get-base-url";
 import lang from "./../lib/lang"
 
 
-const commonTitle = "TGM";
+const commonTitle = lang.xcenic.longName;
 const commonTitleSeperator = " - "
 const commonSubtileSeperator = " > "
 const maxCharactersInTitle = 20
@@ -70,8 +70,11 @@ function renderSubtitle(myDomainIndex: string[] = domIndex) {
   }).join(commonSubtileSeperator)
 }
 
+
+commonTitle.get(updateTitle, false)
+
 function updateTitle() {
-  let title = commonTitle
+  let title = commonTitle.get()
 
   let originalSubtitle: string, subtitle: string
   originalSubtitle = subtitle = renderSubtitle()
@@ -95,6 +98,7 @@ function updateTitle() {
   titleElement.txt(title + subtitle)
   return title + originalSubtitle
 }
+updateTitle()
 
 export function parseDomainIndexToDomain(domainIndex: Readonly<string[]>) {
   return domainIndex.join(dirString)
@@ -193,8 +197,9 @@ export async function set(path: string, level: number = 0, push: boolean = true,
   }
 
 
-
-  let endDomain = dirString + parseDomainIndexToDomain(domIndex)
+  let joined = parseDomainIndexToDomain(domIndex)
+  let endDomain = dirString + joined
+  if (joined !== "") endDomain += dirString
 
   
   if (notify) {
@@ -207,24 +212,24 @@ export async function set(path: string, level: number = 0, push: boolean = true,
     if (recall) {
       let { domain, domainLevel } = recall
       if (parseDomainToDomainIndex(domIndex, domain, domainLevel)) {
-        let endDomain = domIndex.join(dirString)
+        let endDomain = joined
 
         domIndex.set(domainIndexRollback)
         set(endDomain, 0, true)
       }
       else {
-        if (push) pushState(updateTitle(), endDomain + dirString)
-        else replaceState(updateTitle(), endDomain + dirString)
+        if (push) pushState(updateTitle(), endDomain)
+        else replaceState(updateTitle(), endDomain)
       }
     }
     else {
-      if (push) pushState(updateTitle(), endDomain + dirString)
-      else replaceState(updateTitle(), endDomain + dirString)
+      if (push) pushState(updateTitle(), endDomain)
+      else replaceState(updateTitle(), endDomain)
     }
   }
   else {
-    if (push) pushState(updateTitle, endDomain + dirString)
-    else replaceState(updateTitle(), endDomain + dirString)
+    if (push) pushState(updateTitle, endDomain)
+    else replaceState(updateTitle(), endDomain)
   }
 
 
@@ -270,11 +275,11 @@ export function get(domainLevel: number, subscription?: (domainFragment: DomainF
         myDomainIndex.shift() 
       }
   
-      let joined = dirString + parseDomainIndexToDomain(myDomainIndex)
-      return (joined === "" ? defaultDomain : joined) + (domIndex.setWithTrailingSlash ? dirString : "")
+      let joined = parseDomainIndexToDomain(myDomainIndex)
+      return dirString + (joined === "" ? defaultDomain : joined) + (domIndex.setWithTrailingSlash && joined !== "" ? dirString : "")
     }
     else {
-      return (domIndex[domLvl] === undefined ? defaultDomain : domIndex[domLvl]) + (domIndex.setWithTrailingSlash ? dirString : "")
+      return dirString + (domIndex[domLvl] === undefined ? defaultDomain : domIndex[domLvl]) + (domIndex.setWithTrailingSlash && domIndex[domLvl] !== undefined ? dirString : "")
     }
   })
   let currentDomain = calcCurrentDomain();
