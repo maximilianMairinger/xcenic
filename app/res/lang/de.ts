@@ -33,7 +33,7 @@ export default {
   },
   home: {
     landing: {
-      heading: "Our Mission",
+      heading: "GARMAN",
       text: "We strive to elevate your brand. Our tailormade work ensures your business successfully markets itself digitally and positions itself as a future-proof actor in your industry.",
       callToAction: "Lets talk",
       viewWork: "View our work"
