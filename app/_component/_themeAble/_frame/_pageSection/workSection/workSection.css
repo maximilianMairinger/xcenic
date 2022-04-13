@@ -405,9 +405,7 @@ service-showcase.socialMedia .posts {
 }
 
 
-.photographyImage c-image {
 
-}
 
 big-image:not(.noMargin) {
   margin-bottom: 20px;
@@ -419,15 +417,15 @@ big-image {
 }
 
 big-image c-image {
-  border-radius: calc(11vw / 4);
+  border-radius: calc(6vw / 4);
 }
 
-big-image c-image::after:not(.noShadow) {
-  border-radius: calc(11vw / 4);
+big-image c-image::after {
+  border-radius: calc(6vw / 4);
 }
 
 big-image.accent > c-image::before {
-  border-radius: calc(11vw / 4);
+  border-radius: calc(6vw / 4);
 }
 
 
@@ -505,26 +503,26 @@ c-tgm-logo-dots {
   }
 
   big-image c-image {
-    border-radius: calc(11vw / 3);
+    border-radius: calc(6vw / 3);
   }
   big-image.accent > c-image::before {
-    border-radius: calc(11vw / 3);
+    border-radius: calc(6vw / 3);
   }
 
-  big-image c-image::after:not(.noShadow) {
-    border-radius: calc(11vw / 3);
+  big-image c-image::after {
+    border-radius: calc(6vw / 3);
   }
 
   .photographyImage background-accent {
     border-radius: calc(8vw / 3);
   }
 
-  .smartphone c-image::after:not(.noShadow) {
+  .smartphone c-image::after {
     border-radius: calc(9vw / 3);
   }
 
 
-  .tablet c-image::after:not(.noShadow) {
+  .tablet c-image::after {
     border-radius: calc(2.2vw / 1.5);
   }
 
@@ -611,15 +609,15 @@ c-tgm-logo-dots {
     height: 24vw;
   }
   big-image.accent > c-image::before {
-    border-radius: calc(11vw / 2);
+    border-radius: calc(6vw / 2);
   }
 
   big-image c-image {
-    border-radius: calc(11vw / 2);
+    border-radius: calc(6vw / 2);
   }
 
-  big-image c-image::after:not(.noShadow) {
-    border-radius: calc(11vw / 2);
+  big-image c-image::after {
+    border-radius: calc(6vw / 2);
   }
 
   .photographyImage background-accent {
@@ -627,12 +625,12 @@ c-tgm-logo-dots {
   }
 
 
-  .smartphone c-image::after:not(.noShadow) {
+  .smartphone c-image::after {
     border-radius: calc(9vw / 2);
   }
 
 
-  .tablet c-image::after:not(.noShadow) {
+  .tablet c-image::after {
     border-radius: 2.2vw;
   }
 
@@ -761,20 +759,30 @@ c-tgm-logo-dots {
 
   
 
-  .smartphone c-image::after:not(.noShadow) {
+  .smartphone c-image::after {
     border-radius: 9.5vw;
   }
 
   big-image c-image {
-    border-radius: 7vw;
+    border-radius: 6vw;
   }
-  big-image c-image::after:not(.noShadow) {
-    border-radius: 7vw;
+  big-image c-image::after {
+    border-radius: 6vw;
   }
 
   big-image.accent > c-image::before {
-    border-radius: 7vw;
+    border-radius: 6vw;
   }
+
+  big-image.accent > c-image::before {
+    content: initial;
+  }
+
+  big-image.accent {
+    padding-right: initial;
+  }
+
+
   .photographyImage background-accent {
     border-radius: 8vw;
   }
