@@ -44,7 +44,7 @@ function makeEntryDetailsElement(data: {name: string, role: string, imgSrc: stri
 
 const teamMembers = [
   {
-    name: "Rapahel Schlager",
+    name: "Raphael Schlager",
     role: "Geschäftsführung",
     imgSrc: "rschlagerCrop3"
   },
@@ -239,7 +239,6 @@ export default class TeamMemberSection extends PageSection {
         this.preElem.img.remove()
         this.preElem.details.remove()
       }
-      console.log("getting", this.count.get())
       this.prepNewEmployeeElements(this.count.get())
       this.preElem = this.lls.pop()
 
