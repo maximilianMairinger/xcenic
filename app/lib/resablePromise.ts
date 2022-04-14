@@ -1,5 +1,5 @@
 export default class ResablePromise<T = any> extends Promise<T> {
-  public readonly setteled = false
+  public readonly setteled: boolean
   public readonly res: (t: T) => void
   public readonly rej: (err: any) => void
   public readonly onSettled: Promise<void>
@@ -27,6 +27,8 @@ export default class ResablePromise<T = any> extends Promise<T> {
 
     this.res = rres
     this.rej = rrej
+
+    this.setteled = false
 
     let resOnSettled: Function
     this.onSettled = new Promise((res) => {

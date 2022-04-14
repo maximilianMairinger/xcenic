@@ -29,7 +29,7 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
       this.componentBody = this.sr
       this.sr.html("<style>" + this.stl() + "</style>")
     }
-    this.componentBody.apd(this.pug(), lang)
+    this.componentBody.apd(this.pug(), lang as any)
 
 
     if (indexName) {
