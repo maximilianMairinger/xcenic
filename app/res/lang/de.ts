@@ -127,10 +127,10 @@ export default {
       view: "View",
       quote: [
         {
-          // projectName: "TGM Website",
-          // projectLink: "tgmWebsite",
+          projectName: "Das Team",
+          projectLink: "teamMember",
           // WIP
-          text: "Xcenic kombiniert mehrere kreative Disziplinen um Unternehmen ein unkompliziertes Gesamtpaket für ihren medialen Auftritt zu bieten.",
+          text: "Xcenic kombiniert mehrere kreative Disziplinen um Unternehmen ein unkompliziertes Gesamtpaket für ihren medialen Auftritt zu bieten. Mein Team und ich versuchen täglich neue Ideen zu realisieren um unsere Kunden zu unterstützen. ",
           author: "Raphael Schlager",
           // WIP
           authorTitle: "Geschäftsführer"
