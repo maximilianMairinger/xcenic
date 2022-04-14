@@ -274,10 +274,17 @@ image-wrapper {
   z-index: 1;
   --tilt: 3deg;
 }
+image-inner-wrapper {
+  width: 100%;
+  transform: rotate(var(--tilt));
+  display: block;
+}
 c-image.team {
   width: 100%;
-  transform: rotate(var(--tilt)) scale(1.25);
+  transform: scale(1.15);
+  transform-origin: left;
   height: 800px;
+  --object-position: 50% 50%;
 }
 
 @media (max-width: 1150px) {

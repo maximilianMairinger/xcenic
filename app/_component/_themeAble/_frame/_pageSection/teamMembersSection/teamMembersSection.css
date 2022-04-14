@@ -64,6 +64,7 @@ right-side c-image, right-side image-placeholder {
 }
 
 right-side c-image {
+  --object-position: 50% 0%;
   border-radius: 20px;
   top: 0;
   left: 0;

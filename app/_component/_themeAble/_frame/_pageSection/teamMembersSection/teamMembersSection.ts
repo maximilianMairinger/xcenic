@@ -42,19 +42,19 @@ function makeEntryDetailsElement(data: {name: string, role: string, imgSrc: stri
 
 const teamMembers = [
   {
-    name: "Person Name",
-    role: "Person Role",
-    imgSrc: "person3"
+    name: "Rapahel Schlager",
+    role: "Geschäftsführung",
+    imgSrc: "rschlagerCrop3"
   },
   {
-    name: "José",
-    role: "CEO",
-    imgSrc: "person1"
+    name: "Maximilian Mairinger",
+    role: "Design & Webentwicklung",
+    imgSrc: "mmairinger2Crop"
   },
   {
-    name: "Bard",
-    role: "CTO",
-    imgSrc: "person2"
+    name: "Avid Vormann",
+    role: "Videoproduktion",
+    imgSrc: "avormann"
   }
 ]
 

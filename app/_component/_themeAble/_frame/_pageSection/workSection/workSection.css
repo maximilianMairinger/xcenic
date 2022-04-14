@@ -325,7 +325,13 @@ view-more-side-panel .illustration {
 }
 
 
+.videographyImg c-image {
+  height: 310px;
+}
 
+.photographyImage c-image {
+  height: 310px;
+}
 
 
 service-showcase.contentCreation .hero {
