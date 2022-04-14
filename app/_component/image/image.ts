@@ -159,7 +159,7 @@ export default class Image extends Component {
         if (loadStageAtCall === 1 && firstTimeAtStage) {
           
           thisActiveElems.img.anim({opacity: 1}, 150).then(() => {
-            lastActiveElems.img.anim({opacity: 0}, 150)
+            if (lastActiveElems) lastActiveElems.img.anim({opacity: 0}, 150)
             thisActiveElems.img.anim({filter: "blur(0px)"}, 800)
             thisActiveElems.img.anim({scale: 1}, 800)
           })
