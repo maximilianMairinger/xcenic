@@ -40,6 +40,8 @@ function makeEntryDetailsElement(data: {name: string, role: string, imgSrc: stri
 }
 
 
+// TODO avid doesnt get rendered at first
+
 const teamMembers = [
   {
     name: "Rapahel Schlager",

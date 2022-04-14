@@ -1,6 +1,8 @@
 import Component from "../component"
 import declareComponent from "./../../lib/declareComponent"
 import { loadRecord } from "../_themeAble/_frame/frame"
+import { Data } from "josm"
+import ResablePromise from "../../lib/resablePromise"
 
 const unionSymbol = "@"
 const typePrefix = "image/"
@@ -12,18 +14,35 @@ const formats = [
   "jpg"
 ]
 
+const maxRes = "16588800"
 const fullRes = "3K"
 const prevRes = "PREV"
 
-const reses = [
+const resesList = [ 
   prevRes,
-  fullRes
+  fullRes,
+  maxRes
+] as [
+  "PREV", 
+  "3K",
+  "16588800"
 ]
 
-const loadingChashe = {} as { [key in typeof reses[number]]: { [src: string]: boolean | undefined } }
-for (const res of reses) {
-  loadingChashe[res] = {}
-}
+
+// TODO not dependent on border of image but instead dependent on the image resolution within the borderes (img can be cut off but will still need big res) 
+const resStages = [
+  {
+    0: prevRes
+  },
+  {
+    20: fullRes,
+    1600: maxRes
+  }
+]
+
+
+const loadingCache = {} as { [src: string]: {[loadStage: number]: {[resName: string]: boolean | undefined}} }
+
 
 
 
@@ -40,86 +59,120 @@ function isExplicitLocation(location: string) {
   return false
 }
 
+
+const ratio = 16 / 9
+
 export default class Image extends Component {
-  public readonly loaded: {[key in typeof reses[number]]: Promise<void>} = {}
-  private elems: {[key in typeof reses[number]]: {picture: HTMLPictureElement, sources: {setSource: (src: string) => void}[], img: HTMLImageElement &  {setSource: (src: string) => void}}} = {}
+  public readonly loaded: {[key in typeof resesList[number]]?: ResablePromise<void>} = {}
+  private elems: {[key in typeof resesList[number]]?: {picture: HTMLPictureElement, sources: {setSource: (src: string) => void}[], img: HTMLImageElement &  {setSource: (src: string) => void}}} = {}
+  private myWantedRes = this.resizeData().tunnel(({width, height}) => Math.sqrt(width * height * ratio))
   constructor(src?: string, forceLoad?: boolean) {
     //@ts-ignore
     super(false)
 
-    for (const res of reses) {
-      const sources = []
-      const img = ce("img") as HTMLImageElement & {setSource: (to: string) => string}
-      //@ts-ignore
-      img.crossorigin = "anonymous"
-      img.setSource = (to) => img.src = to + fallbackFormat
-      
-      const picture = ce("picture")
 
-      this.elems[res] = {sources, img, picture}
-      
+    this.myWantedRes.get(() => {
+      const wantedResName = this.getCurrentlyWantedRes()
+      if (wantedResName && this.loaded[wantedResName] === undefined) this.loadSrc(this.src(), wantedResName)
+    }, false)
 
-      for (let format of whenPossibleFormats) {
-        const source = ce("source") as HTMLSourceElement & {setSource: (to: string) => string}
-        source.type = typePrefix + format
-        source.setSource = (to: string) => source.srcset = to + format
-        sources.add(source)
-      }
-
-      sources.add(img as any)
-
-      
-      picture.setAttribute("name", res)
-      picture.apd(...sources)
-      this.apd(picture)
-
-      this.newLoadedPromise(res)
-      
-      
-    }
-
-    this.elems[reses.first].img.setAttribute("importance", "high")
+    // this.elems[resesList.first].img.setAttribute("importance", "high")
 
     
     if (src) this.src(src, forceLoad)
   }
 
-  private newLoadedPromise(resolution: typeof reses[number]) {
-    this.loaded[resolution] = new Promise((res) => {
+  private makeNewResElems(loadRes: typeof resesList[number], loadStage: number) {
+    if (!loadRes) return
+    const sources = []
+    const img = ce("img") as HTMLImageElement & {setSource: (to: string) => string}
+    //@ts-ignore
+    img.crossorigin = "anonymous"
+    img.setSource = (to) => img.src = to + fallbackFormat
+    
+    const picture = ce("picture")
+
+    this.elems[loadRes] = {sources, img, picture}
+    
+
+    for (let format of whenPossibleFormats) {
+      const source = ce("source") as HTMLSourceElement & {setSource: (to: string) => string}
+      source.type = typePrefix + format
+      source.setSource = (to: string) => source.srcset = to + format
+      sources.add(source)
+    }
+
+    sources.add(img as any)
+
+    
+    picture.setAttribute("res", loadRes)
+    picture.setAttribute("loadStage", loadStage.toString())
+    picture.apd(...sources)
+    this.apd(picture)
+
+    this.newLoadedPromise(loadRes)
+  }
+
+  private newLoadedPromise(resolution: typeof resesList[number]) {
+    this.loaded[resolution] = new ResablePromise((res) => {
       this.elems[resolution].img.onload = () => {
-        //@ts-ignore
-        this.loaded[resolution].done = true
         res();
       }
     })
   }
 
+  private wasAtStageIndex = {}
+  private currentlyActiveElems: {picture: HTMLPictureElement, sources: {setSource: (src: string) => void}[], img: HTMLImageElement &  {setSource: (src: string) => void}}
+  private loadSrc(src: string, res: typeof resesList[number]): Promise<void> {
+    const loadStageAtCall = this.currentLoadStage 
+    if (this.loaded[res] !== undefined) return this.loaded[res]
+    this.makeNewResElems(res, this.currentLoadStage)
+    const thisActiveElems = this.elems[res]
+    const { img, sources } = thisActiveElems
 
-  private loadSrc(src: string, res: typeof reses[number]): Promise<void> {
-    const { img, sources } = this.elems[res]
-
-    const wasLoaded = loadingChashe[res][src]
+    const wasLoaded = loadingCache[src] && loadingCache[src][loadStageAtCall] && loadingCache[src][loadStageAtCall][res]
     
 
+    if (this.loaded[res].setteled) this.newLoadedPromise(res)
 
-    if ((this.loaded[res] as any).done) this.newLoadedPromise(res)
+    
 
     if (!wasLoaded) {
-      loadingChashe[res][src] = false
+      if (loadingCache[src] === undefined) loadingCache[src] = {} as any
+      
+      if (loadingCache[src][loadStageAtCall] === undefined) loadingCache[src][loadStageAtCall] = {} as any
+      if (loadingCache[src][loadStageAtCall][res] === undefined) loadingCache[src][loadStageAtCall][res] = false
+
+      const firstTimeAtStage = !this.wasAtStageIndex[this.currentLoadStage]
+      
       this.loaded[res].then(() => {
-        loadingChashe[res][src] = true
-        this.elems[res].img.anim({opacity: 1}, 150).then(() => {
-          const resIndex = reses.indexOf(res)
-          if (resIndex !== 0) {
-            this.elems[reses[resIndex - 1]].img.anim({opacity: 0}, 150)
-            this.elems[res].img.anim({filter: "blur(0px)"}, 800)
-            this.elems[res].img.anim({scale: 1}, 800)
-          }
-        })
+        loadingCache[src][loadStageAtCall][res] = true
+        
+        
+        const lastActiveElems = this.currentlyActiveElems
+        if (firstTimeAtStage && loadStageAtCall <= 1) thisActiveElems.img.css({filter: "blur(8px)", scale: 1.03})
+        if (loadStageAtCall === 1 && firstTimeAtStage) {
+          
+          thisActiveElems.img.anim({opacity: 1}, 150).then(() => {
+            lastActiveElems.img.anim({opacity: 0}, 150)
+            thisActiveElems.img.anim({filter: "blur(0px)"}, 800)
+            thisActiveElems.img.anim({scale: 1}, 800)
+          })
+        }
+        else {
+          thisActiveElems.img.anim({opacity: 1}, 300).then(() => {
+            
+            if (lastActiveElems) {
+              console.log("me now", lastActiveElems)
+              lastActiveElems.img.css({opacity: 0})
+            }
+          })
+        }
+        this.currentlyActiveElems = thisActiveElems
       })
     }
     else {
-      this.elems[res].img.css({opacity: 1, filter: "blur(0px)", scale: 1})
+      thisActiveElems.img.css({opacity: 1})
     }
 
 
@@ -132,35 +185,85 @@ export default class Image extends Component {
       sources.Inner("setSource", ["/res/img/dist/" + src + unionSymbol + res + "."])
     }
 
+    this.wasAtStageIndex[this.currentLoadStage] = true
+
     return this.loaded[res]
   }
     
 
+  private currentLoadStage: number
 
 
-
-  src(src?: string, forceLoad: boolean = false): this {
+  private _src: string
+  src(): string
+  src(src: string, forceLoad?: boolean): this
+  src(src?: string, forceLoad: boolean = false): any {
+    if (src === undefined) return this._src
+    this._src = src
     if (forceLoad) {
-      this.loadSrc(src, reses.last)
+      const wantedResName = this.getCurrentlyWantedRes()
+      if (wantedResName && this.loaded[wantedResName] === undefined) return this.loadSrc(this._src, wantedResName)
     }
     else {
-      if (loadingChashe[reses.last][src] !== undefined) {
-        this.loadSrc(src, reses.last)
-        return this
-      }
-      else loadRecord.full.add(() => {
-        return this.loadSrc(src, fullRes)
-      })
+      if (loadingCache[src]) {
+        this.currentLoadStage = +Object.keys(loadingCache[src]).last
+        let biggestLoadedRes: any
+        for (const key in loadingCache[src][this.currentLoadStage]) {
+          if (loadingCache[src][this.currentLoadStage][key] === true) {
+            biggestLoadedRes = key
+          }
+        }
+        this.loadSrc(src, biggestLoadedRes as any)
 
-      if (loadingChashe[reses.first][src] !== undefined) this.loadSrc(src, reses.first)
-      else loadRecord.minimal.add(() => {
-        return this.loadSrc(src, prevRes)
-      })
+        if (this.currentLoadStage === 0) {
+          loadRecord.full.add(() => {
+            this.currentLoadStage = 1
+            const wantedResName = this.getCurrentlyWantedRes()
+            if (wantedResName && this.loaded[wantedResName] === undefined) return this.loadSrc(this._src, wantedResName)
+          })
+        }
+        else {
+          const wantedResName = this.getCurrentlyWantedRes()
+          if (wantedResName && this.loaded[wantedResName] === undefined) this.loadSrc(this.src(), wantedResName)  
+        }
+
+      }
+
+      else {
+        loadRecord.full.add(() => {
+          this.currentLoadStage = 1
+          const wantedResName = this.getCurrentlyWantedRes()
+          if (wantedResName) return this.loadSrc(this._src, wantedResName)
+        })
+  
+        loadRecord.minimal.add(() => {
+          this.currentLoadStage = 0
+          const wantedResName = this.getCurrentlyWantedRes()
+          if (wantedResName) return this.loadSrc(this._src, wantedResName)
+        })
+      }
       
       
     }
     return this
   }
+
+  private getCurrentlyWantedRes() {
+
+    const stage = this.currentLoadStage
+    const wantedRes = this.myWantedRes.get()
+    const resStage = resStages[stage]
+
+
+    let res: any
+    for (const minRes in resStage) {
+      if (+minRes <= wantedRes) {
+        res = resStage[minRes]
+      }
+    }
+    return res
+  }
+
 
 
   stl() {
