@@ -85,7 +85,7 @@ export default class Image extends Component {
   }
 
   private makeNewResElems(loadRes: typeof resesList[number], loadStage: number) {
-    if (!loadRes) return
+    if (loadRes === undefined) return
     const sources = []
     const img = ce("img") as HTMLImageElement & {setSource: (to: string) => string}
     //@ts-ignore
@@ -116,9 +116,12 @@ export default class Image extends Component {
   }
 
   private newLoadedPromise(resolution: typeof resesList[number]) {
-    this.loaded[resolution] = new ResablePromise((res) => {
+    this.loaded[resolution] = new ResablePromise((res, rej) => {
       this.elems[resolution].img.onload = () => {
         res();
+      }
+      this.elems[resolution].img.onerror = () => {
+        (rej as any)(new Error("Image failed to load. Url: " + this.elems[resolution].img.src));
       }
     })
   }
@@ -165,7 +168,6 @@ export default class Image extends Component {
           thisActiveElems.img.anim({opacity: 1}, 300).then(() => {
             
             if (lastActiveElems) {
-              console.log("me now", lastActiveElems)
               lastActiveElems.img.css({opacity: 0})
             }
           })
@@ -179,7 +181,7 @@ export default class Image extends Component {
 
 
     if (isExplicitLocation(src)) {
-      img.setSource(src)
+      img.src = src
     }
     else {
       const pointIndex = src.lastIndexOf(".")
@@ -189,7 +191,7 @@ export default class Image extends Component {
 
     this.wasAtStageIndex[this.currentLoadStage] = true
 
-    return this.loaded[res]
+    return this.loaded[res].onSettled
   }
     
 
@@ -202,6 +204,7 @@ export default class Image extends Component {
   src(src?: string, forceLoad: boolean = false): any {
     if (src === undefined) return this._src
     this._src = src
+    const isExplicitSrc = isExplicitLocation(src)
     if (forceLoad) {
       const wantedResName = this.getCurrentlyWantedRes()
       if (wantedResName && this.loaded[wantedResName] === undefined) return this.loadSrc(this._src, wantedResName)
@@ -217,7 +220,7 @@ export default class Image extends Component {
         }
         this.loadSrc(src, biggestLoadedRes as any)
 
-        if (this.currentLoadStage === 0) {
+        if (this.currentLoadStage === 0 && !isExplicitSrc) {
           loadRecord.full.add(() => {
             if (this.currentLoadStage >= 1) return
             this.currentLoadStage = 1
@@ -233,19 +236,29 @@ export default class Image extends Component {
       }
 
       else {
-        loadRecord.minimal.add(() => {
-          if (this.currentLoadStage >= 0) return
-          this.currentLoadStage = 0
-          const wantedResName = this.getCurrentlyWantedRes()
-          if (wantedResName) return this.loadSrc(this._src, wantedResName)
-        })
-
-        loadRecord.full.add(() => {
-          if (this.currentLoadStage >= 1) return
-          this.currentLoadStage = 1
-          const wantedResName = this.getCurrentlyWantedRes()
-          if (wantedResName) return this.loadSrc(this._src, wantedResName)
-        })
+        if (isExplicitSrc) {
+          loadRecord.full.add(() => {
+            this.currentLoadStage = 1
+            const wantedResName = ""
+            return this.loadSrc(this._src, wantedResName as any)
+          })
+        }
+        else {
+          loadRecord.minimal.add(() => {
+            if (this.currentLoadStage >= 0) return
+            this.currentLoadStage = 0
+            const wantedResName = this.getCurrentlyWantedRes()
+            if (wantedResName) return this.loadSrc(this._src, wantedResName)
+          })
+  
+          loadRecord.full.add(() => {
+            if (this.currentLoadStage >= 1) return
+            this.currentLoadStage = 1
+            const wantedResName = this.getCurrentlyWantedRes()
+            if (wantedResName) return this.loadSrc(this._src, wantedResName)
+          })
+        }
+        
       }
       
       
