@@ -282,7 +282,7 @@ image-inner-wrapper {
 c-image.team {
   width: 100%;
   transform: scale(1.15);
-  transform-origin: left;
+  /* transform-origin: left; */
   height: 800px;
   --object-position: 50% 50%;
 }
