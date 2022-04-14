@@ -73,7 +73,9 @@ export default class Image extends Component {
 
     this.myWantedRes.get(() => {
       const wantedResName = this.getCurrentlyWantedRes()
-      if (wantedResName && this.loaded[wantedResName] === undefined) this.loadSrc(this.src(), wantedResName)
+      if (wantedResName && this.loaded[wantedResName] === undefined) {
+        this.loadSrc(this.src(), wantedResName)
+      }
     }, false)
 
     // this.elems[resesList.first].img.setAttribute("importance", "high")
@@ -217,6 +219,7 @@ export default class Image extends Component {
 
         if (this.currentLoadStage === 0) {
           loadRecord.full.add(() => {
+            if (this.currentLoadStage >= 1) return
             this.currentLoadStage = 1
             const wantedResName = this.getCurrentlyWantedRes()
             if (wantedResName && this.loaded[wantedResName] === undefined) return this.loadSrc(this._src, wantedResName)
@@ -230,14 +233,16 @@ export default class Image extends Component {
       }
 
       else {
-        loadRecord.full.add(() => {
-          this.currentLoadStage = 1
+        loadRecord.minimal.add(() => {
+          if (this.currentLoadStage >= 0) return
+          this.currentLoadStage = 0
           const wantedResName = this.getCurrentlyWantedRes()
           if (wantedResName) return this.loadSrc(this._src, wantedResName)
         })
-  
-        loadRecord.minimal.add(() => {
-          this.currentLoadStage = 0
+
+        loadRecord.full.add(() => {
+          if (this.currentLoadStage >= 1) return
+          this.currentLoadStage = 1
           const wantedResName = this.getCurrentlyWantedRes()
           if (wantedResName) return this.loadSrc(this._src, wantedResName)
         })
