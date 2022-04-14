@@ -789,7 +789,7 @@ export default abstract class SectionedPage extends Page {
   
                     let sub = new DataSubscription(new DataCollection(nameData, q.progress, nextProg, localSegmentScrollDataIndex(elem)(.4) as any as Data<number>) as any, (name: string, wantedProgress, nextProg, currentProgress) => {
                       if (isSmallest) {
-                        wantedProgress = -Infinity
+                        wantedProgress = 0
                       }
                       
                       if (wantedProgress <= currentProgress && nextProg > currentProgress) {
