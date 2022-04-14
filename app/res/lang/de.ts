@@ -127,13 +127,13 @@ export default {
       view: "View",
       quote: [
         {
-          projectName: "TGM Website",
-          projectLink: "tgmWebsite",
+          // projectName: "TGM Website",
+          // projectLink: "tgmWebsite",
           // WIP
-          text: "Very good work. Its super beautiful, I like it alot. In fact it is superb, I would probably bye again if I had enough money. Yes I am sure it is super nice, the collaboration and everything, just nice!",
-          author: "Koppensteiner",
+          text: "Xcenic kombiniert mehrere kreative Disziplinen um Unternehmen ein unkompliziertes Gesamtpaket für ihren medialen Auftritt zu bieten.",
+          author: "Raphael Schlager",
           // WIP
-          authorTitle: "IT Departmenthead"
+          authorTitle: "Geschäftsführer"
         }
       ],
       about: {
