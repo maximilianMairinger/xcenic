@@ -29,3 +29,4 @@ function getActiveElement(root: Document | ShadowRoot = document): Element | nul
 // setInterval(() => {
 //   console.log(getActiveElement())
 // }, 2000)
+
