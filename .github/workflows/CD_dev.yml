@@ -46,39 +46,39 @@ jobs:
         tar_tmp_path: true
 
 
-  compressImages: 
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+  # compressImages: 
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 15
 
-    steps: 
-    - name: "checkout"
-      uses: actions/checkout@master
-      with:
-        lfs: "true"
-
-
-    - name: Setting up node
-      uses: actions/setup-node@master
-      with:
-        node-version: '16.x'
-
-    - name: Installing runner dependencies
-      run: npm i
+  #   steps: 
+  #   - name: "checkout"
+  #     uses: actions/checkout@master
+  #     with:
+  #       lfs: "true"
 
 
-    - name: "Compressing images"
-      run: npm run compressImages
+  #   - name: Setting up node
+  #     uses: actions/setup-node@master
+  #     with:
+  #       node-version: '16.x'
 
-    - name: "Copying files to remote"
-      uses: appleboy/scp-action@v0.1.1
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
-        passphrase: ${{ secrets.PASSPHRASE }}
-        source: "public/res/img/dist"
-        target: /var/www/html/xcenic/dev
-        tar_tmp_path: true
+  #   - name: Installing runner dependencies
+  #     run: npm i
+
+
+  #   - name: "Compressing images"
+  #     run: npm run compressImages
+
+  #   - name: "Copying files to remote"
+  #     uses: appleboy/scp-action@v0.1.1
+  #     with:
+  #       host: ${{ secrets.HOST }}
+  #       username: ${{ secrets.USERNAME }}
+  #       key: ${{ secrets.KEY }}
+  #       passphrase: ${{ secrets.PASSPHRASE }}
+  #       source: "public/res/img/dist"
+  #       target: /var/www/html/xcenic/dev
+  #       tar_tmp_path: true
     
 
   dependencies: 
