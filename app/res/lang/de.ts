@@ -157,9 +157,10 @@ export default {
         socialMedia: {
           heading: "Social Media",
 
-          linkedIn: "Twitter",
+          linkedIn: "LinkedIn",
+          twitter: "Twitter",
           instagram: "Instagram",
-          tikTok: "LinkedIn"
+          tikTok: "TikTok"
         },
         contact: {
           heading: "Kontakt",
