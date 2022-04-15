@@ -16,10 +16,10 @@ export default {
 
   },
   contact: {
-    note: "Du hast ein Projekt?",
-    heading: "Erzähl uns davon!",
+    note: "Sie haben ein Projekt?",
+    heading: "Erzählen Sie uns davon!",
 
-    requestQuery: "Nach welchem Angebot suchst du?",
+    requestQuery: "Wonach suchen Sie?",
     requestOptions: ["Web/App-Entwicklung", "Video-Produktion", "UI-Design", "Fotografie", "Social Media", "Anderes"],
     detailsQuery: "Erzähl uns die Details",
     detailsPlaceholder: "Kurze Projektinfos",
