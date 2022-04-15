@@ -1,6 +1,7 @@
 import Icon from "../icon";
 import declareComponent from "../../../../lib/declareComponent";
-import "../../../image/image"
+// import "../../../image/image"
+import "../../../videoPlayer/videoPlayer"
 
 
 
