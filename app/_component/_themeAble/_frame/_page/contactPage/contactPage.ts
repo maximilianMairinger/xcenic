@@ -34,10 +34,16 @@ export default class ContactPage extends Page {
 
 
 
-    this.formElem.submit(async (e) => {
-      console.log("now")
-      await delay(5000)
-      console.log(e)
+    this.formElem.submit(async (data) => {
+      console.log("submit", data)
+      await fetch("/addEntry", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      
       return () => {
         console.log("later")
       }
