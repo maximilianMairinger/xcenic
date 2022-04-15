@@ -171,7 +171,7 @@ c-designer-woman {
   display: none;
   position: absolute;
   left: 56%;
-  top: 0;
+  top: 40px;
   width: 500px;
   height: 700px;
   z-index: 3;
@@ -184,7 +184,7 @@ floor-line {
   height: 1px;
   background: #2F2E41;
   left: calc(56% + 10px);
-  top: 606px;
+  top: 646px;
   display: none;
 }
 
