@@ -114,7 +114,7 @@ jobs:
 
   deploy: 
     runs-on: ubuntu-latest
-    needs: [build, dependencies, compressImages]
+    needs: [build, dependencies]
     timeout-minutes: 15
 
     steps:
