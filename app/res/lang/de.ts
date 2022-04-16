@@ -35,7 +35,7 @@ export default {
     landing: {
       heading: "Unser Ziel",
       text: "Wir machen Ihre Marke groß! Unsere maßgeschneiderten Projekte vermarkten Ihre Produkte digital und positionieren Ihr Unternehmen als zukunftssicheren Akteur in Ihrer Marktnische.",
-      callToAction: "Schreib uns",
+      callToAction: "Kontakt aufnehmen",
       viewWork: "Unser Angebot"
     },
     philosophy: {
@@ -130,7 +130,7 @@ export default {
           projectName: "Das Team",
           projectLink: "teamMember",
           // WIP
-          text: "Xcenic kombiniert mehrere kreative Disziplinen, um Unternehmen ein unkompliziertes Gesamtpaket für ihren medialen Auftritt zu bieten. Mein Team und ich versuchen täglich neue Ideen zu realisieren, um unsere Kunden zu unterstützen.",
+          text: "Xcenic kombiniert mehrere kreative Disziplinen, um Unternehmen ein unkompliziertes Gesamtpaket für ihren medialen Auftritt zu bieten. Für uns ist es außerdem besonders wichtig auf diverse Kundenanfragen flexibel und zeitnahe reagieren zu können.",
           author: "Raphael Schlager",
           // WIP
           authorTitle: "Geschäftsführer"
@@ -165,7 +165,7 @@ export default {
         contact: {
           heading: "Kontakt",
 
-          email: "corporate@xcenic.com",
+          email: "raphael.schlager@gmx.at",
           phone: "",
           address: ""
         }

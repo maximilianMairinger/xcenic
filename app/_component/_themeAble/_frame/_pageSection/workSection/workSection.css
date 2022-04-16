@@ -819,15 +819,15 @@ view-more-side-panel {
   left: calc(70% + 40px);
   width: calc(30% - 40px);
   height: calc(100% + 8vh);
+  pointer-events: none;
   
 }
 
 showcase-center {
   display: flex;
-  position: sticky;
+  position: absolute;
   top: 55px;
   bottom: 0;
-  width: 100%;
   height: calc(100vh - 55px);
   align-items: center;
 }
