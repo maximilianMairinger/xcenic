@@ -24,6 +24,7 @@ const inactiveClass = "inactive"
 
 export default class PhilosophySection extends PageSection {
   public serviceSection = this.q("service-showcase") as ElementList<HTMLElement>
+  private sideBar = this.q("showcase-center") as HTMLElement
   constructor() {
     super("light")
 
@@ -75,6 +76,7 @@ export default class PhilosophySection extends PageSection {
       service.on("resize", (e) => {
         localHeight.set(e.height)
       })
+      // @ts-ignore
       new DataCollection(prevHeight, localHeight).get((prevHeight, localHeight) => {
         height.set(prevHeight + localHeight)
       })
@@ -135,6 +137,66 @@ export default class PhilosophySection extends PageSection {
       
 
     })
+
+
+    this.localScrollProgressData("start").then((scrollDataStart) => {
+
+      scrollDataStart.get((e) => {
+        console.log(e)
+      })
+
+      scrollDataStart.scrollTrigger(0).on("forward", () => {
+        console.log("forward")
+        this.sideBar.css({
+          position: "fixed",
+          top: 55,
+          marginRight: 10
+        })
+      }).on("backward", () => {
+        console.log("backward")
+        this.sideBar.css({
+          position: "absolute",
+          top: 55,
+          marginRight: 0
+        })
+      })
+      
+
+      this.localScrollProgressData("end").then((scrollData) => {
+
+        
+
+        const atEnd = new Data(false)
+        atEnd.get((atEnd) => {
+          if (atEnd) {
+            this.sideBar.css({
+              position: "absolute",
+              top: 55 + scrollDataStart.get()
+            })
+          }
+          else {
+            this.sideBar.css({
+              position: "fixed",
+              top: 55
+            })
+          }
+        }, false)
+  
+        scrollData.get((scrollPos) => {
+          atEnd.set(scrollPos >= this.height())
+        })
+      })
+    })
+
+    
+
+    
+
+    // this.localScrollProgressData().then((scrollProg) => {
+    //   scrollProg.get((scrollProg) => {
+    //     if (scrollProg >= 0 && scrollProg <= this.height()) this.sideBar.css({top: scrollProg})
+    //   })
+    // })
 
 
   }
