@@ -91,7 +91,7 @@ export default {
       socialMedia: {
         hero: {
           heading: "Social Media",
-          text: "Über das letzte Jahrzehnt hat Social Media immer mehr Bedeutung in der Kundenaquise gewonnen. Unternehmen, die besonders in der jüngeren Generation erfolgreich sein möchten, verlassen sich immer mehr auf kreative Auftritte in den neue Medien."
+          text: "Über das letzte Jahrzehnt hat Social Media immer mehr Bedeutung in der Kundenaquise gewonnen. Unternehmen, die besonders in der jüngeren Generation erfolgreich sein möchten, setzen immer mehr auf kreative Auftritte in den neue Medien."
         },
         yourBrand: {
           heading: "Ihre Marke auf Social Media",
