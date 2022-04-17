@@ -165,7 +165,7 @@ export default {
         contact: {
           heading: "Kontakt",
 
-          email: "raphael.schlager@gmx.at",
+          email: "corporate@xcenic.com",
           phone: "",
           address: ""
         }
