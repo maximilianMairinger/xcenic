@@ -42,8 +42,8 @@ export default {
       note: "Warum Xcenic?",
       heading: "Eine ganzheitliche Herangehensweise an digitales Marketing.",
       text: "Neue Webseite? Einzigartiges Werbevideo? Oder eine komplette Überarbeitung des Online-Auftrittes? Wir bieten, unabhängig der Projektgröße, ein maßgeschneidertes Angebot.",
-      tag: "TGM - Neuerfindung",
-      tagDesc: "Webseite Projekt"
+      tag: "TGM - Rebranding",
+      tagDesc: "Webentwicklung"
     },
     work: {
       viewWork: "Unser Portfolio",
