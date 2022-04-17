@@ -77,7 +77,7 @@ export default {
       contentCreation: {
         hero: {
           heading: "Inhalte",
-          text: "Ein außergewöhnlicher Onlineauftritt benötigt nicht nur superbes Design und neueste Technologie, sondern eben auch packende Inhalte. Deshalb bieten wir Videoproduktion und Fotografie sowohl in Kombination mit Web- und Socialmediamanagement, aber auch als alleiniges Produkt an."
+          text: "Ein außergewöhnlicher Onlineauftritt benötigt nicht nur superbes Design und neueste Technologie, sondern auch auch packende Inhalte. Deshalb bieten wir Videoproduktion und Fotografie sowohl in Kombination mit Web- und Socialmediamanagement, aber auch als seperates Produkt an."
         },
         photography: "Fotografie",
         videography: {
