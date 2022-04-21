@@ -6,6 +6,10 @@ const MongoClient = MongoDB.MongoClient
 import pth from "path"
 import fs from "fs"
 import detectPort from "detect-port"
+import Prerenderer from "../../build/prerenderer"
+import isBot from "isbot"
+const { prerenderStoreFolder } = require("./../../build/stats")
+
 
 
 
@@ -67,6 +71,28 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
 
   
   app.use(express.static(pth.join(pth.resolve(""), publicPath)))
+
+  app.get(indexUrl, async (req, res, next) => {
+    const url = (req.originalUrl.endsWith("/") ? req.originalUrl.slice(0, -1) : req.originalUrl).slice(1).split("/").join(">")
+    const path = pth.join(prerenderStoreFolder, url === "" ? "index" : url) + ".html"
+    const isValidUrl = fs.existsSync(path)
+
+    if (isBot(req.get('user-agent'))) {
+      
+      if (isValidUrl) {
+        res.sendFile(path)
+        console.log("isbot", req.originalUrl, "200")
+      }
+      else {
+        console.log("isbot", req.originalUrl, "404")
+        res.statusCode = 404
+        next()
+      }
+      
+    }
+    else next()
+  })
+
   
   app.get(indexUrl, (req, res) => {
     res.sendFile("public/index.html")

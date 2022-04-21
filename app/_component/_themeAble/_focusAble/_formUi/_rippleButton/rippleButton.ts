@@ -17,9 +17,6 @@ export default class UiButton extends FormUi<Button> {
 
     this.sra(ce("slot"))
     
-    const observer = new MutationObserver(this.mutateChildsCb.bind(this))
-    observer.observe(this, { attributes: false, childList: true, subtree: false });
-
 
 
     this.button = button
@@ -44,16 +41,6 @@ export default class UiButton extends FormUi<Button> {
 
     this.enabled.get(this.button.enabled.set.bind(this.button.enabled))
   }
-
-  private mutateChildsCb() {
-    const childs = this.childNodes as any
-    this.moveBody.append(...childs)
-  }
-
-  connectedCallback() {
-    this.mutateChildsCb()
-  }
-
 
   
   public link: ((() => string) & ((to: null) => this) & ((to: string, domainLevel?: number, push?: boolean, notify?: boolean) => this))

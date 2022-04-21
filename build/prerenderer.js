@@ -3,20 +3,31 @@ const puppeteer = require('puppeteer')
 const { parse, parseMetaFromDocument } = require('parse-open-graph')
 const URLRewriter = require('url-rewrite')
 const fs = require('fs')
-const emptyMedia = fs.readFileSync(__dirname + '/empty.wav')
+const path = require("path")
+const axios = require("axios").default
+const { JSDOM } = require("jsdom");
 const delay = require('delay')
+
+const emptyMediaFile = fs.readFileSync(path.join(__dirname, 'empty.wav'))
+const cssNamespaceParsingCompiledJS = fs.readFileSync(path.join(__dirname, "cssNamespaceParsingCompiled.js")).toString()
+
+
+
+
 
 
 class Prerenderer extends EventEmitter {
   constructor({
     debug = false,
-    puppeteerLaunchOptions,
+    puppeteerLaunchOptions = undefined,
     timeout = 30000,
-    userAgent,
+    userAgent = undefined,
     followRedirect = false,
-    extraMeta,
-    parseOpenGraphOptions,
-    rewrites
+    extraMeta = undefined,
+    parseOpenGraphOptions = undefined,
+    rewrites = undefined,
+    omitDisplayNone = true,
+    renderShadowRoot = false
   } = {}) {
     super()
 
@@ -38,6 +49,8 @@ class Prerenderer extends EventEmitter {
     this.parseOpenGraphOptions = parseOpenGraphOptions
     this.browser = null
     this.rewrites = rewrites
+    this.omitDisplayNone = omitDisplayNone
+    this.renderShadowRoot = renderShadowRoot
     this._launchedAt = 0
 
     this._onBrowserDisconnected = this._onBrowserDisconnected.bind(this)
@@ -102,6 +115,7 @@ class Prerenderer extends EventEmitter {
     const page = await browser.newPage()
     timerOpenTab()
 
+
     const result = {
       status: null,
       redirect: null,
@@ -113,6 +127,8 @@ class Prerenderer extends EventEmitter {
     }
 
     let navigated = 0
+
+    const injectionScriptId = "kqwuznbdaszbteauzw"
 
     page.on('request', async req => {
       const resourceType = req.resourceType()
@@ -147,7 +163,25 @@ class Prerenderer extends EventEmitter {
         navigated++
 
         if (navigated === 1 || followRedirect) {
-          await req.continue({ url })
+          if (this.renderShadowRoot) {
+            const {data: rawHTML} = await axios.get(url, {headers: {'User-Agent': this.userAgent}})
+
+            const { document } = (new JSDOM(rawHTML)).window
+            const head = document.querySelector("head")
+            head.insertAdjacentHTML("afterbegin", `<script id=${JSON.stringify(injectionScriptId)}>${cssNamespaceParsingCompiledJS}</script>`)
+            const parsedHTML = document.documentElement.outerHTML
+  
+            await req.respond({
+              status: 200,
+              contentType: "text/html",
+              body: parsedHTML
+            })
+          }
+          else {
+            await req.continue({ url })
+          }
+         
+
         } else {
           await req.respond({
             status: 200,
@@ -170,11 +204,11 @@ class Prerenderer extends EventEmitter {
 
         await req.respond({
           contentType: 'audio/wav',
-          body: emptyMedia
+          body: emptyMediaFile
         })
       } else {
         this.debug('abort', resourceType, url)
-        await req.abort()
+        await req.continue({  })
       }
     })
 
@@ -233,9 +267,157 @@ class Prerenderer extends EventEmitter {
 
       timerGotoURL()
 
+
       const timerParseDoc = this.timer(`parse ${url}`)
 
+      if (this.omitDisplayNone) {
+        await page.evaluate(() => {
+          
+          const noneStr = "none"
+          const whiteList = ["head", "style", "script", "meta", "link"].join(",")
+          function removeInvisible(element) {
+            if (getComputedStyle(element).display === noneStr) {
+              if (!element.matches(whiteList)) element.remove()
+            }
+            else {
+              let children = []
+              children.push(...element.children)
+              if (element.shadowRoot) children.push(...element.shadowRoot.children)
+              for (let childElement of children) {
+                removeInvisible(childElement)
+              }
+            }
+            
+          }
+          removeInvisible(document.documentElement)
+        })
+      }
+
+      if (this.renderShadowRoot) {
+        await page.evaluate(() => {
+
+          const cssIdMap = new Map()
+
+          let wholeCss = []
+          function styleScope(element, currentScope, goParseCss = true) {
+      
+            if (element instanceof HTMLStyleElement) {
+              if (goParseCss) {
+                const parsed = parseCssJHQWBDJASKJASDBJHS(element.innerHTML, "." + currentScope + "-scope", currentScope, true, {
+                  replaceSelector: {
+                    TypeSelector: {
+                      slot: "slot-scoped"
+                    }
+                  }
+                })
+                element.remove()
+                return parsed
+              }
+              else {
+                element.remove()
+                return
+              }
+              
+              
+            }
+            else if (currentScope) element.classList.add(currentScope + "-scope")
+
+            
+
+            if (element instanceof HTMLElement && element.tagName.toLowerCase() === "slot-scoped") return
+            
+            const localCss = []
+
+            const localChilds = [...element.children]
+            
+
+            // if (element.tagName.toLowerCase() === "c-block-button") console.log(localChilds.map((e) => e.tagName.toLowerCase()))
+            // console.log(element.tagName.toLowerCase())
+            
+            if (element.shadowRoot) {
+              const newTag = element.tagName.toLowerCase()
+              // if (newTag === "c-block-button") console.log(localChilds.map((e) => e.tagName.toLowerCase()))
+              const shadowChilds = [...element.shadowRoot.children]
+              element.classList.add(newTag + "-scope")
+              
+              const mySlotElem = element.shadowRoot.querySelector("slot")
+              if (mySlotElem) {
+                const newSlot = document.createElement("slot-scoped")
+                newSlot.classList.add(newTag + "-scope")
+                const localTextNodesAndElements = [...element.childNodes].filter(x => x instanceof Text || x instanceof Element)
+                newSlot.append(...localTextNodesAndElements)
+                mySlotElem.parentNode.insertBefore(newSlot, mySlotElem.nextSibling);
+                mySlotElem.remove()
+              }
+              element.shadowRoot.innerHTML = ""
+
+              const goParseCssNew = !cssIdMap.has(newTag)
+              if (goParseCssNew) cssIdMap.set(newTag, true)
+              
+              for (const child of shadowChilds) {
+
+                element.append(child)
+                
+
+                
+                
+                
+                const cssMaybe = styleScope(child, newTag, goParseCssNew)
+                cssIdMap.set(newTag, true)
+                if (cssMaybe) {
+                  localCss.push(cssMaybe)
+                }
+              }
+
+              for (const child of localChilds) {
+                const cssMaybe = styleScope(child, currentScope, goParseCss)
+                if (cssMaybe) {
+                  localCss.push(cssMaybe)
+                }
+              }
+            }
+            else {
+              for (const child of localChilds) {
+                const cssMaybe = styleScope(child, currentScope, goParseCss)
+                if (cssMaybe) {
+                  localCss.push(cssMaybe)
+                }
+              }
+            }
+
+            let css = localCss.join("\n\n")
+            wholeCss.unshift(css)
+
+
+            
+            
+            
+          }
+          
+          styleScope(document.body, "")
+          let styleElem = document.createElement("style")
+          styleElem.innerHTML = wholeCss.reverse().join("\n\n")
+          document.head.append(styleElem)
+          
+
+        })
+
+        await page.evaluate((injectionScriptId) => {
+          const script = document.querySelector(`#${injectionScriptId}`)
+          script.remove()
+        }, [injectionScriptId])
+      }
+
+
+      
+
+      
+
       // html
+      
+      
+
+
       result.html = await page.content()
 
       // open graph
@@ -416,7 +598,7 @@ class Prerenderer extends EventEmitter {
     } finally {
       try {
         await page.close()
-        canClose()
+        console.log("page closed")
       } catch (e) {
         // UnhandledPromiseRejectionWarning will be thrown if page.close() is called after browser.close()
       }
@@ -427,6 +609,9 @@ class Prerenderer extends EventEmitter {
     if (this.browser) {
       this.closing = true
       await this.browser.close()
+
+      console.log("browser close")
+
       this.browser = null
       this.closing = false
     }
