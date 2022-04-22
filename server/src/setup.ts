@@ -7,6 +7,7 @@ import pth from "path"
 import fs from "fs"
 import detectPort from "detect-port"
 import Prerenderer from "../../build/prerenderer"
+const pug = require('pug')
 import isBot from "isbot"
 const { prerenderStoreFolder } = require("./../../build/stats")
 
@@ -69,37 +70,71 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
   //@ts-ignore
   app.port = port
 
-  
-  app.use(express.static(pth.join(pth.resolve(""), publicPath)))
+
+  const renderIndex = pug.compileFile("public.src/index.pug")
+
+
+
+
+
+
+
+
+
+  app.use(express.static(pth.join(pth.resolve(""), publicPath), {index: false}))
+
 
   app.get(indexUrl, async (req, res, next) => {
-    const url = (req.originalUrl.endsWith("/") ? req.originalUrl.slice(0, -1) : req.originalUrl).slice(1).split("/").join(">")
+    
+    let url = req.originalUrl
+    const forceNoJs = url.startsWith("/nojs")
+    if (forceNoJs) url = url.substring(5)
+    console.log("url", url)
+
+    url = (url.endsWith("/") ? url.slice(0, -1) : url).slice(1).split("/").join(">")
     const path = pth.join(prerenderStoreFolder, url === "" ? "index" : url) + ".html"
+    console.log("path", path)
     const isValidUrl = fs.existsSync(path)
 
-    if (isBot(req.get('user-agent'))) {
-      
-      if (isValidUrl) {
+    const isReqFromBot = forceNoJs || isBot(req.get('user-agent'))
+
+    console.log(isValidUrl, isReqFromBot)
+    if (isValidUrl) {
+      if (isReqFromBot) {
         res.sendFile(path)
         console.log("isbot", req.originalUrl, "200")
       }
       else {
-        console.log("isbot", req.originalUrl, "404")
-        res.statusCode = 404
-        next()
+        
+
+
+        // todo: meta and stuff
+        res.send(renderIndex({
+          url: req.originalUrl
+        }))
       }
-      
     }
-    else next()
+    else {
+      res.statusCode = 404
+      if (isReqFromBot) {
+        console.log("isbot", url, "404")
+        // todo: crawl 404 page
+        res.send("404 - Page not found<br><a href='/'>Hompage</a>")
+      }
+      else {
+        console.log("here2")
+        res.send(renderIndex({
+          url: req.originalUrl
+        }))
+      }
+    }
   })
+  
+
+
 
   
-  app.get(indexUrl, (req, res) => {
-    res.sendFile("public/index.html")
-  })
-  
 
-  
 
   port.then(app.listen.bind(app))
 

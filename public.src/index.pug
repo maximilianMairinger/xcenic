@@ -1,0 +1,55 @@
+doctype html
+head
+  meta(charset='utf-8')
+  title Xcenic
+  meta(content='user-scalable=no,width=device-width,initial-scale=1,maximum-scale=1' name='viewport')
+  meta(content='no' name='msapplication-tap-highlight')
+  // <link rel='manifest' href='/webmanifest.json'>
+  // <link href="/res/favicon/xcenic_logo_180x180.png" rel=icon type=image/png>
+  script(src='/dist/xcenic.js')
+  link(rel='apple-touch-icon' sizes='180x180' href='/res/img/favicon/apple-touch-icon.png')
+  link(rel='icon' type='image/png' sizes='32x32' href='/res/img/favicon/favicon-32x32.png')
+  link(rel='icon' type='image/png' sizes='16x16' href='/res/img/favicon/favicon-16x16.png')
+  link(rel='mask-icon' href='/res/img/favicon/safari-pinned-tab.svg' color='#003fd2')
+  link(rel='shortcut icon' href='/res/img/favicon/favicon.ico')
+  meta(name='msapplication-TileColor' content='#ffffff')
+  meta(name='msapplication-config' content='/res/img/favicon/browserconfig.xml')
+  meta(name='theme-color' content='#ffffff')
+  style.
+    html {
+      height: 100%;
+      width: 100%;
+    }
+    body {
+      margin: 0;
+      -webkit-tap-highlight-color: transparent;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Averta CY', Arial, sans-serif;
+    }
+
+    @font-face {
+      font-family: 'Averta CY';
+      src: url('/res/font/avertacy-regular.woff2') format('woff2'),
+      url('/res/font/avertacy-regular.woff') format('woff');
+      font-style: normal;
+      font-weight: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Averta Cy';
+      src: url('/res/font/avertacy-bold.woff2') format('woff2'),
+      url('/res/font/avertacy-bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
+body
+  noscript
+    p If you dont get redirected in a second please click <a href="/nojs" + url>here</a>
+    meta#redirect(http-equiv='REFRESH' content='0; /nojs' + url)
+
+
+
+
