@@ -270,6 +270,32 @@ class Prerenderer extends EventEmitter {
 
       const timerParseDoc = this.timer(`parse ${url}`)
 
+      // modify
+      await page.evaluate(() => {
+        // parse document to find all scrollable elements
+        const findScrollableElement = (el) => {
+          if (el.scrollHeight > el.clientHeight) {
+            return [el]
+          } 
+          else {
+            const myScrollables = []
+            const children = [...el.children]
+            if (el.shadowRoot) children.push(...el.shadowRoot.children)
+            for (const child of children) {
+              const scrollable = findScrollableElement(child)
+              if (scrollable) myScrollables.push(...scrollable)
+            }
+            return myScrollables
+          }
+        }
+
+        for (const scrollElem of findScrollableElement(document.body)) {
+          // scroll down 100px
+          scrollElem.scrollTop = 100
+        } 
+      })
+
+
       if (this.omitDisplayNone) {
         await page.evaluate(() => {
           
