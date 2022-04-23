@@ -89,42 +89,36 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
     let url = req.originalUrl
     const forceNoJs = url.startsWith("/nojs")
     if (forceNoJs) url = url.substring(5)
-    console.log("url", url)
+    url = url.endsWith("/") ? url.slice(0, -1) : url
 
-    url = (url.endsWith("/") ? url.slice(0, -1) : url).slice(1).split("/").join(">")
-    const path = pth.join(prerenderStoreFolder, url === "" ? "index" : url) + ".html"
-    console.log("path", path)
+    let path = url.slice(1).split("/").join(">")
+    path = pth.join(prerenderStoreFolder, path === "" ? "index" : path) + ".html"
     const isValidUrl = fs.existsSync(path)
 
     const isReqFromBot = forceNoJs || isBot(req.get('user-agent'))
 
-    console.log(isValidUrl, isReqFromBot)
     if (isValidUrl) {
       if (isReqFromBot) {
         res.sendFile(path)
         console.log("isbot", req.originalUrl, "200")
       }
       else {
-        
-
-
         // todo: meta and stuff
         res.send(renderIndex({
-          url: req.originalUrl
+          url
         }))
       }
     }
     else {
       res.statusCode = 404
       if (isReqFromBot) {
-        console.log("isbot", url, "404")
+        console.log("isbot", req.originalUrl, "404")
         // todo: crawl 404 page
         res.send("404 - Page not found<br><a href='/'>Hompage</a>")
       }
       else {
-        console.log("here2")
         res.send(renderIndex({
-          url: req.originalUrl
+          url
         }))
       }
     }
