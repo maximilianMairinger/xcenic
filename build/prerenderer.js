@@ -323,7 +323,6 @@ class Prerenderer extends EventEmitter {
           script.innerHTML = cssNamespaceParsingCompiledJS
           document.head.appendChild(script)
 
-          console.log("inject cssNamespaceParsingCompiledJS", cssNamespaceParsingCompiledJS)
 
           
 
@@ -334,7 +333,7 @@ class Prerenderer extends EventEmitter {
       
             if (element instanceof HTMLStyleElement) {
               if (goParseCss) {
-                const parsed = parseCssJHQWBDJASKJASDBJHS(element.innerHTML, "." + currentScope + "-scope", currentScope, true, {
+                const parsed = parseCssJHQWBDJASKJASDBJHS(element.innerHTML, "." + currentScope + "-scope", "." + currentScope + "-slot-scope", currentScope, true, {
                   replaceSelector: {
                     TypeSelector: {
                       slot: "slot-scoped"
@@ -367,14 +366,18 @@ class Prerenderer extends EventEmitter {
             
             if (element.shadowRoot) {
               const newTag = element.tagName.toLowerCase()
-              // if (newTag === "c-block-button") console.log(localChilds.map((e) => e.tagName.toLowerCase()))
               const shadowChilds = [...element.shadowRoot.children]
               element.classList.add(newTag + "-scope")
               
               const mySlotElem = element.shadowRoot.querySelector("slot")
               if (mySlotElem) {
+
+                const allSlotChilds = element.querySelectorAll("*")
+                for (const slotChild of allSlotChilds) {
+                  slotChild.classList.add(newTag + "-slot-scope")
+                }
+
                 const newSlot = document.createElement("slot-scoped")
-                newSlot.classList.add(newTag + "-scope")
                 const localTextNodesAndElements = [...element.childNodes].filter(x => x instanceof Text || x instanceof Element)
                 newSlot.append(...localTextNodesAndElements)
                 mySlotElem.parentNode.insertBefore(newSlot, mySlotElem.nextSibling);
@@ -624,11 +627,10 @@ class Prerenderer extends EventEmitter {
     } 
     catch(e) {
       console.log(e)
-      debugger
     }
     finally {
       try {
-        await page.close()
+        // await page.close()
         console.log("page closed")
       } catch (e) {
         // UnhandledPromiseRejectionWarning will be thrown if page.close() is called after browser.close()
