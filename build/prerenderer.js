@@ -1,3 +1,5 @@
+// Heavily inspired by puppeteer-prerender
+
 const EventEmitter = require('events')
 const puppeteer = require('puppeteer')
 const { parse, parseMetaFromDocument } = require('parse-open-graph')
@@ -7,6 +9,7 @@ const path = require("path")
 const axios = require("axios").default
 const { JSDOM } = require("jsdom");
 const delay = require('delay')
+const { URL } = require("url") 
 
 const emptyMediaFile = fs.readFileSync(path.join(__dirname, 'empty.wav'))
 const cssNamespaceParsingCompiledJS = fs.readFileSync(path.join(__dirname, "cssNamespaceParsingCompiled.js")).toString()
@@ -106,13 +109,19 @@ class Prerenderer extends EventEmitter {
     followRedirect = this.followRedirect,
     extraMeta = this.extraMeta,
     parseOpenGraphOptions = this.parseOpenGraphOptions,
-    rewrites = this.rewrites
+    rewrites = this.rewrites,
+    lang,
+    ignore404 = false
   } = {}) {
+    if (url instanceof URL) url = url.href
     let canClose
     const browser = await this.launch(new Promise((res) => {canClose = res}))
     const urlRewriter = rewrites && new URLRewriter(rewrites)
     const timerOpenTab = this.timer('open tab')
     const page = await browser.newPage()
+    if (lang) await page.setExtraHTTPHeaders({
+      'Accept-Language': lang
+    })
     timerOpenTab()
 
 
@@ -128,7 +137,6 @@ class Prerenderer extends EventEmitter {
 
     let navigated = 0
 
-    const injectionScriptId = "kqwuznbdaszbteauzw"
 
     page.on('request', async req => {
       const resourceType = req.resourceType()
@@ -163,25 +171,7 @@ class Prerenderer extends EventEmitter {
         navigated++
 
         if (navigated === 1 || followRedirect) {
-          if (this.renderShadowRoot) {
-            const {data: rawHTML} = await axios.get(url, {headers: {'User-Agent': this.userAgent}})
-
-            const { document } = (new JSDOM(rawHTML)).window
-            const head = document.querySelector("head")
-            head.insertAdjacentHTML("afterbegin", `<script id=${JSON.stringify(injectionScriptId)}>${cssNamespaceParsingCompiledJS}</script>`)
-            const parsedHTML = document.documentElement.outerHTML
-  
-            await req.respond({
-              status: 200,
-              contentType: "text/html",
-              body: parsedHTML
-            })
-          }
-          else {
-            await req.continue({ url })
-          }
-         
-
+          await req.continue({ url })
         } else {
           await req.respond({
             status: 200,
@@ -228,9 +218,15 @@ class Prerenderer extends EventEmitter {
       const res = await page.goto(url, {
         waitUntil: 'networkidle0',
         timeout
+      }).catch(() => {
+        console.log("404 but ok")
       })
 
+
+
       this.debug('networkidle0', url)
+
+      await delay(1000)
 
       const redirects = res.request().redirectChain()
 
@@ -256,7 +252,7 @@ class Prerenderer extends EventEmitter {
           result.status = 200
         }
 
-        if (!ok) {
+        if (!ok && !ignore404) {
           const text = await res.text()
 
           if (!text.length) {
@@ -320,7 +316,16 @@ class Prerenderer extends EventEmitter {
       }
 
       if (this.renderShadowRoot) {
-        await page.evaluate(() => {
+        await page.evaluate((cssNamespaceParsingCompiledJS) => {
+
+          // add script tag and inject cssNamespaceParsingCompiledJS
+          const script = document.createElement("script")
+          script.innerHTML = cssNamespaceParsingCompiledJS
+          document.head.appendChild(script)
+
+          console.log("inject cssNamespaceParsingCompiledJS", cssNamespaceParsingCompiledJS)
+
+          
 
           const cssIdMap = new Map()
 
@@ -426,12 +431,7 @@ class Prerenderer extends EventEmitter {
           document.head.append(styleElem)
           
 
-        })
-
-        await page.evaluate((injectionScriptId) => {
-          const script = document.querySelector(`#${injectionScriptId}`)
-          script.remove()
-        }, [injectionScriptId])
+        }, cssNamespaceParsingCompiledJS)
       }
 
 
@@ -621,12 +621,20 @@ class Prerenderer extends EventEmitter {
       timerParseDoc()
 
       return result
-    } finally {
+    } 
+    catch(e) {
+      console.log(e)
+      debugger
+    }
+    finally {
       try {
         await page.close()
         console.log("page closed")
       } catch (e) {
         // UnhandledPromiseRejectionWarning will be thrown if page.close() is called after browser.close()
+      }
+      finally {
+        canClose()
       }
     }
   }

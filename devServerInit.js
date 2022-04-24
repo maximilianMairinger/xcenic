@@ -14,7 +14,7 @@ try {
 
 }
 catch(e) {
-  
+  console.log("image-web not found")
 }
 
 
@@ -93,7 +93,7 @@ let appEntryPath = path.join(appDir, appEntryFileName);
 
   }
   catch(e) {
-    // console.warn("Failed to compress images: " + e.message)
+    console.warn("Failed to compress images: " + e.message)
   }
 
   
@@ -104,7 +104,7 @@ let appEntryPath = path.join(appDir, appEntryFileName);
 
   
   let server = nodemon({
-    watch: [serverDir, "public.src/index.pug"],
+    watch: [serverDir, "public.src/index.pug", "build/stats.js"],
     script: serverEntryPath,
     env: {
       port: gotPort

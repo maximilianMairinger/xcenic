@@ -47,8 +47,9 @@ head
     }
 body
   noscript
-    p If you dont get redirected in a second please click <a href="/nojs" + url>here</a>
-    meta#redirect(http-equiv='REFRESH' content='0; /nojs' + url)
+    p If you dont get redirected in a second please click
+    a(href="/nojs/" + url) here
+    meta#redirect(http-equiv='REFRESH' content='0; /nojs/' + url)
 
 
 

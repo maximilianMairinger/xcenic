@@ -3,9 +3,10 @@ import featureRequirementsMet from "./featureDetection"
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // TODO: Extra error msg
+  
   if (!featureRequirementsMet) {
-    
+    // rediect to nojs page by prefixing the url with /nojs
+    window.location.href = "/nojs" + window.location.pathname + window.location.search + window.location.hash;
     return
   };
 

@@ -108,3 +108,5 @@ function parseCssJHQWBDJASKJASDBJHS (cssSource, namespaceSelector, prefixSelecto
   return csstree.generate(ast)
 
 }
+
+window.parseCssJHQWBDJASKJASDBJHS = parseCssJHQWBDJASKJASDBJHS

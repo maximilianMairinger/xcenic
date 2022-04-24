@@ -127,7 +127,7 @@ export default {
       view: "View",
       quote: [
         {
-          projectName: "Das Team",
+          projectName: "Contact us",
           projectLink: "teamMember",
           // WIP
           text: "Xcenic kombiniert mehrere kreative Disziplinen, um Unternehmen ein unkompliziertes Gesamtpaket für ihren medialen Auftritt zu bieten. Für uns ist es außerdem besonders wichtig auf diverse Kundenanfragen flexibel und zeitnahe reagieren zu können.",
