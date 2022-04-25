@@ -9,6 +9,9 @@ const sanitisePath = require("sanitize-filename")
 const { URL } = require("url")
 
 
+const headless = true
+
+
 
 class PrerenderOrchestrator {
   constructor(languages) {
@@ -37,7 +40,7 @@ class PrerenderOrchestrator {
       followRedirect: true,
       userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
       puppeteerLaunchOptions: {
-        headless: true
+        headless
       }
     })
   }
@@ -111,10 +114,10 @@ class PrerenderOrchestrator {
 async function main() {
   const orchestrator = new PrerenderOrchestrator(stats.languages)
   try {
-    await orchestrator.render("http://127.0.0.1:6500", true)
+    await orchestrator.render("http://127.0.0.1:6500", false)
   }
   finally {
-    orchestrator.close()
+    if (headless) orchestrator.close()
   }
   
 }

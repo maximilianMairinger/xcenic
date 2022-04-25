@@ -439,6 +439,13 @@ class Prerenderer extends EventEmitter {
 
 
       
+      await page.evaluate(() => {
+        for (const elem of document.body.querySelectorAll("*")) {
+          if (window.getComputedStyle(elem).contentVisibility === "hidden") {
+            elem.style.contentVisibility = "visible"
+          }
+        }
+      })
 
       
 
@@ -630,7 +637,7 @@ class Prerenderer extends EventEmitter {
     }
     finally {
       try {
-        // await page.close()
+        if ((this.puppeteerLaunchOptions.headless === undefined ? true : this.puppeteerLaunchOptions.headless)) await page.close()
         console.log("page closed")
       } catch (e) {
         // UnhandledPromiseRejectionWarning will be thrown if page.close() is called after browser.close()
