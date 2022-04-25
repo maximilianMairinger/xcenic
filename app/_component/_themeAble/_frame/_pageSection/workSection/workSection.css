@@ -357,7 +357,10 @@ service-showcase.contentCreation .hero {
   display: inline;
 }
 .videographyTail .short {
-  display: none;
+  display: inline;
+
+  opacity: 0;
+  pointer-events: none;
 }
 
 .photographyImage {
@@ -602,10 +605,12 @@ c-tgm-logo-dots {
   }
 
   .videographyTail .long {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
   }
   .videographyTail .short {
-    display: inline;
+    opacity: 1;
+    pointer-events: all;
   }
 
   
@@ -692,10 +697,12 @@ c-tgm-logo-dots {
 
 @media (max-width: 900px) {
   .videographyTail .long {
-    display: inline;
+    opacity: 1;
+    pointer-events: all;
   }
   .videographyTail .short {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
   }
   .videographyTail {
     grid-row: 4 / 5;
