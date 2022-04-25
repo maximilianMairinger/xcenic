@@ -15,7 +15,7 @@ component-body > * {
   position: relative;
   float: left;
 
-  content-visibility: hidden;
-  contain-intrinsic-size: 100vh;
+  /* content-visibility: hidden;
+  contain-intrinsic-size: 100vh; */
 }
 
