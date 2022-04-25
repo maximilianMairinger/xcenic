@@ -226,7 +226,7 @@ class Prerenderer extends EventEmitter {
 
       this.debug('networkidle0', url)
 
-      await delay(1000)
+      await delay(2000)
 
       const redirects = res.request().redirectChain()
 

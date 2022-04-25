@@ -33,14 +33,18 @@ class PrerenderOrchestrator {
   
   
     
-  
     this.prerenderer = new Prerenderer({
       debug: true,
       renderShadowRoot: true,
       followRedirect: true,
       userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
       puppeteerLaunchOptions: {
-        headless
+        headless,
+        // fullhd
+        defaultViewport: {
+          width: 1920,
+          height: 1080
+        }
       }
     })
   }
@@ -50,6 +54,7 @@ class PrerenderOrchestrator {
   }
 
   async render(url, recursive = false) {
+
     const initUrl = new URL(url)
     const urlPathName = stats.normalizeUrl(initUrl.pathname)
     const path = stats.urlToPath(urlPathName)
@@ -114,7 +119,8 @@ class PrerenderOrchestrator {
 async function main() {
   const orchestrator = new PrerenderOrchestrator(stats.languages)
   try {
-    await orchestrator.render("http://127.0.0.1:6500", false)
+    await orchestrator.render("http://127.0.0.1:6500/", false)
+    await orchestrator.render("http://127.0.0.1:6500/contact/form", false)
   }
   finally {
     if (headless) orchestrator.close()
