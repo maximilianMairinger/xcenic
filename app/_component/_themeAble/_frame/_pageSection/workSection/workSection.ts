@@ -141,19 +141,15 @@ export default class PhilosophySection extends PageSection {
 
     this.localScrollProgressData("start").then((scrollDataStart) => {
 
-      scrollDataStart.get((e) => {
-        console.log(e)
-      })
+
 
       scrollDataStart.scrollTrigger(0).on("forward", () => {
-        console.log("forward")
         this.sideBar.css({
           position: "fixed",
           top: 55,
           marginRight: 10
         })
       }).on("backward", () => {
-        console.log("backward")
         this.sideBar.css({
           position: "absolute",
           top: 55,
