@@ -561,12 +561,12 @@ export default abstract class SectionedPage extends Page {
 
 
     
-    rendered.get((rendered) => {
-      // console.log("rendered", rendered, section)
-      if (!rendered) section.css("containIntrinsicSize" as any, section.height() + "px")
-      // console.log(rendered ? "visible" : "hidden", section)
-      section.css("contentVisibility" as any, rendered ? "visible" : "hidden")
-    }, false)
+    // rendered.get((rendered) => {
+    //   // console.log("rendered", rendered, section)
+    //   if (!rendered) section.css("containIntrinsicSize" as any, section.height() + "px")
+    //   // console.log(rendered ? "visible" : "hidden", section)
+    //   section.css("contentVisibility" as any, rendered ? "visible" : "hidden")
+    // }, false)
 
     // this.calculateSectionRenderingStatus()
 
