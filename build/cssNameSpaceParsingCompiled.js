@@ -198,7 +198,7 @@ function parseCssJHQWBDJASKJASDBJHS (cssSource, namespaceSelector, slotNamespace
 
 
         if (namespaceSelector) {
-          if ((c.type === "WhiteSpace" || c.type === "Combinator") && (!q.prev || (q.prev.data.type !== parsedSlotNamespaceSelector.type && q.prev.data.name !== parsedSlotNamespaceSelector.name))) {
+          if ((c.type === "WhiteSpace" || c.type === "Combinator") && !(q.prev && (q.prev.data.type === parsedSlotNamespaceSelector.type && q.prev.data.name === parsedSlotNamespaceSelector.name))) {
 
             let o = {data: {...parsedNamespaceSelector}, prev: q.prev, next: q}
             if (q.prev) q.prev.next = o
