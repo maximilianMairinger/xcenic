@@ -363,25 +363,35 @@ class Prerenderer extends EventEmitter {
 
             // if (element.tagName.toLowerCase() === "c-block-button") console.log(localChilds.map((e) => e.tagName.toLowerCase()))
             // console.log(element.tagName.toLowerCase())
+
+            let addSlotAfterDone = () => {}
             
             if (element.shadowRoot) {
               const newTag = element.tagName.toLowerCase()
+
+
               const shadowChilds = [...element.shadowRoot.children]
               element.classList.add(newTag + "-scope")
               
               const mySlotElem = element.shadowRoot.querySelector("slot")
+              
               if (mySlotElem) {
 
                 const allSlotChilds = element.querySelectorAll("*")
+
+                if (newTag === "c-form") console.log([...allSlotChilds])
+
                 for (const slotChild of allSlotChilds) {
                   slotChild.classList.add(newTag + "-slot-scope")
                 }
 
                 const newSlot = document.createElement("slot-scoped")
                 const localTextNodesAndElements = [...element.childNodes].filter(x => x instanceof Text || x instanceof Element)
-                newSlot.append(...localTextNodesAndElements)
-                mySlotElem.parentNode.insertBefore(newSlot, mySlotElem.nextSibling);
-                mySlotElem.remove()
+                addSlotAfterDone = () => {
+                  newSlot.append(...localTextNodesAndElements)
+                  mySlotElem.parentNode.insertBefore(newSlot, mySlotElem.nextSibling);
+                  mySlotElem.remove()
+                }
               }
               element.shadowRoot.innerHTML = ""
 
@@ -419,6 +429,8 @@ class Prerenderer extends EventEmitter {
               }
             }
 
+            addSlotAfterDone()
+
             let css = localCss.join("\n\n")
             wholeCss.unshift(css)
 
@@ -430,6 +442,11 @@ class Prerenderer extends EventEmitter {
           
           styleScope(document.body, "")
           let styleElem = document.createElement("style")
+          wholeCss.unshift(`
+slot-scoped {
+  border-radius: inherit;
+}
+          `)
           styleElem.innerHTML = wholeCss.reverse().join("\n\n")
           document.head.append(styleElem)
           
