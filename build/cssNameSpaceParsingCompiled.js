@@ -73,147 +73,7 @@ function parseCssJHQWBDJASKJASDBJHS (cssSource, namespaceSelector, slotNamespace
 
       
       
-      function loop(c, q) {
-        if (prefixSelector) {
-          
-          if (c.type === "PseudoClassSelector" && c.name === "host") {
-            q.data = {...c, ...parsedPrefixSelector}
-            
-
-            // check if there is something like :host(.disabled)
-            if (c.children) {
-              // filter c.children to not contain *
-              let q2 = c.children.head
-              while(q2) {
-                const c2 = q2.data
-                if (c2.type === "TypeSelector" && c2.name === "*") {
-                  // remove c2 from c.children
-                  if (q2.prev) q2.prev.next = q2.next
-                  if (q2.next) q2.next.prev = q2.prev
-                  if (q2 === c.children.head) c.children.head = q2.next
-                  if (q2 === c.children.tail) c.children.tail = q2.prev
-                }
-                q2 = q2.next
-              }
-
-              if (!!c.children.head) {
-
-                const mq = q
-                const mc = c
-                
-                todoLater.push(() => {
-                  // insert the linked list from c.children after q
-                  const afterNext = mq.next
-                  mq.next = mc.children.head
-                  mc.children.head.prev = mq
-                  mc.children.tail.next = afterNext
-                  if (afterNext) afterNext.prev = mc.children.tail
-                })
-              }
-              
-
-              
-            }
-            
-
-            
-          }
-        }
-
-
-        if (slotNamespaceSelector) {
-          if (c.type === "PseudoElementSelector") {
-            if (c.name === "slotted") {
-              q.data = {...c, ...parsedSlotNamespaceSelector}
-
-              // check if there is something like ::slotted(*.whatever)
-              if (c.children) {
-                // filter c.children to not contain *
-                let q2 = c.children.head
-                while(q2) {
-                  const c2 = q2.data
-                  console.log("c2", c2)
-                  if (c2.type === "Selector") {
-                    if (c2.children) {
-                      let q3 = c2.children.head
-                      while(q3) {
-                        const c3 = q3.data
-                        console.log("c3", c3)
-                        if (c3.type === "TypeSelector" && c3.name === "*") {
-                          console.log("rm c3", c3)
-                          // remove c3 from c2.children
-                          if (q3.prev) q3.prev.next = q3.next
-                          if (q3.next) q3.next.prev = q3.prev
-                          if (q3 === c2.children.head) c2.children.head = q3.next
-                          if (q3 === c2.children.tail) c2.children.tail = q3.prev
-                        }
-                        q3 = q3.next
-                      }
-
-                      if (!c2.children.head) {
-                        // remove c2 from c.children
-                        if (q2.prev) q2.prev.next = q2.next
-                        if (q2.next) q2.next.prev = q2.prev
-                        if (q2 === c.children.head) c.children.head = q2.next
-                        if (q2 === c.children.tail) c.children.tail = q2.prev
-                      }
-                    }
-
-                  }
-                  else if (c2.type === "TypeSelector" && c2.name === "*") {
-                    console.log("contains", c)
-                    // remove c2 from c.children
-                    if (q2.prev) q2.prev.next = q2.next
-                    if (q2.next) q2.next.prev = q2.prev
-                    if (q2 === c.children.head) c.children.head = q2.next
-                    if (q2 === c.children.tail) c.children.tail = q2.prev
-                  }
-                  
-                  q2 = q2.next
-                }
-                console.log("sofar")
-
-
-                if (!!c.children.head) {
-                  const mq = q
-                  const mc = c
-                  todoLater.push(() => {
-                    // insert the linked list from c.children after q
-                    const afterNext = mq.next
-                    mq.next = mc.children.head
-                    mc.children.head.prev = mq
-                    mc.children.tail.next = afterNext
-                    if (afterNext) afterNext.prev = mc.children.tail
-                  })
-                  
-                }
-
-                console.log("sofar2")
-
-              }
-            }
-          }
-        }
-        
-
-
-        if (namespaceSelector) {
-          if ((c.type === "WhiteSpace" || c.type === "Combinator") && !(q.prev && (q.prev.data.type === parsedSlotNamespaceSelector.type && q.prev.data.name === parsedSlotNamespaceSelector.name))) {
-
-            let o = {data: {...parsedNamespaceSelector}, prev: q.prev, next: q}
-            if (q.prev) q.prev.next = o
-            q.prev = o
-          }
-        }
-        
-
-        if (c.type in replaceSelector) {
-          if (c.name in replaceSelector[c.type]) {
-            c.name = replaceSelector[c.type][c.name]
-          }
-        }
-        
-      }
+      
     }
   });
 
@@ -221,6 +81,167 @@ function parseCssJHQWBDJASKJASDBJHS (cssSource, namespaceSelector, slotNamespace
   
   // generate CSS from AST
   return csstree.generate(ast)
+
+
+
+
+
+  function loop(c, q) {
+    if (q.prev && q.prev.data.type === "PseudoElementSelector") console.log("yayyy", q.prev.data.name)
+
+
+
+    if (prefixSelector) {
+      
+      if (c.type === "PseudoClassSelector" && c.name === "host") {
+        q.data = {...c, ...parsedPrefixSelector}
+        
+
+        // check if there is something like :host(.disabled)
+        if (c.children) {
+          // filter c.children to not contain *
+          let q2 = c.children.head
+          while(q2) {
+            const c2 = q2.data
+            if (c2.type === "TypeSelector" && c2.name === "*") {
+              // remove c2 from c.children
+              if (q2.prev) q2.prev.next = q2.next
+              if (q2.next) q2.next.prev = q2.prev
+              if (q2 === c.children.head) c.children.head = q2.next
+              if (q2 === c.children.tail) c.children.tail = q2.prev
+            }
+            q2 = q2.next
+          }
+
+          if (!!c.children.head) {
+
+            const mq = q
+            const mc = c
+            
+            todoLater.push(() => {
+              // insert the linked list from c.children after q
+              const afterNext = mq.next
+              mq.next = mc.children.head
+              mc.children.head.prev = mq
+              mc.children.tail.next = afterNext
+              if (afterNext) afterNext.prev = mc.children.tail
+            })
+          }
+          
+
+          
+        }
+        
+
+        
+      }
+    }
+
+
+    if (slotNamespaceSelector) {
+      if (c.type === "PseudoElementSelector") {
+        if (c.name === "slotted") {
+          q.data = {...c, ...parsedSlotNamespaceSelector}
+
+          // check if there is something like ::slotted(*.whatever)
+          if (c.children) {
+            // filter c.children to not contain *
+            let q2 = c.children.head
+            while(q2) {
+              const c2 = q2.data
+              if (c2.type === "Selector") {
+                if (c2.children) {
+                  let q3 = c2.children.head
+                  while(q3) {
+                    const c3 = q3.data
+                    if (c3.type === "TypeSelector" && c3.name === "*") {
+                      // remove c3 from c2.children
+                      if (q3.prev) q3.prev.next = q3.next
+                      if (q3.next) q3.next.prev = q3.prev
+                      if (q3 === c2.children.head) c2.children.head = q3.next
+                      if (q3 === c2.children.tail) c2.children.tail = q3.prev
+                    }
+                    q3 = q3.next
+                  }
+
+                  if (!c2.children.head) {
+                    // remove c2 from c.children
+                    if (q2.prev) q2.prev.next = q2.next
+                    if (q2.next) q2.next.prev = q2.prev
+                    if (q2 === c.children.head) c.children.head = q2.next
+                    if (q2 === c.children.tail) c.children.tail = q2.prev
+                  }
+                }
+
+              }
+              else if (c2.type === "TypeSelector" && c2.name === "*") {
+                // remove c2 from c.children
+                if (q2.prev) q2.prev.next = q2.next
+                if (q2.next) q2.next.prev = q2.prev
+                if (q2 === c.children.head) c.children.head = q2.next
+                if (q2 === c.children.tail) c.children.tail = q2.prev
+              }
+              
+              q2 = q2.next
+            }
+
+
+            if (!!c.children.head) {
+              const mq = q
+              const mc = c
+              todoLater.push(() => {
+                // insert the linked list from c.children after q
+                const afterNext = mq.next
+                mq.next = mc.children.head
+                mc.children.head.prev = mq
+                mc.children.tail.next = afterNext
+                if (afterNext) afterNext.prev = mc.children.tail
+              })
+              
+            }
+
+
+          }
+        }
+      }
+    }
+    
+
+
+    if (namespaceSelector) {
+      if ((c.type === "WhiteSpace" || c.type === "Combinator") && !(q.prev && (q.prev.data.type === parsedSlotNamespaceSelector.type && q.prev.data.name === parsedSlotNamespaceSelector.name))) {
+        // check ::after and ::before (or :after and :before)
+
+        
+        if (q.prev && (q.prev.data.type === "PseudoElementSelector" || q.prev.data.type === "PseudoClassSelector") && (q.prev.data.name === "after" || q.prev.data.name === "before")) {
+          let o = {data: {...parsedNamespaceSelector}, prev: q.prev.prev, next: q.prev}
+          // insert o before q.prev
+          if (q.prev.prev) q.prev.prev.next = o
+          q.prev.prev = o
+
+          console.log("woooh", o)
+        }
+        else {
+          let o = {data: {...parsedNamespaceSelector}, prev: q.prev, next: q}
+          if (q.prev) q.prev.next = o
+          q.prev = o
+        }
+
+
+
+        
+      }
+    }
+
+    
+
+    if (c.type in replaceSelector) {
+      if (c.name in replaceSelector[c.type]) {
+        c.name = replaceSelector[c.type][c.name]
+      }
+    }
+    
+  }
 
 }
 

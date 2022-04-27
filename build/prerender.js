@@ -119,8 +119,7 @@ class PrerenderOrchestrator {
 async function main() {
   const orchestrator = new PrerenderOrchestrator(stats.languages)
   try {
-    await orchestrator.render("http://127.0.0.1:6500/", false)
-    await orchestrator.render("http://127.0.0.1:6500/contact/form", false)
+    await orchestrator.render("http://127.0.0.1:6500", true)
   }
   finally {
     if (headless) orchestrator.close()
