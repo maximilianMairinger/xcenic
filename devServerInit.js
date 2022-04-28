@@ -20,7 +20,6 @@ catch(e) {
 
 // configureable
 const serverEntryFileName = "server.js"
-const appEntryFileName = "xcenic.js"
 
 
 
@@ -40,7 +39,7 @@ else if (args.dev === "server") {
 
 
 let serverEntryPath = path.join(serverDir, serverEntryFileName)
-let appEntryPath = path.join(appDir, appEntryFileName);
+let appEntryPath = path.join(appDir);
 
 
 
@@ -78,7 +77,7 @@ let appEntryPath = path.join(appDir, appEntryFileName);
 
   try {
 
-    const compressImages = imageWeb.constrImageWeb(["jpg", "webp", "avif"], ["3K", "PREV"])
+    const compressImages = imageWeb.constrImageWeb(["jpg", "webp", "avif"], ["16588800", "3K", "PREV"])
     const imgDistPath = "public/res/img/dist" 
     const imgSrcPath = "app/res/img"
     const imgChangeF = async (path, override = false) => {

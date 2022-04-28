@@ -1,12 +1,21 @@
 doctype html
 head
   meta(charset='utf-8')
-  title Xcenic
+  if meta.title
+    title #{meta.title}
+  else 
+    title Xcenic
+
+  noscript
+    p If you dont get redirected in a second please click
+    a(href="/nojs/" + url) here
+    meta#redirect(http-equiv='REFRESH' content='0; /nojs/' + url)
+
   meta(content='user-scalable=no,width=device-width,initial-scale=1,maximum-scale=1' name='viewport')
   meta(content='no' name='msapplication-tap-highlight')
   // <link rel='manifest' href='/webmanifest.json'>
   // <link href="/res/favicon/xcenic_logo_180x180.png" rel=icon type=image/png>
-  script(src='/dist/xcenic.js')
+  script(src='/dist/' + indexJS)
   link(rel='apple-touch-icon' sizes='180x180' href='/res/img/favicon/apple-touch-icon.png')
   link(rel='icon' type='image/png' sizes='32x32' href='/res/img/favicon/favicon-32x32.png')
   link(rel='icon' type='image/png' sizes='16x16' href='/res/img/favicon/favicon-16x16.png')
@@ -46,10 +55,7 @@ head
       font-display: swap;
     }
 body
-  noscript
-    p If you dont get redirected in a second please click
-    a(href="/nojs/" + url) here
-    meta#redirect(http-equiv='REFRESH' content='0; /nojs/' + url)
+  
 
 
 

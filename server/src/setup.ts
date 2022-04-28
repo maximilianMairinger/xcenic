@@ -33,7 +33,7 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
   }
   app.use(bodyParser.urlencoded({extended: false}))
   app.use(bodyParser.json())
-  console.log("stats", stats.languages)
+  console.log("available langs", stats.languages)
   app.use(locale(stats.languages, stats.languages[0]))
 
 
@@ -79,6 +79,25 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
   app.port = port
 
 
+
+  const indexJSRegex = /^xcenic.*\.js$/
+  // search for a file in public/dist that matches the regex indexRegex
+  const jsPath = pth.join(publicPath, "dist")
+
+  let indexJS: string
+  fs.readdirSync(jsPath).forEach(file => {
+    if (indexJSRegex.test(file)) {
+      if (indexJS !== undefined) console.error("Mutiple index.js files found in dist folder")
+      else indexJS = file
+    }
+  })
+
+  if (indexJS === undefined) {
+    throw new Error("No index.js found in " + jsPath)
+  }
+  
+
+
   const renderIndex = pug.compileFile("public.src/index.pug")
 
 
@@ -118,7 +137,8 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
 
           res.send(renderIndex({
             url,
-            meta: stats.meta
+            meta: stats.meta,
+            indexJS
           }))
         })
         
@@ -133,7 +153,8 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
       }
       else {
         res.send(renderIndex({
-          url
+          url,
+          indexJS
         }))
       }
     }
