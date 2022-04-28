@@ -113,9 +113,15 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
       }
       else {
         // todo: meta and stuff
-        res.send(renderIndex({
-          url
-        }))
+        aFs.readFile(pth.join(path, "index.json")).then((_stats) => {
+          const stats = JSON.parse(_stats.toString())
+
+          res.send(renderIndex({
+            url,
+            meta: stats.meta
+          }))
+        })
+        
       }
     }
     else {

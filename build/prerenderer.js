@@ -379,7 +379,6 @@ class Prerenderer extends EventEmitter {
 
                 const allSlotChilds = element.querySelectorAll("*")
 
-                if (newTag === "c-form") console.log([...allSlotChilds])
 
                 for (const slotChild of allSlotChilds) {
                   slotChild.classList.add(newTag + "-slot-scope")
