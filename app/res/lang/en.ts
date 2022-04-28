@@ -2,13 +2,13 @@ export default {
   xcenic: {
     longName: "Xcenic"
   },
-  copiedFeedback: "Copied to clipboard",
+  copiedFeedback: "In der Zwischeausgabe",
   links: {
     philosophy: "Philosophie",
     services: "Service",
     team: "Team",
     contact: "Kontakt",
-    websites: "Websites",
+    websites: "Webseiten",
     contentCreation: "Inhaltserstellung",
     privacy: "Datenschutz",
     legalNotice: "Impressum",
@@ -16,10 +16,10 @@ export default {
 
   },
   contact: {
-    note: "Du hast ein Projekt?",
-    heading: "Erzähl uns davon!",
+    note: "Sie haben ein Projekt?",
+    heading: "Erzählen Sie uns davon!",
 
-    requestQuery: "Nach welchem Angebot suchst du?",
+    requestQuery: "Wonach suchen Sie?",
     requestOptions: ["Web/App-Entwicklung", "Video-Produktion", "UI-Design", "Fotografie", "Social Media", "Anderes"],
     detailsQuery: "Erzähl uns die Details",
     detailsPlaceholder: "Kurze Projektinfos",
@@ -33,24 +33,24 @@ export default {
   },
   home: {
     landing: {
-      heading: "Unser Ziel",
+      heading: "Our goal",
       text: "Wir machen Ihre Marke groß! Unsere maßgeschneiderten Projekte vermarkten Ihre Produkte digital und positionieren Ihr Unternehmen als zukunftssicheren Akteur in Ihrer Marktnische.",
-      callToAction: "Schreib uns",
+      callToAction: "Kontakt aufnehmen",
       viewWork: "Unser Angebot"
     },
     philosophy: {
       note: "Warum Xcenic?",
-      heading: "Eine ganzheitliche Herangehensweise am digitales Marketing.",
-      text: "Neue Website? Einzigartiges Werbevideo? Oder eine komplette Überarbeitung des Online-Auftrittes? Wir bieten, unabhängig der Projektgröße, ein maßgeschneidtes Angebot",
-      tag: "TGM - Rebrand",
-      tagDesc: "Website project"
+      heading: "Eine ganzheitliche Herangehensweise an digitales Marketing.",
+      text: "Neue Webseite? Einzigartiges Werbevideo? Oder eine komplette Überarbeitung des Online-Auftrittes? Wir bieten, unabhängig der Projektgröße, ein maßgeschneidertes Angebot.",
+      tag: "TGM - Rebranding",
+      tagDesc: "Webentwicklung"
     },
     work: {
       viewWork: "Unser Portfolio",
       webApp: {
         hero: {
-          heading: "Websites",
-          text: "In unserem digitalen Zeitalter verlassen sich Unternehmen zunehmend auf ihre Website um sich von der Konkurenz abzuheben und neue Kunden zu gewinnen. Wir entwickeln Websiten mit ansprechendem Design, spannendem Inhalt und blitzschnellen Ladezeiten."
+          heading: "Webseiten",
+          text: "In unserem digitalen Zeitalter verlassen sich Unternehmen zunehmend auf ihre Webseite, um sich von der Konkurrenz abzuheben und neue Kunden zu gewinnen. Wir entwickeln Webseiten mit ansprechendem Design, spannendem Inhalt und blitzschnellen Ladezeiten."
         },
         tablet: {
           heading: "Web Entwicklung"
@@ -66,40 +66,40 @@ export default {
           },
           three: {
             heading: "Wartung",
-            text: "Nach dem Abschluss ihres Websiteprojektes, bieten wir einen optionalen Wartungsservice um Ihre Website jederzeit technisch und inhaltlich up-to-date zu halten."
+            text: "Nach dem Abschluss Ihres Webseiteprojektes, bieten wir einen optionalen Wartungsservice, um Ihre Webseite jederzeit technisch und inhaltlich up-to-date zu halten."
           }
         },
         smartphone: {
           heading: "App Entwicklung"
         },
-        sideText: "Wir entwickeln einzigartige Websiten und mobile Applikationen die auf die Bedürfnisse Ihres Unternehmens und Ihre Markenidentität maßgeschneidert werden."
+        sideText: "Wir entwickeln einzigartige Webseiten und mobile Applikationen, die auf die Bedürfnisse Ihres Unternehmens und Ihre Markenidentität maßgeschneidert werden."
       },
       contentCreation: {
         hero: {
           heading: "Inhalte",
-          text: "Ein außergewöhnlicher Onlineauftritt benötigt nicht nur superbes Design und neueste Technologie, sondern eben auch packende Inhalte. Deshalb bieten wir Videoproduktion und Fotografie sowohl in Kombination mit Web- und Socialmediamanagement, aber auch als alleiniges Produkt an."
+          text: "Ein außergewöhnlicher Onlineauftritt benötigt nicht nur superbes Design und neueste Technologie, sondern auch auch packende Inhalte. Deshalb bieten wir Videoproduktion und Fotografie sowohl in Kombination mit Web- und Socialmediamanagement, aber auch als seperates Produkt an."
         },
         photography: "Fotografie",
         videography: {
           heading: "Video Produktion",
           text1: "In unserem Produktionsprozess involvieren wir Sie von der Konzeptphase über die Planung bis zur Produktion und Postproduktion.",
           text2: "Wir streben danach markenentsprechende Inhalte zu entwickeln und so das Markenbewusstsein Ihrer Kunden zu stärken.",
-          text3: "Wir nutzen modernstes Licht, Kamera und Audioequipment um atemberaubende Aufnahmen zu erstellen. Unsere Vorerfahrung reicht von Luftvideographie über Studio- und Produktfotografie."
+          text3: "Wir nutzen modernstes Licht-, Kamera- und Audioequipment, um atemberaubende Aufnahmen zu erstellen. Unsere Vorerfahrung reicht von Luftvideografie über Studio- und Produktfotografie."
         },
-        sideText: "Unsere Erfahrung umfasst die Produktion von Kurzfilmen, Werbevideos und Interviews. Unser Ziel ist es Videos und Fotos zu entwickeln die Ihren Kunden die richtigen Emotionen vermitteln."
+        sideText: "Unsere Erfahrung umfasst die Produktion von Kurzfilmen, Werbevideos und Interviews. Unser Ziel ist es Videos und Fotos zu entwickeln, die Ihren Kunden die richtigen Emotionen vermitteln."
       },
       socialMedia: {
         hero: {
           heading: "Social Media",
-          text: "Über das letzte Jahrzehnt hat Social Media immer mehr Bedeutung in der Kundenaquise entwickelt. Unternehmen die besonders in der jüngeren Generation erfolgreich sein möchten, verlassen sich immer mehr auf kreative Auftritte in den neue Medien."
+          text: "Über das letzte Jahrzehnt hat Social Media immer mehr Bedeutung in der Kundenaquise gewonnen. Unternehmen, die besonders in der jüngeren Generation erfolgreich sein möchten, setzen immer mehr auf kreative Auftritte in den neue Medien."
         },
         yourBrand: {
           heading: "Ihre Marke auf Social Media",
-          text: "Wir entwickeln ansprechende Social Media Auftritte, unterstützen mit der Erstellung von Inhalten und interagieren mit Ihren Kunden. Durch unser Social Media Management pflegen wir Ihre Kundenbeziehungen und stellen Ihre Marke im das Rampenlicht."
+          text: "Wir entwickeln ansprechende Social Media Auftritte, unterstützen mit der Erstellung von Inhalten und interagieren mit Ihren Kunden. Durch unser Social Media Management, pflegen wir Ihre Kundenbeziehungen und stellen Ihre Marke ins Rampenlicht."
         },
         process: {
           heading: "Unser Prozess",
-          text: "Egal ob sie Unterstützunf mit Instagram, Facebook, Twitter oder Youtube brauchen, wir bieten zugeschnittene Lösungen.",
+          text: "Egal ob sie Unterstützung mit Instagram, Facebook, Twitter oder Youtube brauchen, wir bieten zugeschnittene Lösungen.",
           step: {
             one: {
               heading: "Konzept",
@@ -111,11 +111,11 @@ export default {
             },
             three: {
               heading: "Kundenanfragen",
-              text: "Wir Antworten unverzüglich und präzise auf diverse Kundenanfragen, auf Ihren Social-Media Plattformen."
+              text: "Wir antworten unverzüglich und präzise auf diverse Kundenanfragen auf Ihren Social-Media Plattformen."
             }
           }
         },
-        sideText: "Wir entwickeln eine außergewöhnliche Social Media Präsenz für Ihr Unternehmen. Die Kombination aus kreativem Talent, Design Erfahrung und neuartigen Ideen ermöglichen hochmoderne Social Media Konzepte."
+        sideText: "Wir entwickeln eine außergewöhnliche Social Media Präsenz für Ihr Unternehmen. Die Kombination aus kreativem Talent, Design, Erfahrung und neuartigen Ideen ermöglichen hochmoderne Social Media Konzepte."
       }
 
     },
@@ -127,39 +127,40 @@ export default {
       view: "View",
       quote: [
         {
-          projectName: "TGM Website",
-          projectLink: "tgmWebsite",
+          projectName: "Contact us",
+          projectLink: "teamMember",
           // WIP
-          text: "Very good work. Its super beautiful, I like it alot. In fact it is superb, I would probably bye again if I had enough money. Yes I am sure it is super nice, the collaboration and everything, just nice!",
-          author: "Koppensteiner",
+          text: "Xcenic kombiniert mehrere kreative Disziplinen, um Unternehmen ein unkompliziertes Gesamtpaket für ihren medialen Auftritt zu bieten. Für uns ist es außerdem besonders wichtig auf diverse Kundenanfragen flexibel und zeitnahe reagieren zu können.",
+          author: "Raphael Schlager",
           // WIP
-          authorTitle: "IT Departmenthead"
+          authorTitle: "Geschäftsführer"
         }
       ],
       about: {
         prefix: "Über uns",
-        mainText: "Xcenic wurde 2019 von einer Gruppe IT Schüler des TGMs gegründet. Jetzt sind wir ein diverses Team aus österreichischen Entwicklern und Designern, die sich die mediale Entwicklung von außergewöhnlichen Marken zur Aufgabe gemacht haben. ",
+        mainText: "Xcenic wurde 2019 von einer Gruppe IT Schüler des TGMs gegründet. Jetzt sind wir ein diverses Team aus österreichischen Entwicklern und Designern, die sich die mediale Verwirklichung außergewöhnlicher Marken zur Aufgabe gemacht haben.",
         cta: "Kontaktieren Sie uns!"
       }
     },
     contact: {
       cta: {
         // WIP
-        heading: "Sie haben eine Idee?",
-        text: "Wir führen mit Ihnen gerne ein unverbindliches und kostenloses Gespräch bezüglich Ihrem Projekt. Während dem Entwicklungsprozess verfolgen wir eine aktive Kommunikationsstrategie um Sie in alle kreativen und technischen Prozesse einzubinden. ",
+        heading: "Eine Idee?",
+        text: "Wir führen mit Ihnen gerne ein unverbindliches und kostenloses Gespräch bezüglich Ihrem Projekt. Während des Entwicklungsprozesses verfolgen wir eine aktive Kommunikationsstrategie, um Sie in allen kreativen und technischen Entscheidungsprozesse einzubinden.",
         button: "Kontakt aufnehmen"
       },
       socials: {
         // WIP
         heading: "Erzähl uns davon",
         // WIP
-        text: "Kontakt können Sie mit uns gerne via Email oder über das Kontaktformular aufnehmen.",
+        text: "Gerne können Sie mit uns via Email oder über das Kontaktformular erreichen.",
         socialMedia: {
           heading: "Social Media",
 
-          linkedIn: "Twitter",
+          linkedIn: "LinkedIn",
+          twitter: "Twitter",
           instagram: "Instagram",
-          tikTok: "LinkedIn"
+          tikTok: "TikTok"
         },
         contact: {
           heading: "Kontakt",
@@ -174,7 +175,7 @@ export default {
         terms: {
           // WIP
           heading: "Impressum",
-          text: "Information bezüglich des Inhabers der Website." 
+          text: "Information bezüglich des Inhabers der Webseite." 
         },
         privacy: {
           // WIP

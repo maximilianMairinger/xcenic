@@ -6,6 +6,7 @@ type Lang = typeof de
 const def = deepDefault(de, "")
 
 
+// @ts-ignore
 export const currentLanguage = new Data("de") as Data<"en" | "de">
 currentLanguage.get(async (w) => {
   const initOb = {}
@@ -24,7 +25,7 @@ const langIndex = {
 
 setTimeout(() => {
   currentLanguage.set("en")
-}, 500)
+}, 2000)
 
 
 const initLang = de
