@@ -5,6 +5,10 @@ module.exports = (env) => {
   const common = commonMod(env);
   return merge(common, {
     mode: "production",
+    output: {
+      filename: 'dist/xcenic.[contenthash].js',
+      chunkFilename: 'dist/[name].[contenthash].js',
+    },
     module: {
       rules: [
         {

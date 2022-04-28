@@ -6,8 +6,15 @@ import delay from "delay"
 
 
 
-app.post("/call", (req, res) => {
-  console.log("call")
-  delay(300).then(() => res.send("\"Hello\""))
-})
+app.post("/addEntry", (req, res) => {
+  const entry = req.body
+  entry.time = Date.now()
 
+  console.log("getting entry", entry)
+
+  setTimeout(() => {
+    res.send({
+      success: true
+    })
+  }, 1000)
+})

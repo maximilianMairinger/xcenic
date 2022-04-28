@@ -24,6 +24,7 @@ const inactiveClass = "inactive"
 
 export default class PhilosophySection extends PageSection {
   public serviceSection = this.q("service-showcase") as ElementList<HTMLElement>
+  private sideBar = this.q("showcase-center") as HTMLElement
   constructor() {
     super("light")
 
@@ -40,6 +41,7 @@ export default class PhilosophySection extends PageSection {
     let curTokenDac: Symbol
     function deactivateSidePanel(atIndex: number) {
       const panel = sidePanelElems[atIndex]
+      if (panel === undefined) return
       const locToken = curTokenDac = Symbol()
       panel.removeClass("animdone")
       panel.anim({height: atIndex === sidePanelElems.length-1 ? 65 : 90}, 500).then(() => {
@@ -54,10 +56,11 @@ export default class PhilosophySection extends PageSection {
     
     async function activateSidePanel(atIndex: number) {
       const panel = sidePanelElems[atIndex]
+      if (panel === undefined) return
       panel.removeClass(inactiveClass)
       
       const locToken = curTokenAc = Symbol()
-      panel.anim([{height: atIndex === sidePanelElems.length-1 ? 65 : 90, offset: 0}, {height: panel.childs(":last-child").offsetBottom() - 13}], {duration: 500, fill: true}).then(() => {
+      panel.anim([{height: atIndex === sidePanelElems.length-1 ? 65 : 90, offset: 0}, {height: panel.childs(":last-child").offsetBottom()}], {duration: 500, fill: true}).then(() => {
         if (curTokenAc !== locToken) return 
         panel.css({height: "fit-content"})
       })
@@ -73,6 +76,7 @@ export default class PhilosophySection extends PageSection {
       service.on("resize", (e) => {
         localHeight.set(e.height)
       })
+      // @ts-ignore
       new DataCollection(prevHeight, localHeight).get((prevHeight, localHeight) => {
         height.set(prevHeight + localHeight)
       })
@@ -89,78 +93,106 @@ export default class PhilosophySection extends PageSection {
     
     Promise.all(scrollTriggers).then((scrollTriggers) => {
 
+      const activeStageIndex = new Data(0)
+
+      const changeThemeFuncIndex = {
+        odd: () => {
+          this.css("backgroundColor", "#FFFAFA")
+          this.style.setProperty("--theme", "var(--secondary-theme)")
+          this.accentTheme.set("secondary")
+        },
+        even: () => {
+          this.css("backgroundColor", "#F9FAFE")
+          this.style.setProperty("--theme", "var(--primary-theme)")
+          this.accentTheme.set("primary")
+        }
+      }
+
+
+      let lastActiveStageIndex = activeStageIndex.get()
+      activeStageIndex.get((index) => {
+        activateSidePanel(index)
+        deactivateSidePanel(lastActiveStageIndex)
+
+        changeThemeFuncIndex[index % 2 === 0 ? "even" : "odd"]()
+
+        lastActiveStageIndex = index
+      }, false)
+
+
       
 
 
       for (let ii = 0; ii < scrollTriggers.length; ii++) {
         const i = ii
-        const scrollTrigger = scrollTriggers[i]
-
-        
-
-
-        const localToggleBool = toggleBool
-
-
-        
-
-        scrollTrigger.on(localToggleBool ? "forward" : "backward", () => {
-          this.css("backgroundColor", "#FFFAFA")
-          this.style.setProperty("--theme", "var(--secondary-theme)")
-          this.accentTheme.set("secondary")
+        const nextI = ii + 1
+        scrollTriggers[ii].on("forward", () => {
+          activeStageIndex.set(nextI)
         })
-  
-        scrollTrigger.on(!localToggleBool ? "forward" : "backward", () => {
-          this.css("backgroundColor", "#F9FAFE")
-          this.style.setProperty("--theme", "var(--primary-theme)")
-          this.accentTheme.set("primary")
+        scrollTriggers[ii].on("backward", () => {
+          activeStageIndex.set(i)
         })
-
-
-        
-
-
-        const nextI = i + 1
-
-        const stbn = () => {
-          deactivateSidePanel(nextI)
-        }
-        const stfc = () => {
-          deactivateSidePanel(i)
-        }
-        const stbc = () => {
-          activateSidePanel(i)
-        }
-        const stfn = () => {
-          activateSidePanel(nextI)
-        }
-
-        const showSidePanel = new Data(false)
-
-        showSidePanel.get((showSidePanel) => {
-          const func = showSidePanel ? "on" : "off"
-          scrollTrigger[func]("backward", stbn)
-          scrollTrigger[func]("forward", stfc)
-          scrollTrigger[func]("backward", stbc)
-          scrollTrigger[func]("forward", stfn)
-        }, false)
-
-        this.resizeData().get(({width}) => {showSidePanel.set(width > 1400)})
-
-        
-        
-          
-        
-
-        
-   
-  
-        toggleBool = !toggleBool
       }
 
       
 
     })
+
+
+    this.localScrollProgressData("start").then((scrollDataStart) => {
+
+
+
+      scrollDataStart.scrollTrigger(0).on("forward", () => {
+        this.sideBar.css({
+          position: "fixed",
+          top: 55,
+          marginRight: 10
+        })
+      }).on("backward", () => {
+        this.sideBar.css({
+          position: "absolute",
+          top: 55,
+          marginRight: 0
+        })
+      })
+      
+
+      this.localScrollProgressData("end").then((scrollData) => {
+
+        
+
+        const atEnd = new Data(false)
+        atEnd.get((atEnd) => {
+          if (atEnd) {
+            this.sideBar.css({
+              position: "absolute",
+              top: 55 + scrollDataStart.get()
+            })
+          }
+          else {
+            this.sideBar.css({
+              position: "fixed",
+              top: 55
+            })
+          }
+        }, false)
+  
+        scrollData.get((scrollPos) => {
+          atEnd.set(scrollPos >= this.height())
+        })
+      })
+    })
+
+    
+
+    
+
+    // this.localScrollProgressData().then((scrollProg) => {
+    //   scrollProg.get((scrollProg) => {
+    //     if (scrollProg >= 0 && scrollProg <= this.height()) this.sideBar.css({top: scrollProg})
+    //   })
+    // })
 
 
   }

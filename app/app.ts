@@ -3,8 +3,12 @@ import featureRequirementsMet from "./featureDetection"
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // TODO: Extra error msg
-  if (!featureRequirementsMet) return;
+  
+  if (!featureRequirementsMet) {
+    // rediect to nojs page by prefixing the url with /nojs
+    window.location.href = "/nojs" + window.location.pathname + window.location.search + window.location.hash;
+    return
+  };
 
   document.body.innerHTML = ""
 
@@ -29,3 +33,4 @@ function getActiveElement(root: Document | ShadowRoot = document): Element | nul
 // setInterval(() => {
 //   console.log(getActiveElement())
 // }, 2000)
+

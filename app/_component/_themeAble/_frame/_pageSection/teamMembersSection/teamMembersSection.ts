@@ -40,21 +40,23 @@ function makeEntryDetailsElement(data: {name: string, role: string, imgSrc: stri
 }
 
 
+// TODO avid doesnt get rendered at first
+
 const teamMembers = [
   {
-    name: "Person Name",
-    role: "Person Role",
-    imgSrc: "person3"
+    name: "Raphael Schlager",
+    role: "Geschäftsführung",
+    imgSrc: "rschlagerCrop3"
   },
   {
-    name: "José",
-    role: "CEO",
-    imgSrc: "person1"
+    name: "Maximilian Mairinger",
+    role: "Design & Webentwicklung",
+    imgSrc: "mmairinger2Crop"
   },
   {
-    name: "Bard",
-    role: "CTO",
-    imgSrc: "person2"
+    name: "Avid Vormann",
+    role: "Videoproduktion",
+    imgSrc: "avormann"
   }
 ]
 
@@ -237,7 +239,6 @@ export default class TeamMemberSection extends PageSection {
         this.preElem.img.remove()
         this.preElem.details.remove()
       }
-      console.log("getting", this.count.get())
       this.prepNewEmployeeElements(this.count.get())
       this.preElem = this.lls.pop()
 

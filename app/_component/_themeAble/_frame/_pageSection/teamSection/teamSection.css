@@ -1,7 +1,6 @@
 :host {
   height: max-content;
   z-index: 3;
-  overflow: hidden;
 }
 
 quote-section {
@@ -9,6 +8,9 @@ quote-section {
   width: 100%;
   display: flex;
   position: relative;
+  padding-bottom: 300px;
+  margin-bottom: -330px;
+  overflow: hidden;
 }
 
 tilt-background {
@@ -169,7 +171,7 @@ c-designer-woman {
   display: none;
   position: absolute;
   left: 56%;
-  top: 0;
+  top: 40px;
   width: 500px;
   height: 700px;
   z-index: 3;
@@ -182,7 +184,7 @@ floor-line {
   height: 1px;
   background: #2F2E41;
   left: calc(56% + 10px);
-  top: 606px;
+  top: 646px;
   display: none;
 }
 
@@ -267,23 +269,31 @@ image-wrapper {
   width: calc(100% + 80px);
   margin: 0 -40px;
   position: relative;
-  transform: rotate(-5deg);
+  transform: rotate(calc(-1 * var(--tilt)));
   overflow: hidden;
   z-index: 1;
+  --tilt: 3deg;
+}
+image-inner-wrapper {
+  width: 100%;
+  transform: rotate(var(--tilt));
+  display: block;
 }
 c-image.team {
   width: 100%;
-  transform: rotate(5deg) scale(1.25);
-  height: 700px;
+  transform: scale(1.15);
+  /* transform-origin: left; */
+  height: 800px;
+  --object-position: 50% 50%;
 }
 
 @media (max-width: 1150px) {
   image-wrapper {
     margin-top: -70px;
-    transform: rotate(5deg);
+    transform: rotate(var(--tilt));
   }
   c-image.team {
-    transform: rotate(-5deg) scale(1.15);
+    transform: rotate(calc(-1 * var(--tilt))) scale(1.15);
   }
 }
 

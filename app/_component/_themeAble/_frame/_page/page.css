@@ -1,6 +1,7 @@
 component-body {
   background: #F9FAFE;
   height: max-content;
+  overflow: hidden;
 }
 
 :host {

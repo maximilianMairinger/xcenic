@@ -8,7 +8,6 @@ const def = deepDefault(de, "")
 
 export const currentLanguage = new Data("de") as Data<"en" | "de">
 currentLanguage.get(async (w) => {
-  debugger
   const initOb = {}
   initOb[w] = cloneObject(lang())
   superLang(initOb)

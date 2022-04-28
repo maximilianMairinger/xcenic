@@ -4,8 +4,18 @@ import xrray from "xrray"; xrray(Array);
 import * as MongoDB from "mongodb";
 const MongoClient = MongoDB.MongoClient
 import pth from "path"
-import fs from "fs"
+import fs, {promises as aFs} from "fs"
 import detectPort from "detect-port"
+import Prerenderer from "../../build/prerenderer"
+const pug = require('pug')
+import isBot from "isbot"
+const stats = require("./../../build/stats")
+const locale = require('locale')
+import sanitizePath from "sanitize-filename"
+
+
+
+
 
 
 
@@ -23,6 +33,9 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
   }
   app.use(bodyParser.urlencoded({extended: false}))
   app.use(bodyParser.json())
+  console.log("available langs", stats.languages)
+  app.use(locale(stats.languages, stats.languages[0]))
+
 
 
   let sendFileProxyLoaded: Function =  (res: any) => (path: string) => {
@@ -65,15 +78,93 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
   //@ts-ignore
   app.port = port
 
+
+
+  const indexJSRegex = /^xcenic.*\.js$/
+  // search for a file in public/dist that matches the regex indexRegex
+  const jsPath = pth.join(publicPath, "dist")
+
+  let indexJS: string
+  fs.readdirSync(jsPath).forEach(file => {
+    if (indexJSRegex.test(file)) {
+      if (indexJS !== undefined) console.error("Mutiple index.js files found in dist folder")
+      else indexJS = file
+    }
+  })
+
+  if (indexJS === undefined) {
+    throw new Error("No index.js found in " + jsPath)
+  }
   
-  app.use(express.static(pth.join(pth.resolve(""), publicPath)))
-  
-  app.get(indexUrl, (req, res) => {
-    res.sendFile("public/index.html")
+
+
+  const renderIndex = pug.compileFile("public.src/index.pug")
+
+
+
+
+
+
+
+
+
+  app.use(express.static(pth.join(pth.resolve(""), publicPath), {index: false}))
+
+
+  app.get(indexUrl, async (req, res, next) => {
+    
+    let url = stats.normalizeUrl(req.originalUrl)
+    console.log("Requested: /" + url)
+
+    const forceNoJs = url.startsWith("nojs")
+    if (forceNoJs) url = url.substring(5)
+
+    let path = stats.buildStaticPath(stats.urlToPath(url), req.locale)
+   
+    // check if dir exists
+    const isValidUrl = await aFs.stat(pth.join(path, "index.html")).then(() => true).catch(() => false)
+    const isReqFromBot = forceNoJs || isBot(req.get('user-agent'))
+
+    if (isValidUrl) {
+      if (isReqFromBot) {
+        res.sendFile(pth.join(path, "index.html"))
+        console.log("isbot", req.originalUrl, "200")
+      }
+      else {
+        // todo: meta and stuff
+        aFs.readFile(pth.join(path, "index.json")).then((_stats) => {
+          const stats = JSON.parse(_stats.toString())
+
+          res.send(renderIndex({
+            url,
+            meta: stats.meta,
+            indexJS
+          }))
+        })
+        
+      }
+    }
+    else {
+      res.statusCode = 404
+      if (isReqFromBot) {
+        console.log("isbot", req.originalUrl, "404")
+        // todo: crawl 404 page
+        res.send("404 - Page not found<br><a href='/'>Hompage</a>")
+      }
+      else {
+        res.send(renderIndex({
+          url,
+          indexJS
+        }))
+      }
+    }
   })
   
 
+
+
   
+
 
   port.then(app.listen.bind(app))
 
@@ -91,7 +182,7 @@ const publicPath = "./public"
 
 export default function (dbName_DBConfig: string | DBConfig, indexUrl?: string): Promise<{ db: MongoDB.Db, app: express.Express & { port: Promise<number> } }>;
 export default function (dbName_DBConfig?: undefined | null, indexUrl?: string): express.Express & { port: Promise<number> };
-export default function (dbName_DBConfig?: string | null | undefined | DBConfig, indexUrl: string = "/"): any {
+export default function (dbName_DBConfig?: string | null | undefined | DBConfig, indexUrl: string = "*"): any {
   const app = configureExpressApp(indexUrl, publicPath)
 
   if (dbName_DBConfig) {

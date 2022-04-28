@@ -10,7 +10,12 @@ export default abstract class BlogPage extends Page {
   constructor(content: string | HTMLElement[]) {
     super()
     
-    this.body.slotElem.apd(...(content instanceof Array ? content : [content]))
+    if (typeof content === "string") {
+      this.innerHTML = content
+    }
+    else {
+      this.append(...content)
+    }
   }
 
 

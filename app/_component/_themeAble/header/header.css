@@ -59,10 +59,6 @@ c-small-logo {
   opacity: 0;
 }
 
-c-small-logo {
-  transition: .25s;
-}
-
 c-arrow-icon {
   transition: fill .25s;
 }

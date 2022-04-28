@@ -34,10 +34,16 @@ export default class ContactPage extends Page {
 
 
 
-    this.formElem.submit(async (e) => {
-      console.log("now")
-      await delay(5000)
-      console.log(e)
+    this.formElem.submit(async (data) => {
+      console.log("submit", data)
+      await fetch("/addEntry", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      
       return () => {
         console.log("later")
       }
@@ -79,11 +85,11 @@ export default class ContactPage extends Page {
     scrollData.scrollTrigger(lastThingShowPos)
       .on("forward", () => {
         let token = lastThingAnimSym = Symbol()
-        this.lastThingElem.show().anim({opacity: 1, translateY: .1, scale: 1}, 550)
+        this.lastThingElem.anim({opacity: 1, translateY: .1, scale: 1}, 550)
       })
       .on("backward", () => {
         let token = lastThingAnimSym = Symbol()
-        this.lastThingElem.anim({translateY: 5, opacity: 0, scale: .95}, 400).then(() => {if (token === lastThingAnimSym) this.lastThingElem.hide().css({translateY: -20})})
+        this.lastThingElem.anim({translateY: 5, opacity: 0, scale: .95}, 400).then(() => {if (token === lastThingAnimSym) this.lastThingElem.css({translateY: -20})})
       })
 
     this.continueButton.content(lang.contact.continue)
