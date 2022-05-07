@@ -1,5 +1,5 @@
 import Site from "./_component/site/site"
-
+import networkDataBase from "./lib/networkDataBase"
 
 export default function() {
   let site = new Site()
@@ -7,14 +7,10 @@ export default function() {
   document.body.append(site)
 
 
+  const dataBase = networkDataBase("lang")
+  dataBase(console.log)
+  // @ts-ignore
+  window.dd = dataBase
 
-  const ws = new WebSocket(location.protocol === "https:" ? "wss://" : "ws://" + location.host + "/lang/de/lel")
-  ws.addEventListener("open", () => {
-    console.log("open")
-    ws.send(JSON.stringify({hello: "hi"}))
-    ws.addEventListener("message", (msg) => {
-      console.log("msg", msg)
-    })
-  })
 
 }

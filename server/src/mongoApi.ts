@@ -21,8 +21,8 @@ export default async function mongoApi(db: Collection<any>) {
 
 
 
-  function mergeData(object: object = {}) {
-    return recMergeObjectToMongoObject(object, rootId, new Map())
+  async function set(object: object = {}) {
+    await recMergeObjectToMongoObject(object, rootId, new Map())
   }
 
 
@@ -43,8 +43,12 @@ export default async function mongoApi(db: Collection<any>) {
     }
 
 
+    let surely_id: Promise<ObjectID>
+
+
     const proms = []
     if (haveId) {
+      surely_id = Promise.resolve(_id)
       
       // transaction??? 
       await db.findOne({ _id }, { projection: { ...nestedOb, _id: false } }).then(insertIdsRecursively).then(async (updateOb) => {
@@ -55,9 +59,12 @@ export default async function mongoApi(db: Collection<any>) {
       
     }
     else {
+      let resId: Function
+      surely_id = new Promise((res) => {resId = res})
       return await insertIdsRecursively({}).then(async (updateOb) => {
         const { insertedId } = (await db.insertOne({ ...localAddOb, ...updateOb }))
         resMemo(insertedId)
+        resId(insertedId)
         return insertedId
       })
     }
@@ -74,19 +81,11 @@ export default async function mongoApi(db: Collection<any>) {
       for (const key in nestedOb) {
         const memo = memoJsToMongo.get(object[key])
         if (memo !== undefined) {
-          if (object === object[key]) {
-            (async () => {
-              const wemo = await memo
-              await db.updateOne({ _id: wemo }, { $set: { [key]: wemo } })
-            })()
-          }
-          else newProms.push(new Promise<any>(async (res) => {
+          proms.push((async () => {
             const wemo = await memo
-            if (!wemo.equals(ids[key])) newProms.push(res({ key, insertedId: wemo }))
-            else res(undefined)
+            if (!wemo.equals(ids[key])) await db.updateOne({ _id: await surely_id }, { $set: { [key]: wemo } })
+          })())
 
-          }))
-          
           continue
         }
         console.log("rec", key)
@@ -117,7 +116,7 @@ export default async function mongoApi(db: Collection<any>) {
 
 
 
-  async function getData(projection?: object) {
+  async function get(projection?: object) {
     const ret = await recRestrictedMongoObjectToJsObject(rootId, projection, new Map())
     return ret
   }
@@ -158,8 +157,8 @@ export default async function mongoApi(db: Collection<any>) {
 
 
   return {
-    getData,
-    mergeData
+    get,
+    set
   }
 
 }

@@ -21,7 +21,7 @@ export default class LoadButton extends BlockButton {
         this.enabled.set(false)
         
         const cbs = new Promise<any[]>((res) => {
-          (ret as Promise<any[]>).then(arr => res(arr.flat())).catch((errF) => res([errF]))
+          (ret as Promise<any[]>).then(arr => res((arr as any).flat())).catch((errF) => res([errF]))
         })
         
         const intrested = cbs.then(arr => !arr.clean().empty)

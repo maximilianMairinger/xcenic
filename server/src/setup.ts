@@ -16,6 +16,7 @@ import expressWs from "express-ws"
 
 
 
+type ExtendedExpress = express.Express & { port: Promise<number> } & { ws: (route: string, fn: (ws: WebSocket & {on: WebSocket["addEventListener"], off: WebSocket["removeEventListener"]}, req: any) => void) => void }
 
 
 
@@ -24,19 +25,16 @@ const defaultPortStart = 3050
 
 export type SendFileProxyFunc = (file: string, ext: string, fileName: string) => string | void | null
 
-export function configureExpressApp(indexUrl: string, publicPath: string, sendFileProxy?: Promise<SendFileProxyFunc> | SendFileProxyFunc, middleware?: (app: express.Express) => express.Express | void): express.Express & { port: Promise<number> } {
+export function configureExpressApp({indexUrl, publicPath, sendFileProxy, onRdy}: {onRdy?: (app: ExtendedExpress) => (Promise<void> | void), indexUrl: string, publicPath: string, sendFileProxy?: Promise<SendFileProxyFunc> | SendFileProxyFunc}): ExtendedExpress {
   if (indexUrl !== "*") if (!indexUrl.startsWith("/")) indexUrl = "/" + indexUrl
 
-  let app = express()
-  expressWs(app)
+  let _app = express()
+  expressWs(_app)
+
+  const app = _app as typeof _app & { ws: (route: string, fn: (ws: WebSocket & {on: WebSocket["addEventListener"], off: WebSocket["removeEventListener"]}, req: any) => void) => void }
 
 
 
-
-  if (middleware) {
-    let q = middleware(app)
-    if (q !== undefined && q !== null) app = q as any
-  }
   app.use(bodyParser.urlencoded({extended: false}))
   app.use(bodyParser.json())
   console.log("available langs", stats.languages)
@@ -119,11 +117,13 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
 
 
 
-  setTimeout(() => {
-    
+  const rr = onRdy !== undefined ? onRdy(app as any) : undefined
+  if (rr instanceof Promise) rr.then(goOnline)
+  else goOnline()
 
+  function goOnline() {
     app.get(indexUrl, async (req, res, next) => {
-    
+  
       let url = stats.normalizeUrl(req.originalUrl)
       console.log("Requested: /" + url, res.statusCode)
   
@@ -131,7 +131,7 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
       if (forceNoJs) url = url.substring(5)
   
       let path = stats.buildStaticPath(stats.urlToPath(url), req.locale)
-     
+      
       // check if dir exists
       const isValidUrl = await aFs.stat(pth.join(path, "index.html")).then(() => true).catch(() => false)
       const isReqFromBot = forceNoJs || isBot(req.get('user-agent'))
@@ -172,14 +172,7 @@ export function configureExpressApp(indexUrl: string, publicPath: string, sendFi
     })
 
     port.then(app.listen.bind(app))
-  }) 
-  
-
-
-
-  
-
-
+  }
 
 
   return app as any
@@ -192,29 +185,40 @@ type DBConfig = {
 
 
 const publicPath = "./public"
+const indexUrl: string = "*"
 
-export default function (dbName_DBConfig: string | DBConfig, indexUrl?: string): Promise<{ db: MongoDB.Db, app: express.Express & { port: Promise<number> } }>;
-export default function (dbName_DBConfig?: undefined | null, indexUrl?: string): express.Express & { port: Promise<number> };
-export default function (dbName_DBConfig?: string | null | undefined | DBConfig, indexUrl: string = "*"): any {
+export default function (dbName_DBConfig: string | DBConfig, onRdy?: (app: ExtendedExpress, db: MongoDB.Db) => (Promise<void> | void)): Promise<{ db: MongoDB.Db, app: ExtendedExpress}>;
+export default function (dbName_DBConfig?: undefined | null): ExtendedExpress;
+export default function (dbName_DBConfig?: string | null | undefined | DBConfig, onRdy?: any): any {
 
   if (dbName_DBConfig) {
     let dbConfig: DBConfig
     if (typeof dbName_DBConfig === "string") dbConfig = { dbName: dbName_DBConfig, url: "mongodb://localhost:27017"}
     else dbConfig = dbName_DBConfig
 
-    return new Promise((res) => {
+
+    
+
+    const dbProm = new Promise((res) => {
       MongoClient.connect(dbConfig.url, { useUnifiedTopology: true }).then((client) => {
         let db = client.db(dbConfig.dbName)
-        const app = configureExpressApp(indexUrl, publicPath)
-        res({db, app})
+        res(db)
       }).catch(() => {
         console.error("Unable to connect to MongoDB")
-        const app = configureExpressApp(indexUrl, publicPath)
-        res({app})
+        res(undefined)
       })
     })
+
+    const app = configureExpressApp({indexUrl, publicPath, async onRdy(app) {
+      if (onRdy) await onRdy(app, await dbProm)
+    }})
+
+    return dbProm.then((db) => {
+      if (db === undefined) return { db }
+      else return { db, app }
+    })
   }
-  else return configureExpressApp(indexUrl, publicPath)
+  else return configureExpressApp({indexUrl, publicPath})
 
 }
 

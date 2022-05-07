@@ -1,72 +1,63 @@
+import { DataBase, DataBaseSubscription } from "josm"
 import setup from "./setup"
 import sizeOfObject from "object-sizeof"
 import mongoApi from "./mongoApi"
-import timoi from "timoi"
-// import objectScan from "object-scan"
+// recursive needed?
+import projectObject from "project-obj"
+// recurisive needed?
+import merge from "deepmerge"
+import { stringify, parse } from "./../../app/lib/serialize"
 
 
 
 
 
 
-
-
-
-setup("xcenic").then(async ({app: _app, db}) => {
-
-  
-  const app = _app as typeof _app & { ws: (route: string, fn: (ws: WebSocket & {on: WebSocket["addEventListener"], off: WebSocket["removeEventListener"]}, req: any) => void) => void }
+setup("xcenic", async (app, db) => {
 
 
 
 
 
-  const mongo = await mongoApi(db.collection("testApi"))
 
-  const ll = {
-    name: "max"
-  }
-  // @ts-ignore
-  ll.loves = ll
-
-  const s = timoi("db access")
-  // await mongo.mergeData({ll, root: "root"})
-  console.log("get", await mongo.getData())
-  s()
+  const mongo = await mongoApi(db.collection("lang"))
+  const josm = new DataBase(await mongo.get())
+  josm((full, diff) => {
+    mongo.set(diff)
+  }, true, false)
 
 
-  
+
   app.ws("/lang", (ws, req) => {
+    let projection = {}
+    console.log("new ws")
 
-    const subscriptions = {
 
-    }
-
-    const queryResolverIndex = {
-      get(what: string) {
-        
-      }
-    }
+    const dataBaseSubscription = josm((full, diff) => {
+      ws.send(stringify(projectObject(diff as any, projection)))
+    }, false) as DataBaseSubscription<[any]>
 
     ws.on("message", (rawMsg) => {
+      console.log("rawMsg", rawMsg)
       if (sizeOfObject(rawMsg) > 100000) return
-      const msg = JSON.parse(rawMsg.data)
-      if (typeof msg === "string") {
-        // query
-        const query = msg.split(" ")
-        const resolver = queryResolverIndex[query.unshift()]
-        if (resolver) {
-          resolver(...query)
-        }
-        else console.warn("no resolver for", msg)
+      console.log("thisfar")
+
+      const msg = parse(rawMsg as any as string)
+      console.log("thisfar2")
+      if (msg.get !== undefined) {
+        dataBaseSubscription.activate(false)
+        projection = merge(projection, msg.get, {})
+        ws.send(stringify(projectObject(josm() as any, msg.get)))
       }
+      if (msg.set) {
+        dataBaseSubscription.setToDataBase(msg.set)
+      }
+      
     })
 
-    ws.send("aye")
-
-    ws.on("message", (msg) => {
-      console.log("msg", msg)
-      ws.send("msg")
+    ws.on("close", () => {
+      dataBaseSubscription.deactivate()
+      console.log("close")
     })
   })
 
