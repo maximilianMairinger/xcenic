@@ -1,4 +1,6 @@
 import { Collection, ObjectID } from "mongodb"
+import { resolvePointer } from "../../app/lib/networkDataBase"
+
 
 
 export default async function mongoApi(db: Collection<any>) {
@@ -25,6 +27,16 @@ export default async function mongoApi(db: Collection<any>) {
     await recMergeObjectToMongoObject(object, rootId, new Map())
   }
 
+  async function lookupIdAtPath(paths: string[]) {
+    let _id = rootId
+    if (paths.length === 0 || (paths.length === 1 && paths[0] === "")) return _id
+    for (const path of paths) {
+      _id = (await db.findOne({ _id }, { projection: { _id: false, [path]: true } }))[path]
+      if (!_id) return null
+    }
+    return _id
+  }
+
 
   async function recMergeObjectToMongoObject(object: object, _id: any, memoJsToMongo: Map<object, ObjectID | Promise<ObjectID>>) {
     const haveId = _id !== undefined
@@ -34,16 +46,41 @@ export default async function mongoApi(db: Collection<any>) {
     const localAddOb = {}
     const localRmOb = {}
     const nestedOb = {}
+    const linkOb = {}
     for (const key in object) {
-      if (object[key] instanceof Object) nestedOb[key] = true
+      const val = object[key]
+      if (val instanceof Object) {
+        const kk = Object.keys(val)[0]
+        if (kk === "$ref" && typeof val[kk] === "string") {
+          if (val[kk].startsWith("##")) {
+            val[kk] = val[kk].slice(1)
+            nestedOb[key] = true
+          }
+          else linkOb[key] = resolvePointer(val[kk])
+        }
+        else nestedOb[key] = true
+      }
       else {
-        if (object[key] === undefined) localRmOb[key] = false
-        else localAddOb[key] = object[key]
+        if (val === undefined) localRmOb[key] = false
+        else localAddOb[key] = val
+          
+          
+        
       }
     }
 
 
     let surely_id: Promise<ObjectID>
+
+    const linkRes = (async () => {
+      const prom = []
+      for (const key in linkOb) {
+        prom.push(lookupIdAtPath(linkOb[key]).then((id) => {
+          if (id !== null) localAddOb[key] = id
+        }))
+      }
+      await Promise.all(prom)
+    })()
 
 
     const proms = []
@@ -52,6 +89,7 @@ export default async function mongoApi(db: Collection<any>) {
       
       // transaction??? 
       await db.findOne({ _id }, { projection: { ...nestedOb, _id: false } }).then(insertIdsRecursively).then(async (updateOb) => {
+        await linkRes
         // unhandled: if replacing a reference to another document, delete it if no no other references are present
         await db.updateOne({ _id }, { $set: { ...localAddOb, ...updateOb }, $unset: localRmOb })
       })
@@ -62,6 +100,7 @@ export default async function mongoApi(db: Collection<any>) {
       let resId: Function
       surely_id = new Promise((res) => {resId = res})
       return await insertIdsRecursively({}).then(async (updateOb) => {
+        await linkRes
         const { insertedId } = (await db.insertOne({ ...localAddOb, ...updateOb }))
         resMemo(insertedId)
         resId(insertedId)

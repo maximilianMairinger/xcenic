@@ -192,22 +192,7 @@ export default function (dbName_DBConfig?: undefined | null): ExtendedExpress;
 export default function (dbName_DBConfig?: string | null | undefined | DBConfig, onRdy?: any): any {
 
   if (dbName_DBConfig) {
-    let dbConfig: DBConfig
-    if (typeof dbName_DBConfig === "string") dbConfig = { dbName: dbName_DBConfig, url: "mongodb://localhost:27017"}
-    else dbConfig = dbName_DBConfig
-
-
-    
-
-    const dbProm = new Promise((res) => {
-      MongoClient.connect(dbConfig.url, { useUnifiedTopology: true }).then((client) => {
-        let db = client.db(dbConfig.dbName)
-        res(db)
-      }).catch(() => {
-        console.error("Unable to connect to MongoDB")
-        res(undefined)
-      })
-    })
+    const dbProm = createMongoConnection(dbName_DBConfig)
 
     const app = configureExpressApp({indexUrl, publicPath, async onRdy(app) {
       if (onRdy) await onRdy(app, await dbProm)
@@ -223,4 +208,18 @@ export default function (dbName_DBConfig?: string | null | undefined | DBConfig,
 }
 
 
+export function createMongoConnection(dbName_DBConfig: string | DBConfig) {
+  let dbConfig: DBConfig
+  if (typeof dbName_DBConfig === "string") dbConfig = { dbName: dbName_DBConfig, url: "mongodb://localhost:27017"}
+  else dbConfig = dbName_DBConfig
 
+  return new Promise((res) => {
+    MongoClient.connect(dbConfig.url, { useUnifiedTopology: true }).then((client) => {
+      let db = client.db(dbConfig.dbName)
+      res(db)
+    }).catch(() => {
+      console.error("Unable to connect to MongoDB")
+      res(undefined)
+    })
+  })
+}

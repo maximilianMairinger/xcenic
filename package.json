@@ -91,6 +91,7 @@
     "ajaon": "^1.5.11",
     "animated-scroll-to": "^2.2.0",
     "animation-frame-delta": "^2.7.8",
+    "argon2": "^0.28.5",
     "copy-to-clipboard": "^3.3.1",
     "css-simple-parser": "^2.0.1",
     "deepmerge": "^4.2.2",
