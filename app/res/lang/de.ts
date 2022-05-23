@@ -8,7 +8,7 @@ export default {
     services: "Service",
     team: "Team",
     contact: "Kontakt",
-    websites: "Webseiten",
+    websites: "Websites",
     contentCreation: "Inhaltserstellung",
     privacy: "Datenschutz",
     legalNotice: "Impressum",
@@ -49,7 +49,7 @@ export default {
       viewWork: "Unser Portfolio",
       webApp: {
         hero: {
-          heading: "Webseiten",
+          heading: "Websites",
           text: "In unserem digitalen Zeitalter verlassen sich Unternehmen zunehmend auf ihre Webseite, um sich von der Konkurrenz abzuheben und neue Kunden zu gewinnen. Wir entwickeln Webseiten mit ansprechendem Design, spannendem Inhalt und blitzschnellen Ladezeiten."
         },
         tablet: {
