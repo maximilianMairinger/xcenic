@@ -14,6 +14,21 @@ import { mergeOldRecursionToDB, resolveOldRecursion } from "../../app/lib/networ
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function justifyNesting(obj: any) {
   let just = false;
   const deeper = [];
@@ -51,53 +66,49 @@ function justifyNesting(obj: any) {
 
 // console.log("sessionKey", sessionKey)
 
+const session = {} as any
+
 
 setup("xcenic", async (app, db) => {
-
-  const max = {
-    myName: "Max",
-    age: 27
   
-  }
+  // const max = {
+  //   myName: "Max",
+  //   age: 27
   
-  const ting = {
-    myName: "Ting",
-    age: 23
-  }
+  // }
   
+  // const ting = {
+  //   myName: "Ting",
+  //   age: 23
+  // }
+
+  // // @ts-ignore
+  // max.loves = ting
+  // // @ts-ignore
+  // ting.loves = max
+
   
+  // let ob = {
+  //   ppl: max
+  // }
+
+  // const mongTest = await mongoApi(db.collection("test123"))
+  // const josmTest = new DataBase(await mongTest.get())
+
+
+  // josmTest(function sub(full, diff) {
+  //   // console.log(diff)
+  //   console.log("dev")
+  //   console.log(resolveOldRecursion(diff, sub))
+
+  //   // mongTest.set(resolveOldRecursion(diff, sub))
+  // }, true, false)
   
-  // @ts-ignore
-  max.loves = ting
-  // @ts-ignore
-  ting.loves = max
-  
-  
-  let ob = {
-    ppl: max
-  }
-
-
-
-
-
-  const mongTest = await mongoApi(db.collection("test123"))
-  const josmTest = new DataBase(await mongTest.get())
-
-
-  josmTest(function sub(full, diff) {
-    // console.log(diff)
-    console.log("dev")
-    console.log(resolveOldRecursion(diff, sub))
-
-    // mongTest.set(resolveOldRecursion(diff, sub))
-  }, true, false)
-  
-  console.log("dd")
+  // console.log("dd")
   // josmTest(ob)
-  ob = josmTest() as any
+  // ob = josmTest() as any
   
-  josmTest({nono: (ob as any).leeeel})
+  // josmTest({nono: (ob as any).leeeel})
 
   // console.log(cloneKeys(josmTest()))
 
