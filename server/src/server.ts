@@ -11,13 +11,14 @@ import { stringify, parse } from "./../../app/lib/serialize"
 import crypto from "crypto"
 import argon2 from "argon2"
 import { mergeOldRecursionToDB, resolveOldRecursion } from "../../app/lib/networkDataBase"
+import { generateRegistrationOptions, verifyRegistrationResponse, generateAuthenticationOptions, verifyAuthenticationResponse } from '@simplewebauthn/server';
 
 
 
 
 
 
-
+type Await<T> = T extends Promise<infer U> ? U : T
 
 
 
@@ -70,6 +71,153 @@ const session = {} as any
 
 
 setup("xcenic", async (app, db) => {
+
+  type UserModel = {
+    id: string;
+    username: string;
+    currentChallenge?: string;
+  };
+  
+
+/**
+ * It is strongly advised that authenticators get their own DB
+ * table, ideally with a foreign key to a specific UserModel.
+ *
+ * "SQL" tags below are suggestions for column data types and
+ * how best to store data received during registration for use
+ * in subsequent authentications.
+ */
+ type Authenticator = {
+  // SQL: Encode to base64url then store as `TEXT`. Index this column
+  credentialID: Buffer;
+  // SQL: Store raw bytes as `BYTEA`/`BLOB`/etc...
+  credentialPublicKey: Buffer;
+  // SQL: Consider `BIGINT` since some authenticators return atomic timestamps as counters
+  counter: number;
+  // SQL: `VARCHAR(255)` and store string array as a CSV string
+  // ['usb' | 'ble' | 'nfc' | 'internal']
+  transports?: AuthenticatorTransport[];
+};
+
+
+  // Human-readable title for your website
+  const rpName = 'Xcenic Example';
+  // A unique identifier for your website
+  const rpID = 'localhost';
+  // The URL at which registrations and authentications should occur
+  const origin = `https://${rpID}`;
+
+
+
+  function getUserFromDB(id: any) {
+    const user = {
+      id: "mmairinger",
+      username: "max",
+      credentials: {} as {[credIdAsString in string]: Authenticator}
+    }
+    return user
+  }
+  
+
+  const tempStoreChellange = {} as {[username in string]: string}
+
+
+  app.post("/api/webauthn/register", async (req, res) => {
+    const user = getUserFromDB(req.body.username)
+    const userAuthenticators: Authenticator[] = Object.keys(user.credentials).map((key) => user.credentials[key])
+  
+    const options = generateRegistrationOptions({
+      rpName,
+      rpID,
+      userID: user.id,
+      userName: user.username,
+      // Don't prompt users for additional information about the authenticator
+      // (Recommended for smoother UX)
+      attestationType: 'indirect',
+      // Prevent users from re-registering existing authenticators
+      excludeCredentials: userAuthenticators.map(authenticator => ({
+        id: authenticator.credentialID,
+        type: 'public-key',
+        // Optional
+        transports: authenticator.transports,
+      })),
+    });
+
+    tempStoreChellange[user.username] = options.challenge
+
+    res.send(options)
+  })
+
+  app.post("/api/webauthn/register/verify", async (req, res) => {
+    const { body } = req;
+
+    // (Pseudocode) Retrieve the logged-in user
+    const user = getUserFromDB("loggedInUserId");
+    // (Pseudocode) Get `options.challenge` that was saved above
+    const expectedChallenge: string = tempStoreChellange[user.username]
+
+    let verification: Await<ReturnType<typeof verifyRegistrationResponse>>;
+    try {
+      verification = await verifyRegistrationResponse({
+        credential: body,
+        expectedChallenge,
+        expectedOrigin: origin,
+        expectedRPID: rpID,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(400).send({ error: error.message });
+    }
+
+    const { verified, registrationInfo } = verification;
+
+    if (verified && registrationInfo) {
+      const { credentialPublicKey, credentialID, counter,  } = registrationInfo
+
+      const authenticator: Authenticator = {
+        credentialPublicKey,
+        credentialID,
+        counter,
+      };
+
+      user.credentials[(credentialID as Buffer).toString("utf-8")] = authenticator
+    }
+
+    res.send({ verified })
+  })
+
+
+  app.post("/api/webauthn/authenticate", async (req, res) => {
+    // (Pseudocode) Retrieve the logged-in user
+    const user = getUserFromDB("loggedInUserId");
+    // (Pseudocode) Retrieve any of the user's previously-
+    // registered authenticators
+    const userAuthenticators: Authenticator[] = Object.keys(user.credentials).map((key) => user.credentials[key])
+
+    const options = generateAuthenticationOptions({
+      // Require users to use a previously-registered authenticator
+      allowCredentials: userAuthenticators.map(authenticator => ({
+        id: authenticator.credentialID,
+        type: 'public-key',
+        // Optional
+        transports: authenticator.transports,
+      })),
+      userVerification: 'preferred',
+    });
+
+    // (Pseudocode) Remember this challenge for this user
+    tempStoreChellange[user.username] = options.challenge
+
+    res.send(options)
+  })
+
+  app.post()
+
+
+
+
+
+
   
   // const max = {
   //   myName: "Max",
