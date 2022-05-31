@@ -476,6 +476,7 @@ export default class AdminPage extends Page {
         storePos(pos())
       });
 
+      // @ts-ignore
       const frame = new PageFrame(page, d, pos, this.absZData, this.normalizedWidthData, this.addNoScaleBoundAddon.bind(this))
 
       setTimeout(() => {
