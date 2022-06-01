@@ -130,7 +130,7 @@ export function configureExpressApp({indexUrl, publicPath, sendFileProxy, onRdy}
       const forceNoJs = url.startsWith("nojs")
       if (forceNoJs) url = url.substring(5)
   
-      let path = stats.buildStaticPath(stats.urlToPath(url), req.locale)
+      let path = stats.buildStaticPath(stats.urlToPath(url), (req as any).locale)
       
       // check if dir exists
       const isValidUrl = await aFs.stat(pth.join(path, "index.html")).then(() => true).catch(() => false)

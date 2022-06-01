@@ -187,7 +187,7 @@ setup("xcenic", async (app, db) => {
   })
 
 
-  app.post("/api/webauthn/authenticate", async (req, res) => {
+  app.post("/api/webauthn/auth", async (req, res) => {
     // (Pseudocode) Retrieve the logged-in user
     const user = getUserFromDB("loggedInUserId");
     // (Pseudocode) Retrieve any of the user's previously-
@@ -211,7 +211,45 @@ setup("xcenic", async (app, db) => {
     res.send(options)
   })
 
-  app.post()
+  app.post("/api/webauthn/auth/verify", async (req, res) => {
+    const { body } = req;
+
+    // (Pseudocode) Retrieve the logged-in user
+    const user = getUserFromDB("loggedInUserId");
+    // (Pseudocode) Get `options.challenge` that was saved above
+    const expectedChallenge: string = tempStoreChellange[user.username]
+    // (Pseudocode} Retrieve an authenticator from the DB that
+    // should match the `id` in the returned credential
+    const authenticator: Authenticator = user.credentials[(body.id as Buffer).toString("utf-8")]
+
+    if (!authenticator) {
+      throw new Error(`Could not find authenticator ${body.id} for user ${user.id}`);
+    }
+
+    let verification;
+    try {
+      verification = await verifyAuthenticationResponse({
+        credential: body,
+        expectedChallenge,
+        expectedOrigin: origin,
+        expectedRPID: rpID,
+        authenticator,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(400).send({ error: error.message });
+    }
+
+    const { verified, authenticationInfo } = verification;
+    if (verified && authenticationInfo) {
+      const { newCounter } = authenticationInfo;
+      authenticator.counter = newCounter;
+    }
+
+
+    res.send(verified)
+  })
+
 
 
 
