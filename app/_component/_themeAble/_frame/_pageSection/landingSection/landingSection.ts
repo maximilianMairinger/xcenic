@@ -12,6 +12,7 @@ import "./../../../_icon/bigVideo/bigVideo"
 import "./../../../_icon/landingCircle/landingCircle"
 import "./../../../textBlob/textBlob"
 import { EventListener } from "extended-dom"
+import BlockButton from "./../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
 
 export default class LandingSection extends PageSection {
 
@@ -21,15 +22,36 @@ export default class LandingSection extends PageSection {
   constructor() {
     super("light")
 
+
+    this.rippleButton.userFeedbackMode.preHover.set(false)
+    
+
+
     new EventListener(this.coverButton, ["mouseover", "focusin"], this.link.mouseOverAnimation)
     new EventListener(this.coverButton, ["mouseleave", "focusout"], this.link.mouseOutAnimation)
     this.coverButton.addActivationCallback(this.link.mouseOutAnimation)
     // this.coverButton.addActivationCallback(this.link.clickAnimation)
 
-    this.coverButton.on("mousedown", () => {
+
+    const rippleSub = this.coverButton.on("mousedown", () => {
       let release = this.rippleButton.initRipple();
-      new EventListener(this.coverButton, ["mouseup", "mouseout"], release, undefined, {once: true})
+      if (release) new EventListener(this.coverButton, ["mouseup", "mouseout"], release, undefined, {once: true})
     })
+
+    this.link.editMode.get((edit) => {
+      this.coverButton.enabled.set(!edit)
+      this.rippleButton.enabled.set(!edit)
+      if (edit) {
+        rippleSub.activate()
+        this.coverButton.hide()
+      }
+      else {
+        rippleSub.deactivate()
+        this.coverButton.show()
+      }
+    })
+
+    
   }
 
   stl() {

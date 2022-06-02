@@ -3,6 +3,8 @@ export default {
     longName: "Xcenic"
   },
   copiedFeedback: "In der Zwischeausgabe",
+  cannotChangeUrl: "Kann URL nicht ändern, wäre doppelt",
+
   links: {
     philosophy: "Philosophie",
     services: "Service",
@@ -189,5 +191,9 @@ export default {
       
 
     }
+  },
+  admin: {
+    subHeading: "Administrate",
+    heading: "Content",
   }
 }

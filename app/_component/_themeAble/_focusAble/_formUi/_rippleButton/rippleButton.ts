@@ -1,7 +1,7 @@
 import declareComponent from "../../../../../lib/declareComponent";
 import FormUi from "../formUi";
 import Button from "../../_button/button"
-import { PrimElem, Token, VariableLibrary } from "extended-dom";
+import { EventListener, PrimElem, Token, VariableLibrary } from "extended-dom";
 
 
 
@@ -24,19 +24,28 @@ export default class UiButton extends FormUi<Button> {
 
     this.validMouseButtons = button.validMouseButtons
 
+    const rippleListenerLs = [] as EventListener[]
 
     let keyPressed = false
-    this.on("keydown", (e) => {
-      if (e.key === " " || e.key === "Enter") {
-        e.preventDefault()
-        if (!keyPressed) {
-          keyPressed = true
-          this.initRipple(e)
+    rippleListenerLs.push(
+      this.on("keydown", (e) => {
+        if (e.key === " " || e.key === "Enter") {
+          e.preventDefault()
+          if (!keyPressed) {
+            keyPressed = true
+            this.initRipple(e)
+          }
         }
-      }
-    }, {capture: true})
-    this.on("keyup", (e) => {
-      if (e.key === " " || e.key === "Enter") keyPressed = false
+      }, {capture: true}),
+      this.on("keyup", (e) => {
+        if (e.key === " " || e.key === "Enter") keyPressed = false
+      })
+    )
+
+
+    this.userFeedbackMode.ripple.get((enabled) => {
+      if (enabled) for (const ev of rippleListenerLs) ev.activate()
+      else for (const ev of rippleListenerLs) ev.deactivate()
     })
 
     this.enabled.get(this.button.enabled.set.bind(this.button.enabled))

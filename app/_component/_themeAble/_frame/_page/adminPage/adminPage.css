@@ -1,27 +1,109 @@
 component-body {
-  display: flex;
+  height: 100%;
+  user-drag: none;
+  -webkit-user-drag: none;
+}
+
+:host {
+  overflow: hidden;
+}
+
+move-area, page-canvas, page-canvas-container {
+  display: block;
+  position: relative;
+  width: 100%;
   height: 100%;
 }
 
-c-form {
-  margin: auto;
+page-canvas-container {
+  overflow: hidden;
+  background-color: rgb(250, 250, 250);
+  width: 80%;
+  max-width: calc(100% - 300px);
+  left: max(20%, 300px);
 }
 
-c-form > h1 {
-  margin-bottom: 16px;
+
+move-area {
+  transform-origin: 0 0;
+  will-change: transform; /* this is the magic performance improving line */
+  margin-top: 95px; /* 55px header + 40px heading of frames */
+
 }
 
-c-form > * {
-  margin: 10px 0;
-  width: 300px;
-  max-width: 100%;
+
+page-canvas {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+  height: max-content;
+  /* min-width: 15000px;
+  min-height: 15000px; */
+  /* margin-top: 55px;   header height */
+  /* margin-bottom: -55px;  */
+  /* margin-top: 55px;
+  padding-bottom: 55px; */
 }
 
-c-form > *:not(c-load-button) {
-  
+c-page-frame {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: max-content;
 }
 
-c-form > c-load-button {
-  --background: var(--primary-theme);
-  --text: var(--plain-background);
+c-page-frame > * {
+  opacity: 1;
+  width: 100%;
+  display: block;
+  overflow: hidden;
 }
+
+test-box {
+  width: 200px;
+  height: 200px;
+  display: block;
+  position: relative;
+  margin: 300px;
+  background-color: red;
+  color: white;
+  font-size: 130px;
+  padding-left: 30px;
+  box-sizing: border-box;
+}
+
+border-box {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+}
+
+c-admin-ui {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: 300px;
+  width: 20%;
+  height: 100%;
+  /* z-index: 1; */
+}
+
+
+
+/* border-box.top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: black;
+} */
+
+

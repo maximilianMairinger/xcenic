@@ -17,7 +17,7 @@ export default class LoadButton extends BlockButton {
       const ret = superClick(e) as Promise<any[]> | Function
       if (e instanceof Function) return ret
       else {
-        if (!this.enabled.get()) return
+        if (!this.button.enabled.get()) return
         this.enabled.set(false)
         
         const cbs = new Promise<any[]>((res) => {

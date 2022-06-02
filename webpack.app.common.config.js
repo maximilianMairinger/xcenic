@@ -7,16 +7,26 @@ module.exports = () => {
     return {
         entry: './app/app.ts',
         output: {
-            filename: 'dist/xcenic.js',
-            chunkFilename: 'dist/[name].js',
-            path: path.resolve(path.dirname(''), "public"),
-            publicPath: "/",
+            filename: 'xcenic.js',
+            chunkFilename: '[name].js',
+            path: path.resolve(path.dirname(''), "public/dist"),
+            publicPath: "/dist/"
         },
         resolve: {
             extensions: ['.ts', '.js']
         },
         module: {
             rules: [
+                {
+                    test: /\.worker\.(js|ts)$/i,
+                    use: [{
+                      loader: 'comlink-loader',
+                      options: {
+                        singleton: true,
+
+                      }
+                    }]
+                },
                 {
                     test: /([a-zA-Z0-9\s_\\.\-\(\):])+\.static\.([a-zA-Z0-9])+$/,
                     use: 'raw-loader',

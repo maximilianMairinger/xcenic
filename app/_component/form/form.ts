@@ -84,6 +84,7 @@ export default class Form extends Component<false> {
         if (elem instanceof FormUi) {
           if (elem instanceof SelectButton) {
             if (!prevWasSelect) {
+              // @ts-ignore
               let name = elem.parent(true).getAttribute("name")
               if (name === null) name = elem.getAttribute("name")
               ob[name] = curSelValOb = {}

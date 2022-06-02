@@ -3,7 +3,6 @@ import { Data, DataCollection, DataSubscription } from "josm";
 import declareComponent from "../../../../../lib/declareComponent";
 import Page from "../page"
 
-
 import "./../../../../form/form"
 import "./../../../../image/image"
 import "./../../../textBlob/textBlob"
@@ -11,7 +10,7 @@ import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/loadButton/load
 import LoadButton from  "./../../../_focusAble/_formUi/_rippleButton/_blockButton/loadButton/loadButton"
 import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/selectButton/selectButton"
 import "./../../../_icon/lineAccent/lineAccent"
-import "./../../../_focusAble/_formUi/_editAble/input/input"
+import "./../../../_focusAble/_formUi/_editAble/_input/input"
 import "./../../../_focusAble/_formUi/_editAble/textArea/textArea"
 import Form from "./../../../../form/form";
 import lang from "../../../../../lib/lang";

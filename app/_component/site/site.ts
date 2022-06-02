@@ -9,9 +9,11 @@ import { ElementList } from "extended-dom"
 import HighlightAbleIcon from "../_themeAble/_icon/_highlightAbleIcon/highlightAbleIcon"
 import { Data, DataSubscription } from "josm"
 import { linkRecord } from "../_themeAble/link/link"
+import { Theme } from "../_themeAble/themeAble"
 
 
 const topLimit = 0
+const topLimitForBlockingInteractions = 55
 const scrollTrendActivationCount = 20
 
 // intentionally never resolve those
@@ -94,6 +96,9 @@ export default class Site extends Component {
 
       if (currentlyShowingLowerNav) lowerNav.updatePage(sections, domainLevel)
       header.updatePage(sectionNames, domainLevel)
+      
+      
+      header.setPreferedLeftSideBorderSpacing(page.preferedLeftBoundry)
     }, (section) => {
       currentSection = section
       if (currentlyShowingLowerNav) lowerNav.updateSelectedLink(section)
@@ -103,13 +108,21 @@ export default class Site extends Component {
         if (prog <= topLimit) {
           header.onTop()
         }
+        if (prog <= topLimitForBlockingInteractions) {
+          header.unblockInteractions()
+        }
       }
-      else if (prog > topLimit) {
-        header.notTop()
+      else {
+        if (prog > topLimit) {
+          header.notTop()
+        }
+        if (prog > topLimitForBlockingInteractions) {
+          header.blockInteractions()
+        }
       }
 
       lastScrollProg = prog
-    },);
+    });
 
     
 
@@ -127,9 +140,8 @@ export default class Site extends Component {
       }, true, false)
       
 
-      const accentThemeSub = new DataSubscription(new Data(undefined), (theme) => {
-        
-        lowerNav.accentTheme.set(theme as any)
+      const accentThemeSub = new DataSubscription(new Data(undefined as "primary" | "secondary"), (theme) => {
+        lowerNav.accentTheme.set(theme)
       }, true, false)
       pageManager.addAccentThemeIntersectionListener(lowerNav, accentThemeSub.data.bind(accentThemeSub))    
       pageManager.addThemeIntersectionListener(header, themeSubHeader.data.bind(themeSubHeader))    

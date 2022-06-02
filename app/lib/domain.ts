@@ -5,6 +5,8 @@ import getBaseUrl from "get-base-url";
 import lang from "./../lib/lang"
 
 
+
+// todo lang
 const commonTitle = lang.xcenic.longName;
 const commonTitleSeperator = " - "
 const commonSubtileSeperator = " > "

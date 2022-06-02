@@ -1,6 +1,7 @@
 component-body {
   display: flex;
   height: fit-content;
+  position: relative;
 }
 
 

@@ -67,7 +67,7 @@ export default abstract class Manager extends Frame {
 
   private resourcesMap: ResourcesMap
 
-  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: string, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void, public blurCallback?: Function, public preserveFocus?: boolean) {
+  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: Page, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number, pageName: string) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void, public blurCallback?: Function, public preserveFocus?: boolean) {
     super(null);
 
     this.bod = ce("manager-body");
@@ -286,7 +286,7 @@ export default abstract class Manager extends Frame {
       }
   
   
-      to.css("zIndex", 0)
+      to.css("zIndex", "initial")
       this.busySwaping = false;
       if (this.wantedFrame !== to) {
         await this.swapFrame(this.wantedFrame);
@@ -398,10 +398,10 @@ export default abstract class Manager extends Frame {
                         ob[e] = ic
                       }
                       
-                      this.pageChangeCallback(to, ob, page.domainLevel)
+                      this.pageChangeCallback(page, ob, page.domainLevel, to)
                     })
                   }
-                  else this.pageChangeCallback(to, [], page.domainLevel)
+                  else this.pageChangeCallback(page, [], page.domainLevel, to)
                 }
                 catch(e) {}
               }

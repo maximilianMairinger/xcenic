@@ -1,9 +1,9 @@
 import FormUi from "./formUi";
 import animationFrame from "animation-frame-delta";
 import Easing from "waapi-easing"
+import { Data, DataBase } from "../../../../lib/josm";
 
 const dragImpactEaseFunc = new Easing("easeIn").function
-
 
 
 
@@ -33,7 +33,7 @@ const qlance = .4
 const halfQlance = qlance / 2
 
 
-export default function(root: HTMLElement, target: HTMLElement, moveElement: HTMLElement, evTarget: HTMLElement) {
+export default function(root: HTMLElement, target: HTMLElement, moveElement: HTMLElement, evTarget: HTMLElement, enabled: Data<boolean>) {
 
   
 
@@ -198,21 +198,32 @@ export default function(root: HTMLElement, target: HTMLElement, moveElement: HTM
   })
   snapBackRuntime.cancel()
 
+
+  enabled.get((enabled) => {
+    if (enabled) enable()
+    else disable()
+  }, false)
+
+
+  function disable() {
+    evTarget.off("mouseleave", mouseLeaveF)
+    evTarget.off("mousemove", mouseMoveF)
+    evTarget.off("mouseenter", mouseEneterF)
+    root.off("mouseenter", rootMouseEnterF)
+    mouseLeaveF()
+    target.css({pointerEvents: "none"})
+  }
+  function enable() {
+    evTarget.on("mouseleave", mouseLeaveF)
+    evTarget.on("mousemove", mouseMoveF)
+    evTarget.on("mouseenter", mouseEneterF)
+    root.on("mouseenter", rootMouseEnterF)
+    target.css({pointerEvents: "all"})
+  }
+
+
   return {
-    disable() {
-      evTarget.off("mouseleave", mouseLeaveF)
-      evTarget.off("mousemove", mouseMoveF)
-      evTarget.off("mouseenter", mouseEneterF)
-      root.off("mouseenter", rootMouseEnterF)
-      mouseLeaveF()
-      target.css({pointerEvents: "none"})
-    },
-    enable() {
-      evTarget.on("mouseleave", mouseLeaveF)
-      evTarget.on("mousemove", mouseMoveF)
-      evTarget.on("mouseenter", mouseEneterF)
-      root.on("mouseenter", rootMouseEnterF)
-      target.css({pointerEvents: "all"})
-    }
+    disable,
+    enable
   }
 }

@@ -11,6 +11,7 @@ import { Data, DataSubscription } from "josm"
 import Image from "../../../../image/image"
 import delay from "delay"
 import { EventListener } from "extended-dom"
+import { textify } from "../../../../text/text"
 
 
 const fadeInAnimOptions = {
@@ -26,14 +27,14 @@ const fadeoutAnimOptions = {
 const smooth = false
 
 
-function makeEntryDetailsElement(data: {name: string, role: string, imgSrc: string}) {
+function makeEntryDetailsElement(data: {name: string | Data<string>, role: string | Data<string>, imgSrc: string}) {
   const img = new Image(data.imgSrc)
 
   
   return {
     details: ce("details-entry").apd(
-      ce("heading-elem").txt(data.name),
-      ce("subtext-elem").txt(data.role),
+      textify(ce("heading-elem")).txt(data.name as string),
+      textify(ce("subtext-elem")).txt(data.role as string),
     ),
     img
   }

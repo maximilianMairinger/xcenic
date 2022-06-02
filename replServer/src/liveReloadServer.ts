@@ -32,19 +32,35 @@ export default function init(indexUrl: string = "*", wsUrl: string = "/") {
   const app = configureExpressApp({indexUrl, publicPath, sendFileProxy: new Promise((res) => {activateSetFileProxy = res})})
 
   
+  const restartingCousOf = []
 
   chokidar.watch(publicPath, { ignoreInitial: true }).on("all", (event, path) => {
     path = formatPath(path)
 
-    console.log("Change at: \"" + path + "\"; Restarting app.")
-    if (clients !== undefined && clients.size > 0) {
-      clients.forEach((c) => {
-        c.send("reload please")
+    
+    //@ts-ignore
+    global.qjwnenqjnewqik = restartingCousOf // quickfix https://github.com/rollup/rollup/issues/4425
+
+    if (restartingCousOf.empty) {
+      setTimeout(() => {
+        console.log("Change at: \"" + restartingCousOf.join(", ") + "\"; Restarting app.")
+        restartingCousOf.clear()
+
+
+        if (clients !== undefined && clients.size > 0) {
+          clients.forEach((c) => {
+            c.send("reload please")
+          }, 0)
+        }
+        else {
+          console.log("No clients to reload.")
+        }
       })
     }
-    else {
-      console.log("No clients to reload.")
-    }
+    restartingCousOf.push(path)
+
+
+
     
   })
 

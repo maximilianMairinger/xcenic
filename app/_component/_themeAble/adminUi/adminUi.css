@@ -1,0 +1,47 @@
+:host {
+  background-color: rgb(240, 240, 240);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  z-index: 102;
+}
+
+component-body {
+  display: flex;
+  flex-direction: column;
+}
+
+ui-container {
+  margin-left: 25px;
+  margin-right: 25px;
+  width: calc(100% - 50px);
+  position: relative;
+  float: left;
+  flex-grow: 1;
+}
+
+ui-container > * {
+  pointer-events: all;
+}
+
+header-spacer {
+  border-bottom: 1px solid rgba(0,0,0,0.16);
+  height: 55px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 35px;
+
+  display: block;
+  position: relative;
+  float: left;
+  /* pointer-events: none; */
+}
+
+#langSelect {
+  width: 100%;
+  position: absolute;
+  bottom: 25px;
+  --background: 225, 225, 225;
+}
+
+
+
+

@@ -2,13 +2,17 @@ import lazyLoad from "../../../../lib/lazyLoad";
 import { linkRecord } from "../../link/link";
 import { Theme } from "../../themeAble";
 import Frame from "../frame";
-
+import "../../../text/text"
 
 
 
 export default abstract class Page extends Frame {
   public domainLevel?: number
   public readonly defaultDomain: string = ""
+  public preferedLeftBoundry?: {
+    mobile: number | string,
+    desktop: number | string
+  }
   constructor(theme?: Theme) {
     super(theme)
 
