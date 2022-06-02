@@ -9,6 +9,7 @@ import LoginPage from "../../_page/loginPage/loginPage"
 import AdminPage from "../../_page/adminPage/adminPage"
 import PrivacyPage from "../../_page/_blogPage/privacyPage/privacyPage"
 import LegalPage from "../../_page/_blogPage/legalPage/legalPage"
+import RegistrationPage from "../../_page/registrationPage/registrationPage"
 
 
 
@@ -36,6 +37,11 @@ export default class PageManager extends Manager {
         key: new Import("contact/form", 10, (contactPage: typeof ContactPage) =>
             new contactPage()
         ), val: () => import(/* webpackChunkName: "contactPage" */"../../_page/contactPage/contactPage")
+      },
+      {
+        key: new Import("register", 10, (registrationPage: typeof RegistrationPage) =>
+            new registrationPage()
+        ), val: () => import(/* webpackChunkName: "registrationPage" */"../../_page/registrationPage/registrationPage")
       },
       {
         key: new Import("admin", 10, (adminPage: typeof AdminPage) =>

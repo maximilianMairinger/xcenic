@@ -1,0 +1,72 @@
+image-container
+  //- c-image(src="contactForm")
+  image-darken
+
+//- c-form#confirmDetails
+//-   form-screen
+//-     c-text-blob(heading="Welcome aboard!" note="Registration" text="Please confirm (or correct) the details below and click confirm to continue the registration.")
+//-     c-input(name="firstname" placeholder="First name")
+//-     c-input(name="surname" placeholder="Surname")
+//-     c-load-button(content="Confirm")
+
+//- c-form#howToReach
+//-   form-screen
+//-     c-text-blob(heading="How can we reach you?" note="Registration" text="Please add at least one way of reaching you. This will not necessarily be used as authentification method.")
+//-     c-input(name="email" placeholder="Email address")
+//-     c-input(name="tel" placeholder="Telephone number")
+//-     c-load-button(content="Confirm")
+
+//- c-form#provideUsername
+//-   form-screen
+//-     c-text-blob(heading="Pick a username" note="Registration" text="Please confirm your username or pick a new one. This will be used to identify you at authentication.")
+//-     c-input(name="username" placeholder="Username")
+//-     c-load-button(content="Confirm")
+
+
+
+//- c-form#pickFactors
+//-   form-screen(name="factors")
+//-     c-text-blob(heading="Pick at least two auth-factors" note="Registration" text="Please pick at least one other auth-factor. You will always need two factors to login.")
+//-     c-select-button(content="Password")
+//-     c-select-button(content="Trust this device")
+//-     c-select-button(content="Email")
+//-     c-select-button(content="Tel number")
+//-     c-select-button(content="OTP Token")
+//-     c-select-button(content="WebAuthn")
+//-     c-load-button(content="Confirm")
+
+//- c-form#webAuthnFactor
+//-   form-screen
+//-     c-text-blob(heading="Verify Webauthn" note="Registration" text="Please register a WebAuthn auth-method using the browser native user interface.")
+//-     c-load-button(content="Add WebAuthn factor").form
+//-     c-load-button(content="Confirm")
+
+//- c-form#passwordFactor
+//-   form-screen
+//-     c-text-blob(heading="Set your password" note="Registration" text="Please set a password for your account. This will be used as one auth-factor.")
+//-     c-input(name="password" placeholder="Password" type="new-password")
+//-     c-input(name="confirmPassword" placeholder="Confirm password" type="new-password")
+//-     c-load-button(content="Confirm")
+
+//- c-form#emailFactor.dualLoad
+//-   form-screen
+//-     c-text-blob(heading="Verify email address" note="Registration" text="We sent you a verification code via email. Please copy the code into the field below.")
+//-     c-input(placeholder="Email code" name="emailCode")
+//-     c-load-button(content="Resend code").form
+//-     c-load-button(content="Verify email")
+
+//- c-form#telFactor.dualLoad
+//-   form-screen
+//-     c-text-blob(heading="Verify telephone number" note="Registration" text="We sent you a verification code via sms. Please copy the code into the field below.")
+//-     c-input(placeholder="Sms code" name="telCode")
+//-     c-load-button(content="Resend code").form
+//-     c-load-button(content="Verify telephone")
+
+c-form#otpFactor
+  form-screen
+    c-text-blob(heading="Setup OTP device" note="Registration" text="Install an OTP provider on your phone (FreeOTP or Google Authenticator) if you don't already have one. Then scan the QR-code below or enter the code manually.")
+    c-form-ui
+      c-image
+      plain-text
+    c-input(placeholder="OTP code" name="otpCode")
+

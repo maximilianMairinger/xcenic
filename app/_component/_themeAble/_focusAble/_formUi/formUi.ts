@@ -16,7 +16,7 @@ function distance(p1: [number, number], p2: [number, number]) {
     return Math.sqrt(Math.abs(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2)));
 }
 
-export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = false | HTMLElement> extends FocusAble<T> {
+export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement = boolean | HTMLElement> extends FocusAble<T> {
   private rippleElements: HTMLElement;
   private waveElement: HTMLElement;
   public validMouseButtons = new Set([0])
@@ -40,7 +40,7 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
   public isFocused: ReadonlyData<boolean>
   public enabled: Data<boolean>
-  constructor(componentBodyExtension?: HTMLElement | false) {
+  constructor(componentBodyExtension: HTMLElement | boolean = false) {
     super(componentBodyExtension)
     if (this.componentBody instanceof HTMLElement) this.componentBody.id = "componentBody"
 
@@ -358,3 +358,5 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
   }
   
 }
+
+declareComponent("form-ui", FormUi)

@@ -16,7 +16,7 @@ export default class EditAble extends FormUi {
 
   protected placeholderUp: Data<boolean>
   constructor(protected inputElem: HTMLInputElement | HTMLTextAreaElement, placeholder = "") {
-    super()
+    super(true)
     inputElem.id = "editAble"
     this.moveBody.apd(this.placeholderContainer.apd(this.placeholderText))
     this.moveBody.apd(inputElem as any)

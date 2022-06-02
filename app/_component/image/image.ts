@@ -56,6 +56,7 @@ function isExplicitLocation(location: string) {
   const firstSlash = location.indexOf("/")
   if (firstSlash === 0) return true
   if (location[firstSlash + 1] === "/") return true
+  if (location.startsWith("data:image")) return true
   return false
 }
 

@@ -37,10 +37,15 @@ export default function init(indexUrl: string = "*", wsUrl: string = "/") {
     path = formatPath(path)
 
     console.log("Change at: \"" + path + "\"; Restarting app.")
-
-    clients.forEach((c) => {
-      c.send("reload please")
-    })
+    if (clients !== undefined && clients.size > 0) {
+      clients.forEach((c) => {
+        c.send("reload please")
+      })
+    }
+    else {
+      console.log("No clients to reload.")
+    }
+    
   })
 
 

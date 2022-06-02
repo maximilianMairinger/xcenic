@@ -11,8 +11,8 @@
 
 picture {
   display: var(--display);
-  width: inherit;
-  height: inherit;
+  width: 100%;
+  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
@@ -30,8 +30,11 @@ img {
   opacity: 0;
   object-fit: cover;
   object-position: var(--object-position);
-  width: inherit;
-  height: inherit;
+  min-width: auto;
+  width: 100%;
+  
+  min-height: auto;
+  height: 100%;
   user-select: none;
   user-drag: none; 
   -moz-user-select: none;

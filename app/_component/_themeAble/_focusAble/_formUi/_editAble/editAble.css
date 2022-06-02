@@ -30,6 +30,7 @@ placeholder-container {
   border-radius: inherit;
   overflow: hidden;
   z-index: 1;
+  user-select: none;
 }
 
 placeholder-text {

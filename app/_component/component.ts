@@ -5,7 +5,7 @@ import { ElementList, ElementListOrElement, PrimElem, VariableLibrary } from "ex
 
 type Token = string | string[]
 
-export default abstract class Component<T extends HTMLElement | HTMLAnchorElement | false | never = HTMLElement> extends HTMLElement {
+export default abstract class Component<T extends HTMLElement | HTMLAnchorElement | boolean | never = HTMLElement> extends HTMLElement {
   protected sr: ShadowRoot;
   protected componentBody: T extends (HTMLElement | HTMLAnchorElement) ? T : T extends false ? ShadowRoot : HTMLElement
   protected body: {[name: string]: Element | ElementList} = {}
@@ -18,7 +18,7 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
     
     if (bodyExtension !== false) {
       //@ts-ignore
-      this.componentBody = bodyExtension !== undefined ? bodyExtension : ce("component-body")
+      this.componentBody = (bodyExtension !== undefined && bodyExtension !== true) ? bodyExtension : ce("component-body")
 
 
       this.sr.html("<style>" + this.stl() + "</style>")

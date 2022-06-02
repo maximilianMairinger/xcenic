@@ -13,6 +13,7 @@ export default class AdminPage extends Page {
   }
 
   protected tryNavigationCallback(domainFragment: string): boolean | void | Promise<boolean | void> {
+    return false
     return adminSession.get() !== ""
   }
 

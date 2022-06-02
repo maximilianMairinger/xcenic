@@ -4,7 +4,7 @@ import { EventListener } from "extended-dom"
 import ThemeAble, { Theme } from "../themeAble";
 
 
-export default class FocusAble<T extends false | HTMLElement | HTMLAnchorElement = false | HTMLElement> extends ThemeAble<T> {
+export default class FocusAble<T extends boolean | HTMLElement | HTMLAnchorElement = boolean | HTMLElement> extends ThemeAble<T> {
 
   public userFeedbackMode = new DataBase({
     focus: "direct",
@@ -12,7 +12,7 @@ export default class FocusAble<T extends false | HTMLElement | HTMLAnchorElement
     focus: boolean | "direct",
   }>
   protected focusManElem = ce("focus-man")
-  constructor(componentBodyExtension?: HTMLElement | false, theme?: Theme | null) {
+  constructor(componentBodyExtension?: HTMLElement | boolean, theme?: Theme | null) {
     super(componentBodyExtension, theme)
 
     super.apd(this.focusManElem)
