@@ -11,6 +11,8 @@ export default class SelectButton extends BlockButton {
   constructor(content: string = "", selectedCallback?: (selected: boolean) => void) {
     super(content);
 
+    (this.userFeedbackModeCalc.ripple.normal as any).set("late")
+
     if (selectedCallback) this.selected.get(selectedCallback)
 
     this.preSelected.get((preSelected) => {
@@ -64,10 +66,6 @@ export default class SelectButton extends BlockButton {
     }, false)
   }
 
-  // @ts-ignore
-  protected ripplePreference(): (typeof this.userFeedbackMode.ripple) extends Data<infer T> ? T : null {
-    return "late"
-  }
   
   stl() {
     return super.stl() + require('./selectButton.css').toString();

@@ -20,9 +20,9 @@ export default class EditAble extends FormUi {
     super()
     inputElem.id = "editAble"
     this.moveBody.apd(this.placeholderContainer.apd(this.placeholderText))
-    this.moveBody.apd(inputElem as any)
+    this.moveBody.apd(inputElem as any);
 
-    this.userFeedbackMode.ripple.set(false)
+    (this.userFeedbackModeCalc.ripple.normal as any).set(false)
 
     this.placeholder(placeholder)
 

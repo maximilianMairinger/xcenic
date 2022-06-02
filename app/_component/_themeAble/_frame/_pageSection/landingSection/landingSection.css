@@ -191,9 +191,8 @@ text-blob {
 }
 
 c-block-button {
-  --background: var(--primary-theme);
-  --text: var(--plain-background);
-  --border: unset;
+  /* --background: var(--primary-theme); */
+  /* --text: var(--plain-background); */
   --padding: 15px 50px;
   font-size: 18px;
 }

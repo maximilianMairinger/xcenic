@@ -1,7 +1,8 @@
-import { DataCollection } from "josm"
+import { Data, DataCollection } from "josm"
 import * as fuzzySearch from "../../../../../../../lib/fuzzySearch.worker"
 import { currentLanguage } from "../../../../../../../lib/lang"
 import Select from "./select"
+
 
 
 export default function(t: Select) {
@@ -61,34 +62,77 @@ export default function(t: Select) {
   return async function () {
     const tippy = (await import("tippy.js")).default;
 
-    t.sra(ce("style").html(require("tippy.js/dist/tippy.css").toString() + require("./tippyModification.css").toString() + require('tippy.js/animations/shift-away-subtle.css').toString()))
+    t.sra(ce("style").html(require("tippy.js/dist/tippy.css").toString() + require('tippy.js/animations/shift-away-subtle.css').toString() + require("./tippyModification.css").toString()))
 
 
     const tip = tippy((t as any).inputElem as HTMLElement, {
       content: "test <b>waosd</b>",
       allowHTML: true,
       trigger: "manual",
-      placement: "top",
+      placement: "bottom",
       animation: 'shift-away-subtle',
       appendTo: "parent",
       arrow: false,
-      maxWidth: 400,
+      hideOnClick: false,
       
-      popperOptions: {
-        modifiers: [
-          {
-            name: 'flip',
-            options: {
-              padding: {top: 60, left: 5, right: 5, bottom: 5},
-            },
-          }
-        ]
-      }
+      // popperOptions: {
+      //   modifiers: [
+      //     {
+      //       name: 'flip'
+      //     }
+      //   ]
+      // }
     });
 
-    (t as any).inputElem.on("focus", () => {
-      tip.show()
+
+    const placement = new Data("bottom");
+    const mutObserver = new MutationObserver((muts) => {
+      for (const mut of muts) {
+        placement.set((mut.target as HTMLElement).getAttribute("data-placement"))
+      }
+    });
+    mutObserver.observe(tip.popper.childs(".tippy-box") as HTMLElement, {
+      attributes: true,
+      childList: false,
+      subtree: false,
+      attributeFilter: ["data-placement"]
+    });
+
+    (t as Select).isFocused.get((is) => {
+      if (is) tip.show()
+      else tip.hide()
     })
+
+    const dirSidesIndex = {
+      bottom: ["BottomLeft", "BottomRight"],
+      top: ["TopLeft", "TopRight"],
+      right: ["TopRight", "BottomRight"],
+      left: ["TopLeft", "BottomLeft"]
+    }
+
+    const inverseDirIndex = {
+      top: "bottom",
+      bottom: "top",
+      left: "right",
+      right: "left"
+    }
+
+    new DataCollection(placement, (t as Select).isFocused as Data<boolean>).get(async (placement, isFocused) => {
+      if (isFocused) {
+        for (const dir of dirSidesIndex[placement]) {
+          // @ts-ignore
+          t.css("border" + dir + "Radius", 0)
+        }
+        for (const dir of dirSidesIndex[inverseDirIndex[placement]]) {
+          // @ts-ignore
+          t.css("border" + dir + "Radius", 20)
+        }
+      }
+      else t.css("borderRadius", 20)
+    })
+
+    // t.userFeedbackMode.
+
 
     // t.textValue.get(async () => {
     //   const res = await results

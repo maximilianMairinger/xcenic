@@ -12,6 +12,7 @@ import "./../../../_icon/bigVideo/bigVideo"
 import "./../../../_icon/landingCircle/landingCircle"
 import "./../../../textBlob/textBlob"
 import { EventListener } from "extended-dom"
+import BlockButton from "./../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
 
 export default class LandingSection extends PageSection {
 
@@ -20,6 +21,20 @@ export default class LandingSection extends PageSection {
   private link = this.q("view-work c-link") as Link
   constructor() {
     super("light")
+
+    const but = this.q("c-block-button") as BlockButton
+
+
+    // @ts-ignore
+    but.userFeedbackModeResult((e, diff) => {
+      // debugger
+      console.log(diff)
+    }, true, false)
+
+    this.rippleButton.userFeedbackMode.preHover.set(false)
+    
+    but.userFeedbackMode.preHover.set(false)
+
 
     new EventListener(this.coverButton, ["mouseover", "focusin"], this.link.mouseOverAnimation)
     new EventListener(this.coverButton, ["mouseleave", "focusout"], this.link.mouseOutAnimation)

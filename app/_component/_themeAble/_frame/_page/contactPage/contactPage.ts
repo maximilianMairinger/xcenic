@@ -3,7 +3,6 @@ import { Data, DataCollection, DataSubscription } from "josm";
 import declareComponent from "../../../../../lib/declareComponent";
 import Page from "../page"
 
-
 import "./../../../../form/form"
 import "./../../../../image/image"
 import "./../../../textBlob/textBlob"

@@ -9,6 +9,7 @@ import { ElementList } from "extended-dom"
 import HighlightAbleIcon from "../_themeAble/_icon/_highlightAbleIcon/highlightAbleIcon"
 import { Data, DataSubscription } from "josm"
 import { linkRecord } from "../_themeAble/link/link"
+import { Theme } from "../_themeAble/themeAble"
 
 
 const topLimit = 0
@@ -133,7 +134,7 @@ export default class Site extends Component {
         lowerNav.theme.set(theme)
       }, true, false)
 
-      const accentThemeSub = new DataSubscription(new Data(undefined), (theme) => {
+      const accentThemeSub = new DataSubscription(new Data(undefined as "primary" | "secondary"), (theme) => {
         lowerNav.accentTheme.set(theme)
       }, true, false)
       pageManager.addAccentThemeIntersectionListener(lowerNav, accentThemeSub.data.bind(accentThemeSub))    

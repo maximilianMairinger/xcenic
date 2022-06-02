@@ -1,3 +1,7 @@
+move-me {
+  transition: .2s border-radius;
+}
+
 #autoComplete {
   position: absolute;
   top: 0;

@@ -1,5 +1,6 @@
 import { EventListener, Prim } from "extended-dom";
-import { Data, DataCollection, DataSubscription } from "josm";
+import { DataCollection } from "josm";
+import { Data } from "../../lib/josm";
 import declareComponent from "../../lib/declareComponent";
 import Component from "../component";
 
@@ -21,7 +22,7 @@ export function textify(element: HTMLElement, visualUnit?: HTMLElement) {
 
 
 const listOfAllTextElems = [] as Text[]
-let currentlyEditableEnabled = true
+let currentlyEditableEnabled = false
 export function enableEditableForAll() {
   for (const elem of listOfAllTextElems) elem.editMode.set(true)
 }
