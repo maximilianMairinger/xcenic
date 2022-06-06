@@ -3,6 +3,7 @@ import declareComponent from "./../../lib/declareComponent"
 import { loadRecord } from "../_themeAble/_frame/frame"
 import { Data } from "josm"
 import ResablePromise from "../../lib/resablePromise"
+import delay from "tiny-delay"
 
 const unionSymbol = "@"
 const typePrefix = "image/"
@@ -56,7 +57,12 @@ function isExplicitLocation(location: string) {
   const firstSlash = location.indexOf("/")
   if (firstSlash === 0) return true
   if (location[firstSlash + 1] === "/") return true
-  if (location.startsWith("data:image")) return true
+  return false
+}
+
+function isExplicitSrc(src: string) {
+  if (isExplicitLocation(src)) return true
+  if (src.startsWith("data:image")) return true
   return false
 }
 
@@ -67,6 +73,7 @@ export default class Image extends Component {
   public readonly loaded: {[key in typeof resesList[number]]?: ResablePromise<void>} = {}
   private elems: {[key in typeof resesList[number]]?: {picture: HTMLPictureElement, sources: {setSource: (src: string) => void}[], img: HTMLImageElement &  {setSource: (src: string) => void}}} = {}
   private myWantedRes = this.resizeData().tunnel(({width, height}) => Math.sqrt(width * height * ratio))
+  private slotElem = this.q("slot") as HTMLSlotElement
   constructor(src?: string, forceLoad?: boolean) {
     //@ts-ignore
     super(false)
@@ -83,6 +90,14 @@ export default class Image extends Component {
 
     
     if (src) this.src(src, forceLoad)
+
+
+    delay(50, () => {
+      if (!this.src() || isExplicitLocation(this.src())) {
+        this.needBeforeLoadComponentInSlot()
+        this.slotElem.show()
+      }
+    })
   }
 
   private makeNewResElems(loadRes: typeof resesList[number], loadStage: number) {
@@ -127,11 +142,27 @@ export default class Image extends Component {
     })
   }
 
+  private beforeLoadComponentFunc: () => Promise<HTMLElement>
+  loadingIndecator(el: HTMLElement | (() => Promise<HTMLElement>)) {
+    if (el instanceof Function) this.beforeLoadComponentFunc = el
+    else {
+      this.innerHTML = ""
+      this.append(el)
+    }
+  }
+
+  private async needBeforeLoadComponentInSlot() {
+    if (!this.children[0]) {
+      this.append(await this.beforeLoadComponentFunc())
+    }
+  }
+
   private wasAtStageIndex = {}
   private currentlyActiveElems: {picture: HTMLPictureElement, sources: {setSource: (src: string) => void}[], img: HTMLImageElement &  {setSource: (src: string) => void}}
   private loadSrc(src: string, res: typeof resesList[number]): Promise<void> {
     const loadStageAtCall = this.currentLoadStage 
     if (this.loaded[res] !== undefined) return this.loaded[res]
+    this.slotElem.hide()
     this.makeNewResElems(res, this.currentLoadStage)
     const thisActiveElems = this.elems[res]
     const { img, sources } = thisActiveElems
@@ -181,7 +212,7 @@ export default class Image extends Component {
     }
 
 
-    if (isExplicitLocation(src)) {
+    if (isExplicitSrc(src)) {
       img.src = src
     }
     else {
@@ -205,7 +236,7 @@ export default class Image extends Component {
   src(src?: string, forceLoad: boolean = false): any {
     if (src === undefined) return this._src
     this._src = src
-    const isExplicitSrc = isExplicitLocation(src)
+    const isSrcExplicit = isExplicitSrc(src)
     if (forceLoad) {
       const wantedResName = this.getCurrentlyWantedRes()
       if (wantedResName && this.loaded[wantedResName] === undefined) return this.loadSrc(this._src, wantedResName)
@@ -221,7 +252,7 @@ export default class Image extends Component {
         }
         this.loadSrc(src, biggestLoadedRes as any)
 
-        if (this.currentLoadStage === 0 && !isExplicitSrc) {
+        if (this.currentLoadStage === 0 && !isSrcExplicit) {
           loadRecord.full.add(() => {
             if (this.currentLoadStage >= 1) return
             this.currentLoadStage = 1
@@ -237,7 +268,7 @@ export default class Image extends Component {
       }
 
       else {
-        if (isExplicitSrc) {
+        if (isSrcExplicit) {
           loadRecord.full.add(() => {
             this.currentLoadStage = 1
             const wantedResName = ""
@@ -293,6 +324,10 @@ export default class Image extends Component {
     return require("./image.pug").default
   }
 
+}
+
+(Image.prototype as any).beforeLoadComponentFunc = async () => {
+  return new (await import("./../loadingBox/loadingBox")).default
 }
 
 declareComponent("image", Image)

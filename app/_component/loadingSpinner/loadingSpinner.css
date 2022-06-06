@@ -1,0 +1,21 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+
+component-body {
+  display: flex;
+}
+
+
+spinner-elem {
+  width: 25px;
+  height: 25px;
+  display: block;
+  margin: auto;
+  border-radius: 50%;
+  border: 4px solid rgb(0, 0, 0);
+  border-top: 4px solid rgba(0, 0, 0, 0);
+}

@@ -28,13 +28,7 @@ function waitUnitilData<T extends unknown>(data: Data<T>, equals: T | T[] | ((va
   })
 }
 
-type TMod<T> = T extends number ? string : boolean
 
-function retTMod<T>(e: T) {
-  return {} as TMod<T>
-}
-
-const www = retTMod(1 as any)
 
 type ReadonlyData<T> = Omit<Data<T>, "set">
 
@@ -46,9 +40,9 @@ function distance(p1: [number, number], p2: [number, number]) {
 export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement = boolean | HTMLElement> extends FocusAble<T> {
   public rippleElements: HTMLElement;
   public waveElement: HTMLElement;
-  public validMouseButtons = new Set([0])
+  public validMouseButtons: Set<number>
 
-  protected moveBody = this.q("move-me") as HTMLElement;
+  protected moveBody: HTMLElement;
 
   // @ts-ignore
   public userFeedbackMode: DataBase<{
@@ -62,20 +56,37 @@ export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement 
 
 
 
-  private coverElems = {
-    hover: this.q("hover-cover"),
-    click: this.q("click-cover"),
+  private coverElems: {
+    hover: HTMLElement,
+    click: HTMLElement
   }
 
 
   public isFocused: ReadonlyData<boolean>
   public enabled: Data<boolean>
   constructor(componentBodyExtension: HTMLElement | boolean = false) {
+    if (componentBodyExtension === false) {
+      componentBodyExtension = ce("placeholder-component-body")
+      
+    }
     super(componentBodyExtension)
+
+    this.coverElems = {
+      hover: this.q("hover-cover"),
+      click: this.q("click-cover"),
+    }
+    this.moveBody = this.q("move-me")
+    this.validMouseButtons = new Set([0])
+    this.fadeRipple = []
+    this.rippleElems = new ElementList
+    this.initRippleCb = (e?: MouseEvent | TouchEvent | KeyboardEvent | "center") => () => {}
+    this.rippleSettled = Promise.resolve()
+
+
     if (this.componentBody instanceof HTMLElement) this.componentBody.id = "componentBody"
 
     this.userFeedbackModeResult({
-      ripple: true,
+      ripple: false,
       hover: true,
       active: false,
       enabled: true,
@@ -91,15 +102,13 @@ export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement 
     
 
     const ufc = this.userFeedbackModeCalc
-    const ufr = this.userFeedbackModeResult
 
 
-    ufc.focus.addCondition(ufr.enabled)
-    ufc.ripple.addCondition(ufr.enabled)
-    ufc.hover.addCondition(ufr.enabled)
-    ufc.active.addCondition(ufr.enabled)
-    ufc.enabled.addCondition(ufr.enabled)
-    ufc.preHover.addCondition(ufr.enabled)
+    ufc.focus.addCondition(this.enabled)
+    ufc.ripple.addCondition(this.enabled)
+    ufc.hover.addCondition(this.enabled)
+    ufc.active.addCondition(this.enabled)
+    ufc.preHover.addCondition(this.enabled)
 
 
     const supportsHover = window.matchMedia && window.matchMedia("(hover:hover)").matches
@@ -115,10 +124,16 @@ export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement 
 
     
 
-    this.userFeedbackModeResult.enabled.get((enabled) => {
+    const enabledSub = this.enabled.get((enabled) => {
       if (enabled) this.removeClass("disabled")
       else this.addClass("disabled")
     }, false)
+
+
+    this.userFeedbackModeResult.enabled.get((showEnabledFeedback) => {
+      if (showEnabledFeedback) enabledSub.activate(true)
+      else enabledSub.deactivate()
+    })
 
 
     
@@ -166,7 +181,7 @@ export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement 
           this.userFeedbackModeResult.preHover.get((enabled) => {
             if (enabled) controller.enable()
             else controller.disable()
-          })
+          }, false)
         }) 
       })
     })
@@ -194,12 +209,12 @@ export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement 
   }
 
 
-  public fadeRipple: ((anim?: boolean) => void)[] = []
-  public rippleElems: ElementList<Element & {fade?: ((animation?: boolean) => Promise<void>) & {auto?: boolean}}> = new ElementList
-  public initRippleCb = (e?: MouseEvent | TouchEvent | KeyboardEvent | "center") => () => {}
+  public fadeRipple: ((anim?: boolean) => void)[]
+  public rippleElems: ElementList<Element & {fade?: ((animation?: boolean) => Promise<void>) & {auto?: boolean}}> 
+  public initRippleCb: (e?: MouseEvent | TouchEvent | KeyboardEvent | "center") => () => void
 
 
-  public rippleSettled = Promise.resolve()
+  public rippleSettled: Promise<void>
   public initRipple(e?: MouseEvent | TouchEvent | KeyboardEvent | "center"): () => void {
     console.warn("initRipple not inited yet")
     return () => {}

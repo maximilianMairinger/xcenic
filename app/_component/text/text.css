@@ -3,4 +3,17 @@
   cursor: text;
   user-select: auto !important;
   pointer-events: all;
+  
+}
+
+::slotted(*) {
+  --placeholderHeight: 1.2em;
+  --placeholderWidth: 8em;
+  
+  display: inline-block;
+  cursor: text;
+  height: var(--placeholderHeight);
+  width: var(--placeholderWidth);
+  border-radius: .2em;
+  position: relative;
 }

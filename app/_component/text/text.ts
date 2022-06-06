@@ -1,8 +1,10 @@
 import { EventListener, Prim } from "extended-dom";
 import { DataCollection } from "josm";
 import { Data } from "../../lib/josm";
+import ResablePromise from "../../lib/resablePromise";
 import declareComponent from "../../lib/declareComponent";
 import Component from "../component";
+import delay from "tiny-delay"
 
 
 export function textify(element: HTMLElement, visualUnit?: HTMLElement) {
@@ -90,6 +92,7 @@ export default class Text extends Component {
 
 
     let lastVisUnit = this.visualUnit.get() as HTMLElement
+    // @ts-ignore
     new DataCollection(this.editMode, this.canBeEdited, this.visualUnit).get((edit, canBeEdited, visualUnit) => {
       if (edit && canBeEdited) {
         this.addClass("edit")
@@ -124,7 +127,24 @@ export default class Text extends Component {
     if (txtNode) Object.defineProperty(txtNode, "txt", {value: (...a) => {
       return this.txt(...a)
     }})
+
+
+
+    if (!this.initTextHasBeenSet.setteled) {
+      delay(50, () => {
+        if (!this.initTextHasBeenSet.setteled) {
+          const el = this.needBeforeLoadComponentInSlot()
+          this.initTextHasBeenSet.then(() => {
+            el.remove()
+          })
+        }
+        else if (this.children[0]) this.children[0].hide()
+      })
+    }
+    else if (this.children[0]) this.children[0].hide()
+
   }
+  private initTextHasBeenSet = new ResablePromise<void>()
   private sub = new Data("").get((s) => {
     super.txt(s)
   }, false)
@@ -134,6 +154,7 @@ export default class Text extends Component {
   txt(to?: Data<Prim>, animOnExplicitChange?: boolean, animOnDataChange?: boolean): this
   txt(to?: Data<Prim> | Prim, animOnExplicitChange?: boolean, animOnDataChange?: boolean) {
     if (to !== undefined) {
+      this.initTextHasBeenSet.res()
       if (!(to instanceof Data)) {
         this.canBeEdited.set(false)
         return super.txt(to as any, animOnExplicitChange, animOnDataChange)
@@ -147,6 +168,28 @@ export default class Text extends Component {
     else return super.txt(to as any, animOnExplicitChange, animOnDataChange) as any
   }
 
+  private beforeLoadComponentFunc: () => Promise<HTMLElement>
+  loadingIndecator(el: HTMLElement | (() => Promise<HTMLElement>)) {
+    if (el instanceof Function) this.beforeLoadComponentFunc = el
+    else {
+      this.innerHTML = ""
+      this.append(el)
+    }
+  }
+
+  private needBeforeLoadComponentInSlot() {
+    if (!this.children[0]) {
+      const container = ce("loading-indecator");
+      (async () => {
+        container.append(await this.beforeLoadComponentFunc())
+      })();
+      this.append(container)
+      return container
+    }
+    else return this.children[0]
+    
+  }
+
   public pug(): string {
     return ""
   }
@@ -154,6 +197,10 @@ export default class Text extends Component {
     return require("./text.css").toString()
   }
   
+}
+
+(Text.prototype as any).beforeLoadComponentFunc = async () => {
+  return new (await import("./../loadingBox/loadingBox")).default
 }
 
 declareComponent("text", Text);

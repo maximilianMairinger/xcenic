@@ -1,3 +1,4 @@
+import { delay } from "tiny-delay"
 import declareComponent from "../../../../../lib/declareComponent"
 import Page from "./../page"
 import "./../../../../form/form"
@@ -26,24 +27,42 @@ class NotFoundPage extends Page {
     const otpForm = this.q("c-form#otpFactor") as HTMLElement
     const qrCodeUi = otpForm.childs("c-form-ui") as FormUi
     const otpImage = otpForm.childs("c-image") as Image
-    const otpPlainText = otpForm.childs("plain-text") as HTMLSpanElement
+    const otpPlainText = otpForm.childs("c-text") as HTMLSpanElement
+
 
     qrCodeUi.userFeedbackMode({
-      // hover: false,
-      // ripple: false,
-      // focus
-      // active: 
-      // enabled
-
+      preHover: true,
+      hover: false,
+      focus: false,
+      enabled: false,
+      ripple: false,
+      active: false
     })
 
-    qrCode.toDataURL("https://google.com", {margin: 0}).then((url) => {
-      otpImage.src(url)
+
+
+
+    this.getOtpToken().then(({code, url}) => {
+      qrCode.toDataURL(url, {
+        margin: 0, 
+        color: {
+          light: '#0000'
+        }
+      }).then(async (url) => {
+        otpImage.src(url)
+      })
+  
+      
+      otpPlainText.txt(code)
     })
 
     
-    otpPlainText.txt("123456")
     
+  }
+
+  async getOtpToken() {
+    await delay(2000)
+    return {code: "123456", url: "https://google.com"}
   }
 
 

@@ -1,29 +1,26 @@
+import { Data } from "josm";
+import keyIndex from "key-index"
 import declareComponent from "../../../lib/declareComponent";
 import { textify } from "../../text/text";
 import ThemeAble from "../themeAble";
 
+
 export default class TextBlob extends ThemeAble {
-  private noteElem = textify(this.q("note-header"))
-  private headerElem = textify(this.q("h1"))
-  private bodyElem = textify(this.q("p"))
+  private elems = keyIndex((elemName: string) => textify(this.q(elemName)))
   constructor() {
     super(false)
-    this.text = this.bodyElem.txt.bind(this.bodyElem)
   }
   heading(to: string) {
-    this.headerElem.txt(to)
+    return this.elems("h1").txt(to)
   }
   note(to: string) {
-    this.noteElem.txt(to)
+    return this.elems("note-header").txt(to)
   }
-  // //@ts-ignore
-  // text(): string
-  // //@ts-ignore
-  // text(to: string): void
-  // //@ts-ignore
-  // text(to?: string) {
-  //   return this.bodyElem.txt(to)
-  // }
+  // @ts-ignore
+  text(to: string): any {
+    return this.elems("p").txt(to)
+  }
+
 
   public pug(): string {
     return require("./textBlob.pug").default
