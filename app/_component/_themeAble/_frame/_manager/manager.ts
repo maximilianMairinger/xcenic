@@ -1,5 +1,5 @@
 import Frame from "./../frame";
-import LoadingIndecator from "../../../_indecator/loadingIndecator/loadingIndecator";
+import LoadingSpinner from "../../../loadingSpinner/loadingSpinner";
 import * as domain from "../../../../lib/domain";
 import lazyLoad, { ImportanceMap, Import, ResourcesMap, PriorityPromise } from "../../../../lib/lazyLoad";
 import SectionedPage from "../_page/_sectionedPage/sectionedPage";
@@ -71,7 +71,8 @@ export default abstract class Manager extends Frame {
     super(null);
 
     this.bod = ce("manager-body");
-    this.loadingElem = new LoadingIndecator();
+    this.loadingElem = new LoadingSpinner();
+    this.loadingElem.show()
     
     this.bod.apd(this.loadingElem)
     this.sra(this.bod);
@@ -195,7 +196,6 @@ export default abstract class Manager extends Frame {
       return 
     }
     this.busySwaping = true;
-    this.loadingElem.remove();
 
     this.wantedFrame = to;
     let from = this.currentPage;
@@ -205,7 +205,7 @@ export default abstract class Manager extends Frame {
 
     if (from === to) {
       //Focus even when it is already the active frame
-      if (!this.preserveFocus) to.focus()
+      to.focus()
       to.navigate()
       this.busySwaping = false
       return
@@ -213,9 +213,9 @@ export default abstract class Manager extends Frame {
     
 
     
-
+    this.loadingElem.remove();
     to.show();
-    if (!this.preserveFocus) to.focus();
+    to.focus();
     
     if (from !== undefined) from.deactivate()
     if (this.active) {
@@ -371,6 +371,11 @@ export default abstract class Manager extends Frame {
     this.currentPageFullyLoaded = new Promise((doneLoading) => {
       domain.set(domain.dirString + suc.domain + (fullDomainHasTrailingSlash && suc.domain !== "" ? domain.dirString : ""), suc.level, false).then(() => {
 
+        
+        pageProm.priorityThen(() => {
+          this.swapFrame(suc.page)
+        }, "minimalContentPaint")
+
         pageProm.priorityThen(() => {
           if (this.currentUrl !== to) {
             this.currentUrl = to;
@@ -401,8 +406,8 @@ export default abstract class Manager extends Frame {
             })()
           }
         }, "completePaint")
-  
-        this.swapFrame(suc.page)
+
+        
       }).then(doneLoading)
     })
   }
