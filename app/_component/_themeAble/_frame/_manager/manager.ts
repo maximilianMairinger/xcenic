@@ -100,9 +100,11 @@ export default abstract class Manager extends Frame {
       this.bod.apd(e)
     })
     this.resourcesMap = resourcesMap
-    this.domainSubscription = domain.get(this.domainLevel, this.setDomain.bind(this), false, "")
   }
-  private async setDomain(to: string) {
+  private tempDomainStore: string
+  private minimalLoadedYet: boolean = false
+  public async setDomain(to: string) {
+    if (!this.minimalLoadedYet) this.tempDomainStore = to
     const linkRecording = linkRecord.record()
     await this.setElem(to)
     this.currentPageFullyLoaded.then(() => {
@@ -110,13 +112,24 @@ export default abstract class Manager extends Frame {
     })
   }
 
-  private scrollEventListener: EventListener
-  private domainSubscription: domain.DomainSubscription
 
+  tryNavigationCallback(url: string) {
+    try {
+      this.findSuitablePage(url)
+      return true
+    }
+    catch(e) {
+      return false
+    }
+  }
+
+
+  private scrollEventListener: EventListener
   private currentPageFullyLoaded: Promise<any>
 
   async minimalContentPaint() {
-    await this.setDomain(this.domainSubscription.domain)
+    this.minimalLoadedYet = true
+    if (this.tempDomainStore) await this.setDomain(this.tempDomainStore)
     await super.minimalContentPaint()
   }
 
@@ -297,7 +310,16 @@ export default abstract class Manager extends Frame {
     else return this.currentUrl
   }
 
-  private async findSuitablePage(fullDomain: string) {
+  private suitablePageCache = new Map<string, Awaited<ReturnType<typeof this.findSuitablePage>>>()
+  private async findSuitablePage(fullDomain: string): Promise<{ to: string, pageProm: PriorityPromise<Frame>, fullDomainHasTrailingSlash: boolean, suc: {
+    domain: string,
+    page: Frame,
+    level: number
+  }}> {
+    const cached = this.suitablePageCache.get(fullDomain)
+    if (cached !== undefined) return cached as any
+
+
     let to: any = fullDomain
 
     if (fullDomain.startsWith(domain.dirString)) to = to.slice(1)
@@ -318,7 +340,6 @@ export default abstract class Manager extends Frame {
       while(pageProm === undefined) {
         if (to === "") {
           const msg = "421 Misdirected request"
-          document.body.html(`<b>${msg}</b>`)
           throw new Error(msg)
         }
         to = to.substr(0, to.lastIndexOf("/")) as any
@@ -353,12 +374,15 @@ export default abstract class Manager extends Frame {
       }
     }
 
-    return { to, pageProm, fullDomainHasTrailingSlash, suc: {
-        domain: sucDomainFrag,
-        page: sucPage,
-        level: sucDomainLevel
-      } 
-    }
+    const ret = { to, pageProm, fullDomainHasTrailingSlash, suc: {
+      domain: sucDomainFrag,
+      page: sucPage,
+      level: sucDomainLevel
+    }}
+
+    this.suitablePageCache.set(fullDomain, ret)
+
+    return ret
   }
 
   private async setElem(fullDomain: string) {

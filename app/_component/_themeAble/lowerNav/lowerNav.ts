@@ -31,7 +31,10 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
   public async disable(init: boolean, func: "css" | "anim" = init ? "css" : "anim") {
     let token = this.enableToken = Symbol()
     let r = this.layers[func]({opacity: 0})
-    if (!init) await r.then(() => {if (token === this.enableToken) this.componentBody.hide()})
+    if (!init) {
+      await r
+      if (token === this.enableToken) this.componentBody.hide()
+    }
   }
 
 

@@ -10,6 +10,7 @@ import HighlightAbleIcon from "../_themeAble/_icon/_highlightAbleIcon/highlightA
 import { Data, DataSubscription } from "josm"
 import { linkRecord } from "../_themeAble/link/link"
 import { Theme } from "../_themeAble/themeAble"
+import * as domain from "./../../lib/domain"
 
 
 const topLimit = 0
@@ -154,7 +155,19 @@ export default class Site extends Component {
       })
 
     })
-    
+
+
+    function handleDomainSet(url: string) {
+      try {
+        pageManager.setDomain(url)
+      }
+      catch(e) {
+        document.write(e.message)
+      }
+    }
+
+    const domSub = domain.get(0, handleDomainSet, false, "")
+    handleDomainSet(domSub.domain)
     
     
 
