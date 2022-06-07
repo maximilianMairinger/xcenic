@@ -204,7 +204,7 @@ export default abstract class Manager extends Frame {
   private async swapFrame(to: Frame): Promise<void> {
     if (this.busySwaping) {
       console.warn("was busy, unable to execute pageswap")
-      // maybe retry, or cancel ...
+      // will be retried at the end of execution
       return 
     }
     this.busySwaping = true;

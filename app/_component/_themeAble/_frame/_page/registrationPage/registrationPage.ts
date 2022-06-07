@@ -27,13 +27,14 @@ class RegisterPage extends Page {
     super("light")
 
 
-    const forms = this.q("c-form") as ElementList<Form>
+    const forms = this.q("c-form", true) as ElementList<Form>
     this.formIndex = {} as {[id: string]: Form}
     forms.forEach((form) => {
       this.formIndex[form.id] = form as Form
     })
 
     for (let i = 1; i < forms.length; i++) forms[i].hide()
+
   }
 
   private registrationInfo: {
@@ -78,8 +79,8 @@ class RegisterPage extends Page {
   }
 
   insertInitalValues() {
-    (this.body.firstName as Input).value.set(this.registrationInfo.firstName);
-    (this.body.surName as Input).value.set(this.registrationInfo.surName);
+    // (this.body.firstName as Input).value.set(this.registrationInfo.firstName);
+    // (this.body.surName as Input).value.set(this.registrationInfo.surName);
     // TODO
   }
 
@@ -119,7 +120,7 @@ class RegisterPage extends Page {
   }
 
   async getOtpToken() {
-    await delay(2000)
+    await delay(300000)
     return {code: "123456", url: "https://google.com"}
   }
 
