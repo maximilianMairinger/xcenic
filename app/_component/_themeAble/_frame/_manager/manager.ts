@@ -7,7 +7,6 @@ import delay from "delay";
 import { Theme } from "../../../_themeAble/themeAble";
 import PageSection from "../_pageSection/pageSection";
 import { EventListener } from "extended-dom";
-import Page from "../_page/page";
 
 import HighlightAbleIcon from "../../_icon/_highlightAbleIcon/highlightAbleIcon";
 import { Data } from "josm";
@@ -53,11 +52,11 @@ function occurrences(string: string, subString: string, allowOverlapping = false
 export default abstract class Manager extends Frame {
 
   protected busySwaping: boolean = false;
-  public currentPage: Page
+  public currentPage: Frame
 
   protected bod: HTMLElement;
 
-  private wantedFrame: Page;
+  private wantedFrame: Frame;
 
 
   private loadingElem: any;
@@ -67,7 +66,7 @@ export default abstract class Manager extends Frame {
 
   private resourcesMap: ResourcesMap
 
-  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: Page, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number, pageName: string) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void) {
+  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: Frame, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number, pageName: string) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void) {
     super(null);
 
     this.bod = ce("manager-body");
@@ -182,14 +181,14 @@ export default abstract class Manager extends Frame {
     this.removeIntersectionListener(root)
   }
 
-  private async canSwap(to: Page, domainFragment: string): Promise<boolean> {
+  private async canSwap(to: Frame, domainFragment: string): Promise<boolean> {
     return await to.tryNavigate(domainFragment)
   }
   /**
    * Swaps to given Frame
    * @param to frame to be swaped to
    */
-  private async swapFrame(to: Page): Promise<void> {
+  private async swapFrame(to: Frame): Promise<void> {
     if (this.busySwaping) {
       console.warn("was busy, unable to execute pageswap")
       // maybe retry, or cancel ...
@@ -336,7 +335,7 @@ export default abstract class Manager extends Frame {
       while(pageProm !== undefined) {
         nthTry++
 
-        let suc: boolean = await pageProm.priorityThen(async (page: Page | SectionedPage) => {
+        let suc: boolean = await pageProm.priorityThen(async (page: Frame | SectionedPage) => {
           sucPage = page
           page.domainLevel = domainLevel
           domainFragment = rootDomainFragment === "" ? page.defaultDomain : rootDomainFragment

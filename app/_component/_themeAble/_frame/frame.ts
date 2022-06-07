@@ -59,6 +59,38 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
 
     if (this.activationCallback) return this.activationCallback(activate)
   }
+
+
+
+
+  public domainLevel?: number
+  public readonly defaultDomain: string = ""
+  public preferedLeftBoundry?: {
+    mobile: number | string,
+    desktop: number | string
+  }
+
+  /**
+   * @return resolve Promise as soon as you know if the navigation will be successful or not. Dont wait for swap animation etc
+   */
+  protected tryNavigationCallback?(domainFragment: string): boolean | void | Promise<boolean | void>
+  protected navigationCallback?(): Promise<void>
+  protected initialActivationCallback?(): boolean | void | Promise<boolean | void>
+
+  public async tryNavigate(domainFragment?: string) {
+    let res = true
+    if (this.tryNavigationCallback) {
+      let acRes = await this.tryNavigationCallback(domainFragment)
+      if (acRes === undefined) acRes = true
+      if (!acRes) res = false
+    }
+    
+    return res
+  }
+  public navigate() {
+    if (this.navigationCallback) this.navigationCallback()
+  }
+
   
   stl() {
     return super.stl() + require("./frame.css").toString()
@@ -74,7 +106,6 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
   }
 
   protected activationCallback?(active: boolean): void
-  protected initialActivationCallback?(): void
   public userInitedScrollEvent: boolean
   public addIntersectionListener?(root: HTMLElement, cb: Function, threshold?: number, rootMargin?: string): void
   public removeIntersectionListener?(root: HTMLElement): void
