@@ -3,7 +3,7 @@ import pth from "path"
 import fs from "fs"
 import xtring from "xtring"; xtring();
 
-import { configureExpressApp, SendFileProxyFunc } from "./../../server/src/setup"
+import { configureExpressApp, ExtendedExpress, SendFileProxyFunc } from "./../../server/src/setup"
 
 
 
@@ -22,14 +22,14 @@ const swInjection = fs.readFileSync(pth.join(__dirname, "./../res/live-reload-in
 const publicPath = "./public"
 
 
-export default function init(indexUrl: string = "*", wsUrl: string = "/") {
+export default function init(onRdy: (app: ExtendedExpress) => (Promise<void> | void), indexUrl: string = "*", wsUrl: string = "/") {
   if (!wsUrl.startsWith("/")) wsUrl = "/" + wsUrl
 
 
   let activateSetFileProxy: (f: SendFileProxyFunc) => void
 
   let clients: Set<WebSocket>
-  const app = configureExpressApp({indexUrl, publicPath, sendFileProxy: new Promise((res) => {activateSetFileProxy = res})})
+  const app = configureExpressApp({onRdy, indexUrl, publicPath, sendFileProxy: new Promise((res) => {activateSetFileProxy = res})})
 
   
   const restartingCousOf = []

@@ -16,7 +16,7 @@ import expressWs from "express-ws"
 
 
 
-type ExtendedExpress = express.Express & { port: Promise<number> } & { ws: (route: string, fn: (ws: WebSocket & {on: WebSocket["addEventListener"], off: WebSocket["removeEventListener"]}, req: any) => void) => void }
+export type ExtendedExpress = express.Express & { port: Promise<number> } & { ws: (route: string, fn: (ws: WebSocket & {on: WebSocket["addEventListener"], off: WebSocket["removeEventListener"]}, req: any) => void) => void }
 
 
 

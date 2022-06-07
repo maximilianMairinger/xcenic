@@ -67,7 +67,7 @@ export default abstract class Manager extends Frame {
 
   private resourcesMap: ResourcesMap
 
-  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: Page, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number, pageName: string) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void, public blurCallback?: Function, public preserveFocus?: boolean) {
+  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: Page, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number, pageName: string) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void) {
     super(null);
 
     this.bod = ce("manager-body");
@@ -75,13 +75,6 @@ export default abstract class Manager extends Frame {
     
     this.bod.apd(this.loadingElem)
     this.sra(this.bod);
-
-    this.on("keydown", (e) => {
-      if (e.code === "Escape") {
-        this.blur();
-        if (this.blurCallback !== undefined) this.blurCallback(e);
-      }
-    });
 
 
     if (onUserScroll && onScroll) {

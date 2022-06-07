@@ -1,20 +1,38 @@
 import liveReloadServer from "./liveReloadServer"
-let app = liveReloadServer()
-
-
 import delay from "delay"
 
 
 
-app.post("/addEntry", (req, res) => {
-  const entry = req.body
-  entry.time = Date.now()
 
-  console.log("getting entry", entry)
-
-  setTimeout(() => {
+liveReloadServer((app) => {
+  app.get("/api/register/:uid", async (req, res) => {
+    const uid = req.params.uid
+  
+    console.log("got call")
+  
     res.send({
-      success: true
+      firstName: uid,
+      surName: "Doe",
     })
-  }, 1000)
+  })
+      
+  
+
+  
+  app.post("/addEntry", (req, res) => {
+    const entry = req.body
+    entry.time = Date.now()
+  
+    console.log("getting entry", entry)
+  
+    setTimeout(() => {
+      res.send({
+        success: true
+      })
+    }, 1000)
+  })
 })
+
+
+
+

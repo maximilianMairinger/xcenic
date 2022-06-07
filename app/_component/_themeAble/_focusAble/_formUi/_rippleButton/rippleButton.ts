@@ -16,6 +16,14 @@ export default class UiButton extends FormUi<Button> {
     super(button)
 
     this.sra(ce("slot"))
+
+    this.userFeedbackModeResult({
+      ripple: true,
+      hover: true,
+      active: true,
+      enabled: true,
+      preHover: true
+    })
     
 
 

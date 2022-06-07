@@ -18,16 +18,25 @@ export default class Form extends Component<false> {
     if (submitElement) {
       this.submitElement(submitElement)
     }
+    else {
+      setTimeout(() => {
+        if (this.submitElementSym !== undefined) return
+        const subBut = this.childs("c-block-button, c-button, c-ripple-button, c-block-button, c-load-button", true).last as Button
+        if (subBut) this.submitElement(subBut)
+      })
+      
+    }
   }
   private unsubFromLastSubmitElement = () => {}
+  private submitElementSym: Symbol
   submitElement(submitElement: SelectorToButton | Button) {
     if (typeof submitElement === "string") {
       submitElement = this.childs(submitElement)
     }
 
-    const localUnsub = this.unsubFromLastSubmitElement
+    const localSym = this.submitElementSym = Symbol()
     setTimeout(() => {
-      if (localUnsub !== this.unsubFromLastSubmitElement) return
+      if (localSym !== this.submitElementSym) return
 
       this.unsubFromLastSubmitElement();
       const cb = (submitElement as Button).addActivationCallback(async () => {
