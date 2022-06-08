@@ -54,8 +54,6 @@ export default abstract class Manager extends Frame {
   protected busySwaping: boolean = false;
   public currentPage: Frame
 
-  protected bod: HTMLElement;
-
   private wantedFrame: Frame;
 
 
@@ -69,12 +67,14 @@ export default abstract class Manager extends Frame {
   constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: Frame, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number, pageName: string) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void) {
     super(null);
 
-    this.bod = ce("manager-body");
+    this.apd(ce("slot"));
+
     this.loadingElem = new LoadingSpinner();
     this.loadingElem.show()
     
-    this.bod.apd(this.loadingElem)
-    this.sra(this.bod);
+    
+
+    this.append(this.loadingElem)
 
 
     if (onUserScroll && onScroll) {
@@ -97,7 +97,7 @@ export default abstract class Manager extends Frame {
     }
 
     const { resourcesMap } = lazyLoad(this.importanceMap, e => {
-      this.bod.apd(e)
+      this.append(e)
     })
     this.resourcesMap = resourcesMap
   }
