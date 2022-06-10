@@ -7,13 +7,19 @@ import delay from "delay"
 liveReloadServer((app) => {
   app.get("/api/register/:uid", async (req, res) => {
     const uid = req.params.uid
+    if (uid === "uid") {
+      console.log("got call")
   
-    console.log("got call")
+      res.send({
+        firstName: uid,
+        surName: "Doe",
+      })
+    }
+    else {
+      res.send(404)
+    }
   
-    res.send({
-      firstName: uid,
-      surName: "Doe",
-    })
+    
   })
       
   

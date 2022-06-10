@@ -1,11 +1,12 @@
-component-body {
+component-body, frame-container {
   display: block;
   width: 100%;
   height: 100%;
   position: relative;
 }
 
-::slotted(*) {
+
+::slotted(*), frame-container > * {
   display: none;
   position: absolute;
   width: 100%;

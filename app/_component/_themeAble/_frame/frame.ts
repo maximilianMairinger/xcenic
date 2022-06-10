@@ -24,7 +24,7 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
   private contentRec: Recording
   private fullRec: Recording
 
-  constructor(theme: Theme) {
+  constructor(theme?: Theme) {
     const minimal = loadRecord.minimal.record()
     const content = loadRecord.content.record()
     const full = loadRecord.full.record()
@@ -74,10 +74,10 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
    * @return resolve Promise as soon as you know if the navigation will be successful or not. Dont wait for swap animation etc
    */
   protected tryNavigationCallback?(domainFragment: string): boolean | void | Promise<boolean | void>
-  protected navigationCallback?(): Promise<void>
+  protected navigationCallback?(domainFragment: string): Promise<void>
   protected initialActivationCallback?(): boolean | void | Promise<boolean | void>
 
-  public async tryNavigate(domainFragment?: string) {
+  public async tryNavigate(domainFragment: string) {
     let res = true
     if (this.tryNavigationCallback) {
       let acRes = await this.tryNavigationCallback(domainFragment)
@@ -87,8 +87,8 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
     
     return res
   }
-  public navigate() {
-    if (this.navigationCallback) this.navigationCallback()
+  public navigate(domainFragment: string) {
+    if (this.navigationCallback) this.navigationCallback(domainFragment)
   }
 
   

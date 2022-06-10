@@ -12,6 +12,7 @@ import HighlightAbleIcon from "../../_icon/_highlightAbleIcon/highlightAbleIcon"
 import { Data } from "josm";
 import { linkRecord } from "../../link/link";
 import * as isSafari from "is-safari"
+import ResablePromise from "../../../../lib/resablePromise";
 
 
 
@@ -54,27 +55,23 @@ export default abstract class Manager extends Frame {
   protected busySwaping: boolean = false;
   public currentPage: Frame
 
-  private wantedFrame: Frame;
-
+  private wantedFrame: {frame: Frame, url: string};
 
   private loadingElem: any;
+  protected resourcesMap: ResourcesMap
+  protected bodyTarget: HTMLElement
 
-
-
-
-  private resourcesMap: ResourcesMap
-
-  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any>, public domainLevel: number, private pageChangeCallback?: (page: Frame, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number, pageName: string) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void) {
+  private needAppendProxy = false
+  constructor(private importanceMap: ImportanceMap<() => Promise<any>, any> | null, public domainLevel: number, private pageChangeCallback?: (page: Frame, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number, pageName: string) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void) {
     super(null);
 
-    this.apd(ce("slot"));
+    const instancieatedDirectly = this.constructor === Manager
+    const bod = instancieatedDirectly ? ce("slot") : ce("frame-container")
+    const bodTarget = this.bodyTarget = instancieatedDirectly ? this : bod
 
-    this.loadingElem = new LoadingSpinner();
-    this.loadingElem.show()
-    
-    
+    this.apd(bod);
 
-    this.append(this.loadingElem)
+    
 
 
     if (onUserScroll && onScroll) {
@@ -96,10 +93,76 @@ export default abstract class Manager extends Frame {
       }, false, {passive: true})
     }
 
-    const { resourcesMap } = lazyLoad(this.importanceMap, e => {
-      this.append(e)
-    })
-    this.resourcesMap = resourcesMap
+    
+
+
+
+
+
+    if (!importanceMap) {
+      this.resourcesMap = new ResourcesMap()
+      this.needAppendProxy = true
+    }
+    else {
+      const { resourcesMap } = lazyLoad(this.importanceMap, e => {
+        bodTarget.append(e)
+      })
+      this.resourcesMap = resourcesMap
+    }
+
+
+    this.loadingElem = new LoadingSpinner();
+    this.loadingElem.show()
+    super.append(this.loadingElem)
+  }
+  private needCallMutFunc: boolean = false
+  // connectedCallback() {
+  //   if (this.needCallMutFunc) this.mutFunc(this.bodyTarget.childs(1))
+  // }
+
+  mutFunc(addedNodes: Element[]) {
+    for (const addedNode of addedNodes) {
+      const elem = addedNode as Frame
+      const urlParam = elem.getAttribute("url")
+      const id = elem.id
+      const name = urlParam ? urlParam : id ? id : ""
+      const prom = Promise.resolve(elem)
+
+      elem.tryNavigate = async (domainFrag) => domainFrag === ""
+      elem.navigate = async () => {}
+      elem.activate = () => {(elem as any).active = true}
+      elem.deactivate = () => {(elem as any).active = false}
+      elem.vate = (what) => {(elem as any).active = what}
+      (elem as any).minimalContentPaint = () => {}
+      (elem as any).fullContentPaint = () => {}
+      (elem as any).completePaint = () => {}
+      (elem as any).defaultDomain = ""
+
+
+      prom.then((page) => {
+        console.log("page", page)
+      });
+      //@ts-ignore
+      prom.priorityThen = prom.then
+      this.resourcesMap.add(name, prom as any)
+    }
+  }
+
+  set innerHTML(to: string) {
+    this.bodyTarget.innerHTML = to
+
+    if (this.needAppendProxy) {
+      this.mutFunc(this.bodyTarget.childs(1))
+    }
+  }
+  get innerHTML() {
+    return this.bodyTarget.innerHTML
+  }
+  append(...elems: HTMLElement[]) {
+    this.bodyTarget.append(...elems)
+    if (this.needAppendProxy) {
+      this.mutFunc(elems)
+    }
   }
   private tempDomainStore: string
   private minimalLoadedYet: boolean = false
@@ -112,13 +175,19 @@ export default abstract class Manager extends Frame {
     })
   }
 
+  async navigationCallback(to: string) {
+    await this.setDomain(to)
+  }
 
-  tryNavigationCallback(url: string) {
+
+
+  async tryNavigationCallback(url: string) {
     try {
-      this.findSuitablePage(url)
+      await this.findSuitablePage(url)
       return true
     }
     catch(e) {
+      debugger
       return false
     }
   }
@@ -141,16 +210,21 @@ export default abstract class Manager extends Frame {
     for (const {link, level} of links) {
       const { href, isOnOrigin} = domain.linkMeta(link, level)
       if (isOnOrigin) {
-        toBePreloadedLocally.add(href)
+        debugger
+        const subUrl = href.split("/").splice(0, this.domainLevel).join("/")
+        toBePreloadedLocally.add(subUrl)
       }
       else toBePreloadedExternally.add(href)
       
     }
 
-    const el = await Promise.all(toBePreloadedLocally.map(async (url) => 
-      (await this.findSuitablePage(url)).pageProm.imp
-    ))
-    await this.importanceMap.whiteList(el, "minimalContentPaint")
+    if (this.importanceMap) {
+      const el = await Promise.all(toBePreloadedLocally.map(async (url) => 
+        (await this.findSuitablePage(url)).pageProm.imp
+      ))
+      await this.importanceMap.whiteList(el, "minimalContentPaint")
+    }
+
     
     
     await Promise.all(toBePreloadedExternally.map((url) => fetch(url).catch(() => {})))
@@ -201,7 +275,7 @@ export default abstract class Manager extends Frame {
    * Swaps to given Frame
    * @param to frame to be swaped to
    */
-  private async swapFrame(to: Frame): Promise<void> {
+  private async swapFrame(to: Frame, toStr: string): Promise<void> {
     if (this.busySwaping) {
       console.warn("was busy, unable to execute pageswap")
       // will be retried at the end of execution
@@ -209,7 +283,7 @@ export default abstract class Manager extends Frame {
     }
     this.busySwaping = true;
 
-    this.wantedFrame = to;
+    this.wantedFrame = {frame: to, url: toStr};
     let from = this.currentPage;
 
     
@@ -218,7 +292,7 @@ export default abstract class Manager extends Frame {
     if (from === to) {
       //Focus even when it is already the active frame
       to.focus()
-      to.navigate()
+      to.navigate(toStr)
       this.busySwaping = false
       return
     }
@@ -231,7 +305,7 @@ export default abstract class Manager extends Frame {
     
     if (from !== undefined) from.deactivate()
     if (this.active) {
-      to.navigate()
+      to.navigate(toStr)
       to.activate()
     }
 
@@ -241,7 +315,7 @@ export default abstract class Manager extends Frame {
 
 
     
-    this.scrollEventListener.target((to as any)).activate()
+    if (this.scrollEventListener) this.scrollEventListener.target((to as any)).activate()
 
     if (this.onUserScroll && this.onScroll) {
       
@@ -293,8 +367,8 @@ export default abstract class Manager extends Frame {
   
       to.css("zIndex", "initial")
       this.busySwaping = false;
-      if (this.wantedFrame !== to) {
-        await this.swapFrame(this.wantedFrame);
+      if (this.wantedFrame.frame !== to) {
+        await this.swapFrame(this.wantedFrame.frame, this.wantedFrame.url);
         return
       }
     })()
@@ -310,14 +384,20 @@ export default abstract class Manager extends Frame {
     else return this.currentUrl
   }
 
-  private suitablePageCache = new Map<string, Awaited<ReturnType<typeof this.findSuitablePage>>>()
+  private suitablePageCache = new Map<string, ReturnType<typeof this.findSuitablePage>>()
   private async findSuitablePage(fullDomain: string): Promise<{ to: string, pageProm: PriorityPromise<Frame>, fullDomainHasTrailingSlash: boolean, suc: {
-    domain: string,
+    domain: {
+      url: string,
+      level: number
+    },
     page: Frame,
-    level: number
+    
   }}> {
     const cached = this.suitablePageCache.get(fullDomain)
-    if (cached !== undefined) return cached as any
+    if (cached !== undefined) return await cached as any
+
+    const chacheProm = new ResablePromise()
+    this.suitablePageCache.set(fullDomain, chacheProm)
 
 
     let to: any = fullDomain
@@ -350,7 +430,8 @@ export default abstract class Manager extends Frame {
       let domFrag = fullDomain.slice(to.length + (toIsEmpty ? 1 : 2), fullDomainHasTrailingSlash ? -1 : undefined)
       const rootDomainFragment = domFrag
       let domainFragment: string
-      const domainLevel = toIsEmpty ? 0 : (occurrences(to, "/") + 1 + this.domainLevel)
+      debugger
+      const domainLevel = (toIsEmpty ? 0 : (occurrences(to, "/") + 1)) + this.domainLevel
       sucDomainLevel = domainLevel
 
       while(pageProm !== undefined) {
@@ -359,6 +440,7 @@ export default abstract class Manager extends Frame {
         let suc: boolean = await pageProm.priorityThen(async (page: Frame | SectionedPage) => {
           sucPage = page
           page.domainLevel = domainLevel
+          debugger
           domainFragment = rootDomainFragment === "" ? page.defaultDomain : rootDomainFragment
           return await this.canSwap(page, domainFragment)
         }, false)
@@ -375,12 +457,14 @@ export default abstract class Manager extends Frame {
     }
 
     const ret = { to, pageProm, fullDomainHasTrailingSlash, suc: {
-      domain: sucDomainFrag,
+      domain: {
+        url: sucDomainFrag,
+        level: sucDomainLevel
+      },
       page: sucPage,
-      level: sucDomainLevel
     }}
 
-    this.suitablePageCache.set(fullDomain, ret)
+    chacheProm.res(ret)
 
     return ret
   }
@@ -392,11 +476,11 @@ export default abstract class Manager extends Frame {
     if (this.nextPageToken !== nextPageToken) return
     
     this.currentPageFullyLoaded = new Promise((doneLoading) => {
-      domain.set(domain.dirString + suc.domain + (fullDomainHasTrailingSlash && suc.domain !== "" ? domain.dirString : ""), suc.level, false).then(() => {
+      domain.set(domain.dirString + suc.domain.url + (fullDomainHasTrailingSlash && suc.domain.url !== "" ? domain.dirString : ""), suc.domain.level, false).then(() => {
 
         
         pageProm.priorityThen(() => {
-          this.swapFrame(suc.page)
+          this.swapFrame(suc.page, suc.domain.url)
         }, "minimalContentPaint")
 
         pageProm.priorityThen(() => {

@@ -157,9 +157,9 @@ export default class Site extends Component {
     })
 
 
-    function handleDomainSet(url: string) {
+    async function handleDomainSet(url: string) {
       try {
-        pageManager.setDomain(url)
+        await pageManager.setDomain(url)
       }
       catch(e) {
         document.write(e.message)

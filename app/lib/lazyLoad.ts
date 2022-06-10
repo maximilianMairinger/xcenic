@@ -125,6 +125,8 @@ export class BidirectionalMap<K, V> extends Map<K, V> {
   }
 }
 
+
+// TODO: Replace with npm package
 class MultiKeyMap<K, V> {
   private index = keyIndex<K, V[]>(() => [])
   constructor(...index: {key: K, val: V}[]) {

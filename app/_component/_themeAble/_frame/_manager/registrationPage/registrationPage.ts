@@ -1,33 +1,49 @@
-import * as domain from "./../../../../../lib/domain"
+import { Import, PriorityPromise } from "./../../../../../lib/lazyLoad"
+import * as domain from "../../../../../lib/domain"
 import { delay } from "tiny-delay"
 import declareComponent from "../../../../../lib/declareComponent"
-import Page from "./../page"
-import "./../../../../form/form"
-import Form from "./../../../../form/form";
-import "./../../../textBlob/textBlob"
-import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/loadButton/loadButton"
-import "./../../../_focusAble/_formUi/_rippleButton/_blockButton/selectButton/selectButton"
-import LoadButton from  "./../../../_focusAble/_formUi/_rippleButton/_blockButton/loadButton/loadButton"
-import "./../../../_focusAble/_formUi/_editAble/_input/input"
-import "./../../../_focusAble/_formUi/_editAble/textArea/textArea"
-import "./../../../_focusAble/_formUi/formUi"
-import "./../../../../image/image"
-import Image from "./../../../../image/image"
+import Manager from "../manager"
+import "../../../../form/form"
+import Form from "../../../../form/form";
+import "../../../textBlob/textBlob"
+import "../../../_focusAble/_formUi/_rippleButton/_blockButton/loadButton/loadButton"
+import "../../../_focusAble/_formUi/_rippleButton/_blockButton/selectButton/selectButton"
+import LoadButton from  "../../../_focusAble/_formUi/_rippleButton/_blockButton/loadButton/loadButton"
+import "../../../_focusAble/_formUi/_editAble/_input/input"
+import "../../../_focusAble/_formUi/_editAble/textArea/textArea"
+import "../../../_focusAble/_formUi/formUi"
+import "../../../../image/image"
+import Image from "../../../../image/image"
 import qrCode from "qrcode"
-import FormUi from "./../../../_focusAble/_formUi/formUi";
+import FormUi from "../../../_focusAble/_formUi/formUi";
 import { ElementList } from "extended-dom";
-import Input from "./../../../_focusAble/_formUi/_editAble/_input/input"
+import Input from "../../../_focusAble/_formUi/_editAble/_input/input"
 import * as ajax from "../../../../../lib/ajax"
 
 
 
-class RegisterPage extends Page {
+
+class RegisterPage extends Manager {
   private formIndex = {} as {[id: string]: Form}
+
   constructor() {
-    super("light")
+    super(null, 1, undefined)
+
+    
+
+
+    this.innerHTML = require("./setupViews.pug").default
 
 
     const forms = this.q("c-form", true) as ElementList<Form>
+
+    const prom = Promise.resolve(forms[0]);
+    prom.then((page) => {
+      console.log("page", page)
+    });
+    (prom as any).priorityThen = prom.then
+    this.resourcesMap.add("", prom as PriorityPromise)
+
     this.formIndex = {} as {[id: string]: Form}
     forms.forEach((form) => {
       this.formIndex[form.id] = form as Form
@@ -35,6 +51,12 @@ class RegisterPage extends Page {
 
     for (let i = 1; i < forms.length; i++) forms[i].hide()
 
+
+
+  }
+
+  connectedCallback() {
+    (this as any).defaultDomain = this.resourcesMap.entries().next().value.next().value[0]
   }
 
   private registrationInfo: {
@@ -46,6 +68,8 @@ class RegisterPage extends Page {
   }
   private registerIdentifier: string
   async tryNavigationCallback(domainFragment: string) {
+    if (await super.tryNavigationCallback(domainFragment)) return true
+
     const splitDomain = domainFragment.split(domain.dirString)
     this.registerIdentifier = splitDomain.last
     try {
@@ -57,7 +81,8 @@ class RegisterPage extends Page {
     }
   }
 
-  async navigationCallback() {
+  async navigationCallback(to: string) {
+    await super.navigationCallback(to)
     // TODO: remove key from url and keep in local storage
     this.insertInitalValues()
 
@@ -124,11 +149,6 @@ class RegisterPage extends Page {
     return {code: "123456", url: "https://google.com"}
   }
 
-
-
-  protected activationCallback(active: boolean): void {
-    
-  }
   stl() {
     return super.stl() + require("./registrationPage.css").toString()
   }

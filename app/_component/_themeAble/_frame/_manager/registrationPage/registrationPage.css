@@ -25,7 +25,6 @@ c-form {
   position: absolute;
   /* padding-top: 100px; */
   box-sizing: border-box;
-  display: flex;
   justify-content: center;
   align-items: center;
   width: 80%;
@@ -35,6 +34,7 @@ c-form {
   background-color: white;
   height: 100vh;
 }
+
 
 c-form c-text-blob {
   --body-size: 100%;
