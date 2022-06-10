@@ -1,6 +1,5 @@
 component-body {
   display: flex;
-  height: fit-content;
 }
 
 image-container {
@@ -21,13 +20,29 @@ image-darken {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
+frame-container {
+  width: 70%;
+  min-width: 450px;
+}
+
+@media (max-width: 870px) {
+  frame-container {
+    width: 100%;
+  }
+  image-container {
+    display: none;
+  }
+}
+
+
+
 c-form {
   position: absolute;
   /* padding-top: 100px; */
   box-sizing: border-box;
   justify-content: center;
   align-items: center;
-  width: 80%;
+  width: 100%;
   min-width: 420px;
   height: min-content;
   position: relative;
@@ -35,6 +50,11 @@ c-form {
   height: 100vh;
 }
 
+@media (max-width: 550px) {
+  c-form {
+    height: 70vh;
+  }
+}
 
 c-form c-text-blob {
   --body-size: 100%;

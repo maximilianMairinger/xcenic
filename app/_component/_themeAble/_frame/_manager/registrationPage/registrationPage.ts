@@ -25,6 +25,7 @@ import * as ajax from "../../../../../lib/ajax"
 
 class RegisterPage extends Manager {
   private formIndex = {} as {[id: string]: Form}
+  showDisplay = "flex"
 
   constructor() {
     super(null, 1, undefined)

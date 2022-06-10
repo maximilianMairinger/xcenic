@@ -5,6 +5,10 @@ component-body, frame-container {
   position: relative;
 }
 
+component-body {
+  overflow-x: auto;
+  height: 100vh;
+}
 
 ::slotted(*), frame-container > * {
   display: none;

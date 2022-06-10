@@ -376,7 +376,6 @@ export default class Link extends ThemeAble {
         this.domainLevel = domainLevel !== undefined ? domainLevel : this.domainLevel
       }
 
-      debugger
       linkRecord.add({link: this._link, level: this.domainLevel})
       this.updateHref()
       this.addClass("active")

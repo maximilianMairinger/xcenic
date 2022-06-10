@@ -60,6 +60,7 @@ export default abstract class Manager extends Frame {
   private loadingElem: any;
   protected resourcesMap: ResourcesMap
   protected bodyTarget: HTMLElement
+  public showDisplay = "block"
 
   private needAppendProxy = false
   constructor(private importanceMap: ImportanceMap<() => Promise<any>, any> | null, public domainLevel: number, private pageChangeCallback?: (page: Frame, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number, pageName: string) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void) {
@@ -187,7 +188,6 @@ export default abstract class Manager extends Frame {
       return true
     }
     catch(e) {
-      debugger
       return false
     }
   }
@@ -210,7 +210,6 @@ export default abstract class Manager extends Frame {
     for (const {link, level} of links) {
       const { href, isOnOrigin} = domain.linkMeta(link, level)
       if (isOnOrigin) {
-        debugger
         const subUrl = href.split("/").splice(0, this.domainLevel).join("/")
         toBePreloadedLocally.add(subUrl)
       }
@@ -300,7 +299,7 @@ export default abstract class Manager extends Frame {
 
     
     this.loadingElem.remove();
-    to.show();
+    to.css("display", this.showDisplay)
     to.focus();
     
     if (from !== undefined) from.deactivate()
@@ -430,7 +429,6 @@ export default abstract class Manager extends Frame {
       let domFrag = fullDomain.slice(to.length + (toIsEmpty ? 1 : 2), fullDomainHasTrailingSlash ? -1 : undefined)
       const rootDomainFragment = domFrag
       let domainFragment: string
-      debugger
       const domainLevel = (toIsEmpty ? 0 : (occurrences(to, "/") + 1)) + this.domainLevel
       sucDomainLevel = domainLevel
 
@@ -440,7 +438,6 @@ export default abstract class Manager extends Frame {
         let suc: boolean = await pageProm.priorityThen(async (page: Frame | SectionedPage) => {
           sucPage = page
           page.domainLevel = domainLevel
-          debugger
           domainFragment = rootDomainFragment === "" ? page.defaultDomain : rootDomainFragment
           return await this.canSwap(page, domainFragment)
         }, false)
