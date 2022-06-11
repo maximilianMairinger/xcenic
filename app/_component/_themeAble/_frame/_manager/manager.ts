@@ -168,6 +168,7 @@ export default abstract class Manager extends Frame {
   private tempDomainStore: string
   private minimalLoadedYet: boolean = false
   public async setDomain(to: string) {
+    if (!to.startsWith("/")) to = "/" + to
     if (!this.minimalLoadedYet) this.tempDomainStore = to
     const linkRecording = linkRecord.record()
     await this.setElem(to)
@@ -392,6 +393,9 @@ export default abstract class Manager extends Frame {
     page: Frame,
     
   }}> {
+
+    if (!fullDomain.startsWith("/")) fullDomain = "/" + fullDomain
+
     const cached = this.suitablePageCache.get(fullDomain)
     if (cached !== undefined) return await cached as any
 

@@ -19,6 +19,8 @@ import FormUi from "../../../_focusAble/_formUi/formUi";
 import { ElementList } from "extended-dom";
 import Input from "../../../_focusAble/_formUi/_editAble/_input/input"
 import * as ajax from "../../../../../lib/ajax"
+import localSettings from "../../../../../lib/localSettings"
+import { Data } from "josm"
 
 
 
@@ -67,14 +69,37 @@ class RegisterPage extends Manager {
     phone?: string
     username?: string
   }
-  private registerIdentifier: string
+  private registerIdentifier = localSettings("registerIdentifier", undefined)
+  async activationCallback(active: boolean) {
+    await super.activationCallback(active)
+
+    if (!active) {
+      this.registerIdentifier.set(undefined)
+    }
+  }
+  private uidFoundInUrl = false
   async tryNavigationCallback(domainFragment: string) {
-    if (await super.tryNavigationCallback(domainFragment)) return true
+    if (await super.tryNavigationCallback(domainFragment)) {
+      if (this.registerIdentifier.get() !== undefined) {
+        const registerIdentifier = this.registerIdentifier.get()
+        try {
+          this.registrationInfo = await ajax.get(`/api/register/${registerIdentifier}`)
+          return true
+        }
+        catch(e) {
+          return false
+        }
+      }
+      else return false
+    }
+
+    this.uidFoundInUrl = true
 
     const splitDomain = domainFragment.split(domain.dirString)
-    this.registerIdentifier = splitDomain.last
+    const registerIdentifier = splitDomain.last
     try {
-      this.registrationInfo = await ajax.get(`/api/register/${this.registerIdentifier}`)
+      this.registrationInfo = await ajax.get(`/api/register/${registerIdentifier}`)
+      this.registerIdentifier.set(registerIdentifier)
       return true
     }
     catch(e) {
@@ -82,10 +107,42 @@ class RegisterPage extends Manager {
     }
   }
 
+  // async tryNavigationCallback(domainFragment: string) {
+  //   if (await super.tryNavigationCallback(domainFragment)) {
+  //     return this.registerIdentifier.get() !== undefined
+  //   }
+
+  //   const splitDomain = domainFragment.split(domain.dirString)
+  //   const noRegIdent = this.registerIdentifier.get() === undefined
+  //   const registerIdentifier = noRegIdent ? splitDomain.last : this.registerIdentifier.get()
+  //   try {
+  //     this.registrationInfo = await ajax.get(`/api/register/${registerIdentifier}`)
+  //     this.registerIdentifier.set(registerIdentifier)
+  //     return true
+  //   }
+  //   catch(e) {
+  //     if (!noRegIdent) {
+  //       const registerIdentifier = splitDomain.last
+  //       try {
+  //         this.registrationInfo = await ajax.get(`/api/register/${registerIdentifier}`)
+  //         this.registerIdentifier.set(registerIdentifier)
+  //         return true
+  //       }
+  //       catch(e) {
+  //         return false
+  //       }
+        
+  //     }
+  //     else return false
+  //   }
+  // }
+
+
   async navigationCallback(to: string) {
-    await super.navigationCallback(to)
-    // TODO: remove key from url and keep in local storage
+    await super.navigationCallback(this.uidFoundInUrl ? "" : to)
     this.insertInitalValues()
+
+    if (this.uidFoundInUrl) domain.set(this.defaultDomain, this.domainLevel, false)
 
     for (const id in this.formIndex) {
       const form = this.formIndex[id]
