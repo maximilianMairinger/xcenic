@@ -2,15 +2,23 @@ import { parse, stringify } from "./serialize"
 
 
 export async function get(url: string): Promise<object> {
-  return parse(await (await fetch(url)).text())
+  const req = await fetch(url)
+  if (req.status !== 200) {
+    throw new Error(`${req.status} ${req.statusText}`)
+  }
+  return parse(await req.text())
 }
 
 export async function post(url: string, data: object): Promise<object> {
-  return parse(await (await fetch(url, {
+  const req = (await fetch(url, {
     method: "POST",
     body: stringify(data),
     headers: {
       "Content-Type": "application/json"
     }
-  })).text())
+  }))
+  if (req.status !== 200) {
+    throw new Error(`${req.status} ${req.statusText}`)
+  }
+  return parse(await req.text())
 }

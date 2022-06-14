@@ -8,7 +8,7 @@ type Token = string | string[]
 export default abstract class Component<T extends HTMLElement | HTMLAnchorElement | boolean | never = HTMLElement> extends HTMLElement {
   protected sr: ShadowRoot;
   protected componentBody: T extends (HTMLElement | HTMLAnchorElement) ? T : T extends false ? ShadowRoot : HTMLElement
-  protected body: {[name: string]: Element | ElementList} = {}
+  protected body: {[name: string]: Element | ElementList}
 
 
   constructor(bodyExtension?: T, indexName = true) {
@@ -33,17 +33,21 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
 
 
     if (indexName) {
-      this.componentBody.childs("*", true).ea((e: any) => {
-        const name = e.getAttribute("name")
-        if (name !== undefined) {
-          if (this.body[name] === undefined) this.body[name] = e
-          else if (this.body[name] instanceof ElementList) (this.body[name] as ElementList).add(e)
-          else this.body[name] = new ElementList(this.body[name], e)
-  
-  
-        }
-      })
+      this.body = this.indexElements()
     }
+  }
+
+  protected indexElements(rootElem = this.componentBody, attrbName = "name") {
+    const body = {} as {[name: string]: Element | ElementList}
+    rootElem.childs("*", true).ea((e: any) => {
+      const name = e.getAttribute(attrbName)
+      if (name !== undefined) {
+        if (body[name] === undefined) body[name] = e
+        else if (body[name] instanceof ElementList) (body[name] as ElementList).add(e)
+        else body[name] = new ElementList(body[name], e)
+      }
+    })
+    return body
   }
 
 

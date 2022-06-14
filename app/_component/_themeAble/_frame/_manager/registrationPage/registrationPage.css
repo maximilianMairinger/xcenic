@@ -37,15 +37,13 @@ frame-container {
 
 
 c-form {
-  position: absolute;
   /* padding-top: 100px; */
   box-sizing: border-box;
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-width: 420px;
+  min-width: calc(100% - 30px);
   height: min-content;
-  position: relative;
   background-color: white;
   height: 100vh;
 }
@@ -61,7 +59,7 @@ c-form c-text-blob {
 }
 
 form-screen {
-  width: 350px;
+  width: 380px;
 }
 
 form-screen > * {
@@ -125,5 +123,15 @@ c-load-button:not(.form) {
 }
 
 
+#pickFactors c-small-key-icon {
+  aspect-ratio: 1.2 / 1;
+}
 
+#pickFactors c-small-fingerprint-icon {
+  aspect-ratio: 1 / 1.1;
+}
+
+#pickFactors c-small-location-icon {
+  aspect-ratio: 1 / 1.2;
+}
 

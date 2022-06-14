@@ -16,11 +16,32 @@ liveReloadServer((app) => {
       })
     }
     else {
-      res.send(404)
+      res.status(404).send({ok:false})
     }
   
     
   })
+
+  app.post("/api/registerUpdate/:uid/:pageId", async (req, res) => {
+    const uid = req.params.uid
+    console.log("req" , req.params)
+    if (uid === "uid") {
+      console.log("got call update")
+      const pageId = req.params.pageId
+  
+      res.send({
+        ok: true,
+        pageId
+      })
+    }
+    else {
+      res.status(404).send({
+        ok: false
+      })
+    }
+  })
+
+  
       
   
 

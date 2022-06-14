@@ -7,8 +7,9 @@
 }
 
 
-button-text {
-  color: #D2E1E1;
+::slotted(*) {
+  --toggle-color: #D2E1E1;
+  color: var(--toggle-color);
 }
 
 :host(.preSelected) {
@@ -16,8 +17,8 @@ button-text {
 }
 
 
-:host(.preSelected) button-text {
-  color: white;
+:host(.preSelected) ::slotted(*) {
+  --toggle-color: white;
 }
 
 
@@ -26,14 +27,14 @@ button-text {
   
 } */
 
-:host(:not(.selected):not(.preSelected).rippleSettled) button-text {
-  color: rgb(var(--primary-text));
-  color: black;
+:host(:not(.selected):not(.preSelected).rippleSettled) ::slotted(*) {
+  --toggle-color: rgb(var(--primary-text));
+  --toggle-color: black;
   mix-blend-mode: normal;
 }
 
-:host(.selected.preSelected.rippleSettled) button-text {
-  color: #d2e1e1;
+:host(.selected.preSelected.rippleSettled) ::slotted(*) {
+  --toggle-color: #d2e1e1;
   mix-blend-mode: normal;
 }
 
@@ -62,7 +63,7 @@ button-waves :nth-child(2n+1):last-child button-wave {
 
 
 
-button-text {
+::slotted(*) {
   mix-blend-mode: difference;
 }
 

@@ -23,12 +23,18 @@ c-form#provideUsername
 c-form#pickFactors
   form-screen(name="factors")
     c-text-blob(heading="Pick at least two auth-factors" note="Registration" text="Please pick at least one other auth-factor. You will always need two factors to login.")
-    c-select-button(content="Password")
-    c-select-button(content="Trust this device")
-    c-select-button(content="Email")
-    c-select-button(content="Tel number")
-    c-select-button(content="OTP Token")
-    c-select-button(content="WebAuthn")
+    c-select-button(name="passwordFactor") Password
+     c-small-key-icon
+    c-select-button(content="" name="emailFactor") Email
+      c-small-key-icon
+    c-select-button(name="trustFactor") Trust this device
+      c-small-location-icon
+    c-select-button(name="telFactor") Phone
+      c-small-location-icon
+    c-select-button(name="otpFactor") OTP Token
+      c-small-location-icon
+    c-select-button(name="webAuthnFactor") WebAuthn
+      c-small-fingerprint-icon
     c-load-button(content="Confirm")
 
 c-form#webAuthnFactor

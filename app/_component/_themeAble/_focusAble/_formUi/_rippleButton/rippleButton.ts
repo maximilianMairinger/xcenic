@@ -2,6 +2,7 @@ import declareComponent from "../../../../../lib/declareComponent";
 import FormUi from "../formUi";
 import Button from "../../_button/button"
 import { EventListener, PrimElem, Token, VariableLibrary } from "extended-dom";
+import delay from "tiny-delay";
 
 
 
@@ -15,8 +16,6 @@ export default class UiButton extends FormUi<Button> {
     const button = new Button()
     super(button)
 
-    this.sra(ce("slot"))
-
     this.userFeedbackModeResult({
       ripple: true,
       hover: true,
@@ -26,8 +25,8 @@ export default class UiButton extends FormUi<Button> {
     })
     
 
-
-    this.button = button
+    this.button = button;
+    this.delayLinkForwardUntilCalledAgain = true
     button.userFeedbackMode.focus.set(false)
 
     this.validMouseButtons = button.validMouseButtons
@@ -57,7 +56,48 @@ export default class UiButton extends FormUi<Button> {
     })
 
     this.enabled.get(this.button.enabled.set.bind(this.button.enabled))
+
+
+
+
+    const superClick = this.button.click.bind(this.button)
+    //@ts-ignore
+    this.button.click = (e?: any) => {
+      const ret = superClick(e) as Promise<any[]> | Function
+      if (e instanceof Function) return ret
+      else {
+        const cbs = new Promise<any[]>((res) => {
+          (ret as Promise<any[]>).then(arr => res((arr as any).flat())).catch((errF) => res([errF]))
+        })
+        const doneAnim = delay(this.getAnimTimer())
+        cbs.then((cbs) => {
+          for (const f of cbs) {
+            if (f instanceof Function) doneAnim.then(f)
+          }  
+        })
+      }
+    }
+    // @ts-ignore
+    this.button.click.superClick = superClick
   }
+
+  protected set delayLinkForwardUntilCalledAgain(to: boolean) {
+    // @ts-ignore
+    this.button.delayLinkForwardUntilCalledAgain = to
+  }
+  protected get delayLinkForwardUntilCalledAgain() {
+    // @ts-ignore
+    return this.button.delayLinkForwardUntilCalledAgain
+  }
+
+
+  getAnimTimer() {
+    const feed = this.userFeedbackModeResult
+    if (!feed.enabled.get()) return 0
+    if (feed.ripple.get()) return 150
+    return 0
+  }
+
 
   
   public link: ((() => string) & ((to: null) => this) & ((to: string, domainLevel?: number, push?: boolean, notify?: boolean) => this))

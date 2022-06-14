@@ -168,8 +168,7 @@ export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement 
       }
     }, true)
     this.componentBody.prepend(hovPreDet);
-    const root = ce("root-bounds")
-    this.apd(root);
+    const root = this.q("click-cover")
 
     setTimeout(() => {
       waitUnitilData(this.userFeedbackModeResult.preHover, val => !!val).then(() => {

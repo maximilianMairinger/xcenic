@@ -11,7 +11,7 @@ export default class LoadButton extends BlockButton {
     super(content, onClick);
 
 
-    const superClick = this.button.click.bind(this.button)
+    const superClick = (this.button.click as any).superClick
     //@ts-ignore
     this.button.click = (e?: any) => {
       const ret = superClick(e) as Promise<any[]> | Function

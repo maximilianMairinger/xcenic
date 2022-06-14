@@ -21,7 +21,8 @@ export default class SelectButton extends BlockButton {
     })
 
 
-    this.addActivationCallback(() => {
+
+    this.click(() => {
       (this.selected as Data<boolean>).set(!this.selected.get())
     })
 

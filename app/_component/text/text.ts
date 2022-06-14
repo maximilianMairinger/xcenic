@@ -50,7 +50,7 @@ export default class Text extends Component {
   public editMode = new Data(false)
   public visualUnit = new Data(undefined, this)
 
-  constructor(data?: Data<Prim>, visualUnit?: HTMLElement) {
+  constructor(data?: Data<Prim> | Prim, visualUnit?: HTMLElement) {
     super(ce("slot"))
 
 
@@ -59,7 +59,7 @@ export default class Text extends Component {
     if (currentlyEditableEnabled) this.editMode.set(true)
 
 
-    if (data) this.txt(data)
+    if (data) this.txt(data as any)
 
 
     this.on("input", () => {

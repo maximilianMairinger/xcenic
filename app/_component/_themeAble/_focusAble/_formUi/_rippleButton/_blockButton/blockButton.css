@@ -8,7 +8,20 @@
   width: fit-content;
 }
 
-button-text {
+::slotted(*:not(c-text)) {
+  position: relative;
+  height: 1.5em;
+  width: fit-content;
+  margin-top: -100%;
+  transform: translateY(25%);
+  aspect-ratio: 1
+}
+
+::slotted(*:not(:first-child)) {
+  margin-left: 7px;
+}
+
+slot {
   display: block;
   font-size: 1em;
   margin: auto 0;

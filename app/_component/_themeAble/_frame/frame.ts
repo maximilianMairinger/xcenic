@@ -24,11 +24,11 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
   private contentRec: Recording
   private fullRec: Recording
 
-  constructor(theme?: Theme) {
+  constructor(theme?: Theme, indexNames?: boolean) {
     const minimal = loadRecord.minimal.record()
     const content = loadRecord.content.record()
     const full = loadRecord.full.record()
-    super(undefined, theme)
+    super(undefined, theme, indexNames)
     this.accentTheme = new Data("primary") as Data<"primary" | "secondary">
 
     this.minimalRec = minimal

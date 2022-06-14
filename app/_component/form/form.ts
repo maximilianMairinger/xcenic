@@ -20,19 +20,34 @@ export default class Form extends Component<false> {
     }
     else {
       setTimeout(() => {
-        if (this.submitElementSym !== undefined) return
-        const subBut = this.childs("c-block-button, c-button, c-ripple-button, c-block-button, c-load-button", true).last as Button
-        if (subBut) this.submitElement(subBut)
+        if (this.submitElem === undefined) {
+          this.panicFindSubmitAndSetButton()
+        }
       })
       
     }
   }
+  private panicFindSubmitAndSetButton() {
+    if (this.submitElementSym !== undefined) return
+    const subBut = this.childs("c-block-button, c-button, c-ripple-button, c-block-button, c-load-button", true).last as Button
+    if (subBut) this.submitElement(subBut)
+  }
   private unsubFromLastSubmitElement = () => {}
+  private submitElem: Button
   private submitElementSym: Symbol
-  submitElement(submitElement: SelectorToButton | Button) {
+  submitElement(submitElement?: SelectorToButton | Button) {
+    if (submitElement === undefined) {
+      if (this.submitElem === undefined) {
+        this.panicFindSubmitAndSetButton()
+      }
+      return this.submitElem
+    }
+    
     if (typeof submitElement === "string") {
       submitElement = this.childs(submitElement)
     }
+
+    this.submitElem = submitElement as any
 
     const localSym = this.submitElementSym = Symbol()
     setTimeout(() => {

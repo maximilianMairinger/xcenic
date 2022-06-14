@@ -64,7 +64,7 @@ export default abstract class Manager extends Frame {
 
   private needAppendProxy = false
   constructor(private importanceMap: ImportanceMap<() => Promise<any>, any> | null, public domainLevel: number, private pageChangeCallback?: (page: Frame, sectiones: {[link: string]: HighlightAbleIcon}[], domainLevel: number, pageName: string) => void, private pushDomainDefault: boolean = true, private onScroll?: (scrollProgress: number) => void, private onUserScroll?: (scrollProgress: number, userInited: boolean) => void) {
-    super(null);
+    super(null, false);
 
     const instancieatedDirectly = this.constructor === Manager
     const bod = instancieatedDirectly ? ce("slot") : ce("frame-container")
@@ -129,15 +129,15 @@ export default abstract class Manager extends Frame {
       const name = urlParam ? urlParam : id ? id : ""
       const prom = Promise.resolve(elem)
 
-      elem.tryNavigate = async (domainFrag) => domainFrag === ""
-      elem.navigate = async () => {}
-      elem.activate = () => {(elem as any).active = true}
-      elem.deactivate = () => {(elem as any).active = false}
-      elem.vate = (what) => {(elem as any).active = what}
-      (elem as any).minimalContentPaint = () => {}
-      (elem as any).fullContentPaint = () => {}
-      (elem as any).completePaint = () => {}
-      (elem as any).defaultDomain = ""
+      if (!elem.tryNavigate) elem.tryNavigate = async (domainFrag) => domainFrag === ""
+      if (!elem.navigate) elem.navigate = async () => {}
+      if (!elem.activate) elem.activate = () => {(elem as any).active = true}
+      if (!elem.deactivate) elem.deactivate = () => {(elem as any).active = false}
+      if (!elem.vate) elem.vate = (what) => {(elem as any).active = what}
+      if (!(elem as any).minimalContentPaint) (elem as any).minimalContentPaint = () => {}
+      if (!(elem as any).fullContentPaint) (elem as any).fullContentPaint = () => {}
+      if (!(elem as any).completePaint) (elem as any).completePaint = () => {}
+      if (!(elem as any).defaultDomain) (elem as any).defaultDomain = ""
 
 
       prom.then((page) => {

@@ -21,7 +21,10 @@ import Input from "../../../_focusAble/_formUi/_editAble/_input/input"
 import * as ajax from "../../../../../lib/ajax"
 import localSettings from "../../../../../lib/localSettings"
 import { Data } from "josm"
-
+import SelectButton from "../../../_focusAble/_formUi/_rippleButton/_blockButton/selectButton/selectButton"
+import "../../../_icon/smallKey/smallKey"
+import "../../../_icon/smallFingerprint/smallFingerprint"
+import "../../../_icon/smallLocation/smallLocation"
 
 
 
@@ -36,6 +39,8 @@ class RegisterPage extends Manager {
 
 
     this.innerHTML = require("./setupViews.pug").default
+    this.formBody = this.indexElements()
+
 
 
     const forms = this.q("c-form", true) as ElementList<Form>
@@ -58,6 +63,11 @@ class RegisterPage extends Manager {
 
   }
 
+  private _endPage: string
+  endPage(endPage: string) {
+    this._endPage = endPage
+  }
+
   connectedCallback() {
     (this as any).defaultDomain = this.resourcesMap.entries().next().value.next().value[0]
   }
@@ -70,13 +80,7 @@ class RegisterPage extends Manager {
     username?: string
   }
   private registerIdentifier = localSettings("registerIdentifier", undefined)
-  async activationCallback(active: boolean) {
-    await super.activationCallback(active)
 
-    if (!active) {
-      this.registerIdentifier.set(undefined)
-    }
-  }
   private uidFoundInUrl = false
   async tryNavigationCallback(domainFragment: string) {
     if (await super.tryNavigationCallback(domainFragment)) {
@@ -107,63 +111,78 @@ class RegisterPage extends Manager {
     }
   }
 
-  // async tryNavigationCallback(domainFragment: string) {
-  //   if (await super.tryNavigationCallback(domainFragment)) {
-  //     return this.registerIdentifier.get() !== undefined
-  //   }
-
-  //   const splitDomain = domainFragment.split(domain.dirString)
-  //   const noRegIdent = this.registerIdentifier.get() === undefined
-  //   const registerIdentifier = noRegIdent ? splitDomain.last : this.registerIdentifier.get()
-  //   try {
-  //     this.registrationInfo = await ajax.get(`/api/register/${registerIdentifier}`)
-  //     this.registerIdentifier.set(registerIdentifier)
-  //     return true
-  //   }
-  //   catch(e) {
-  //     if (!noRegIdent) {
-  //       const registerIdentifier = splitDomain.last
-  //       try {
-  //         this.registrationInfo = await ajax.get(`/api/register/${registerIdentifier}`)
-  //         this.registerIdentifier.set(registerIdentifier)
-  //         return true
-  //       }
-  //       catch(e) {
-  //         return false
-  //       }
-        
-  //     }
-  //     else return false
-  //   }
-  // }
 
 
   async navigationCallback(to: string) {
     await super.navigationCallback(this.uidFoundInUrl ? "" : to)
+    this.uidFoundInUrl = false
     this.insertInitalValues()
 
     if (this.uidFoundInUrl) domain.set(this.defaultDomain, this.domainLevel, false)
+  }
 
+  initialActivationCallback() {
     for (const id in this.formIndex) {
       const form = this.formIndex[id]
 
       form.submit(async (vals) => {
         try {
-          await ajax.post(`/api/registerUpdate/${id}`, vals)
+          await ajax.post(`/api/registerUpdate/${this.registerIdentifier.get()}/${id}`, vals)
         }
         catch(e) {
           console.error(e)
         }
-        // TODO: save progress?
-        // TODO: manager?
 
       })
     }
+
+    let linearFormLinks = Object.keys(this.formIndex)
+    linearFormLinks = linearFormLinks.slice(0, linearFormLinks.indexOf("pickFactors") + 1)
+
+    for (let i = 0; i < linearFormLinks.length; i++) {
+      const link = linearFormLinks[i + 1]
+      const form = this.formIndex[linearFormLinks[i]]
+      form.submitElement().link(link, this.domainLevel)
+    }
+    for (const key in this.formIndex) {
+      if (this[key]) {
+        const ret = this[key]()
+
+        if (ret instanceof Function) {
+          (this.formIndex[key] as any).navigate = ret
+        }
+      }
+    }
+
+
+    const pickFactorsForm = this.formIndex.pickFactors
+    const factorButtons = pickFactorsForm.childs("c-select-button", true) as ElementList<SelectButton>
+    factorButtons.forEach((button) => {
+      const link = button.getAttribute("name")
+      if (this.formIndex[link] !== undefined) {
+        this.formIndex[link].submitElement().link("pickFactors", this.domainLevel)
+        button.selected.get((selected) => {
+          setTimeout(() => {
+            if (!selected) button.link(link, this.domainLevel)
+            else button.link(null)
+          })
+        })
+      }
+    })
+    
+    const doneWithFactorSelectionButton = pickFactorsForm.childs("c-load-button") as LoadButton
+    doneWithFactorSelectionButton.link(this._endPage)
+
+
+
+
   }
 
+  private formBody: {[name: string]: Element | ElementList}
+
   insertInitalValues() {
-    // (this.body.firstName as Input).value.set(this.registrationInfo.firstName);
-    // (this.body.surName as Input).value.set(this.registrationInfo.surName);
+    (this.formBody.firstName as Input).value.set(this.registrationInfo.firstName);
+    (this.formBody.surName as Input).value.set(this.registrationInfo.surName);
     // TODO
   }
 
@@ -171,6 +190,7 @@ class RegisterPage extends Manager {
 
 
   otpFactor() {
+    console.log("OTP")
     const otpForm = this.q("c-form#otpFactor") as HTMLElement
     const qrCodeUi = otpForm.childs("c-form-ui") as FormUi
     const otpImage = otpForm.childs("c-image") as Image
@@ -186,24 +206,26 @@ class RegisterPage extends Manager {
       active: false
     })
 
-
-    this.getOtpToken().then(({code, url}) => {
-      qrCode.toDataURL(url, {
-        margin: 0, 
-        color: {
-          light: '#0000'
-        }
-      }).then(async (url) => {
-        otpImage.src(url)
+    return () => {
+      console.log("OTP2")
+      this.getOtpToken().then(({code, url}) => {
+        qrCode.toDataURL(url, {
+          margin: 0, 
+          color: {
+            light: '#0000'
+          }
+        }).then(async (url) => {
+          otpImage.src(url)
+        })
+    
+        
+        otpPlainText.txt(code)
       })
-  
-      
-      otpPlainText.txt(code)
-    })
+    }
   }
 
   async getOtpToken() {
-    await delay(300000)
+    await delay(2000)
     return {code: "123456", url: "https://google.com"}
   }
 

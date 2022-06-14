@@ -5,8 +5,8 @@ export default abstract class ThemeAble<T extends boolean | HTMLElement | HTMLAn
   private themeStyleElement: HTMLStyleElement = ce("style")
   public theme: Data<Theme>
 
-  constructor(componentBodyExtension?: HTMLElement | boolean, theme?: Theme | null) {
-    super(componentBodyExtension as any)
+  constructor(componentBodyExtension?: HTMLElement | boolean, theme?: Theme | null, indexNames?: boolean) {
+    super(componentBodyExtension as any, indexNames)
 
     this._childThemeAbles = this.childThemeAbles ? this.q(this.childThemeAbles().join(","), true) as any as ThemeAble[] : []
 

@@ -90,6 +90,7 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
     Object.getPrototypeOf(Component).prototype.apd.call(this, ...a)
     return this
   }
+  protected delayLinkForwardUntilCalledAgain = false
 
   private _link: string
   private linkFn: any
@@ -109,8 +110,11 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
         if (this.linkFn !== undefined) this.removeActivationCallback(this.linkFn)
         this.linkFn = this.click((e) => {
           if (e) e.preventDefault()
+          if (!this.delayLinkForwardUntilCalledAgain) domain.set(to, domainLevel, push, notify)
+          else return () => {
+            domain.set(to, domainLevel, push, notify)
+          }
 
-          domain.set(to, domainLevel, push, notify)
         })
         let updateF = () => {
           let link = domain.linkMeta(to, domainLevel)
@@ -122,7 +126,10 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
       else {
         this.validMouseButtons.delete(1)
 
-        if (this.linkFn !== undefined) this.removeActivationCallback(this.linkFn)
+        if (this.linkFn !== undefined) {
+          this.removeActivationCallback(this.linkFn)
+          this.linkFn = undefined
+        }
       }
 
       return this
