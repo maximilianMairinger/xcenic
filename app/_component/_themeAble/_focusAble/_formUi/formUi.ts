@@ -168,8 +168,9 @@ export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement 
       }
     }, true)
     this.componentBody.prepend(hovPreDet);
-    const root = this.q("click-cover")
 
+    
+    const root = this.q("root-bounds")
     setTimeout(() => {
       waitUnitilData(this.userFeedbackModeResult.preHover, val => !!val).then(() => {
         loadRecord.full.add(async () => {
@@ -190,9 +191,9 @@ export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement 
     this.waveElement = ce("button-wave-container").apd(ce("button-wave"))
 
 
+    
     this.rippleElements = ce("button-waves");
     this.moveBody.apd(this.rippleElements);
-
 
 
     setTimeout(() => {

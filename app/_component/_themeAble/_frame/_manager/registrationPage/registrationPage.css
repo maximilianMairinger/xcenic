@@ -60,6 +60,8 @@ c-form c-text-blob {
 
 form-screen {
   width: 380px;
+  position: relative;
+
 }
 
 form-screen > * {
@@ -115,11 +117,15 @@ c-load-button:not(.form) {
   margin-bottom: 7px;
 }
 
-#otpFactor c-text {
+#otpFactor form-ui-content c-text {
   display: block;
   text-align: center;
   font-size: 18px;
   margin-bottom: 20px;
+}
+
+.tglIcon {
+  fill: var(--toggle-color)
 }
 
 
@@ -133,5 +139,28 @@ c-load-button:not(.form) {
 
 #pickFactors c-small-location-icon {
   aspect-ratio: 1 / 1.2;
+}
+
+c-ripple-button.back {
+  width: 35px;
+  height: 35px;
+  position: absolute;
+  top: -6px;
+  left: -38px;
+  border-radius: 12px;
+}
+
+c-ripple-button.back arrow-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+c-ripple-button.back c-arrow-icon {
+  width: 20px;
+  height: 20px;
+  margin: auto;
+  transform: rotate(180deg);
+  fill: rgb(var(--primary-theme))
 }
 

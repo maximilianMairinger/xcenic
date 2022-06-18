@@ -11,6 +11,8 @@
   font-weight: bold;
   display: block;
   background-color: transparent;
+  height: 100%;
+  width: 100%;
 }
 
 :host(:not(.disabled)) {

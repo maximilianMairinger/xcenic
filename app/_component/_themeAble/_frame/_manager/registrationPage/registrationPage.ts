@@ -25,6 +25,8 @@ import SelectButton from "../../../_focusAble/_formUi/_rippleButton/_blockButton
 import "../../../_icon/smallKey/smallKey"
 import "../../../_icon/smallFingerprint/smallFingerprint"
 import "../../../_icon/smallLocation/smallLocation"
+import "../../../_icon/smallIdea/smallIdea"
+import Button from "../../../_focusAble/_button/button"
 
 
 
@@ -64,8 +66,10 @@ class RegisterPage extends Manager {
   }
 
   private _endPage: string
-  endPage(endPage: string) {
+  private _endPageLevel: number
+  endPage(endPage: string, endPageLevel = 0) {
     this._endPage = endPage
+    this._endPageLevel = endPageLevel
   }
 
   connectedCallback() {
@@ -142,8 +146,14 @@ class RegisterPage extends Manager {
     for (let i = 0; i < linearFormLinks.length; i++) {
       const link = linearFormLinks[i + 1]
       const form = this.formIndex[linearFormLinks[i]]
-      form.submitElement().link(link, this.domainLevel)
+      form.submitElement().link(link, this.domainLevel);
     }
+    for (let i = 1; i < linearFormLinks.length; i++) {
+      const link = linearFormLinks[i - 1]
+      const form = this.formIndex[linearFormLinks[i]];
+      (form.childs(".back") as Button).link(link, this.domainLevel)
+    } 
+
     for (const key in this.formIndex) {
       if (this[key]) {
         const ret = this[key]()
@@ -170,12 +180,8 @@ class RegisterPage extends Manager {
       }
     })
     
-    const doneWithFactorSelectionButton = pickFactorsForm.childs("c-load-button") as LoadButton
-    doneWithFactorSelectionButton.link(this._endPage)
-
-
-
-
+    pickFactorsForm.submitElement().link("done", this.domainLevel)
+    this.formIndex.done.submitElement().link(this._endPage, this._endPageLevel);
   }
 
   private formBody: {[name: string]: Element | ElementList}
@@ -194,7 +200,7 @@ class RegisterPage extends Manager {
     const otpForm = this.q("c-form#otpFactor") as HTMLElement
     const qrCodeUi = otpForm.childs("c-form-ui") as FormUi
     const otpImage = otpForm.childs("c-image") as Image
-    const otpPlainText = otpForm.childs("c-text") as HTMLSpanElement
+    const otpPlainText = otpForm.childs("form-ui-content c-text") as HTMLSpanElement
 
 
     qrCodeUi.userFeedbackMode({
