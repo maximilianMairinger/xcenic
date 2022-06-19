@@ -1,7 +1,10 @@
-import { Data, DataCollection } from "josm";
+import { LinkedList } from "fast-linked-list"
+import { Data, DataCollection, DataSubscription } from "josm";
 import { textify } from "../../../../text/text";
 import FormUi from "../formUi";
 
+
+type IsInvalid = (value: string) => (boolean | string | Data<string>)
 
 type ReadonlyData<T> = Omit<Data<T>, "set">
 
@@ -10,6 +13,8 @@ export default class EditAble extends FormUi {
   
   public isEmpty: ReadonlyData<boolean>
   public value: Data<string>
+  private errorMsgSub: DataSubscription<[string]>
+  public isValid: ReadonlyData<boolean>
 
   protected placeholderContainer = ce("placeholder-container")
   
@@ -52,12 +57,26 @@ export default class EditAble extends FormUi {
     
     const value = (this as any).value = new Data(undefined, "")
     const setValueSub = value.get((val) => {this.inputElem.value = val})
-    this.inputElem.on("input", () => {setValueSub.setToData(this.inputElem.value)})
+    this.inputElem.on("input", () => {setValueSub.setToData(this.precedeing + this.inputElem.value)})
     const isEmpty = (this as any).isEmpty = value.tunnel((v) => v === "")
 
     this.placeholderUp = new Data(false) as any
     new DataCollection(this.isFocused as Data<boolean>, isEmpty).get((isFocused, isEmpty) => {
       this.placeholderUp.set(!isEmpty || isFocused)
+    })
+
+    value.tunnel((val) => {
+      for (const inValidator of this.inValidators) {
+        const invalid = inValidator(val)
+        if (invalid) {
+          if (typeof invalid === "string") {
+            
+          }
+          this.errorMsgSub
+          return false
+        }
+      }
+      return true
     })
 
     
@@ -79,6 +98,14 @@ export default class EditAble extends FormUi {
       this.placeholderText.css({fontWeight: isEmpty ? "normal" : "bold"})
     })
 
+  }
+  private inValidators = new LinkedList<IsInvalid>()
+  addInValidator(validator: IsInvalid) {
+    this.inValidators.push(validator)
+  }
+  private precedeing = ""
+  protected preFixModel(to: string) {
+    this.precedeing = to
   }
   focus() {
     this.inputElem.focus()

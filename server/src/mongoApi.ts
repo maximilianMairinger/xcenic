@@ -127,15 +127,12 @@ export default async function mongoApi(db: Collection<any>) {
 
           continue
         }
-        console.log("rec", key)
         const res = recMergeObjectToMongoObject(object[key], ids[key], memoJsToMongo)
-        console.log("donerec")
         
         if (!(ids[key] instanceof ObjectID)) newProms.push(res.then((insertedId) => {return {key, insertedId}}))
         else proms.push(res)
       }
       const insertedList = await Promise.all(newProms)
-      console.log("donerec2")
       const updateOb = {}
       for (const inserted of insertedList) {
         if (inserted !== undefined) updateOb[inserted.key] = inserted.insertedId
@@ -179,7 +176,6 @@ export default async function mongoApi(db: Collection<any>) {
     let proms = []
     for (const key in mongoOb) {
       if (mongoOb[key] instanceof ObjectID) {
-        console.log("rec", key)
         proms.push(recRestrictedMongoObjectToJsObject(mongoOb[key], projection[key], memoMonToJs).then((r) => {
           endOb[key] = r
         }))

@@ -1,13 +1,29 @@
 import global from "./global"
-
+import * as lang from "./lib/lang"
 
 
 
 export async function init() {
-  await global()
+
+  lang.lang(console.log)
+
+  await Promise.all([
+    global(),
+    lang.fetch({
+      xcenic: true,
+    })
+  ])
   
-  const main = (await import("./main")).default
-  main()
+  // setTimeout(() => {
+  //   lang
+  //   console.log(lang.lang.xcenic)
+  //   debugger
+  // }, 1000)
+  
+  
+
+  // const main = (await import("./main")).default
+  // main()
 
 
   // if ("serviceWorker" in navigator) {

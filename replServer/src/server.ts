@@ -1,10 +1,21 @@
+import initLangService from "./langService"
 import liveReloadServer from "./liveReloadServer"
 import delay from "delay"
+import { createMongoConnection } from "../../server/src/setup"
 
 
 
 
-liveReloadServer((app) => {
+liveReloadServer(async (app) => {
+
+
+  await createMongoConnection("replLangXcenic").then((mongo) => {
+    return initLangService(app, mongo)
+  })
+
+  
+
+
   app.get("/api/register/:uid", async (req, res) => {
     const uid = req.params.uid
     if (uid === "uid") {

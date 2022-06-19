@@ -1,42 +1,43 @@
+import { LinkedList } from "fast-linked-list"
 import { Data, DataBase } from "josm"
-import de from "../res/lang/de"
+import merge from "deepmerge"
+import { parse, stringify } from "./serialize"
+import { cloneKeys, isObjectEmpty } from "./../../server/src/lib/clone"
+import projectObject from "project-obj"
 
-type Lang = typeof de
 
-const def = deepDefault(de, "")
+
+
+
+const superLang = new DataBase<{en: Lang, de: Lang}>({de: {} as any, en: {} as any})
+const network = networkDataBase(superLang, "lang")
+
+
+let projection = {}
+export async function fetch(addProjection: object, withLang: boolean = false) {
+  projection = merge(projection, addProjection)
+  await network.fetch(withLang ? addProjection : {[currentLanguage.get()]: addProjection})
+}
+
+
+
 
 
 // @ts-ignore
 export const currentLanguage = new Data("de") as Data<"en" | "de">
-currentLanguage.get(async (w) => {
-  const initOb = {}
-  initOb[w] = cloneObject(lang())
-  superLang(initOb)
-  const ob = {}
-  ob[w] = (await langIndex[w]()).default
-  superLang(ob)
+let oldLang = currentLanguage.get()
+currentLanguage.get((newLang) => {
+  if (isObjectEmpty(superLang[newLang]())) {
+    superLang({[newLang]: cloneKeys(lang())})
+    network.fetch({[newLang]: projection, [oldLang]: false})
+  }
+
+  oldLang = newLang
 }, false)
 
-const langIndex = {
-  en: () => import("./../res/lang/en"),
-  de: () => import("./../res/lang/de")
-}
-
-
-setTimeout(() => {
-  currentLanguage.set("en")
-}, 2000)
-
-
-const initLang = de
 
 
 
-const data = {}
-data["de"] = initLang
-
-
-const superLang = new DataBase<{en: Lang, de?: Lang}>(data as any, {en: def, de: def})
 export const lang = superLang(currentLanguage) as any as DataBase<Lang>
 export default lang
 
@@ -48,23 +49,7 @@ window.currentLanguage = currentLanguage
 
 
 
-
-function deepDefault(ob: any, lastKey: string): any {
-  const endOb = {}
-  for (const k in ob) {
-    if (typeof ob[k] === "object") endOb[k] = deepDefault(ob[k], k)
-    else endOb[k] = lastKey + " " + k
-  }
-  return endOb
-}
-
-// can also clone recursive objects
-function cloneObject(ob: object) {
-  const newOb = new (ob as any).constructor()
-  for (const key in ob) {
-    if (!ob.hasOwnProperty(key)) continue
-    if (typeof ob[key] === "object") newOb[key] = cloneObject(ob[key])
-    else newOb[key] = ob[key]
-  }
-  return newOb
-}
+// type only
+import de from "./../res/lang/de"
+import networkDataBase from "./networkDataBase"
+type Lang = typeof de

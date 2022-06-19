@@ -100,6 +100,7 @@
     "animation-frame-delta": "^2.7.8",
     "argon2": "^0.28.5",
     "base64url": "^3.0.1",
+    "browser-or-node": "^2.0.0",
     "cbor": "^8.1.0",
     "copy-to-clipboard": "^3.3.1",
     "css-simple-parser": "^2.0.1",

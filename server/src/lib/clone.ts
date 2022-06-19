@@ -36,3 +36,8 @@ export const cloneKeys = (() => {
     else return ob
   }
 })()
+
+export function isObjectEmpty(ob: object) {
+  for (const k in ob) return false
+  return true
+}

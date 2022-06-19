@@ -8,15 +8,6 @@ export default function() {
   document.body.append(site)
 
 
-  const dataBase = networkDataBase("lang")
-  dataBase(console.log)
-  // @ts-ignore
-  window.dd = dataBase;
-
-  (async () => {
-    
-  })()
-
 
   
 }

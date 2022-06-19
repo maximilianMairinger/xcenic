@@ -2,8 +2,30 @@ import { Data, DataCollection } from "josm";
 import declareComponent from "../../../../../../lib/declareComponent";
 import EditAble from "../editAble";
 
+type Type = "password" | "newPassword" | "text" | "email" | "url" | "tel" | "number" | "otp" | {
+  type: "otp",
+  digits?: number,
+  letters?: boolean,
+  caseSensetive?: boolean
+} | {
+  type: "number",
+  min?: number,
+  max?: number,
+  step?: number
+} | {
+  type: "url",
+  startingWith?: string
+}
+
+const typeImports = {
+  password: "password",
+  newPassword: "new-password",
+  text: "text",
+  email: () => import("./inputTypes/email"),
+}
+
 export default class Input extends EditAble {
-  constructor(placeholder?: string) {
+  constructor(placeholder?: string, type: Type = "text") {
     super(ce("input"), placeholder)
 
     this.placeholderContainer.prepend(ce("left-gradient"), ce("right-gradient"))
@@ -21,7 +43,15 @@ export default class Input extends EditAble {
         this.componentBody[is ? "addClass" : "removeClass"]("scrollEnd")
       })
     })
+
+    this.type(type)
     
+  }
+  compartments(to: number | number[]) {
+
+  }
+  type(to: Type) {
+
   }
   public pug(): string {
     return super.pug() + require("./input.pug").default

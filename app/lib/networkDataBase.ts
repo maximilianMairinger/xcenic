@@ -1,32 +1,74 @@
 import { DataBase, internalDataBaseBridge, dataBaseParsingId as parsingId } from "josm"
-import { cloneKeys } from "../../server/src/lib/clone"
+import { cloneKeys, isObjectEmpty } from "../../server/src/lib/clone"
 import { stringify, parse } from "./../lib/serialize"
 import { MultiMap } from "./multiMap"
+import sizeOfObject from "object-sizeof"
+import merge from "deepmerge"
+import projectObject from "project-obj"
+import ResablePromise from "./resablePromise"
+import { isBrowser } from "browser-or-node"
+
+
+export default function networkDataBase(dataBase: DataBase<object>, urlPath_webSocket: string | URL | WebSocket) {
+  let ws: WebSocket
+  if (urlPath_webSocket instanceof URL || typeof urlPath_webSocket === "string") {
+    // todo server support
+    const url = urlPath_webSocket instanceof URL ? urlPath_webSocket.toString() : location.protocol === "https:" ? "wss://" : "ws://" + location.host + (urlPath_webSocket.startsWith("/") ? urlPath_webSocket : "/" + urlPath_webSocket)
+    ws = new WebSocket(url)  
+  }
+  else ws = urlPath_webSocket
+
+
+  const mergeOldRecursionToMyDB = mergeOldRecursionToDB(dataBase())
 
 
 
-
-export default function networkDataBase(urlPath: string | URL, fetchQuery: object = {}) {
-  const url = urlPath instanceof URL ? urlPath.toString() : location.protocol === "https:" ? "wss://" : "ws://" + location.host + (urlPath.startsWith("/") ? urlPath : "/" + urlPath)
-  const ws = new WebSocket(url)
-  const dataBase = new DataBase({})
-  const sub = dataBase((full, diff) => {
-    ws.send(stringify({set: diff}))
-  }, true, false)
-
-  ws.addEventListener("message", (rawMessage) => {
-    const msg = parse(rawMessage.data)
-    sub.setToDataBase(msg)
-  })
+  const connected = new ResablePromise<void>()
   ws.addEventListener("open", () => {
-    const msg = stringify({get: fetchQuery})
-    console.log("open", msg)
-    ws.send(msg)
+    connected.res()
+    let projection = {}
+
+    const sub = dataBase(function subFunc(full, diff) {
+      ws.send(stringify({set: resolveOldRecursion(projectObject(diff, projection), subFunc)}))
+    }, true, false)
+  
+    ws.addEventListener("message", (rawMessage) => {
+      // if (sizeOfObject(rawMessage) > 100000) return
+
+      const msg = parse(rawMessage.data)
+      if (msg.set instanceof Object) {
+        sub.setToDataBase(mergeOldRecursionToMyDB(msg.set))
+      }
+      else if (msg.get instanceof Object) {
+        sub.activate(false)
+        projection = merge(projection, msg.get, {})
+        ws.send(stringify({set: projectObject(dataBase() as any, msg.get)}))
+      }
+    })
+
+    ws.addEventListener("close", () => {
+      sub.deactivate()
+      console.log("closing")
+    })
   })
-  ws.addEventListener("close", () => {
-    console.log("closing")
-  })
-  return dataBase
+
+ 
+  
+  return {
+    async fetch(newProjection: object) {
+      await connected
+      ws.send(stringify({get: newProjection}))
+      return new Promise<void>((res) => {
+        const sub = dataBase((full, diff) => {
+          if (!isObjectEmpty(projectObject(diff, newProjection))) {
+            sub.deactivate()
+            res()
+          }
+        }, true, false)
+      })
+      
+    }
+  }
 } 
 
 
@@ -170,6 +212,7 @@ export function mergeOldRecursionToDB(rootStore: object) {
   return function mergeOldRecursion(diff: object) {
     known = new Set()
     rec(diff)
+    return diff
   }
 }
 
@@ -177,7 +220,7 @@ export function mergeOldRecursionToDB(rootStore: object) {
 export const toPointer = (parts) => '#' + ["", ...parts].map(part => String(part).replace(/~/g, '~0').replace(/\//g, '~1')).join('/')
 export const resolvePointer = (pointer) => {
   let p = pointer.slice(1)
-  const ar = []
+  const ar = [] as any[]
   if (p === "") return ar
   p = p.slice(1)
   for (const part of p.split('/').map(s => s.replace(/~1/g, '/').replace(/~0/g, '~'))) {

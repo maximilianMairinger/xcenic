@@ -208,7 +208,7 @@ export default function (dbName_DBConfig?: string | null | undefined | DBConfig,
 }
 
 
-export function createMongoConnection(dbName_DBConfig: string | DBConfig) {
+export function createMongoConnection(dbName_DBConfig: string | DBConfig): Promise<MongoDB.Db> {
   let dbConfig: DBConfig
   if (typeof dbName_DBConfig === "string") dbConfig = { dbName: dbName_DBConfig, url: "mongodb://localhost:27017"}
   else dbConfig = dbName_DBConfig
