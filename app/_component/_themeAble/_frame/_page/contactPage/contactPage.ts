@@ -31,7 +31,7 @@ export default class ContactPage extends Page {
     super("dark")
 
 
-
+    this.formElem.submitElement(null)
 
     this.formElem.submit(async (data) => {
       console.log("submit", data)

@@ -49,6 +49,8 @@ export default class Form extends Component<false> {
 
     this.submitElem = submitElement as any
 
+    if (submitElement === null) return
+
     const localSym = this.submitElementSym = Symbol()
     setTimeout(() => {
       if (localSym !== this.submitElementSym) return

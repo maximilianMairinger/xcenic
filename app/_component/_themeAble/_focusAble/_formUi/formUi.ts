@@ -44,6 +44,8 @@ export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement 
 
   protected moveBody: HTMLElement;
 
+  protected slotElem = this.q("slot") as HTMLSlotElement
+
   // @ts-ignore
   public userFeedbackMode: DataBase<{
     focus: boolean | "direct",
