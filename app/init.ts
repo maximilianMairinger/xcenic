@@ -10,7 +10,11 @@ export async function init() {
     global(),
     lang.fetch({
       xcenic: true,
-      contact: true
+      contact: true,
+      home: true,
+      links: true,
+      copiedFeedback: true,
+      cannotChangeUrl: true
     })
   ])
   
