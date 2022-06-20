@@ -156,7 +156,7 @@ export default class Header extends ThemeAble {
   }
 
   private leftSideBorder = {
-    mobile: "calc(10% + -12px)",
+    mobile: "calc(11.5% + -12px)",
     desktop: "6%"
   } as {
     mobile: number | string,
@@ -171,6 +171,7 @@ export default class Header extends ThemeAble {
   private isLinkContainerCurrentlyHidden: boolean
   private initialResize = true
   private resizeHandler(q: {width: number}) {
+
     if (this.currentLinkElems) {
       let linksLeft: number = !this.currentLinkElems.empty ? this.currentLinkElems.first.getBoundingClientRect().left : q.width - 200
       let logo = this.pathDisplayElem.getBoundingClientRect()
@@ -178,27 +179,41 @@ export default class Header extends ThemeAble {
       const func: "css" | "anim" = this.initialResize ? "css" : "anim"
       this.initialResize = false
 
+
       
       let margin = this.pathDisplayHeaderMargin.get() + (this.isLinkContainerCurrentlyHidden ? 25 : 0)
       if (linksLeft < logo.right + margin) {
         this.leftContent[func as any]({marginLeft: this.leftSideBorder.mobile})
+        this.componentBody.addClass("mobile")
 
         if (!this.isLinkContainerCurrentlyHidden) {
           this.isLinkContainerCurrentlyHidden = true
           this.linkContainerElem[func as any]({opacity: 0})
           if (this.linksShownChangeCallback) this.linksShownChangeCallback(false, this.initialResize, func)
-          this.componentBody.addClass("mobile")
         }
       }
       else {
         this.leftContent[func as any]({marginLeft: this.leftSideBorder.desktop})
+        this.componentBody.removeClass("mobile")
 
         if (this.isLinkContainerCurrentlyHidden || this.isLinkContainerCurrentlyHidden === undefined) {
           this.isLinkContainerCurrentlyHidden = false
           this.linkContainerElem[func as any]({opacity: 1})
           if (this.linksShownChangeCallback) this.linksShownChangeCallback(true, this.initialResize, func)
-          this.componentBody.removeClass("mobile")
         }
+      }
+    }
+    else {
+      const func: "css" | "anim" = this.initialResize ? "css" : "anim"
+      this.initialResize = false
+
+      if (this.innerWidth() < 768) {
+        this.leftContent[func as any]({marginLeft: this.leftSideBorder.mobile})
+        this.componentBody.addClass("mobile")
+      }
+      else {
+        this.leftContent[func as any]({marginLeft: this.leftSideBorder.desktop})
+        this.componentBody.removeClass("mobile")
       }
     }
   }

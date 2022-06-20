@@ -75,6 +75,12 @@ left-content {
   z-index: 101;
 }
 
+/* @media (max-width: 768px) {
+  left-content {
+    margin-left: 0;
+  }
+} */
+
 left-content > * {
   pointer-events: all;
   z-index: 201;
