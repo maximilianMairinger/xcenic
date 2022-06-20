@@ -5,25 +5,19 @@ import * as lang from "./lib/lang"
 
 export async function init() {
 
-  lang.lang(console.log)
 
   await Promise.all([
     global(),
     lang.fetch({
       xcenic: true,
+      contact: true
     })
   ])
   
-  // setTimeout(() => {
-  //   lang
-  //   console.log(lang.lang.xcenic)
-  //   debugger
-  // }, 1000)
-  
-  
 
-  // const main = (await import("./main")).default
-  // main()
+
+  const main = (await import("./main")).default
+  main()
 
 
   // if ("serviceWorker" in navigator) {

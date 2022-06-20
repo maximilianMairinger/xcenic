@@ -51,7 +51,8 @@ export default class LandingSection extends PageSection {
       }
     })
 
-    
+
+    // loadRecord.minimal.
   }
 
   stl() {

@@ -6,8 +6,4 @@ export default function() {
   let site = new Site()
 
   document.body.append(site)
-
-
-
-  
 }
