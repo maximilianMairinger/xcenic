@@ -143,13 +143,23 @@ initial-view {
     width: 100%;
     position: absolute;
     min-width: 345px;
-  }
-  
+  } 
+}
+
+component-body {
+  overflow: unset;
 }
 
 @media (min-width: 700px) {
   component-body {
     overflow: auto;
+    height: 100vh;
+  }
+}
+
+@media (max-width: 700px) {
+  :host {
+    overflow-y: auto;
     height: 100vh;
   }
 }
