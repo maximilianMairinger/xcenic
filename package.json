@@ -94,6 +94,7 @@
     "slotify-css": "^1.0.1",
     "slugify": "^1.6.0",
     "sync-p": "^1.3.0",
+    "timoi": "^1.1.8",
     "tippy.js": "^6.3.7",
     "tween-svg-path": "^2.0.6",
     "waapi-easing": "^1.0.3"
