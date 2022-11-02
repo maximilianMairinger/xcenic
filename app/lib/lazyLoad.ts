@@ -147,6 +147,7 @@ class MultiKeyMap<K, V> {
   }
   forEach(cb: (key: K, vals: V[]) => void) {
     for (let e of this.index.entries()) {
+      //@ts-ignore
       cb(...e)
     }
   }
