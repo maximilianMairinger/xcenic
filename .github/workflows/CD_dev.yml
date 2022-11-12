@@ -63,7 +63,11 @@ jobs:
         node-version: '16.x'
 
     - name: Installing runner dependencies
-      run: npm i
+      run: npm i image-web --D
+
+    - name: Pull images
+      run: git lfs pull
+
 
 
     - name: "Compressing images"
