@@ -67,6 +67,11 @@ jobs:
     - name: Pull images
       run: git lfs pull
 
+    - name: Setting environment variables
+      uses: allenevans/set-env@v2.0.0
+      with:
+        UV_THREADPOOL_SIZE: '1'
+
 
     - name: "Compressing images"
       run: npm run compressImages
