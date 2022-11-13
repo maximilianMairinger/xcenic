@@ -84,9 +84,6 @@ jobs:
     - name: Installing runner dependencies
       run: npm i image-web -g
 
-    - name: Pull images
-      run: git lfs pull
-
     - name: Setting environment variables
       uses: allenevans/set-env@v2.0.0
       with:
