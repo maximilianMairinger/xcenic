@@ -10,6 +10,7 @@ jobs:
   # JOB to run change detection
   detectChanges:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       pull-requests: read
     outputs:
@@ -68,7 +69,7 @@ jobs:
     if: ${{ needs.detectChanges.outputs.images == 'true' }}
 
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 180
 
     steps: 
     - name: "checkout"
