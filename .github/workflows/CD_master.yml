@@ -65,8 +65,8 @@ jobs:
 
   compressImages: 
     needs: detectChanges
-    continue-on-error: true
-    if: ${{ needs.detectChanges.outputs.images == 'true' }}
+    # continue-on-error: true
+    # if: ${{ needs.detectChanges.outputs.images == 'true' }}
 
     runs-on: ubuntu-latest
     timeout-minutes: 100
@@ -74,28 +74,42 @@ jobs:
     steps: 
     - name: "checkout"
       uses: actions/checkout@master
+      # with:
+      #   lfs: "true"
+
+    - uses: dorny/paths-filter@v2
+      id: filter
       with:
-        lfs: "true"
+        base: master
+        filters: |
+          images:
+            - 'app/res/img/**'
+    
 
 
     - name: Setting up node
+      if: steps.filter.outputs.images == 'true'
       uses: actions/setup-node@master
       with:
         node-version: '16.x'
 
     - name: Installing runner dependencies
+      if: steps.filter.outputs.images == 'true'
       run: npm i image-web -g
 
     - name: Setting environment variables
+      if: steps.filter.outputs.images == 'true'
       uses: allenevans/set-env@v2.0.0
       with:
         UV_THREADPOOL_SIZE: '1' # otherwise may take up too much memory and cause action to be canceled.
 
 
     - name: "Compressing images"
+      if: steps.filter.outputs.images == 'true'
       run: npm run compressImages -- --legacyLogs
 
     - name: "Copying files to remote"
+      if: steps.filter.outputs.images == 'true'
       uses: appleboy/scp-action@v0.1.1
       with:
         host: ${{ secrets.HOST }}
