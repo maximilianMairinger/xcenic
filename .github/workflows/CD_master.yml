@@ -5,6 +5,7 @@ on:
     branches:
     - master
 
+
 jobs:
   # JOB to run change detection
   detectChanges:
@@ -65,7 +66,7 @@ jobs:
   compressImages: 
     needs: detectChanges
     if: ${{ needs.detectChanges.outputs.images == 'true' }}
-    
+
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
