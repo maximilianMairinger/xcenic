@@ -65,6 +65,7 @@ jobs:
 
   compressImages: 
     needs: detectChanges
+    continue-on-error: true
     if: ${{ needs.detectChanges.outputs.images == 'true' }}
 
     runs-on: ubuntu-latest
