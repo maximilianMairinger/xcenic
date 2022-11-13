@@ -18,8 +18,8 @@ jobs:
     - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
       id: filter
-      base: master
       with:
+        base: master
         filters: |
           images:
             - 'app/res/img/**'
