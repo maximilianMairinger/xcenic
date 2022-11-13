@@ -34,7 +34,7 @@ jobs:
           dependencies
             - 'package.json'
           public
-            - 'public'
+            - 'public/**'
           deployOption
             - '.deploy'
 
