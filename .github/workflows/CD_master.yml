@@ -62,7 +62,6 @@ jobs:
         target: /var/www/html/xcenic/master
         tar_tmp_path: true
 
-    
   compressImages: 
     needs: detectChanges
     if: ${{ needs.detectChanges.outputs.images == 'true' }}
