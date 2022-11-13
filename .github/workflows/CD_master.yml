@@ -6,6 +6,23 @@ on:
     - master
 
 jobs:
+  # JOB to run change detection
+  detectChanges:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      images: ${{ steps.filter.outputs.images }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          images:
+            - 'app/res/img/**'
+
+
   build: 
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -46,6 +63,9 @@ jobs:
 
     
   compressImages: 
+    needs: detectChanges
+    if: ${{ needs.detectChanges.outputs.images == 'true' }}
+    
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
