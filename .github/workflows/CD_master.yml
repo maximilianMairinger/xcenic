@@ -83,8 +83,8 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
-        source: "${GITHUB_SHA}/public/dist"
-        target: /var/www/html/xcenic/master
+        source: "public/dist"
+        target: /var/www/html/xcenic/master/${GITHUB_SHA}
         overwrite: true
 
   buildServer: 
@@ -124,8 +124,8 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
-        source: "${GITHUB_SHA}/server"
-        target: /var/www/html/xcenic/master
+        source: "server"
+        target: /var/www/html/xcenic/master/${GITHUB_SHA}
         overwrite: true
 
   buildReplServer: 
@@ -165,8 +165,8 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
-        source: "${GITHUB_SHA}/replServer"
-        target: /var/www/html/xcenic/master
+        source: "replServer"
+        target: /var/www/html/xcenic/master/${GITHUB_SHA}
         overwrite: true
 
 
@@ -208,8 +208,8 @@ jobs:
         key: ${{ secrets.KEY }}
         # todo service worker dist
         passphrase: ${{ secrets.PASSPHRASE }}
-        source: "${GITHUB_SHA}/public/sw.js"
-        target: /var/www/html/xcenic/master
+        source: "public/sw.js"
+        target: /var/www/html/xcenic/master/${GITHUB_SHA}
         overwrite: true
 
   compressImages: 
@@ -253,8 +253,8 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
-        source: "${GITHUB_SHA}/public/res/img/dist"
-        target: /var/www/html/xcenic/master
+        source: "public/res/img/dist"
+        target: /var/www/html/xcenic/master/${GITHUB_SHA}
         overwrite: true
 
 
@@ -277,8 +277,8 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
-        source: "${GITHUB_SHA}/public"
-        target: /var/www/html/xcenic/master
+        source: "public"
+        target: /var/www/html/xcenic/master/${GITHUB_SHA}
         overwrite: true
 
   dependencies: 
