@@ -245,7 +245,7 @@ jobs:
 
     - name: "Compressing images"
       if: ${{ needs.detectChanges.outputs.images == 'true' }}
-      run: "eval `node -e \"let a = JSON.parse(fs.readFileSync('package.json').toString()).scripts.compressImages.split(' '); let a1 = a[0] === 'image-web'; let a2 = a[0] === 'npx' && a[1] === 'image-web'; assert(a1 || a2); let i = a1 ? 1 : 2; a[i] = require('process').argv[1]; console.log(a.join(' ') + a.includes('--legacyLogs') ? '' : ' --legacyLogs')\" \"${{ needs.detectChanges.outputs.imagesFiles }}\"`"
+      run: "eval `node -e \"let a = JSON.parse(fs.readFileSync('package.json').toString()).scripts.compressImages.split(' '); let a1 = a[0] === 'image-web'; let a2 = a[0] === 'npx' && a[1] === 'image-web'; assert(a1 || a2); let i = a1 ? 1 : 2; a[i] = require('process').argv[1]; console.log(a.join(' ') + (a.includes('--legacyLogs') ? '' : ' --legacyLogs'))\" \"${{ needs.detectChanges.outputs.imagesFiles }}\"`"
 
     - name: "Uploading files to remote"
       if: ${{ needs.detectChanges.outputs.images == 'true' }}
