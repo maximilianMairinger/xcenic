@@ -10,7 +10,7 @@ app.post("/addEntry", (req, res) => {
   const entry = req.body
   entry.time = Date.now()
 
-  console.log("getting entry", entry)
+  console.log("Getting entry", entry)
   
 
   setTimeout(() => {

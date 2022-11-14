@@ -84,7 +84,7 @@ jobs:
         key: ${{ secrets.KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         source: "public/dist"
-        target: /var/www/html/xcenic/master/${GITHUB_SHA}
+        target: /var/www/html/xcenic/master/_${GITHUB_SHA}
         overwrite: true
 
   buildServer: 
@@ -125,7 +125,7 @@ jobs:
         key: ${{ secrets.KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         source: "server"
-        target: /var/www/html/xcenic/master/${GITHUB_SHA}
+        target: /var/www/html/xcenic/master/_${GITHUB_SHA}
         overwrite: true
 
   buildReplServer: 
@@ -166,7 +166,7 @@ jobs:
         key: ${{ secrets.KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         source: "replServer"
-        target: /var/www/html/xcenic/master/${GITHUB_SHA}
+        target: /var/www/html/xcenic/master/_${GITHUB_SHA}
         overwrite: true
 
 
@@ -209,7 +209,7 @@ jobs:
         # todo service worker dist
         passphrase: ${{ secrets.PASSPHRASE }}
         source: "public/sw.js"
-        target: /var/www/html/xcenic/master/${GITHUB_SHA}
+        target: /var/www/html/xcenic/master/_${GITHUB_SHA}
         overwrite: true
 
   compressImages: 
@@ -254,7 +254,7 @@ jobs:
         key: ${{ secrets.KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         source: "public/res/img/dist"
-        target: /var/www/html/xcenic/master/${GITHUB_SHA}
+        target: /var/www/html/xcenic/master/_${GITHUB_SHA}
         overwrite: true
 
 
@@ -278,7 +278,7 @@ jobs:
         key: ${{ secrets.KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         source: "public"
-        target: /var/www/html/xcenic/master/${GITHUB_SHA}
+        target: /var/www/html/xcenic/master/_${GITHUB_SHA}
         overwrite: true
 
   dependencies: 
