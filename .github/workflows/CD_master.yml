@@ -14,6 +14,13 @@ jobs:
       pull-requests: read
     outputs:
       images: ${{ steps.filter.outputs.images }}
+      server: ${{ steps.filter.outputs.server }}
+      replServer: ${{ steps.filter.outputs.replServer }}
+      app: ${{ steps.filter.outputs.app }}
+      serviceWorker: ${{ steps.filter.outputs.serviceWorker }}
+      dependencies: ${{ steps.filter.outputs.dependencies }}
+      public: ${{ steps.filter.outputs.public }}
+      deployOption: ${{ steps.filter.outputs.deployOption }}
     steps:
     - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
