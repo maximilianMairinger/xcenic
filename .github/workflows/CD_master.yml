@@ -356,5 +356,5 @@ jobs:
           cd /var/www/html/xcenic/master
           source ~/.nvm/nvm.sh
           nvm use default
-          wait-on ecosystem.config.js
+          npx wait-on ecosystem.config.js
           node pm2Reload.js
