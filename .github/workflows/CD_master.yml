@@ -32,17 +32,17 @@ jobs:
             - 'app/res/img/**'
           server:
             - 'server/**'
-          replServer
+          replServer:
             - 'replServer/**'
-          app
+          app:
             - 'app/**'
-          serviceWorker
+          serviceWorker:
             - 'serviceWorker/**'
-          dependencies
+          dependencies:
             - 'package.json'
-          public
+          public:
             - 'public/**'
-          deployOption
+          deployOption:
             - '.deploy'
 
 
