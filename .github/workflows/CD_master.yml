@@ -75,7 +75,7 @@ jobs:
       if: ${{ needs.detectChanges.outputs.app == 'true' }}
       run: npm run buildProdApp --if-present
 
-    - name: "Copying files to remote"
+    - name: "Uploading files to remote"
       if: ${{ needs.detectChanges.outputs.app == 'true' }}
       uses: appleboy/scp-action@v0.1.1
       with:
@@ -116,7 +116,7 @@ jobs:
       if: ${{ needs.detectChanges.outputs.server == 'true' }}
       run: npm run buildProdServer --if-present
 
-    - name: "Copying files to remote"
+    - name: "Uploading files to remote"
       if: ${{ needs.detectChanges.outputs.server == 'true' }}
       uses: appleboy/scp-action@v0.1.1
       with:
@@ -157,7 +157,7 @@ jobs:
       if: ${{ needs.detectChanges.outputs.replServer == 'true' }}
       run: npm run buildProdReplServer --if-present
 
-    - name: "Copying files to remote"
+    - name: "Uploading files to remote"
       if: ${{ needs.detectChanges.outputs.replServer == 'true' }}
       uses: appleboy/scp-action@v0.1.1
       with:
@@ -199,7 +199,7 @@ jobs:
       if: ${{ needs.detectChanges.outputs.serviceWorker == 'true' }}
       run: npm run buildProdSw --if-present
 
-    - name: "Copying files to remote"
+    - name: "Uploading files to remote"
       if: ${{ needs.detectChanges.outputs.serviceWorker == 'true' }}
       uses: appleboy/scp-action@v0.1.1
       with:
@@ -245,7 +245,7 @@ jobs:
       if: ${{ needs.detectChanges.outputs.images == 'true' }}
       run: npm run compressImages -- --legacyLogs
 
-    - name: "Copying files to remote"
+    - name: "Uploading files to remote"
       if: ${{ needs.detectChanges.outputs.images == 'true' }}
       uses: appleboy/scp-action@v0.1.1
       with:
@@ -258,7 +258,7 @@ jobs:
         overwrite: true
 
 
-  copyPublicAssets: 
+  uploadPublicAssets: 
     runs-on: ubuntu-latest
     needs: [detectChanges]
     timeout-minutes: 15
@@ -269,7 +269,7 @@ jobs:
       if: ${{ needs.detectChanges.outputs.public == 'true' }}
       uses: actions/checkout@master
 
-    - name: Copy public files
+    - name: Upload public files
       if: ${{ needs.detectChanges.outputs.public == 'true' }}
       uses: appleboy/scp-action@v0.1.1
       with:
@@ -292,7 +292,7 @@ jobs:
       if: ${{ needs.detectChanges.outputs.dependencies == 'true' }}
       uses: actions/checkout@master
 
-    - name: Copy dependency files
+    - name: Upload dependency declaration
       if: ${{ needs.detectChanges.outputs.dependencies == 'true' }}
       uses: appleboy/scp-action@v0.1.1
       with:
@@ -320,7 +320,7 @@ jobs:
 
   deploy: 
     runs-on: ubuntu-latest
-    needs: [detectChanges, buildApp, buildServer, buildReplServer, buildServiceWorker, compressImages, copyPublicAssets, dependencies]
+    needs: [detectChanges, buildApp, buildServer, buildReplServer, buildServiceWorker, compressImages, uploadPublicAssets, dependencies]
     timeout-minutes: 15
 
     steps:
@@ -328,7 +328,7 @@ jobs:
       if: ${{ needs.detectChanges.outputs.deployOption == 'true' }}
       uses: actions/checkout@master
 
-    - name: Copy deploy option files
+    - name: Upload deploy option files
       if: ${{ needs.detectChanges.outputs.deployOption == 'true' }}
       uses: appleboy/scp-action@v0.1.1
       with:
@@ -341,7 +341,18 @@ jobs:
         overwrite: true
 
 
-      # todo copy from temp storage to final
+    - name: Moving files from temp storage 
+      if: ${{ (needs.detectChanges.outputs.images == 'true') || (needs.detectChanges.outputs.server == 'true') || (needs.detectChanges.outputs.replServer == 'true') || (needs.detectChanges.outputs.app == 'true') || (needs.detectChanges.outputs.serviceWorker == 'true') || (needs.detectChanges.outputs.public == 'true') }}
+      uses: appleboy/ssh-action@master
+      with: 
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        passphrase: ${{ secrets.PASSPHRASE }}
+        # https://unix.stackexchange.com/a/182155/431792
+        script: |
+          cp -rlf /var/www/html/xcenic/master/_${{github.sha}}/* /var/www/html/xcenic/master
+          rm -r /var/www/html/xcenic/master/_${{github.sha}}
 
     
     - name: Restarting server
