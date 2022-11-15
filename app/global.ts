@@ -3,6 +3,7 @@ import "xrray"
 
 
 export default async function() {
+  window.global = window
   await polyfill()
   //@ts-ignore
   global.log = console.log

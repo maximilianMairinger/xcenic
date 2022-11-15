@@ -16,7 +16,7 @@ import "xtring"
 import { Data } from "josm"
 import Button from "../../_themeAble/_focusAble/_button/button"
 
-
+console.log(require("./header.pug"))
 
 
 const linkAnimationOffset = 170
