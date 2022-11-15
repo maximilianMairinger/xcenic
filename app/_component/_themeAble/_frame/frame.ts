@@ -61,7 +61,7 @@ export default abstract class Frame extends ThemeAble<HTMLElement> {
   }
   
   stl() {
-    return super.stl() + require("./frame.css").toString()
+    return super.stl() + require("./frame.css").default
   }
   public async minimalContentPaint(): Promise<void> {
     await this.minimalRec()()

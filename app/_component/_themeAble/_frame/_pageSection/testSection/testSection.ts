@@ -13,10 +13,10 @@ export default declareComponent("test-section", class extends PageSection {
   
   }
   stl() {
-    return super.stl() + require("./testSection.css").toString()
+    return super.stl() + require("./testSection.css").default
   }
   pug() {
-    return require("./testSection.pug").default
+    return require("./testSection.pug") 
   }
 });
 

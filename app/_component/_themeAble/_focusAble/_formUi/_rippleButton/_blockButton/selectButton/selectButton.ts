@@ -68,10 +68,10 @@ export default class SelectButton extends BlockButton {
   }
   
   stl() {
-    return super.stl() + require('./selectButton.css').toString();
+    return super.stl() + require('./selectButton.css').default;
   }
   pug() {
-    return super.pug() + require("./selectButton.pug").default
+    return super.pug() + require("./selectButton.pug") 
   }
 }
 

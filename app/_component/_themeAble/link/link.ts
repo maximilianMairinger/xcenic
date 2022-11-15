@@ -365,10 +365,10 @@ export default class Link extends ThemeAble {
   }
 
   stl() {
-    return super.stl() + require("./link.css").toString()
+    return super.stl() + require("./link.css").default
   }
   pug() {
-    return require("./link.pug").default
+    return require("./link.pug") 
   }
 }
 

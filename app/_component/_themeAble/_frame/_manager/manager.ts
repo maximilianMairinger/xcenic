@@ -418,6 +418,6 @@ export default abstract class Manager extends Frame {
     if (this.currentPage) if (this.currentPage.active !== active) this.currentPage.vate(active as any)
   }
   stl() {
-    return super.stl() + require('./manager.css').toString();
+    return super.stl() + require('./manager.css').default;
   }
 }

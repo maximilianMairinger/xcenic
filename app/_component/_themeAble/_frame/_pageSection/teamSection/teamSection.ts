@@ -42,10 +42,10 @@ export default class TeamSection extends PageSection {
   }
 
   stl() {
-    return super.stl() + require("./teamSection.css").toString()
+    return super.stl() + require("./teamSection.css").default
   }
   pug() {
-    return require("./teamSection.pug").default
+    return require("./teamSection.pug") 
   }
 }
 

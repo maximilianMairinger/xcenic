@@ -11,11 +11,11 @@ export default class SpeachBubble extends Icon {
   }
 
   stl() {
-    return super.stl() + require("./speachBubble.css").toString()
+    return super.stl() + require("./speachBubble.css").default
   }
 
   pug() {
-    return require("./speachBubble.pug").default
+    return require("./speachBubble.pug") 
   }
 }
 

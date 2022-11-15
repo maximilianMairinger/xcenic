@@ -13,10 +13,10 @@ export default class LinesSection extends PageSection {
   }
 
   stl() {
-    return super.stl() + require("./linesSection.css").toString()
+    return super.stl() + require("./linesSection.css").default
   }
   pug() {
-    return require("./linesSection.pug").default
+    return require("./linesSection.pug") 
   }
 }
 

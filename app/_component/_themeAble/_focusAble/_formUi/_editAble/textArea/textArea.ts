@@ -25,10 +25,10 @@ export default class TextArea extends EditAble {
 
   }
   public pug(): string {
-    return super.pug() + require("./textArea.pug").default
+    return super.pug() + require("./textArea.pug") 
   }
   stl() {
-    return super.stl() + require("./textArea.css").toString()
+    return super.stl() + require("./textArea.css").default
   }
   
 }

@@ -11,7 +11,7 @@ export default class YoutubeIllustration extends Icon {
   }
 
   pug() {
-    return require("./youtubeIllustration.pug").default
+    return require("./youtubeIllustration.pug") 
   }
 }
 

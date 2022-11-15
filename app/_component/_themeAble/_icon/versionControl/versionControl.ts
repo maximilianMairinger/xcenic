@@ -11,7 +11,7 @@ export default class VersionControl extends Icon {
   }
 
   pug() {
-    return require("./versionControl.pug").default
+    return require("./versionControl.pug") 
   }
 }
 

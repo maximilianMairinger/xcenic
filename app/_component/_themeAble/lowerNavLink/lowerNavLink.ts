@@ -85,10 +85,10 @@ export default class LowerNavLink extends ThemeAble {
 
 
   stl() {
-    return super.stl() + require("./lowerNavLink.css").toString()
+    return super.stl() + require("./lowerNavLink.css").default
   }
   pug() {
-    return require("./lowerNavLink.pug").default
+    return require("./lowerNavLink.pug") 
   }
 }
 

@@ -26,10 +26,10 @@ export default class ContactSection extends PageSection {
   }
 
   stl() {
-    return super.stl() + require("./contactSection.css").toString()
+    return super.stl() + require("./contactSection.css").default
   }
   pug() {
-    return require("./contactSection.pug").default
+    return require("./contactSection.pug") 
   }
 }
 

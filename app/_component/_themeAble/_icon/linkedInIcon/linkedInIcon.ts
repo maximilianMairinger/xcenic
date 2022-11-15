@@ -12,7 +12,7 @@ export default class LinkedInIcon extends Icon {
 
 
   pug() {
-    return require("./linkedInIcon.pug").default
+    return require("./linkedInIcon.pug") 
   }
 }
 

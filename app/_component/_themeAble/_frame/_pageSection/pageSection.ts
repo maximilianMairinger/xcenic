@@ -38,6 +38,6 @@ export default abstract class PageSection extends Frame {
   
 
   stl() {
-    return super.stl() + require("./pageSection.css").toString()
+    return super.stl() + require("./pageSection.css").default
   }
 }

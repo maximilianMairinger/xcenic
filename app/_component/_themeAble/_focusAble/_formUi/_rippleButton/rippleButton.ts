@@ -73,10 +73,10 @@ export default class UiButton extends FormUi<Button> {
   }
 
   public pug(): string {
-    return super.pug() + require("./rippleButton.pug").default
+    return super.pug() + require("./rippleButton.pug") 
   }
   stl() {
-    return super.stl() + require("./rippleButton.css").toString()
+    return super.stl() + require("./rippleButton.css").default
   }
   
 }

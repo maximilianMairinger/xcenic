@@ -30,10 +30,10 @@ export default class LoginPage extends Page {
 
 
   stl() {
-    return super.stl() + require("./loginPage.css").toString()
+    return super.stl() + require("./loginPage.css").default
   }
   pug() {
-    return require("./loginPage.pug").default
+    return require("./loginPage.pug") 
   }
 }
 declareComponent("login-page", LoginPage)

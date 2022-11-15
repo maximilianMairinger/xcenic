@@ -11,7 +11,7 @@ export default class InstagramIcon extends Icon {
   }
 
   pug() {
-    return require("./instagramIcon.pug").default
+    return require("./instagramIcon.pug") 
   }
 }
 

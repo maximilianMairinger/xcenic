@@ -7,7 +7,7 @@ export default abstract class Icon extends ThemeAble {
 
   }
   stl() {
-    return super.stl() + require("./icon.css").toString()
+    return super.stl() + require("./icon.css").default
   }
 }
 

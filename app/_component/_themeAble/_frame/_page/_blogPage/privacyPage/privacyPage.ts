@@ -8,7 +8,7 @@ import { dirString, domainIndex } from "../../../../../../lib/domain";
 export default class PrivacyPage extends BlogPage {
 
   constructor() {
-    super(require("./privacy.pug").default)
+    super(require("./privacy.pug") )
     
     
   }

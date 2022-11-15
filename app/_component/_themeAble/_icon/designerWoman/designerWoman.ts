@@ -28,7 +28,7 @@ export default class DesignerWoman extends Icon {
   }
 
   pug() {
-    return require("./designerWoman.pug").default
+    return require("./designerWoman.pug") 
   }
 }
 

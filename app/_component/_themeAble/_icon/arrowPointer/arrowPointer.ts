@@ -12,7 +12,7 @@ export default class ArrowPointer extends Icon {
 
 
   pug() {
-    return require("./arrowPointer.pug").default
+    return require("./arrowPointer.pug") 
   }
 }
 

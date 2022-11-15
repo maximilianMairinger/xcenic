@@ -15,10 +15,10 @@ export default abstract class BlogPage extends Page {
 
 
   stl() {
-    return super.stl() + require("./blogPage.css").toString()
+    return super.stl() + require("./blogPage.css").default
   }
   pug() {
-    return require("./blogPage.pug").default
+    return require("./blogPage.pug") 
   }
 
 }

@@ -28,7 +28,7 @@ export default class Contact extends HighlightAbleIcon {
   }
 
   pug() {
-    return require("./contact.pug").default
+    return require("./contact.pug") 
   }
 }
 

@@ -11,7 +11,7 @@ export default class LaptopWalkIllustration extends Icon {
   }
 
   pug() {
-    return require("./laptopWalkIllustration.pug").default
+    return require("./laptopWalkIllustration.pug") 
   }
 }
 

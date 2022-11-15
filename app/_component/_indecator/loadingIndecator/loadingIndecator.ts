@@ -27,7 +27,7 @@ export default declareComponent("loading-indecator", class loadingIndecator exte
   }
   
   stl() {
-    return super.stl() + require('./loadingIndecator.css').toString();
+    return super.stl() + require('./loadingIndecator.css').default;
   }
   pug() {
     return ""

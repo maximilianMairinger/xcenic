@@ -57,7 +57,7 @@ export default class PageManager extends Manager {
 
 
   stl() {
-    return super.stl() + require("./pageManager.css").toString()
+    return super.stl() + require("./pageManager.css").default
   }
   pug() {
     return "";

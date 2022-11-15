@@ -11,7 +11,7 @@ export default class LineAccent extends Icon {
   }
 
   pug() {
-    return require("./lineAccent.pug").default
+    return require("./lineAccent.pug") 
   }
 }
 

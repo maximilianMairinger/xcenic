@@ -11,7 +11,7 @@ export default class PhotoShoot extends Icon {
   }
 
   pug() {
-    return require("./photoShoot.pug").default
+    return require("./photoShoot.pug") 
   }
 }
 

@@ -8,7 +8,7 @@ export default class RocketIcon extends HighlightAbleIcon {
   }
 
   pug() {
-    return require("./rocket.pug").default
+    return require("./rocket.pug") 
   }
 }
 

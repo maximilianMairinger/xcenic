@@ -35,6 +35,6 @@ export default abstract class Page extends Frame {
   protected navigationCallback?(): Promise<void>
   protected initialActivationCallback?(): boolean | void | Promise<boolean | void>
   stl() {
-    return super.stl() + require("./page.css").toString()
+    return super.stl() + require("./page.css").default
   }
 }

@@ -25,10 +25,10 @@ export default class Input extends EditAble {
     
   }
   public pug(): string {
-    return super.pug() + require("./input.pug").default
+    return super.pug() + require("./input.pug") 
   }
   stl() {
-    return super.stl() + require("./input.css").toString()
+    return super.stl() + require("./input.css").default
   }
   
 }

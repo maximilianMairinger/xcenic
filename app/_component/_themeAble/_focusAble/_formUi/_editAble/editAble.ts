@@ -79,10 +79,10 @@ export default class EditAble extends FormUi {
     this.placeholderText.text(to)
   }
   public pug(): string {
-    return super.pug() + require("./editAble.pug").default
+    return super.pug() + require("./editAble.pug") 
   }
   stl() {
-    return super.stl() + require("./editAble.css").toString()
+    return super.stl() + require("./editAble.css").default
   }
   
 }

@@ -11,7 +11,7 @@ export default class HeartIllustration extends Icon {
   }
 
   pug() {
-    return require("./heartIllustration.pug").default
+    return require("./heartIllustration.pug") 
   }
 }
 

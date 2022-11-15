@@ -186,7 +186,7 @@ export default class LoadButton extends BlockButton {
 
   
   stl() {
-    return super.stl() + require("./loadButton.css").toString();
+    return super.stl() + require("./loadButton.css").default;
   }
   pug() {
     return super.pug()

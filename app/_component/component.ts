@@ -48,7 +48,7 @@ export default abstract class Component<T extends HTMLElement | HTMLAnchorElemen
 
 
   public stl(): string {
-    return require('./component.css').toString()
+    return require('./component.css').default
   }
   public abstract pug(): string
   /**
@@ -100,10 +100,10 @@ export default class Example extends Component {
   }
 
   stl() {
-    return require("./example.css").toString()
+    return require("./example.css").default
   }
   pug() {
-    return require("./example.pug").default
+    return require("./example.pug") 
   }
 }
 

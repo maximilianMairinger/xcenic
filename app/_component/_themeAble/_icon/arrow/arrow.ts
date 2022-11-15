@@ -11,7 +11,7 @@ export default class ArrowIcon extends Icon {
   }
 
   pug() {
-    return require("./arrow.pug").default
+    return require("./arrow.pug") 
   }
 }
 

@@ -11,7 +11,7 @@ export default class SendIcon extends Icon {
   }
 
   pug() {
-    return require("./sendIcon.pug").default
+    return require("./sendIcon.pug") 
   }
 }
 

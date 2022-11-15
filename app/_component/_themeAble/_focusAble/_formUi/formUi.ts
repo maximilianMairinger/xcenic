@@ -351,10 +351,10 @@ export default class FormUi<T extends false | HTMLElement | HTMLAnchorElement = 
 
 
   public pug(): string {
-    return super.pug() + require("./formUi.pug").default
+    return super.pug() + require("./formUi.pug") 
   }
   stl() {
-    return super.stl() + require("./formUi.css").toString()
+    return super.stl() + require("./formUi.css").default
   }
   
 }

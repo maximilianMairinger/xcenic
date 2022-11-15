@@ -8,7 +8,7 @@ import { dirString, domainIndex } from "../../../../../../lib/domain";
 export default class LegalPage extends BlogPage {
 
   constructor() {
-    super(require("./legal.pug").default)
+    super(require("./legal.pug") )
     
     
   }

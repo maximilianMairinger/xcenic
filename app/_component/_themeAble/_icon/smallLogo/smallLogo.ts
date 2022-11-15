@@ -11,7 +11,7 @@ export default class SmallLogo extends Icon {
   }
 
   pug() {
-    return require("./smallLogo.pug").default
+    return require("./smallLogo.pug") 
   }
 }
 

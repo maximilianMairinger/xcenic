@@ -11,7 +11,7 @@ export default class QuotationMark extends Icon {
   }
 
   pug() {
-    return require("./quotationMark.pug").default
+    return require("./quotationMark.pug") 
   }
 }
 

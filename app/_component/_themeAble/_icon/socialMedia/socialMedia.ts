@@ -11,7 +11,7 @@ export default class SocialMedia extends Icon {
   }
 
   pug() {
-    return require("./socialMedia.pug").default
+    return require("./socialMedia.pug") 
   }
 }
 

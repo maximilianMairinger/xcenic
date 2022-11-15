@@ -16,7 +16,7 @@ import "xtring"
 import { Data } from "josm"
 import Button from "../../_themeAble/_focusAble/_button/button"
 
-console.log(require("./header.pug"))
+console.log(require("./header.css").default)
 
 
 const linkAnimationOffset = 170
@@ -477,10 +477,10 @@ export default class Header extends ThemeAble {
   
 
   stl() {
-    return super.stl() + require("./header.css").toString()
+    return super.stl() + require("./header.css").default
   }
   pug() {
-    return require("./header.pug").default
+    return require("./header.pug") 
   }
 }
 declareComponent("header", Header)

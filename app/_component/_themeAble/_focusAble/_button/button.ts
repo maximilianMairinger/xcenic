@@ -185,7 +185,7 @@ export default class Button extends FocusAble<HTMLAnchorElement> {
   }
 
   pug() {
-    return super.pug() + require("./button.pug").default
+    return super.pug() + require("./button.pug") 
   }
   stl() {
     return super.stl() + require("./button.css")

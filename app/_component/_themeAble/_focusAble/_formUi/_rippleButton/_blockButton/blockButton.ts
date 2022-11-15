@@ -19,10 +19,10 @@ export default class BlockButton extends RippleButton {
     this.textElem.text(to as any)
   }
   stl() {
-    return super.stl() + require('./blockButton.css').toString();
+    return super.stl() + require('./blockButton.css').default;
   }
   pug() {
-    return super.pug() + require("./blockButton.pug").default
+    return super.pug() + require("./blockButton.pug") 
   }
 }
 

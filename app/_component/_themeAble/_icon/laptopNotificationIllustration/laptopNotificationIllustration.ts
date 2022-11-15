@@ -11,7 +11,7 @@ export default class LaptopNotificationIllustration extends Icon {
   }
 
   pug() {
-    return require("./laptopNotificationIllustration.pug").default
+    return require("./laptopNotificationIllustration.pug") 
   }
 }
 

@@ -8,7 +8,7 @@ export default class TeamIcon extends HighlightAbleIcon {
   }
 
   pug() {
-    return require("./team.pug").default
+    return require("./team.pug") 
   }
 }
 

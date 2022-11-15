@@ -11,7 +11,7 @@ export default class Line extends Icon {
   }
 
   pug() {
-    return require("./line.pug").default
+    return require("./line.pug") 
   }
 }
 

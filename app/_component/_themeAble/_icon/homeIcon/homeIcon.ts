@@ -12,7 +12,7 @@ export default class HomeIcon extends Icon {
 
 
   pug() {
-    return require("./homeIcon.pug").default
+    return require("./homeIcon.pug") 
   }
 }
 

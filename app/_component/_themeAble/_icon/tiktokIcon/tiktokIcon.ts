@@ -12,7 +12,7 @@ export default class TiktokIcon extends Icon {
 
 
   pug() {
-    return require("./tiktokIcon.pug").default
+    return require("./tiktokIcon.pug") 
   }
 }
 

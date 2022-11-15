@@ -1009,7 +1009,7 @@ export default abstract class SectionedPage extends Page {
 
 
   stl() {
-    return super.stl() + require("./sectionedPage.css").toString()
+    return super.stl() + require("./sectionedPage.css").default
   }
 }
 

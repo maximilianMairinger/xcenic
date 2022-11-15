@@ -83,10 +83,10 @@ class NotFoundPage extends Page {
     
   }
   stl() {
-    return super.stl() + require("./notFound.css").toString()
+    return super.stl() + require("./notFound.css").default
   }
   pug() {
-    return require("./notFound.pug").default
+    return require("./notFound.pug") 
   }
 
 }

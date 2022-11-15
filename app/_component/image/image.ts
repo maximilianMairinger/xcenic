@@ -285,11 +285,11 @@ export default class Image extends Component {
 
 
   stl() {
-    return super.stl() + require("./image.css").toString()
+    return super.stl() + require("./image.css").default
   }
 
   pug() {
-    return require("./image.pug").default
+    return require("./image.pug") 
   }
 
 }

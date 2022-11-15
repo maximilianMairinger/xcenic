@@ -11,7 +11,7 @@ export default class CheckIcon extends Icon {
   }
 
   pug() {
-    return require("./check.pug").default
+    return require("./check.pug") 
   }
 }
 

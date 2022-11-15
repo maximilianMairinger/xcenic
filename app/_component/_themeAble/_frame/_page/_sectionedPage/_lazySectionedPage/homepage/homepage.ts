@@ -109,10 +109,10 @@ export default class HomePage extends LazySectionedPage {
   }
 
   stl() {
-    return super.stl() + require("./homepage.css").toString()
+    return super.stl() + require("./homepage.css").default
   }
   pug() {
-    return require("./homepage.pug").default
+    return require("./homepage.pug") 
   }
 }
 

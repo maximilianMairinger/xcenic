@@ -171,11 +171,11 @@ export default class ContactPage extends Page {
   }
 
   pug() {
-    return require("./contactPage.pug").default
+    return require("./contactPage.pug") 
   }
   
   stl() {
-    return super.stl() + require("./contactPage.css").toString()
+    return super.stl() + require("./contactPage.css").default
   }
 }
 

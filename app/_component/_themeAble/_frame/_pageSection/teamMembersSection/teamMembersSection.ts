@@ -277,10 +277,10 @@ export default class TeamMemberSection extends PageSection {
   }
 
   stl() {
-    return super.stl() + require("./teamMembersSection.css").toString()
+    return super.stl() + require("./teamMembersSection.css").default
   }
   pug() {
-    return require("./teamMembersSection.pug").default
+    return require("./teamMembersSection.pug") 
   }
 }
 

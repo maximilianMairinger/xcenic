@@ -115,6 +115,6 @@ export default abstract class LazySectionedPage extends SectionedPage {
   
 
   stl() {
-    return super.stl() + require("./lazySectionedPage.css").toString()
+    return super.stl() + require("./lazySectionedPage.css").default
   }
 }

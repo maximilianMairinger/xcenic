@@ -161,10 +161,10 @@ export default class Site extends Component {
   }
 
   stl() {
-    return super.stl() + require("./site.css").toString()
+    return super.stl() + require("./site.css").default
   }
   pug() {
-    return require("./site.pug").default
+    return require("./site.pug") 
   }
 }
 

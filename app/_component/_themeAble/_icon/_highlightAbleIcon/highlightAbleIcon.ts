@@ -16,6 +16,6 @@ export default abstract class HighlightAbleIcon extends Icon {
   }
 
   stl() {
-    return super.stl() + require("./highlightAbleIcon.css").toString()
+    return super.stl() + require("./highlightAbleIcon.css").default
   }
 }

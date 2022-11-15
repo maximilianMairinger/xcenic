@@ -11,6 +11,6 @@ export default declareComponent("external-link-icon", class ExternalLinkIcon ext
   }
 
   pug() {
-    return require("./externalLink.pug").default
+    return require("./externalLink.pug") 
   }
 })

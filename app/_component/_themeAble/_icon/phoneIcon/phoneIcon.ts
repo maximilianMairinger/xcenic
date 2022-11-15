@@ -12,7 +12,7 @@ export default class PhoneIcon extends Icon {
 
 
   pug() {
-    return require("./phoneIcon.pug").default
+    return require("./phoneIcon.pug") 
   }
 }
 

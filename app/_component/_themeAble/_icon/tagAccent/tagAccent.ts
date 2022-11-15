@@ -32,7 +32,7 @@ export default class TagAccent extends Icon {
 
 
   pug() {
-    return require("./tagAccent.pug").default
+    return require("./tagAccent.pug") 
   }
 }
 

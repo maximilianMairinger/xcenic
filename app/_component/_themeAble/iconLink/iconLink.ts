@@ -46,10 +46,10 @@ export default class IconLink extends ThemeAble {
 
 
   stl() {
-    return super.stl() + require("./iconLink.css").toString()
+    return super.stl() + require("./iconLink.css").default
   }
   pug() {
-    return require("./iconLink.pug").default
+    return require("./iconLink.pug") 
   }
 }
 

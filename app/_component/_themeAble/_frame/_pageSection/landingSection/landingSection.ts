@@ -33,10 +33,10 @@ export default class LandingSection extends PageSection {
   }
 
   stl() {
-    return super.stl() + require("./landingSection.css").toString()
+    return super.stl() + require("./landingSection.css").default
   }
   pug() {
-    return require("./landingSection.pug").default
+    return require("./landingSection.pug") 
   }
 }
 

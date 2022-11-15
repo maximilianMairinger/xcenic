@@ -19,10 +19,10 @@ export default class AdminPage extends Page {
 
 
   stl() {
-    return super.stl() + require("./adminPage.css").toString()
+    return super.stl() + require("./adminPage.css").default
   }
   pug() {
-    return require("./adminPage.pug").default
+    return require("./adminPage.pug") 
   }
 }
 declareComponent("admin-page", AdminPage)

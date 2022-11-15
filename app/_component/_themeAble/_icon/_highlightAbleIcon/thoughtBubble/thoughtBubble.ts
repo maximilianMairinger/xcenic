@@ -28,7 +28,7 @@ export default class ThoughtBubble extends HighlightAbleIcon {
   }
 
   pug() {
-    return require("./thoughtBubble.pug").default
+    return require("./thoughtBubble.pug") 
   }
 }
 

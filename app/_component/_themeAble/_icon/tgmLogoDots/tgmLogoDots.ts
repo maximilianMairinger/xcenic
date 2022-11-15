@@ -30,7 +30,7 @@ export default class TgmLogoDots extends Icon {
 
     
     this.main.emptyNodes()
-    this.main.apd(require("./oneDot.pug").default)
+    this.main.apd(require("./oneDot.pug") )
     const template = this.main.childs() as HTMLElement
     template.setAttribute("cy", pointsDiameterStr)
     template.setAttribute("r", pointsDiameterStr)
@@ -52,7 +52,7 @@ export default class TgmLogoDots extends Icon {
 
 
   pug() {
-    return require("./tgmLogoDots.pug").default
+    return require("./tgmLogoDots.pug") 
   }
 }
 

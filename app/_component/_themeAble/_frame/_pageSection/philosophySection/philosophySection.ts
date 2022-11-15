@@ -15,10 +15,10 @@ export default class PhilosophySection extends PageSection {
   }
 
   stl() {
-    return super.stl() + require("./philosophySection.css").toString()
+    return super.stl() + require("./philosophySection.css").default
   }
   pug() {
-    return require("./philosophySection.pug").default
+    return require("./philosophySection.pug") 
   }
 }
 

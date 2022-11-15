@@ -11,7 +11,7 @@ export default class LandingCircle extends Icon {
   }
 
   pug() {
-    return require("./landingCircle.pug").default
+    return require("./landingCircle.pug") 
   }
 }
 

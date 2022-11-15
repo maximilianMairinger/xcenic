@@ -10,9 +10,9 @@ export default declareComponent("big-video", class BigVideoIcon extends Icon {
 
   }
   stl() {
-    return super.stl() + require("./bigVideo.css").toString()
+    return super.stl() + require("./bigVideo.css").default
   }
   pug() {
-    return require("./bigVideo.pug").default
+    return require("./bigVideo.pug") 
   }
 })

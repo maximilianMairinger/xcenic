@@ -78,10 +78,10 @@ export default class FocusAble<T extends false | HTMLElement | HTMLAnchorElement
 
   }
   public pug(): string {
-    return require("./focusAble.pug").default
+    return require("./focusAble.pug") 
   }
   stl() {
-    return super.stl() + require("./focusAble.css").toString()
+    return super.stl() + require("./focusAble.css").default
   }
   
 }

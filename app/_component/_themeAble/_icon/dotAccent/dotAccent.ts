@@ -11,7 +11,7 @@ export default class DotAccent extends Icon {
   }
 
   pug() {
-    return require("./dotAccent.pug").default
+    return require("./dotAccent.pug") 
   }
 }
 

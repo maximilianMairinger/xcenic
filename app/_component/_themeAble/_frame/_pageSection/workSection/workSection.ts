@@ -202,10 +202,10 @@ export default class PhilosophySection extends PageSection {
   }
 
   stl() {
-    return super.stl() + require("./workSection.css").toString()
+    return super.stl() + require("./workSection.css").default
   }
   pug() {
-    return require("./workSection.pug").default
+    return require("./workSection.pug") 
   }
 }
 

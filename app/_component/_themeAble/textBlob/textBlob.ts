@@ -24,10 +24,10 @@ export default class TextBlob extends ThemeAble {
   }
 
   public pug(): string {
-    return require("./textBlob.pug").default
+    return require("./textBlob.pug") 
   }
   stl() {
-    return super.stl() + require("./textBlob.css").toString()
+    return super.stl() + require("./textBlob.css").default
   }
   
 }
