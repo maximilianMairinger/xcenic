@@ -85,7 +85,7 @@
     "copy-to-clipboard": "^3.3.1",
     "css-simple-parser": "^2.0.1",
     "delay": "^4.4.1",
-    "extended-dom": "^4.0.13",
+    "extended-dom": "^4.0.31",
     "fast-decode-uri-component": "^1.0.1",
     "get-base-url": "^3.0.1",
     "image-web": "^1.2.2",
