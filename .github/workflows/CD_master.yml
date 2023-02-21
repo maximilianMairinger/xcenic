@@ -55,17 +55,17 @@ jobs:
     
     steps: 
     - name: "checkout"
-      if: ${{ needs.detectChanges.outputs.app == 'true' || needs.detectChanges.outputs.dependencies == 'true' }}
+      if: ${{ (needs.detectChanges.outputs.app == 'true') || (needs.detectChanges.outputs.dependencies == 'true') }}
       uses: actions/checkout@master
 
     - name: Setting up node
-      if: ${{ needs.detectChanges.outputs.app == 'true' || needs.detectChanges.outputs.dependencies == 'true' }}
+      if: ${{ (needs.detectChanges.outputs.app == 'true') || (needs.detectChanges.outputs.dependencies == 'true') }}
       uses: actions/setup-node@master
       with:
         node-version: '16.x'
 
     - name: Installing runner dependencies
-      if: ${{ needs.detectChanges.outputs.app == 'true' || needs.detectChanges.outputs.dependencies == 'true' }}
+      if: ${{ (needs.detectChanges.outputs.app == 'true') || (needs.detectChanges.outputs.dependencies == 'true') }}
       run: npm i
 
     # - name: set environment variables
@@ -74,11 +74,11 @@ jobs:
     #     GOOGLE_MAPS_API_KEY: '${{ secrets.MAPS_API_KEY }}'
     
     - name: "Building app"
-      if: ${{ needs.detectChanges.outputs.app == 'true' || needs.detectChanges.outputs.dependencies == 'true' }}
+      if: ${{ (needs.detectChanges.outputs.app == 'true') || (needs.detectChanges.outputs.dependencies == 'true') }}
       run: npm run buildProdApp --if-present
 
     - name: "Uploading files to remote"
-      if: ${{ needs.detectChanges.outputs.app == 'true' || needs.detectChanges.outputs.dependencies == 'true' }}
+      if: ${{ (needs.detectChanges.outputs.app == 'true') || (needs.detectChanges.outputs.dependencies == 'true') }}
       uses: appleboy/scp-action@v0.1.1
       with:
         host: ${{ secrets.HOST }}
@@ -346,7 +346,7 @@ jobs:
 
 
     - name: Moving files from temp storage 
-      if: ${{ (needs.detectChanges.outputs.images == 'true') || (needs.detectChanges.outputs.server == 'true') || (needs.detectChanges.outputs.replServer == 'true') || (needs.detectChanges.outputs.app == 'true') || (needs.detectChanges.outputs.serviceWorker == 'true') || (needs.detectChanges.outputs.public == 'true') }}
+      if: ${{ (needs.detectChanges.outputs.dependencies == 'true') || (needs.detectChanges.outputs.images == 'true') || (needs.detectChanges.outputs.server == 'true') || (needs.detectChanges.outputs.replServer == 'true') || (needs.detectChanges.outputs.app == 'true') || (needs.detectChanges.outputs.serviceWorker == 'true') || (needs.detectChanges.outputs.public == 'true') }}
       uses: appleboy/ssh-action@master
       with: 
         host: ${{ secrets.HOST }}
