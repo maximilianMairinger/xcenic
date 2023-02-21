@@ -68,16 +68,18 @@ let appEntryPath = path.join(appDir, appEntryFileName);
   const compressImages = imageWeb.constrImageWeb(["jpg", "webp", "avif"], ["3K", "PREV"])
   const imgDistPath = "public/res/img/dist" 
   const imgSrcPath = "app/res/img"
-  const imgChangeF = async (path, override = false) => {
+  const imgChangeF = async (path, override) => {
     console.log("Compressing images")
+    debugger
     await delay(1000)
-    await compressImages(imgSrcPath, imgDistPath, { override, silent: false })
+    await compressImages(path, imgDistPath, { override, silent: false })
   }
   
 
   
   imgChangeF(imgSrcPath, false)
-  chokidar.watch(imgSrcPath, { ignoreInitial: true }).on("change", (path) => imgChangeF(path))
+  chokidar.watch(imgSrcPath, { ignoreInitial: true }).on("change", (path) => imgChangeF(path, true))
+  chokidar.watch(imgSrcPath, { ignoreInitial: true }).on("add", (path) => imgChangeF(path, false))
 
   
   
