@@ -64,7 +64,7 @@ const ratio = 16 / 9
 
 export default class Image extends Component {
   public readonly loaded: {[key in typeof resesList[number]]?: ResablePromise<void>} = {}
-  private elems: {[key in typeof resesList[number]]?: {picture: HTMLPictureElement, sources: {setSource: (src: string) => void}[], img: HTMLImageElement &  {setSource: (src: string) => void}}} = {}
+  private elems: {[key in typeof resesList[number]]?: {picture: HTMLPictureElement, sources: ((HTMLSourceElement | HTMLImageElement) & {setSource: (src: string) => void, getSource: () => string})[], img: HTMLImageElement &  {setSource: (src: string) => void}}} = {}
   private myWantedRes = this.resizeData().tunnel(({width, height}) => Math.sqrt(width * height * ratio))
   constructor(src?: string, forceLoad?: boolean) {
     //@ts-ignore
@@ -86,11 +86,12 @@ export default class Image extends Component {
 
   private makeNewResElems(loadRes: typeof resesList[number], loadStage: number) {
     if (loadRes === undefined) return
-    const sources = []
-    const img = ce("img") as HTMLImageElement & {setSource: (to: string) => string}
+    const sources = [] as any
+    const img = ce("img") as HTMLImageElement & {setSource: (to: string) => string, getSource: () => string}
     //@ts-ignore
     img.crossorigin = "anonymous"
     img.setSource = (to) => img.src = to + fallbackFormat
+    img.getSource = () => img.src
     
     const picture = ce("picture")
 
@@ -98,9 +99,10 @@ export default class Image extends Component {
     
 
     for (let format of whenPossibleFormats) {
-      const source = ce("source") as HTMLSourceElement & {setSource: (to: string) => string}
+      const source = ce("source") as HTMLSourceElement & {setSource: (to: string) => string, getSource: () => string}
       source.type = typePrefix + format
       source.setSource = (to: string) => source.srcset = to + format
+      source.getSource = () => source.srcset
       sources.add(source)
     }
 
@@ -121,7 +123,12 @@ export default class Image extends Component {
         res();
       }
       this.elems[resolution].img.onerror = () => {
-        (rej as any)(new Error("Image failed to load. Url: " + this.elems[resolution].img.src));
+        const erroringElem = this.elems[resolution].sources.shift()
+        if (erroringElem !== undefined) {
+          console.error(`Image format ${erroringElem.getSource()} failed to load. Trying next format...`)
+          erroringElem.remove();
+        }
+        else (rej as any)(new Error("Image failed to load. Url: " + this.elems[resolution].img.src));
       }
     })
   }
@@ -173,6 +180,12 @@ export default class Image extends Component {
           })
         }
         this.currentlyActiveElems = thisActiveElems
+      }).catch(() => {
+        // if this res failed to load, try another one
+        this.resesThatAreNotWorking.add(res)
+        const nextRes = this.getCurrentlyWantedRes()
+        if (nextRes === undefined) throw new Error("Image was unable to load. No resolution with any format was able to load. " + src)
+        return this.loadSrc(src, nextRes)
       })
     }
     else {
@@ -193,6 +206,8 @@ export default class Image extends Component {
 
     return this.loaded[res].onSettled
   }
+
+  
     
 
   private currentLoadStage: number
@@ -266,6 +281,8 @@ export default class Image extends Component {
     return this
   }
 
+
+  private resesThatAreNotWorking: string[] = []
   private getCurrentlyWantedRes() {
 
     const stage = this.currentLoadStage
@@ -274,13 +291,21 @@ export default class Image extends Component {
 
 
     let res: any
+    let nextPass = false
     for (const minRes in resStage) {
-      if (+minRes <= wantedRes) {
+      if (this.resesThatAreNotWorking.includes(resStage[minRes])) {
+        nextPass = true
+        continue
+      }
+      if (nextPass || +minRes <= wantedRes) {
+        nextPass = false
         res = resStage[minRes]
       }
+      
     }
     return res
   }
+
 
 
 
