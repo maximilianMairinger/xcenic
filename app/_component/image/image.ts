@@ -184,7 +184,7 @@ export default class Image extends Component {
         // if this res failed to load, try another one
         this.resesThatAreNotWorking.add(res)
         const nextRes = this.getCurrentlyWantedRes()
-        if (nextRes === undefined) throw new Error("Image was unable to load. No resolution with any format was able to load. " + src)
+        if (nextRes === undefined) console.error("Image was unable to load. No resolution with any format was able to load. " + src)
         return this.loadSrc(src, nextRes)
       })
     }
