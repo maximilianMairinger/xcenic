@@ -8,6 +8,7 @@ const unionSymbol = "@"
 const typePrefix = "image/"
 
 
+
 const formats = [
   "avif",
   "webp",
@@ -120,18 +121,20 @@ export default class Image extends Component {
   private newLoadedPromise(resolution: typeof resesList[number]) {
     this.loaded[resolution] = new ResablePromise((res, rej) => {
       this.elems[resolution].img.onload = () => {
+        if (this.optimalImageNotFound) console.error(`Did not find optimal codec for image ${this.src()} in ${resolution}, but found alternative (${this.elems[resolution].sources.first.getSource()}).`)
         res();
       }
       this.elems[resolution].img.onerror = () => {
         const erroringElem = this.elems[resolution].sources.shift()
         if (erroringElem !== undefined) {
-          console.error(`Image format ${erroringElem.getSource()} failed to load. Trying next format...`)
+          this.optimalImageNotFound = true
           erroringElem.remove();
         }
-        else (rej as any)(new Error("Image failed to load. Url: " + this.elems[resolution].img.src));
+        else rej(new Error());
       }
     })
   }
+  private optimalImageNotFound = false
 
   private wasAtStageIndex = {}
   private currentlyActiveElems: {picture: HTMLPictureElement, sources: {setSource: (src: string) => void}[], img: HTMLImageElement &  {setSource: (src: string) => void}}
@@ -158,6 +161,11 @@ export default class Image extends Component {
       const firstTimeAtStage = !this.wasAtStageIndex[this.currentLoadStage]
       
       this.loaded[res].then(() => {
+
+        if (this.couldntLoadAtStage.length !== 0) {
+          console.error(`Image ${src} was unable to load at loading stage [${this.couldntLoadAtStage.join(", ")}]. No resolution with any format was able to load at those stages. But we found an alternative at a differnt stage.`)
+        }
+
         loadingCache[src][loadStageAtCall][res] = true
         
         
@@ -184,8 +192,12 @@ export default class Image extends Component {
         // if this res failed to load, try another one
         this.resesThatAreNotWorking.add(res)
         const nextRes = this.getCurrentlyWantedRes()
-        if (nextRes === undefined) console.error("Image was unable to load. No resolution with any format was able to load. " + src)
-        return this.loadSrc(src, nextRes)
+        
+        if (nextRes === undefined) {
+          this.couldntLoadAtStage.push(this.currentLoadStage)
+          if (this.currentLoadStage === resStages.length - 1) console.error(`Image ${src} was unable to load at any loading stage. No resolution with any format was able to load.`)
+        }
+        else return this.loadSrc(src, nextRes)
       })
     }
     else {
@@ -208,7 +220,7 @@ export default class Image extends Component {
   }
 
   
-    
+  private couldntLoadAtStage = []
 
   private currentLoadStage: number
 
