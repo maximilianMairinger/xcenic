@@ -43,6 +43,7 @@ self.addEventListener("fetch", function (e: any) {
 
 
 
+
 self.addEventListener('activate', function(e: any) {
   e.waitUntil(
     caches.keys().then(function(cacheNames) {
