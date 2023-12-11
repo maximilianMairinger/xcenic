@@ -5,7 +5,11 @@
     "moduleResolution": "classic",
     "allowJs": true,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "es2022",
+      "dom"
+    ]
   },
   "include": [
     "./replServer/src",

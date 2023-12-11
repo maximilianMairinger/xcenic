@@ -73,7 +73,7 @@ export default async function mongoApi(db: Collection<any>) {
     let surely_id: Promise<ObjectID>
 
     const linkRes = (async () => {
-      const prom = []
+      const prom = [] as Promise<void>[]
       for (const key in linkOb) {
         prom.push(lookupIdAtPath(linkOb[key]).then((id) => {
           if (id !== null) localAddOb[key] = id
@@ -83,7 +83,7 @@ export default async function mongoApi(db: Collection<any>) {
     })()
 
 
-    const proms = []
+    const proms = [] as Promise<void>[]
     if (haveId) {
       surely_id = Promise.resolve(_id)
       
@@ -116,7 +116,7 @@ export default async function mongoApi(db: Collection<any>) {
 
 
     async function insertIdsRecursively(ids: any) {
-      const newProms = []
+      const newProms = [] as Promise<{key, insertedId}>[]
       for (const key in nestedOb) {
         const memo = memoJsToMongo.get(object[key])
         if (memo !== undefined) {
@@ -173,7 +173,7 @@ export default async function mongoApi(db: Collection<any>) {
 
     const mongoOb = await db.findOne({ _id }, { projection: localProjection })
 
-    let proms = []
+    let proms = [] as Promise<void>[]
     for (const key in mongoOb) {
       if (mongoOb[key] instanceof ObjectID) {
         proms.push(recRestrictedMongoObjectToJsObject(mongoOb[key], projection[key], memoMonToJs).then((r) => {

@@ -6,7 +6,11 @@
     "allowJs": true,
     "sourceMap": true,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "es2022",
+      "dom"
+    ]
   },
   "include": [
     "./replApp"
