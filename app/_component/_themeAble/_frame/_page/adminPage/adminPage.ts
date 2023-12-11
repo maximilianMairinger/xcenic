@@ -766,6 +766,7 @@ export default class AdminPage extends Page {
 
     this.on("wheel", (e: WheelEvent) => {
       wheelIdle.stillActive()
+      // debugger
 
       e.preventDefault()
       if (!e.ctrlKey && !startedWheelWithControl) {
@@ -775,8 +776,8 @@ export default class AdminPage extends Page {
           delta.y = 0
         }
         else {
-          delta.x = e.deltaX * .5
-          delta.y = e.deltaY * .5
+          delta.x = e.deltaX * 1
+          delta.y = e.deltaY * 1
         }
 
 
