@@ -18,16 +18,6 @@ module.exports = () => {
         module: {
             rules: [
                 {
-                    test: /\.worker\.(js|ts)$/i,
-                    use: [{
-                      loader: 'comlink-loader',
-                      options: {
-                        singleton: true,
-
-                      }
-                    }]
-                },
-                {
                     test: /([a-zA-Z0-9\s_\\.\-\(\):])+\.static\.([a-zA-Z0-9])+$/,
                     use: 'raw-loader',
                 },
@@ -47,11 +37,11 @@ module.exports = () => {
                 },
                 {
                     test: /\.(png|jpg|gif|jpeg|woff|woff2|eot|ttf|svg)$/,
-                    loader: 'url-loader?limit=100000000'
+                    use: 'url-loader?limit=100000000'
                 },
                 {
                     test: /\.pug$/,
-                    loader: ['raw-loader', 'pug-html-loader']
+                    use: ['raw-loader', 'pug-html-loader']
                 }
             ]
         }

@@ -1,6 +1,6 @@
 import { Data as DATA, DataSubscription, DataBaseSubscription } from "josm"
 import { DataBase as DATABASE } from "josm"
-import { setDataDerivativeIndex, OptionallyExtendedData, OptionallyExtendedDataBase } from "josm/app/dist/esm/derivativeExtension"
+import { setDataDerivativeIndex, OptionallyExtendedData, OptionallyExtendedDataBase } from "josm"
 
 
 

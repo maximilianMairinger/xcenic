@@ -60,7 +60,9 @@ export default class PhilosophySection extends PageSection {
       panel.removeClass(inactiveClass)
       
       const locToken = curTokenAc = Symbol()
-      panel.anim([{height: atIndex === sidePanelElems.length-1 ? 65 : 90, offset: 0}, {height: panel.childs(":last-child").offsetBottom()}], {duration: 500, fill: true}).then(() => {
+      const offset = panel.childs(":last-child").offset()
+      
+      panel.anim([{height: atIndex === sidePanelElems.length-1 ? 65 : 90, offset: 0}, {height: offset.height + offset.top}], {duration: 500, fill: true}).then(() => {
         if (curTokenAc !== locToken) return 
         panel.css({height: "fit-content"})
       })

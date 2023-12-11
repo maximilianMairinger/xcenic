@@ -10,7 +10,7 @@ export default declareComponent("lower-nav", class LowerNav extends ThemeAble {
   private currentLinkWrapperElems: ElementList
   private currentLinkElems: ElementList<LowerNavLink>
   private backgroundContainer = this.q("background-container")
-  private layers = this.backgroundContainer.childs(1, true).add(this.componentBody) as any
+  private layers = this.backgroundContainer.childs(1, true).add(this.componentBody as HTMLElement) as any
   private slidy: Element
   public accentTheme = new Data("primary") as Data<"primary" | "secondary">
 

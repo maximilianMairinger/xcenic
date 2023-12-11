@@ -7,6 +7,7 @@ import Button from "../_button/button";
 import FocusAble from "../focusAble"
 import { Theme } from "../../themeAble"
 import { DataSubscription } from "josm";
+import { DataBase as DATABASE } from "josm";
 
 if (window.TouchEvent === undefined) window.TouchEvent = class SurelyNotTouchEvent {} as any
 
@@ -37,7 +38,14 @@ function distance(p1: [number, number], p2: [number, number]) {
     return Math.sqrt(Math.abs(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2)));
 }
 
-export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement = boolean | HTMLElement> extends FocusAble<T> {
+export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement = boolean | HTMLElement> extends FocusAble<T, DATABASE<{
+  focus: boolean | "direct",
+  ripple: boolean | "late",
+  hover: boolean,
+  active: boolean,
+  enabled: boolean,
+  preHover: boolean
+}>> {
   public rippleElements: HTMLElement;
   public waveElement: HTMLElement;
   public validMouseButtons: Set<number>
@@ -46,7 +54,7 @@ export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement 
 
   protected slotElem = this.q("slot") as HTMLSlotElement
 
-  // @ts-ignore
+  
   public userFeedbackMode: DataBase<{
     focus: boolean | "direct",
     ripple: boolean | "late",
@@ -74,10 +82,10 @@ export default class FormUi<T extends boolean | HTMLElement | HTMLAnchorElement 
     super(componentBodyExtension)
 
     this.coverElems = {
-      hover: this.q("hover-cover"),
-      click: this.q("click-cover"),
+      hover: this.q("hover-cover") as HTMLElement,
+      click: this.q("click-cover") as HTMLElement,
     }
-    this.moveBody = this.q("move-me")
+    this.moveBody = this.q("move-me") as HTMLElement
     this.validMouseButtons = new Set([0])
     this.fadeRipple = []
     this.rippleElems = new ElementList

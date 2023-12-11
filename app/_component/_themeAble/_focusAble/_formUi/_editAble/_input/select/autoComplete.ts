@@ -1,53 +1,46 @@
 import { Data, DataCollection } from "josm"
-import * as fuzzySearch from "../../../../../../../lib/fuzzySearch.worker"
-import { currentLanguage } from "../../../../../../../lib/lang"
+import Fuse, { FuseResult } from "../../../../../../../lib/fuzzySearch.worker"
+
 import Select from "./select"
 
 
 
 export default function(t: Select) {
-  currentLanguage.get((lang) => {fuzzySearch.setLang(lang)})
-  
-  fuzzySearch.add("English")
-  fuzzySearch.add("German")
-  
   const autoCompleteElem = ce("input")
   autoCompleteElem.id = "autoComplete";
   (t as any).moveBody.insertBefore(autoCompleteElem as any, (t as any).inputElem as any)
   
-  
-  
-  let results: Promise<string[]>
 
+
+
+  let results: Promise<FuseResult<string>[]>
   const selModOp = t.selectMode.options
-  t.textValue.get(async (value) => {
-  
-  
-    results = fuzzySearch.search(value, 5, { suggest: true })
-    const res = await results
-    const firstResult = res.first
+  new DataCollection(selModOp.autoComplete, t.possibleValues).get((autoComplete, possibleValues) => {
+    if (autoComplete) {
+      const fuse = new Fuse(possibleValues, {})
+      
+      t.textValue.get(async (value) => {
+        results = fuse.search(value, { limit: 5 }) as any as Promise<FuseResult<string>[]>
+        const resLs = await results
+        console.log(resLs)
 
-    if (selModOp.autoComplete.get()) {
-      const match = firstResult && firstResult.toLowerCase().indexOf(value.toLowerCase());
+        const explicitMatch = resLs.find((res) => res.item.toLowerCase() === value.toLowerCase())
+        if (explicitMatch !== undefined) {
+          // todo: make this work
+          autoCompleteElem.value = explicitMatch.item
+        }
+      }, t.isFocused.get())
 
-      if (firstResult && (match !== -1)) {
-        autoCompleteElem.value = value + firstResult.substring(match + value.length);
-      }
-      else {
-        autoCompleteElem.value = ""
-      }
     }
-
+  })
   
-    
   
-  }, t.isFocused.get())
 
   
   
   const confirm = async () => {
     if (t.selectMode.options.forceOption.get()) {
-      if (results !== undefined) t.textValue.set((await results).first)
+      if (results !== undefined) t.textValue.set((await results)[0].item)
     }
     t.value.set(t.textValue.get())
   }

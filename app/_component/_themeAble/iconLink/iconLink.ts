@@ -8,8 +8,8 @@ import Icon from "../_icon/icon";
 export default class IconLink extends ThemeAble {
 
   public linkElem: Link;
-  private slotElem = this.q("slot")
-  private iconElem = this.slotElem.assignedNodes()[0] as Icon
+  private slotElem = this.q("slot") as any
+  private iconElem = this.slotElem.assignedNodes()[0] as any as Icon
 
 
   constructor(content: string | Data<string>, icon: Icon, link?: string, iconSide: "left" | "right" = "right", underline = true, eventTarget?: Element) {

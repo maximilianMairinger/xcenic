@@ -7,14 +7,12 @@ import { EventListener } from "extended-dom"
 import ThemeAble, { Theme } from "../themeAble";
 
 
-export default class FocusAble<T extends boolean | HTMLElement | HTMLAnchorElement = boolean | HTMLElement> extends ThemeAble<T> {
+export default class FocusAble<T extends boolean | HTMLElement | HTMLAnchorElement = boolean | HTMLElement, UserFeedbackMode extends DATABASE<{focus: boolean | "direct"}> = DATABASE<{focus: boolean | "direct"}>> extends ThemeAble<T> {
 
-  public userFeedbackMode = new DataBase({}) as any as DATABASE<{
-    focus: boolean | "direct"
-  }>
-  protected userFeedbackModeResult = new DataBase({}) as any as typeof this["userFeedbackMode"]
-  protected userFeedbackModeCalc = new DataBase({}) as any as {[key in keyof typeof this["userFeedbackMode"]]: DataBase<{
-    normal: typeof this["userFeedbackMode"][key], 
+  public userFeedbackMode = new DataBase({}) as any as UserFeedbackMode
+  protected userFeedbackModeResult = new DataBase({}) as any as UserFeedbackMode
+  protected userFeedbackModeCalc = new DataBase({}) as any as {[key in keyof UserFeedbackMode]: DataBase<{
+    normal: UserFeedbackMode[key], 
     conditions: boolean[], 
     mandatory: boolean[]
   }>}

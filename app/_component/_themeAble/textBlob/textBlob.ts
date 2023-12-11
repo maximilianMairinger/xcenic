@@ -6,7 +6,7 @@ import ThemeAble from "../themeAble";
 
 
 export default class TextBlob extends ThemeAble {
-  private elems = keyIndex((elemName: string) => textify(this.q(elemName)))
+  private elems = keyIndex((elemName: string) => textify(this.q(elemName) as HTMLElement))
   constructor() {
     super(false)
   }

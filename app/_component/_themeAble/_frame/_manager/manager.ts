@@ -153,7 +153,7 @@ export default abstract class Manager extends Frame {
     this.bodyTarget.innerHTML = to
 
     if (this.needAppendProxy) {
-      this.mutFunc(this.bodyTarget.childs(1))
+      this.mutFunc(this.bodyTarget.childs(1, true))
     }
   }
   get innerHTML() {

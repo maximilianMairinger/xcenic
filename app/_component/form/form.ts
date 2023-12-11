@@ -44,7 +44,7 @@ export default class Form extends Component<false> {
     }
     
     if (typeof submitElement === "string") {
-      submitElement = this.childs(submitElement)
+      submitElement = this.childs(submitElement) as Button
     }
 
     this.submitElem = submitElement as any

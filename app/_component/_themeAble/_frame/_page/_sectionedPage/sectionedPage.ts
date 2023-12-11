@@ -401,7 +401,7 @@ export default abstract class SectionedPage extends Page {
 
   private unreadySectionCount = new Data(0)
   private allSectionsReady = this.unreadySectionCount.tunnel((count) => count === 0)
-  private renderingSections: RenderSections = []
+  private renderingSections = [] as RenderSections
   protected newSectionArrived(section: PageSection & {showSection?: () => (void | number)}, wantedPos: number) {
     const rendered = new Data(false) as Data<boolean>
     const top = section.offsetTop

@@ -25,8 +25,9 @@ export default class Select extends Input {
   }>
 
   public textValue: Data<string>
+  public possibleValues: Data<string[]>
 
-  constructor(options: string[], placeholder?: string) {
+  constructor(possibleValues: string[] = [], placeholder?: string) {
     super(placeholder)
 
     this.textValue = this.value
@@ -53,6 +54,7 @@ export default class Select extends Input {
     })
 
 
+
     let fullLoad: Function
     loadRecord.content.add(async () => {
       fullLoad = (await import("./autoComplete")).default(this)
@@ -63,7 +65,12 @@ export default class Select extends Input {
     })
 
     
+    this.possibleValues = new Data(possibleValues)
     
+  }
+
+  values(values: string[]) {
+    this.possibleValues.set(values)
   }
 
 
