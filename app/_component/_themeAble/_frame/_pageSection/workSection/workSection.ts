@@ -60,7 +60,7 @@ export default class PhilosophySection extends PageSection {
       panel.removeClass(inactiveClass)
       
       const locToken = curTokenAc = Symbol()
-      const offset = panel.childs(":last-child").offset()
+      const offset = panel.childs(1, true).last.absoluteOffset()
       
       panel.anim([{height: atIndex === sidePanelElems.length-1 ? 65 : 90, offset: 0}, {height: offset.height + offset.top}], {duration: 500, fill: true}).then(() => {
         if (curTokenAc !== locToken) return 
