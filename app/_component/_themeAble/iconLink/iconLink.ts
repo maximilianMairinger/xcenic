@@ -8,7 +8,7 @@ import Icon from "../_icon/icon";
 export default class IconLink extends ThemeAble {
 
   public linkElem: Link;
-  private slotElem = this.q("slot")
+  private slotElem = this.q("slot") as HTMLSlotElement
   private iconElem = this.slotElem.assignedNodes()[0] as Icon
 
 
