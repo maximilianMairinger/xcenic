@@ -22,7 +22,7 @@ export default class Form extends Component<false> {
   private unsubFromLastSubmitElement = () => {}
   submitElement(submitElement: SelectorToButton | Button) {
     if (typeof submitElement === "string") {
-      submitElement = this.childs(submitElement)
+      submitElement = this.childs(submitElement) as any
     }
 
     const localUnsub = this.unsubFromLastSubmitElement

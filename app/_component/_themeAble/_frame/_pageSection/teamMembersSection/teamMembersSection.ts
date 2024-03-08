@@ -68,7 +68,7 @@ export default class TeamMemberSection extends PageSection {
   private scrollContainer = this.q("scroll-container") as HTMLElement
   private imageContainer = this.q("image-container")
   private detailsBar = this.q("details-bar") as HTMLElement
-  private nextEmploeeBtn: RippleButton = this.detailsBar.childs("c-ripple-button")
+  private nextEmploeeBtn = this.detailsBar.childs("c-ripple-button") as RippleButton
   constructor() {
     super("light");
     this.accentTheme.set("secondary")

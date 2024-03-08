@@ -17,6 +17,7 @@ import "../../../_focusAble/_formUi/_rippleButton/_blockButton/blockButton"
 import { ElementList, ScrollData, ScrollTrigger } from "extended-dom"
 import { Data, DataCollection, DataSubscription } from "josm"
 import delay from "delay"
+import "extended-dom"
 
 
 
@@ -60,7 +61,10 @@ export default class PhilosophySection extends PageSection {
       panel.removeClass(inactiveClass)
       
       const locToken = curTokenAc = Symbol()
-      panel.anim([{height: atIndex === sidePanelElems.length-1 ? 65 : 90, offset: 0}, {height: panel.childs(":last-child").offsetBottom()}], {duration: 500, fill: true}).then(() => {
+      const e = panel.childs(":last-child") as HTMLElement
+      const height = e.offsetHeight + e.offsetTop
+
+      panel.anim([{height: atIndex === sidePanelElems.length-1 ? 65 : 90, offset: 0}, {height}], {duration: 500, fill: true}).then(() => {
         if (curTokenAc !== locToken) return 
         panel.css({height: "fit-content"})
       })
