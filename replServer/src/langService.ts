@@ -2,11 +2,11 @@ import { DataBase, DataBaseSubscription } from "josm"
 import * as MongoDB from "mongodb"
 import { parse, stringify } from "../../app/lib/serialize"
 import mongoApi from "../../server/src/mongoApi"
-import { ExtendedExpress } from "../../server/src/setup"
+
 import projectObject from "project-obj"
 import sizeOfObject from "object-sizeof"
 import merge from "deepmerge"
-import { resolveOldRecursion } from "../../app/lib/networkDataBase"
+import { escapeRecursion } from "../../app/lib/networkDataBase"
 import networkDataBase from "./../../app/lib/networkDataBase"
 import de from "./../../app/res/lang/de"
 import en from "./../../app/res/lang/en"
@@ -15,7 +15,7 @@ const initLang = {de, en}
 
 
 
-export default async function(app: ExtendedExpress, db: MongoDB.Db) {
+export default async function(app: any, db: MongoDB.Db) {
 
   
 
@@ -25,12 +25,13 @@ export default async function(app: ExtendedExpress, db: MongoDB.Db) {
   const josm = new DataBase(needFallback ? initLang : initMongo)
 
   josm(function sub(full, diff) {
-    mongo.set(resolveOldRecursion(diff, sub))
+    mongo.set(escapeRecursion(diff, sub))
   }, true, needFallback)
 
 
   app.ws("/lang", (ws) => {
     const network = networkDataBase(josm, ws)
+    
   })
 
   

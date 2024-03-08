@@ -1,20 +1,20 @@
+import expressWs from "express-ws"
 import chokidar from "chokidar"
 import pth from "path"
 import fs from "fs"
 import xtring from "xtring"; xtring();
 
-import { configureExpressApp, ExtendedExpress, SendFileProxyFunc } from "./../../server/src/setup"
+import { configureExpressApp, SendFileProxyFunc } from "./../../server/src/setup"
 
 
 
 function formatPath (path: string) {
-  let localPath = path.substr(7)
+  let localPath = path.substring(7)
   localPath = localPath.split("\\").join("/")
   if (pth.extname(localPath) === "") localPath += "/"
   return localPath
 }
 
-const swInjection = fs.readFileSync(pth.join(__dirname, "./../res/live-reload-inject.js")).toString()
 
 
 
@@ -22,68 +22,47 @@ const swInjection = fs.readFileSync(pth.join(__dirname, "./../res/live-reload-in
 const publicPath = "./public"
 
 
-export default function init(onRdy: (app: ExtendedExpress) => (Promise<void> | void), indexUrl: string = "*", wsUrl: string = "/") {
-  if (!wsUrl.startsWith("/")) wsUrl = "/" + wsUrl
+export default async function init(indexUrl: string = "*", _wsUrl: string = "/reloadWs") {
+  let wsUrl: `/${string}`
+  if (!_wsUrl.startsWith("/")) wsUrl = ("/" + _wsUrl) as `/${string}`
+  else wsUrl = _wsUrl as `/${string}`
 
 
-  let activateSetFileProxy: (f: SendFileProxyFunc) => void
+  const app = await configureExpressApp(indexUrl, publicPath, (file, ext) => {
+    if (ext === ".html" || ext === ".htm") {
+      let injectAt = file.lastIndexOf("</body>")
+      return file.splice(injectAt, 0, swInjTxt())
+    }
+  })
 
-  let clients: Set<WebSocket>
-  const app = configureExpressApp({onRdy, indexUrl, publicPath, sendFileProxy: new Promise((res) => {activateSetFileProxy = res})})
+  const { clients } = app.getWebSocketServer(wsUrl)
+  // app.ws(wsUrl, () => {})
 
   
-  const restartingCousOf = []
-
+  
   chokidar.watch(publicPath, { ignoreInitial: true }).on("all", (event, path) => {
     path = formatPath(path)
 
-    
-    //@ts-ignore
-    global.qjwnenqjnewqik = restartingCousOf // quickfix https://github.com/rollup/rollup/issues/4425
+    console.log("Change at: \"" + path + "\"; Restarting app.")
 
-    if (restartingCousOf.empty) {
-      setTimeout(() => {
-        console.log("Change at: \"" + restartingCousOf.join(", ") + "\"; Restarting app.")
-        restartingCousOf.clear()
-
-
-        if (clients !== undefined && clients.size > 0) {
-          clients.forEach((c) => {
-            c.send("reload please")
-          }, 0)
-        }
-        else {
-          console.log("No clients to reload.")
-        }
-      })
-    }
-    restartingCousOf.push(path)
-
-
-
-    
+    clients.forEach((c) => {
+      c.send(JSON.stringify({reeee: "reload please"}))
+    })
   })
 
 
   
-  app.port.then((port) => {
+
   // inject
-  const swInjUrl = `
+  const swInjTxt = () => `
 <!-- Code Injected by the live server -->
 <script>
 (() => {
 let wsUrl = "${wsUrl}";
-${swInjection}
+${fs.readFileSync(pth.join(__dirname, "./../res/live-reload-inject.js")).toString()}
 })()
 </script>`
 
-    activateSetFileProxy((file, ext) => {
-      if (ext === ".html" || ext === ".htm") {
-        let injectAt = file.lastIndexOf("</body>")
-        return file.splice(injectAt, 0, swInjUrl)
-      }
-    })
-  })
 
   
   return app

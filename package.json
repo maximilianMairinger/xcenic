@@ -40,6 +40,7 @@
     "@types/node": "^14.17.12",
     "@types/nodemon": "^1.19.1",
     "@types/qrcode": "^1.4.2",
+    "@types/ws": "^8.5.10",
     "@webcomponents/webcomponentsjs": "^2.6.0",
     "axios": "^0.26.1",
     "body-parser": "^1.19.0",
@@ -92,6 +93,7 @@
     "webpack-inject-plugin": "^1.5.5",
     "webpack-merge": "^5.7.3",
     "worker-loader": "^3.0.8",
+    "ws": "^8.15.0",
     "yargs": "16.2.0"
   },
   "dependencies": {

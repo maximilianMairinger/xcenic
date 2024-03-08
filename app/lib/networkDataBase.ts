@@ -19,7 +19,7 @@ export default function networkDataBase(dataBase: DataBase<object>, urlPath_webS
   else ws = urlPath_webSocket
 
 
-  const mergeOldRecursionToMyDB = mergeOldRecursionToDB(dataBase())
+  const mergeOldRecursionToMyDB = parseEscapedRecursion(dataBase())
 
 
 
@@ -29,7 +29,7 @@ export default function networkDataBase(dataBase: DataBase<object>, urlPath_webS
     let projection = {}
 
     const sub = dataBase(function subFunc(full, diff) {
-      ws.send(stringify({set: resolveOldRecursion(projectObject(diff, projection), subFunc)}))
+      ws.send(stringify({set: escapeRecursion(projectObject(diff, projection), subFunc)}))
     }, true, false)
   
     ws.addEventListener("message", (rawMessage) => {
@@ -145,30 +145,33 @@ function getParents(db: InternalDataBase<{}>) {
   return (db as any).beforeDestroyCbs as MultiMap<InternalDataBase<{}>, {key: string}>
 }
 
-export const resolveOldRecursion = (() => {
+type dbDiff = object
+
+export const escapeRecursion = (() => {
   let known: Map<any, any>
-  return function resolveOldRecursion(diff: object, rootSub: any) {
+  return function escapeRecursion(diff: dbDiff, rootSub: any) {
     known = new Map()
-    return resolveOldRecursionRec(diff, rootSub)
+    return escapeRecursionFromDBRec(diff, rootSub)
   }
 
-  function resolveOldRecursionRec(diff: object, rootSub: any) {
+  function escapeRecursionFromDBRec(diff: dbDiff, rootSub: any) {
     if (known.has(diff)) return known.get(diff)
     const res = {}
     known.set(diff, res)
     for (let dk in diff) {
       let val = diff[dk]
-      if (diff[dk] instanceof Object) {
+      if (val instanceof Object) {
         if (val[parsingId] !== undefined) {
           const db = val[parsingId][internalDataBaseBridge] as InternalDataBase<{}>
           const parents = getParents(db)
           if (parents.size >= 2  || ((db as any).isRoot && parents.size === 1)) {
+            // what if this (the new ref) is the new most shallowest connection to the root
             res[dk] = { $ref: findRoot(db, rootSub) }
           }
           else res[dk] = val
         }
         else {
-          res[dk] = resolveOldRecursionRec(val, rootSub)
+          res[dk] = escapeRecursionFromDBRec(val, rootSub)
         }
       }
       else {
@@ -181,7 +184,7 @@ export const resolveOldRecursion = (() => {
 })()
 
 
-export function mergeOldRecursionToDB(rootStore: object) {
+export function parseEscapedRecursion(rootStore: object) {
   let known: Set<any>
   function rec(diff: object) {
     if (diff instanceof Object) {

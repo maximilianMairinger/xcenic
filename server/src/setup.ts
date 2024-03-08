@@ -1,55 +1,54 @@
 import express from "express"
-import * as bodyParser from "body-parser"
+import { urlencoded, json } from "body-parser"
 import xrray from "xrray"; xrray(Array);
 import * as MongoDB from "mongodb";
 const MongoClient = MongoDB.MongoClient
 import pth from "path"
-import fs, {promises as aFs} from "fs"
+import fss, {promises as fs} from "fs"
 import detectPort from "detect-port"
+import ws, { WebSocketServer, WebSocket } from "ws"
 import Prerenderer from "../../build/prerenderer"
 const pug = require('pug')
+import keyIndex from "key-index"
 import isBot from "isbot"
 const stats = require("./../../build/stats")
-const locale = require('locale')
-import sanitizePath from "sanitize-filename"
-import expressWs from "express-ws"
-
-
-
-export type ExtendedExpress = express.Express & { port: Promise<number> } & { ws: (route: string, fn: (ws: WebSocket & {on: WebSocket["addEventListener"], off: WebSocket["removeEventListener"]}, req: any) => void) => void }
-
-
 
 
 const defaultPortStart = 3050
 
+
+
+
 export type SendFileProxyFunc = (file: string, ext: string, fileName: string) => string | void | null
 
-export function configureExpressApp({indexUrl, publicPath, sendFileProxy, onRdy}: {onRdy?: (app: ExtendedExpress) => (Promise<void> | void), indexUrl: string, publicPath: string, sendFileProxy?: Promise<SendFileProxyFunc> | SendFileProxyFunc}): ExtendedExpress {
+export async function configureExpressApp(indexUrl: string, publicPath: string, sendFileProxy?: Promise<SendFileProxyFunc> | SendFileProxyFunc, middleware?: (app: express.Express) => express.Express | void) {
   if (indexUrl !== "*") if (!indexUrl.startsWith("/")) indexUrl = "/" + indexUrl
 
-  let _app = express()
-  expressWs(_app)
+  let app = express() as express.Express & { 
+    port: number, 
+    getWebSocketServer: (url: `/${string}`) => WebSocketServer,
+    ws: (url: `/${string}`, cb: (ws: WebSocket & {on: WebSocket["addEventListener"], off: WebSocket["removeEventListener"]}, req: any) => void) => void,
+  }
+  
+  
 
-  const app = _app as typeof _app & { ws: (route: string, fn: (ws: WebSocket & {on: WebSocket["addEventListener"], off: WebSocket["removeEventListener"]}, req: any) => void) => void }
+  if (middleware) {
+    let q = middleware(app)
+    if (q !== undefined && q !== null) app = q as any
+  }
+  app.use(urlencoded({extended: false}))
+  app.use(json())
 
 
-
-  app.use(bodyParser.urlencoded({extended: false}))
-  app.use(bodyParser.json())
-  console.log("available langs", stats.languages)
-  app.use(locale(stats.languages, stats.languages[0]))
-
-
-
-  let sendFileProxyLoaded: Function =  (res: any) => (path: string) => {
+  let sendFileProxyLoaded: Function = (res: any) => (path: string) => {
     res.old_sendFile(pth.join(pth.resolve(""), path))
   }
   if (sendFileProxy) {
     (async () => {
       let proxy = await sendFileProxy
       sendFileProxyLoaded = (res: any) => (path: string) => {
-        let file = fs.readFileSync(path).toString()
+        // async?
+        let file = fss.readFileSync(path).toString("utf-8")
         let extName = pth.extname(path)
         let end = proxy(file, pth.extname(path), pth.basename(path, extName))
         if (end === undefined) res.send(file)
@@ -58,6 +57,10 @@ export function configureExpressApp({indexUrl, publicPath, sendFileProxy, onRdy}
       }
     })()
   }
+
+  app.use(express.static(pth.join(pth.resolve(""), publicPath), {index: false}))
+
+
 
   //@ts-ignore
   app.old_get = app.get
@@ -74,25 +77,47 @@ export function configureExpressApp({indexUrl, publicPath, sendFileProxy, onRdy}
   }
 
   let prt = process.env.port
-  let port: Promise<number>
+  let _port: Promise<number>
   if (prt === undefined) {
-    port = (detectPort(defaultPortStart) as Promise<number>).then((port) => {console.log("No port given, using fallback - Serving on http://127.0.0.1:" + port)}) as Promise<number>
+    _port = (detectPort(defaultPortStart) as Promise<number>)
+    _port.then((port) => {console.log("No port given, using fallback - Serving on http://127.0.0.1:" + port)}) as Promise<number>
   }
-  else port = Promise.resolve(+prt)
+  else _port = Promise.resolve(+prt)
+  
 
-  //@ts-ignore
-  app.port = port
+  
 
+
+  app.port = await _port
+  const port = app.port
+
+  const webSocketServerMap = keyIndex((url: `/${string}`) => new WebSocketServer({ noServer: true, path: url }))
+  const expressServer = app.listen(port)
+  app.ws = (url: `/${string}`, cb: (ws: WebSocket & {on: WebSocket["addEventListener"], off: WebSocket["removeEventListener"]}, req: any) => void) => {
+    const websocketServer = webSocketServerMap(url)
+    websocketServer.on("connection", (ws, req) => {
+      cb(ws, req)
+    })
+  }
+
+  expressServer.on("upgrade", (request, socket, head) => {
+    const url= request.url as `/${string}`
+    webSocketServerMap(url).handleUpgrade(request, socket, head, (websocket) => {
+      webSocketServerMap(url).emit("connection", websocket, request);
+    });
+  });
+
+  app.getWebSocketServer = webSocketServerMap
 
 
   const indexJSRegex = /^xcenic.*\.js$/
   // search for a file in public/dist that matches the regex indexRegex
   const jsPath = pth.join(publicPath, "dist")
 
-  let indexJS: string
-  fs.readdirSync(jsPath).forEach(file => {
+  let indexJS: string | undefined
+  fss.readdirSync(jsPath).forEach(file => {
     if (indexJSRegex.test(file)) {
-      if (indexJS !== undefined) console.error("Mutiple index.js files found in dist folder")
+      if (indexJS !== undefined) console.error("Multiple index.js files found in dist folder")
       else indexJS = file
     }
   })
@@ -106,76 +131,58 @@ export function configureExpressApp({indexUrl, publicPath, sendFileProxy, onRdy}
   const renderIndex = pug.compileFile("public.src/index.pug")
 
 
+  app.get(indexUrl, async (req, res, next) => {
 
+    let url = stats.normalizeUrl(req.originalUrl)
+    console.log("Requested: /" + url, res.statusCode)
 
-  
+    const forceNoJs = url.startsWith("nojs")
+    if (forceNoJs) url = url.substring(5)
 
+    let path = stats.buildStaticPath(stats.urlToPath(url), (req as any).locale)
+    
+    // check if dir exists
+    const isValidUrl = await fs.stat(pth.join(path, "index.html")).then(() => true).catch(() => false)
+    const isReqFromBot = forceNoJs || isBot(req.get('user-agent'))
 
-
-
-  app.use(express.static(pth.join(pth.resolve(""), publicPath), {index: false}))
-
-
-
-  const rr = onRdy !== undefined ? onRdy(app as any) : undefined
-  if (rr instanceof Promise) rr.then(goOnline)
-  else goOnline()
-
-  function goOnline() {
-    app.get(indexUrl, async (req, res, next) => {
-  
-      let url = stats.normalizeUrl(req.originalUrl)
-      console.log("Requested: /" + url, res.statusCode)
-  
-      const forceNoJs = url.startsWith("nojs")
-      if (forceNoJs) url = url.substring(5)
-  
-      let path = stats.buildStaticPath(stats.urlToPath(url), (req as any).locale)
-      
-      // check if dir exists
-      const isValidUrl = await aFs.stat(pth.join(path, "index.html")).then(() => true).catch(() => false)
-      const isReqFromBot = forceNoJs || isBot(req.get('user-agent'))
-  
-      if (isValidUrl) {
-        if (isReqFromBot) {
-          res.sendFile(pth.join(path, "index.html"))
-          console.log("isbot", req.originalUrl, "200")
-        }
-        else {
-          // todo: meta and stuff
-          aFs.readFile(pth.join(path, "index.json")).then((_stats) => {
-            const stats = JSON.parse(_stats.toString())
-  
-            res.send(renderIndex({
-              url,
-              meta: stats.meta,
-              indexJS
-            }))
-          })
-          
-        }
+    if (isValidUrl) {
+      if (isReqFromBot) {
+        res.sendFile(pth.join(path, "index.html"))
+        console.log("isbot", req.originalUrl, "200")
       }
       else {
-        res.statusCode = 404
-        if (isReqFromBot) {
-          console.log("isbot", req.originalUrl, "404")
-          // todo: crawl 404 page
-          res.send("404 - Page not found<br><a href='/'>Hompage</a>")
-        }
-        else {
+        // todo: meta and stuff
+        fs.readFile(pth.join(path, "index.json")).then((_stats) => {
+          const stats = JSON.parse(_stats.toString())
+
           res.send(renderIndex({
             url,
+            meta: stats.meta,
             indexJS
           }))
-        }
+        })
+        
       }
-    })
+    }
+    else {
+      res.statusCode = 404
+      if (isReqFromBot) {
+        console.log("isbot", req.originalUrl, "404")
+        // todo: crawl 404 page
+        res.send("404 - Page not found<br><a href='/'>Hompage</a>")
+      }
+      else {
+        res.send(renderIndex({
+          url,
+          indexJS
+        }))
+      }
+    }
+  })
 
-    port.then(app.listen.bind(app))
-  }
 
 
-  return app as any
+  return app
 }
 
 type DBConfig = {
@@ -185,41 +192,39 @@ type DBConfig = {
 
 
 const publicPath = "./public"
-const indexUrl: string = "*"
 
-export default function (dbName_DBConfig: string | DBConfig, onRdy?: (app: ExtendedExpress, db: MongoDB.Db) => (Promise<void> | void)): Promise<{ db: MongoDB.Db, app: ExtendedExpress}>;
-export default function (dbName_DBConfig?: undefined | null): ExtendedExpress;
-export default function (dbName_DBConfig?: string | null | undefined | DBConfig, onRdy?: any): any {
+export default function (dbName_DBConfig: string | DBConfig, indexUrl?: string): Promise<{ db: MongoDB.Db, app: Awaited<ReturnType<typeof configureExpressApp>> }>
+export default function (dbName_DBConfig?: undefined | null, indexUrl?: string): ReturnType<typeof configureExpressApp>;
+export default function (dbName_DBConfig?: string | null | undefined | DBConfig, indexUrl: string = "/"): any {
+  const app = configureExpressApp(indexUrl, publicPath)
 
   if (dbName_DBConfig) {
-    const dbProm = createMongoConnection(dbName_DBConfig)
-
-    const app = configureExpressApp({indexUrl, publicPath, async onRdy(app) {
-      if (onRdy) await onRdy(app, await dbProm)
-    }})
-
-    return dbProm.then((db) => {
-      if (db === undefined) return { db }
-      else return { db, app }
-    })
+    return (async () => {
+      try {
+        return {db: await createMongoConnection(dbName_DBConfig), app: await app}
+      }
+      catch(e) {
+        console.error(e.message)
+        return {app: await app}
+      }
+      
+    })()
   }
-  else return configureExpressApp({indexUrl, publicPath})
-
+  else return app
 }
 
 
-export function createMongoConnection(dbName_DBConfig: string | DBConfig): Promise<MongoDB.Db> {
+
+export function createMongoConnection(dbName_DBConfig: DBConfig | string) {
   let dbConfig: DBConfig
   if (typeof dbName_DBConfig === "string") dbConfig = { dbName: dbName_DBConfig, url: "mongodb://localhost:27017"}
   else dbConfig = dbName_DBConfig
 
-  return new Promise((res) => {
-    MongoClient.connect(dbConfig.url, { useUnifiedTopology: true }).then((client) => {
-      let db = client.db(dbConfig.dbName)
-      res(db)
-    }).catch(() => {
-      console.error("Unable to connect to MongoDB")
-      res(undefined)
+  return new Promise<MongoDB.Db>((res, rej) => {
+    MongoClient.connect(dbConfig.url, { useUnifiedTopology: true }).then(async (client) => {
+      res(client.db(dbConfig.dbName))
+    }).catch(async () => {
+      rej(new Error("Unable to connect to MongoDB"))
     })
   })
 }

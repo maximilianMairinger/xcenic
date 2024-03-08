@@ -6,7 +6,7 @@ import { createMongoConnection } from "../../server/src/setup"
 
 
 
-liveReloadServer(async (app) => {
+liveReloadServer().then(async (app) => {
 
 
   await createMongoConnection("replLangXcenic").then((mongo) => {

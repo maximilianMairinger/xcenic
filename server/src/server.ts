@@ -11,14 +11,7 @@ import mongoApi from "./mongoApi"
 
 
 
-setup("xcenic", async (app, db) => {
-
-
-  
-
-
-
-
+setup("xcenic").then(async ({app, db}) => {
 
   
   app.post("/addEntry", (req, res) => {
