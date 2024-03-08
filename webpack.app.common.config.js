@@ -1,5 +1,6 @@
 const InjectPlugin = require("webpack-inject-plugin")
 const path = require("path")
+// const { webpack: VidstackPlugin } = require('vidstack/plugins');
 
 
 
@@ -15,6 +16,11 @@ module.exports = () => {
         resolve: {
             extensions: ['.ts', '.js']
         },
+        // plugins: [
+        //     // https://www.vidstack.io/docs/player/getting-started/installation/web-components?styling=default-layout&bundler=webpack&provider=vimeo
+        //     // Include filter to only check specific files for components and styles.
+        //     new VidstackPlugin({ include: /player\// }),
+        // ],
         module: {
             rules: [
                 {

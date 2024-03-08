@@ -1,5 +1,5 @@
 import Frame from "./../frame";
-import LoadingIndecator from "../../../_indecator/loadingIndecator/loadingIndecator";
+import LoadingIndecator from "../../../_indecator/loadingIndecator/loadingIndicator";
 import * as domain from "../../../../lib/domain";
 import lazyLoad, { ImportanceMap, Import, ResourcesMap, PriorityPromise } from "../../../../lib/lazyLoad";
 import SectionedPage from "../_page/_sectionedPage/sectionedPage";
@@ -286,7 +286,7 @@ export default abstract class Manager extends Frame {
       }
   
   
-      to.css("zIndex", 0)
+      to.css("zIndex", "unset")
       this.busySwaping = false;
       if (this.wantedFrame !== to) {
         await this.swapFrame(this.wantedFrame);

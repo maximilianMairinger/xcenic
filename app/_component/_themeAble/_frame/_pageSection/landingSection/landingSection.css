@@ -253,3 +253,36 @@ view-work c-ripple-button {
     margin-bottom: -90px;
   }
 }
+
+player-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* display: none;
+  opacity: 1; */
+  z-index: 150;
+}
+
+fade-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.6);
+  backdrop-filter: blur(5px);
+}
+
+media-player {
+  max-width: 95vw;
+  max-height: 95vh;
+  aspect-ratio: 16/9;
+  width: 1200px !important;
+}

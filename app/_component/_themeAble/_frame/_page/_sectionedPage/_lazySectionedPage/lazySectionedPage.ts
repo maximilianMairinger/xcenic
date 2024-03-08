@@ -1,6 +1,6 @@
 import SectionedPage, { QuerySelector, AliasList, scrollToPadding } from "../sectionedPage";
 import lazyLoad, { ImportanceMap, ResourcesMap } from "../../../../../../lib/lazyLoad";
-import LoadingIndecator from "../../../../../_indecator/loadingIndecator/loadingIndecator";
+import LoadingIndecator from "../../../../../_indecator/loadingIndecator/loadingIndicator";
 import * as domain from "../../../../../../lib/domain";
 import constructAttachToPrototype from "attatch-to-prototype";
 
@@ -36,8 +36,8 @@ export default abstract class LazySectionedPage extends SectionedPage {
 
 
     
-    this.componentBody.apd(this.loadingIndecatorTop = ce("loading-indecator"))
-    this.componentBody.apd(this.loadingIndecatorBot = ce("loading-indecator"))
+    this.componentBody.apd(this.loadingIndecatorTop = ce("loading-indicator"))
+    this.componentBody.apd(this.loadingIndecatorBot = ce("loading-indicator"))
 
     
     const loadedElementsIndex = {"-1": this.loadingIndecatorTop}

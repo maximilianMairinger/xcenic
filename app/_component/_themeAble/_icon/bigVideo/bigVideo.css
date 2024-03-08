@@ -38,16 +38,13 @@ hero-vid {
   height: 52.5%;
   border-radius: 2vw;
   overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-#play > path {
+#playBtn > path {
   fill: white;
 }
 
-#play {
+#playBtn {
   position: absolute;
   width: 10%;
   pointer-events: none;
@@ -65,5 +62,38 @@ darken-overlay {
   position: absolute;
   top: 0;
   left: 0;
-  /* cursor: pointer; */
+  transition: background-color .3s;
+}
+
+hero-vid #playBtn {
+  transition: transform .3s;
+}
+hero-vid:hover #playBtn {
+  transform: scale(1.1);
+}
+
+hero-vid:hover darken-overlay, *[name="contentContainer"].loading darken-overlay {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+c-button[name="playButton"], hero-vid-body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+}
+
+hero-vid-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+c-loading-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
 }

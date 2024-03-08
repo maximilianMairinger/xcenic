@@ -1,5 +1,5 @@
 right-side
-  c-big-video
+  c-big-video(name="thumbnail")
 
 left-side
   text-blob
@@ -17,3 +17,9 @@ view-work
   c-link(link="services" tabIndex="-1") $[ home.landing.viewWork ]
 
   c-button.coverButton(link="services")
+
+player-container(name="playerContainer")
+  fade-background(name="fadeBackground")
+  media-player(name="player" title="Sprite Fight" src="vimeo/640499893")
+    media-provider
+    media-video-layout(thumbnails="https://image.mux.com/VZtzUzGRv02OhRnZCxcNg49OilvolTqdnFLEqBsTwaxU/storyboard.vtt")

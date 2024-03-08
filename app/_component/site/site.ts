@@ -52,7 +52,7 @@ export default class Site extends Component {
       
     })
 
-    let navs = new ElementList<Element>(header, lowerNav)
+    // let navs = new ElementList<Element>(header, lowerNav)
     
 
     let lastScrollProg = 0
@@ -113,7 +113,7 @@ export default class Site extends Component {
 
     
 
-    this.apd(pageManager)
+    this.apd(pageManager as any)
     pageManager.activate()
     pageManager.minimalContentPaint().then(() => {
       // @ts-ignore
@@ -141,7 +141,7 @@ export default class Site extends Component {
         })
       })
 
-    })
+    });
     
     
     
@@ -150,7 +150,7 @@ export default class Site extends Component {
 
 
 
-    this.apd(header, lowerNav)
+    (this as any).apd(header, lowerNav)
     
     
     
