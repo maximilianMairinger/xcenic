@@ -8,7 +8,7 @@ export default {
     services: "Service",
     team: "Team",
     contact: "Kontakt",
-    websites: "Webseites",
+    websites: "Websites",
     contentCreation: "Inhaltserstellung",
     privacy: "Datenschutz",
     legalNotice: "Impressum",
@@ -35,21 +35,21 @@ export default {
     landing: {
       heading: "Unser Ziel",
       text: "Wir machen Ihre Marke groß! Unsere maßgeschneiderten Projekte vermarkten Ihre Produkte digital und positionieren Ihr Unternehmen als zukunftssicheren Akteur in Ihrer Marktnische.",
-      callToAction: "Schreib uns",
+      callToAction: "Kontakt aufnehmen",
       viewWork: "Unser Angebot"
     },
     philosophy: {
       note: "Warum Xcenic?",
       heading: "Eine ganzheitliche Herangehensweise an digitales Marketing.",
       text: "Neue Webseite? Einzigartiges Werbevideo? Oder eine komplette Überarbeitung des Online-Auftrittes? Wir bieten, unabhängig der Projektgröße, ein maßgeschneidertes Angebot.",
-      tag: "TGM - Neuerfindung",
-      tagDesc: "Webseite Projekt"
+      tag: "TGM - Rebranding",
+      tagDesc: "Webentwicklung"
     },
     work: {
       viewWork: "Unser Portfolio",
       webApp: {
         hero: {
-          heading: "Webseites",
+          heading: "Websites",
           text: "In unserem digitalen Zeitalter verlassen sich Unternehmen zunehmend auf ihre Webseite, um sich von der Konkurrenz abzuheben und neue Kunden zu gewinnen. Wir entwickeln Webseiten mit ansprechendem Design, spannendem Inhalt und blitzschnellen Ladezeiten."
         },
         tablet: {
@@ -77,7 +77,7 @@ export default {
       contentCreation: {
         hero: {
           heading: "Inhalte",
-          text: "Ein außergewöhnlicher Onlineauftritt benötigt nicht nur superbes Design und neueste Technologie, sondern eben auch packende Inhalte. Deshalb bieten wir Videoproduktion und Fotografie sowohl in Kombination mit Web- und Socialmediamanagement, aber auch als alleiniges Produkt an."
+          text: "Ein außergewöhnlicher Onlineauftritt benötigt nicht nur superbes Design und neueste Technologie, sondern auch auch packende Inhalte. Deshalb bieten wir Videoproduktion und Fotografie sowohl in Kombination mit Web- und Socialmediamanagement, aber auch als seperates Produkt an."
         },
         photography: "Fotografie",
         videography: {
@@ -91,7 +91,7 @@ export default {
       socialMedia: {
         hero: {
           heading: "Social Media",
-          text: "Über das letzte Jahrzehnt hat Social Media immer mehr Bedeutung in der Kundenaquise entwickelt. Unternehmen, die besonders in der jüngeren Generation erfolgreich sein möchten, verlassen sich immer mehr auf kreative Auftritte in den neue Medien."
+          text: "Über das letzte Jahrzehnt hat Social Media immer mehr Bedeutung in der Kundenaquise gewonnen. Unternehmen, die besonders in der jüngeren Generation erfolgreich sein möchten, setzen immer mehr auf kreative Auftritte in den neue Medien."
         },
         yourBrand: {
           heading: "Ihre Marke auf Social Media",
@@ -130,7 +130,7 @@ export default {
           projectName: "Das Team",
           projectLink: "teamMember",
           // WIP
-          text: "Xcenic kombiniert mehrere kreative Disziplinen, um Unternehmen ein unkompliziertes Gesamtpaket für ihren medialen Auftritt zu bieten. Mein Team und ich versuchen täglich neue Ideen zu realisieren, um unsere Kunden zu unterstützen.",
+          text: "Xcenic kombiniert mehrere kreative Disziplinen, um Unternehmen ein unkompliziertes Gesamtpaket für ihren medialen Auftritt zu bieten. Für uns ist es außerdem besonders wichtig auf diverse Kundenanfragen flexibel und zeitnahe reagieren zu können.",
           author: "Raphael Schlager",
           // WIP
           authorTitle: "Geschäftsführer"

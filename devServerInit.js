@@ -7,8 +7,16 @@ const open = require("open")
 const waitOn = require("wait-on")
 const del = require("del")
 const chokidar = require("chokidar")
-const imageWeb = require("image-web")
 const delay = require("delay")
+
+let imageWeb
+try {
+  imageWeb = require("image-web")
+}
+catch(e) {
+  console.error("image-web cannot be required. This is probably due to sharp not working correctly on your system. Please install sharp manually and try again.")
+  console.error("This will (only) impact the ability to compress images later.")
+}
 
 
 // configureable
@@ -64,20 +72,27 @@ let appEntryPath = path.join(appDir, appEntryFileName);
     return
   }
   
-
-  const compressImages = imageWeb.constrImageWeb(["jpg", "webp", "avif"], ["3K", "PREV"])
-  const imgDistPath = "public/res/img/dist" 
-  const imgSrcPath = "app/res/img"
-  const imgChangeF = async (path, override = false) => {
-    console.log("Compressing images")
-    await delay(1000)
-    await compressImages(imgSrcPath, imgDistPath, { override, silent: false })
+  if (imageWeb) {
+    const compressImages = imageWeb.constrImageWeb(["jpg", "webp", "avif"], ["3K", "PREV"])
+    const imgDistPath = "public/res/img/dist" 
+    const imgSrcPath = "app/res/img"
+    const imgChangeF = async (path, override) => {
+      console.log("Compressing images")
+      await delay(1000)
+      await compressImages(path, imgDistPath, { override, silent: false })
+    }
+    
+  
+    
+    imgChangeF(imgSrcPath, false)
+    chokidar.watch(imgSrcPath, { ignoreInitial: true }).on("change", (path) => imgChangeF(path, true))
+    chokidar.watch(imgSrcPath, { ignoreInitial: true }).on("add", (path) => imgChangeF(path, false))
   }
-  
+  else {
+    console.log("image-web not found. Skipping image compression.")
+  }
 
   
-  imgChangeF(imgSrcPath, false)
-  chokidar.watch(imgSrcPath, { ignoreInitial: true }).on("change", (path) => imgChangeF(path))
 
   
   

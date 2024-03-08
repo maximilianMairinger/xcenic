@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
+
 function getActiveElement(root: Document | ShadowRoot = document): Element | null {
   const activeEl = root.activeElement;
 

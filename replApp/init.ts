@@ -11,3 +11,4 @@ let { post, get } = ajaon();
   let res = await post("call")
   console.log(res)
 })()
+
