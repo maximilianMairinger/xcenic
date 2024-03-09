@@ -2,8 +2,9 @@ import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 import commonJS from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
-import dotenv from "rollup-plugin-dotenv"
-
+import dotenvPlugin from "rollup-plugin-inject-process-env"
+import dotenv from 'dotenv'
+dotenv.config()
 
 export default {
   input: 'server/src/server.ts',
@@ -18,6 +19,10 @@ export default {
       include: 'node_modules/**'
     }),
     json(),
-    dotenv()
+    dotenvPlugin({
+      MAIL_USER: process.env.MAIL_USER,
+      MAIL_PASSWORD: process.env.MAIL_PASSWORD,
+
+    })
   ]
 };
