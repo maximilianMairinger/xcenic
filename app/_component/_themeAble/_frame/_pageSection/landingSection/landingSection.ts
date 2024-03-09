@@ -158,3 +158,5 @@ export default class LandingSection extends PageSection {
 }
 
 declareComponent("landing-section", LandingSection)
+
+document.body.apd(ce("style").addClass("vidstack").html(require('vidstack/player/styles/default/theme.css').toString() + require('vidstack/player/styles/default/layouts/video.css').toString()))
