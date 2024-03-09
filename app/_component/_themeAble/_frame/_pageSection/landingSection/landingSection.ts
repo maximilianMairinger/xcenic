@@ -71,6 +71,8 @@ export default class LandingSection extends PageSection {
     })
     
 
+    // todo set unable to play when hidden. Native play/pause on device (keyboard) can still trigger play even when hidden
+
     playerOpen.get(latestLatent(async (open: boolean) => {
       const player = this.body.player as any
       if (open) {
@@ -104,15 +106,19 @@ export default class LandingSection extends PageSection {
         const f = () => {
           k1.deactivate()
           k2.deactivate()
+          k3.deactivate()
           
           playerOpen.set(false)
         }
+
 
         const k1 = document.body.on("keydown", ({key}) => {
           if (key === "Escape") f()
         })
 
         const k2 = this.body.fadeBackground.on("click", f)
+
+        const k3 = this.body.playerContainer.on("wheel", f)
 
         playerContainer.css({display: "flex"});
         await playerContainer.anim({opacity: 1})
