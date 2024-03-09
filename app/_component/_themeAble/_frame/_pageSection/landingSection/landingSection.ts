@@ -78,7 +78,7 @@ export default class LandingSection extends PageSection {
       if (open) {
         thumbnailElem.playingState.set("loading")
         console.log("can load wait")
-        await canLoad
+        // await canLoad
         console.log("can load")
         player.startLoading()
       }
