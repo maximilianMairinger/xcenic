@@ -115,10 +115,12 @@ jobs:
       if: ${{ needs.detectChanges.outputs.server == 'true' || needs.detectChanges.outputs.dependencies == 'true' || (needs.detectChanges.outputs.CD == 'true') }}
       run: npx -y pnpm i
 
-    # - name: set environment variables
-    #   uses: allenevans/set-env@v2.0.0
-    #   with:
-    #     GOOGLE_MAPS_API_KEY: '${{ secrets.MAPS_API_KEY }}'
+    - name: set environment variables
+      uses: allenevans/set-env@v2.0.0
+      with:
+        MAIL_USER: '${{ secrets.MAIL_USER }}'
+        MAIL_PASSWORD: '${{ secrets.MAIL_PASSWORD }}'
+        
     
     - name: "Building server"
       if: ${{ needs.detectChanges.outputs.server == 'true' || needs.detectChanges.outputs.dependencies == 'true' || (needs.detectChanges.outputs.CD == 'true') }}
