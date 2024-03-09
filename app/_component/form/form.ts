@@ -99,7 +99,7 @@ export default class Form extends Component<false> {
       })
 
 
-      const prom = Promise.all(this.callbacks.map(cb => cb(ob))) as Promise<any[]> & {data: {[key: string]: any}}
+      const prom = Promise.all(this.callbacks.map(async cb => cb(ob))) as Promise<any[]> & {data: {[key: string]: any}}
       prom.data = ob
 
       return prom

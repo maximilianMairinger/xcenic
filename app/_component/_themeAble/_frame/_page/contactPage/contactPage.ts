@@ -36,16 +36,21 @@ export default class ContactPage extends Page {
 
     this.formElem.submit(async (data) => {
       console.log("submit", data)
-      await fetch("/addEntry", {
+      const resp = await fetch("/addEntry", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json"
         }
-      })
-      
-      return () => {
-        console.log("later")
+      }).then(e => e.json())
+
+      if (resp.success) {
+        return () => {
+          
+        }
+      }
+      else {
+        throw new Error(resp.msg)
       }
     })
 

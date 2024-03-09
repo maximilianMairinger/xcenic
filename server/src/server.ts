@@ -29,14 +29,25 @@ setup("xcenic").then(async ({app, db}) => {
       social: Boolean,
       other: Boolean
     },
-    name: String,
+    sender: String,
     email: String
   })
 
   app.post("/addEntry", (req, res) => {
 
+    let entry: any
 
-    const entry = addEntrySani(req.body)
+    try {
+      entry = addEntrySani(req.body)
+    } catch(e) {
+      res.send({
+        msg: "Invalid entry",
+        success: false
+      })
+      console.log(req.body)
+      return
+    }
+
     if (sizeOfObject(entry) > 100000) {
       res.send({
         msg: "Entry is too big",
@@ -55,8 +66,8 @@ setup("xcenic").then(async ({app, db}) => {
     transporter.sendMail({
       from: "bot@xcenic.com",
       to: "maximilian.mairinger@xcenic.com",
-      subject: `New contact request from ${entry.name}`,
-      text: `New contact request from ${entry.name} (${entry.email}) with content:\n\n${JSON.stringify(entry.interests, null, 2)}\n\n${entry.details}`
+      subject: `New contact request from ${entry.sender}`,
+      text: `New contact request from ${entry.sender} (${entry.email}) with content:\n\n${JSON.stringify(entry.interests, null, 2)}\n\n${entry.details}`
     }, (err, info) => {
       if (err) {
         console.log(err)

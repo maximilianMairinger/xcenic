@@ -24,10 +24,10 @@ export default class LoadButton extends BlockButton {
           (ret as Promise<any[]>).then(arr => res(arr.flat())).catch((errF) => res([errF]))
         })
         
-        const intrested = cbs.then(arr => !arr.clean().empty)
+        const interested = cbs.then(arr => !arr.clean().empty)
         const doneShowAnim = this.showLoadingAnimationFor(ret as Promise<any>);
 
-        const doneAnim = intrested.then((yes) => 
+        const doneAnim = interested.then((yes) => 
           yes ? doneShowAnim.then(this.succLoading.bind(this)).catch(this.errorLoading.bind(this)) :
           doneShowAnim.then(this.stopLoading.bind(this)).catch(this.errorLoading.bind(this))
         )
