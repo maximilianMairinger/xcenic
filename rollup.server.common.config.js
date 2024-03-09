@@ -2,6 +2,7 @@ import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 import commonJS from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
+import dotenv from "rollup-plugin-dotenv"
 
 
 export default {
@@ -16,6 +17,7 @@ export default {
     commonJS({
       include: 'node_modules/**'
     }),
-    json()
+    json(),
+    dotenv()
   ]
 };

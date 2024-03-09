@@ -36,11 +36,11 @@ module.exports = () => {
                 {
                     
                     test: /\.(png|jpg|gif|jpeg|woff|woff2|eot|ttf|svg)$/,
-                    loader: 'url-loader?limit=100000000'
+                    use: 'url-loader?limit=100000000'
                 },
                 {
                     test: /\.pug$/,
-                    loader: ['raw-loader', 'pug-html-loader']
+                    use: ['raw-loader', 'pug-html-loader']
                 }
             ]
         }

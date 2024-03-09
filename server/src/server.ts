@@ -15,7 +15,6 @@ const transporter = nodemailer.createTransport({
 
 
 
-
 setup("xcenic").then(async ({app, db}) => {
 
   
