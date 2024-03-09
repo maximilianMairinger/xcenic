@@ -64,14 +64,15 @@ setup("xcenic").then(async ({app, db}) => {
 
     transporter.sendMail({
       from: "bot@xcenic.com",
-      to: "maximilian.mairinger@xcenic.com",
+      to: "corporate@xcenic.com",
       subject: `New contact request from ${entry.sender}`,
       text: `New contact request from ${entry.sender} (${entry.email}) with content:\n\n${JSON.stringify(entry.interests, null, 2)}\n\n${entry.details}`
     }, (err, info) => {
       if (err) {
-        console.log(err)
+        console.error("Mail send error")
+        console.error(err)
       } else {
-        console.log(info)
+        console.log("Mail sent")
       }
     })
 
