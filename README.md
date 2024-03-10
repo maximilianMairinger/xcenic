@@ -6,6 +6,18 @@ Public facing frontend and backend of the xcenic website.
 
 The frontend / client is referred as app. The backend as server.
 
+### Video setup
+
+```bash
+bun compressVideo.ts
+```
+
+### Image compression
+
+```bash
+npm run compressImages
+```
+
 ### Development env
 
 #### Develop app
@@ -45,23 +57,3 @@ Build everything for production
 ```
  $ npm run build
 ```
-
-#### Start
-
-Start the server with default options
-
-```
- $ npm start
-```
-
-Since this is a [npm-run-script](https://docs.npmjs.com/cli/run-script), cli options must be escaped in order to distinguish them from npm options. Simply prefix all options with **one** `--` like so: 
-
-```
- $ npm start --  --port 1234 --outageReciliance strong
-```
-
-##### CLI options
-
-Here is a list of all recognised cli options:
-
-> TODO

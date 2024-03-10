@@ -19,3 +19,4 @@ deploy.zip
 debug.log
 pnpm-lock.yaml
 .env
+public/res/vid

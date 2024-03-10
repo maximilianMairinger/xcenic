@@ -15,12 +15,18 @@ import "./../../../textBlob/textBlob"
 import { EventListener } from "extended-dom"
 import { latestLatent } from "more-proms"
 import { Data } from "josm"
-
+// import HLS from 'hls.js';
 
 
 require('vidstack/player');
-require('vidstack/player/layouts/default');
-require('vidstack/player/ui');
+require('vidstack/player/layouts');
+require('vidstack/player/ui')
+
+// import { defineCustomElement, MediaQualityRadioGroupElement, MediaSpeedRadioGroupElement } from "vidstack/elements";
+
+// defineCustomElement(MediaQualityRadioGroupElement);
+// defineCustomElement(MediaSpeedRadioGroupElement);
+
 
 
 
@@ -43,6 +49,17 @@ export default class LandingSection extends PageSection {
 
 
     
+    const player = this.body.player as any
+
+    player.addEventListener('provider-change', (event) => {
+      const provider = event.detail;
+      if (provider?.type === 'hls') {
+        // // Static import
+        // provider.library = HLS;
+        // Or, dynamic import
+        provider.library = () => import(/* webpackChunkName: "hls" */'hls.js');
+      }
+    });
 
 
     const playerOpen = new Data(false)
@@ -77,7 +94,10 @@ export default class LandingSection extends PageSection {
       const player = this.body.player as any
       if (open) {
         thumbnailElem.playingState.set("loading")
-        console.log("can load wait")
+        player.qualities.switch = 'next';
+
+
+        
         // await canLoad
         console.log("can load")
         player.startLoading()
@@ -91,8 +111,15 @@ export default class LandingSection extends PageSection {
       if (open) {
         console.log("can play wait")
         await canPlay
-        console.log("can play")
+        console.log("can play2")
         player.play()
+        
+        try {
+          player.qualities[player.qualities.length-1].selected = true
+        }
+        catch(e) {
+          console.error("cannot set quality", player.qualities)
+        }
         console.log("playing wait")
         await playing
         console.log("playing")
@@ -150,7 +177,7 @@ export default class LandingSection extends PageSection {
   }
 
   stl() {
-    return super.stl() + require('vidstack/player/styles/default/theme.css').toString() + require('vidstack/player/styles/default/layouts/video.css').toString() + require("./landingSection.css").toString()
+    return super.stl() + require("vidstack/player/styles/default/theme.css").toString() + require("vidstack/player/styles/default/layouts/video.css").toString() + require('./vidPlayer.css').toString() + require("./landingSection.css").toString()
   }
   pug() {
     return require("./landingSection.pug").default
@@ -159,4 +186,5 @@ export default class LandingSection extends PageSection {
 
 declareComponent("landing-section", LandingSection)
 
-document.body.apd(ce("style").addClass("vidstack").html(require('vidstack/player/styles/default/theme.css').toString() + require('vidstack/player/styles/default/layouts/video.css').toString()))
+const globalStyles = require("vidstack/player/styles/default/theme.css").toString() + require("vidstack/player/styles/default/layouts/video.css").toString() + require('./vidPlayer.css').toString()
+document.body.apd(ce("style").addClass("vidstack").html(globalStyles))
