@@ -117,7 +117,7 @@ export default class LandingSection extends PageSection {
         const f = () => {
           k1.deactivate()
           k2.deactivate()
-          k3.deactivate()
+          // k3.deactivate()
           
           playerOpen.set(false)
         }
@@ -129,7 +129,7 @@ export default class LandingSection extends PageSection {
 
         const k2 = this.body.fadeBackground.on("click", f)
 
-        const k3 = this.body.playerContainer.on("wheel", f)
+        // const k3 = this.body.playerContainer.on("wheel", f)
 
         playerContainer.css({display: "flex"});
         await playerContainer.anim({opacity: 1})
