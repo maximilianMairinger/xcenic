@@ -4,19 +4,38 @@ import path from "path"
 
 
 
+const sourceVidName = Bun.argv[2]
+assert(sourceVidName !== undefined, "No source video provided. Please provide one as an argument. Example: bun compressVideo.ts promoVid.mp4")
+const publicUrl = "/res/vid"
+const publicDir = path.join("public", publicUrl)
+
+
+
 
 
 const videoResolutionP = [720, 480, 360, 240]; // [2160, 1440, 1080, 720, 480, 360, 240];
 const hslSegmentLengthInS = 5
 const frameCount = 40
-const sourceVideo = "public/res/vid/promoVid.mp4"
-const distVideoDir = "public/res/vid/promoVid" 
-const distVideoName = "video.m3u8"
-const outputDir = "public/res/vid/promoVid" // # Output directory for the sprite
-const spriteUrl = '/res/vid/promoVid/prev.png'; // WITHOUT PUBLIC
 const columns = 5 // Number of thumbnails per row
 const thumbWidth = 320 // Scale width for thumbnails
+const distVideoName = "video.m3u8"
+const distSpriteName = "prev.png"
+
+
+const sourceVidWithoutExt = (() => {
+  const a = sourceVidName.split(".")
+  a.pop()
+  return a.join(".")
+})()
+const distDirName = sourceVidWithoutExt
+
+const sourceVideo = path.join(publicDir, sourceVidName)
+const distVideoDir = path.join(publicDir, distDirName)
+const outputDir = distVideoDir // # Output directory for the sprite
+const spriteUrl = path.join(publicUrl, distDirName, distSpriteName)
 const vvtOutputFile = path.join(outputDir, "prev.vtt")
+
+
 
 
 

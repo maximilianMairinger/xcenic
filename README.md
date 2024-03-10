@@ -9,7 +9,7 @@ The frontend / client is referred as app. The backend as server.
 ### Video setup
 
 ```bash
-bun compressVideo.ts
+bun compressVideo.ts promoVid.mp4
 ```
 
 ### Image compression
