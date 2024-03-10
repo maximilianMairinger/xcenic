@@ -86,7 +86,6 @@ export default class LandingSection extends PageSection {
         res()
       })
     })
-    
 
     // todo set unable to play when hidden. Native play/pause on device (keyboard) can still trigger play even when hidden
 
@@ -94,12 +93,8 @@ export default class LandingSection extends PageSection {
       const player = this.body.player as any
       if (open) {
         thumbnailElem.playingState.set("loading")
-        player.qualities.switch = 'next';
-
-
-        
+        player.qualities.switch = 'next';        
         // await canLoad
-        console.log("can load")
         player.startLoading()
       }
       else {
@@ -109,20 +104,9 @@ export default class LandingSection extends PageSection {
     }).then(async (open) => {
       const player = this.body.player as any
       if (open) {
-        console.log("can play wait")
         await canPlay
-        console.log("can play2")
         player.play()
-        
-        try {
-          player.qualities[player.qualities.length-1].selected = true
-        }
-        catch(e) {
-          console.error("cannot set quality", player.qualities)
-        }
-        console.log("playing wait")
         await playing
-        console.log("playing")
       }
       thumbnailElem.playingState.set("playing")
       return open
@@ -161,19 +145,6 @@ export default class LandingSection extends PageSection {
         playerContainer.css({display: "none"});
       }
     }))
-
-    // playerOpen.get((open) => {
-    //   if (open) {
-    //     (this.body.player as any).play()
-    //   }
-    //   else {
-    //     (this.body.player as any).pause()
-    //   }
-      
-    // })
-
-
-    
   }
 
   stl() {

@@ -13,9 +13,9 @@ const publicDir = path.join("public", publicUrl)
 
 
 
-const videoResolutionP = [720, 480, 360, 240]; // [2160, 1440, 1080, 720, 480, 360, 240];
+const videoResolutionP = [240, 360, 480, 720, 1080, 1440, 2160 ];
 const hslSegmentLengthInS = 5
-const frameCount = 40
+const frameCount = 100
 const columns = 5 // Number of thumbnails per row
 const thumbWidth = 320 // Scale width for thumbnails
 const distVideoName = "video.m3u8"
@@ -43,6 +43,7 @@ const vvtOutputFile = path.join(outputDir, "prev.vtt")
 const videoWidth = +await $`ffprobe -v error -select_streams v:0 -show_entries stream=width -of default=noprint_wrappers=1:nokey=1 ${sourceVideo}`.text()
 const videoHeight = +await $`ffprobe -v error -select_streams v:0 -show_entries stream=height -of default=noprint_wrappers=1:nokey=1 ${sourceVideo}`.text()
 const aspectRatio = videoWidth / videoHeight
+const sourceVideoPixels = videoWidth * videoHeight
 
 assert(!isNaN(aspectRatio))
 
@@ -65,8 +66,14 @@ const vidRes = videoResolutionP.map((res) => {
     width, 
     height, 
     name: `${res}p`, 
-    estimatedBandwidth: estimateBitrate(width * height) 
+    estimatedBandwidth: estimateBitrate(width * height),
+    pixels: width * height
   }
+})
+
+
+vidRes.filter(({ pixels }) => {
+  return sourceVideoPixels >= pixels
 })
 
 for (const { res, width, height, name } of vidRes) {
@@ -76,10 +83,15 @@ for (const { res, width, height, name } of vidRes) {
   await $`ffmpeg -i ${sourceVideo} -profile:v baseline -level 3.0 -s ${width}x${height} -start_number 0 -hls_time ${hslSegmentLengthInS} -hls_list_size 0 -f hls ${path.join(resolutionDir, distVideoName)}`.quiet()
 }
 
+// reverse the array so that the highest resolution is first
+vidRes.reverse()
+
 let playList = "#EXTM3U\n"
 for (const { name, width, height, estimatedBandwidth } of vidRes) {
   playList += `#EXT-X-STREAM-INF:BANDWIDTH=${estimatedBandwidth},RESOLUTION=${width}x${height}\n${name}/${distVideoName}\n`
 }
+
+vidRes.reverse()
 
 await Bun.write(path.join(distVideoDir, distVideoName), playList)
 
@@ -104,7 +116,7 @@ await makeDir(outputDir)
 console.log(`ffmpeg -i ${sourceVideo} -vf "fps=${fps},scale=${thumbWidth}:${thumbHeight},tile=${columns}x${rows}" ${outputDir}/prev.png`)
 
 // Generate the sprite
-await $`ffmpeg -i -y ${sourceVideo} -vf "fps=${fps},scale=${thumbWidth}:${thumbHeight},tile=${columns}x${rows}" ${outputDir}/prev.png`
+await $`ffmpeg -y -i ${sourceVideo} -vf "fps=${fps},scale=${thumbWidth}:${thumbHeight},tile=${columns}x${rows}" ${outputDir}/prev.png`
 
 
 // make WEBVVT file
