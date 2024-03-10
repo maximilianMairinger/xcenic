@@ -14,6 +14,8 @@ bun compressVideo.ts promoVid.mp4
 
 ```bash
 scp -r public/res/vid user@xcenic.com:/var/www/html/xcenic/master/public/res/vid
+# or
+rsync -av -e ssh --exclude='*.mp4' public/res/vid root@xcenic.com:/var/www/html/xcenic/stable/public/res/vid
 ```
 
 ### Image compression
