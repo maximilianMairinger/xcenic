@@ -12,6 +12,10 @@ The frontend / client is referred as app. The backend as server.
 bun compressVideo.ts promoVid.mp4
 ```
 
+```bash
+scp -r public/res/vid user@xcenic.com:/var/www/html/xcenic/master/public/res/vid
+```
+
 ### Image compression
 
 ```bash

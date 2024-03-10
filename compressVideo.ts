@@ -65,7 +65,7 @@ const vidRes = videoResolutionP.map((res) => {
     width, 
     height, 
     name: `${res}p`, 
-    estimatedBandwidth: 800000 
+    estimatedBandwidth: estimateBitrate(width * height) 
   }
 })
 
@@ -104,7 +104,7 @@ await makeDir(outputDir)
 console.log(`ffmpeg -i ${sourceVideo} -vf "fps=${fps},scale=${thumbWidth}:${thumbHeight},tile=${columns}x${rows}" ${outputDir}/prev.png`)
 
 // Generate the sprite
-await $`ffmpeg -i ${sourceVideo} -vf "fps=${fps},scale=${thumbWidth}:${thumbHeight},tile=${columns}x${rows}" ${outputDir}/prev.png`
+await $`ffmpeg -i -y ${sourceVideo} -vf "fps=${fps},scale=${thumbWidth}:${thumbHeight},tile=${columns}x${rows}" ${outputDir}/prev.png`
 
 
 // make WEBVVT file
@@ -141,4 +141,20 @@ function assert(condition, message = "Assertion failed") {
 
 async function makeDir(dir: string) {
   await $`mkdir -p ${path.resolve(dir)}`
+}
+
+
+function estimateBitrate(totalPixels) {
+  // Quadratic model parameters
+  const a = 8.12114114e-14;
+  const b = 2.32536486e-6;
+  const c = 0.143;
+
+  // Estimate the bitrate in Mbps using the quadratic model
+  const bitrateMbps = a * Math.pow(totalPixels, 2) + b * totalPixels + c;
+
+  // Convert Mbps to bytes per second
+  const bitrateBytes = (bitrateMbps * 1000 * 1000);
+
+  return Math.round(bitrateBytes);
 }
