@@ -63,7 +63,7 @@ setup("xcenic").then(async ({app, db}) => {
     console.log("getting entry", entry)
 
     transporter.sendMail({
-      from: "bot@xcenic.com",
+      from: process.env.MAIL_USER,
       to: "corporate@xcenic.com",
       subject: `New contact request from ${entry.sender}`,
       text: `New contact request from ${entry.sender} (${entry.email}) with content:\n\n${JSON.stringify(entry.interests, null, 2)}\n\n${entry.details}`
