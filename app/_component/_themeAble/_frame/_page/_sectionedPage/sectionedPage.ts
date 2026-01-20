@@ -67,11 +67,11 @@ export class ScrollProgressAliasIndex<Root extends string = string> {
 
   protected buildReverseAlias(aliasReverses: ReverseAliasIndex) {
     for (let alias of this.scrollProgressAliases) {
-      
+
       let aliasesLength = 0
       //@ts-ignore
       new DataCollection(alias.progress, alias.aliases, this.root).get((progress, aliases: string[], root) => {
-        if (aliasesLength !== aliases.length)  {
+        if (aliasesLength !== aliases.length) {
           aliases.ea((alias) => {
             if (aliasReverses[alias] !== undefined) {
               (aliasReverses[alias] as any).progress.set(progress);
@@ -87,12 +87,12 @@ export class ScrollProgressAliasIndex<Root extends string = string> {
           })
         }
       })
-      
+
     }
   }
 
   public static Reverse = class {
-    constructor(public readonly progress: Data<number>, public readonly root: Data<string>) {}
+    constructor(public readonly progress: Data<number>, public readonly root: Data<string>) { }
   }
 }
 
@@ -124,9 +124,9 @@ export class SimpleAlias<Root extends string = string> {
     })
   }
 
-  
+
   public static Reverse = class {
-    constructor(public readonly root: string) {}
+    constructor(public readonly root: string) { }
   }
 }
 
@@ -137,7 +137,7 @@ export class AliasList {
     this.aliases = aliases;
 
     (aliases as Alias[]).ea((alias) => {
-      (alias as Alias & {buildReverseAlias(aliasReverses: ReverseAliasIndex): void}).buildReverseAlias(this.reverseIndex)
+      (alias as Alias & { buildReverseAlias(aliasReverses: ReverseAliasIndex): void }).buildReverseAlias(this.reverseIndex)
     })
   }
   public getAllAliasesByRoot(root: string) {
@@ -164,12 +164,12 @@ export class AliasList {
 }
 
 type ReverseAliasUnion = (InstanceType<(typeof ScrollProgressAliasIndex)["Reverse"]> | InstanceType<(typeof SimpleAlias)["Reverse"]>)
-type ReverseAliasIndex = {[root: string]: ReverseAliasUnion}
+type ReverseAliasIndex = { [root: string]: ReverseAliasUnion }
 
 export type Alias = ScrollProgressAliasIndex | SimpleAlias
 
 
-type SectionIndex = {[name in Name]: HTMLElement | QuerySelector}
+type SectionIndex = { [name in Name]: HTMLElement | QuerySelector }
 type Name = string
 type FullSectionIndex = ResourcesMap | SectionIndex
 export type QuerySelector = string
@@ -178,7 +178,7 @@ export type QuerySelector = string
 
 
 
-type RenderSections = {initElemIndex?: number} & {isInPos: Data<number>, wantedPos: number, dimensions: {top: number, bot: number}, rendered: Data<boolean>, section: HTMLElement, isInWantedPos: Promise<void>}[]
+type RenderSections = { initElemIndex?: number } & { isInPos: Data<number>, wantedPos: number, dimensions: { top: number, bot: number }, rendered: Data<boolean>, section: HTMLElement, isInWantedPos: Promise<void> }[]
 export default abstract class SectionedPage extends Page {
   protected readonly sectionIndex: ResourcesMap
   public readonly sectionList: Data<string[]>
@@ -187,24 +187,24 @@ export default abstract class SectionedPage extends Page {
   protected scrollToSection: (to?: number, speed?: number, force?: boolean) => Promise<void>
   private scrollToSectionFunctionIndex = constructIndex((section: PageSection) => this.constructScrollTo(section))
 
-  public abstract iconIndex: {[key: string]: HightlightAbleIcon}
+  public abstract iconIndex: { [key: string]: HightlightAbleIcon }
 
   private currentSectionIdIndexStore = localSettings<number>("currentSectionIdIndex@" + this.baselink, 0)
   private localScrollPosStore = localSettings<number>("localScrollPos@" + this.baselink, 0)
   private currentSectionIdStore = localSettings<string>("currentSectionId@" + this.baselink, "") // TODO: use first section id as default?
 
-  constructor(sectionIndex: FullSectionIndex, private baselink: string, protected sectionChangeCallback?: (section: string) => void, protected readonly sectionAliasList: AliasList = new AliasList(), protected readonly mergeIndex: {[part in string]: string} = {}) {
+  constructor(sectionIndex: FullSectionIndex, private baselink: string, protected sectionChangeCallback?: (section: string) => void, protected readonly sectionAliasList: AliasList = new AliasList(), protected readonly mergeIndex: { [part in string]: string } = {}) {
     super()
-    
+
     let that = this
-    this.scrollToSection = function(to?: number, speed?: number, force?: boolean) {
+    this.scrollToSection = function (to?: number, speed?: number, force?: boolean) {
       if (!(this instanceof PageSection)) console.warn("Unable to scrollTo this. This is not instanceof PageSection.")
       return that.scrollToSectionFunctionIndex(this)(to, speed)
     }
 
 
-    
-    
+
+
 
 
     let r = this.prepSectionIndex(sectionIndex)
@@ -226,7 +226,7 @@ export default abstract class SectionedPage extends Page {
         let elem: any
         if (!(sectionIndex[name] instanceof HTMLElement)) elem = this.q(sectionIndex[name] as any)
         else elem = sectionIndex[name]
-  
+
         let prom = Promise.resolve(elem)
         //@ts-ignore
         prom.priorityThen = prom.then
@@ -246,7 +246,7 @@ export default abstract class SectionedPage extends Page {
       sectionList.set((dataList as any).flat().distinct())
     })
 
-    return {sectionList, sectionIndex}
+    return { sectionList, sectionIndex }
   }
 
   private merge(name: string) {
@@ -262,7 +262,7 @@ export default abstract class SectionedPage extends Page {
       this.lastSectionName = name as string
     }
   }
-  
+
   private activateSectionNameWithDomain(name: string) {
     this.activateSectionName(name)
     domain.set(name, this.domainLevel, false)
@@ -274,10 +274,10 @@ export default abstract class SectionedPage extends Page {
   tryNavigationCallback(domainFragment: string) {
 
     domainFragment = this.merge(domainFragment)
-    
+
     //@ts-ignore
     let fragments: {
-      rootElem: string, 
+      rootElem: string,
       closeUp: string
     } = {}
 
@@ -311,23 +311,23 @@ export default abstract class SectionedPage extends Page {
     const m = this.sectionIndex.get(this.currentDomainFragment = domainFragment, this.currentlyActiveSectionIdIndex = this.currentSectionIdStore.get() === fragments.rootElem ? this.currentSectionIdIndexStore.get() : 0)
     this.curSectionProm = new Promise((res) => {
       if (m) m.then((pageSection) => {
-        res({pageSection, fragments})
+        res({ pageSection, fragments })
       })
-      
+
     })
 
 
     return !!m
   }
 
-  
+
 
   private lastLocalScrollProgressStoreSubstription: DataSubscription<[number]>
   private confirmedLastScrollProgress = 0
 
   async navigationCallback() {
     let resFunc: Function
-    const funcProm = new Promise<void>((r) => {resFunc = r})
+    const funcProm = new Promise<void>((r) => { resFunc = r })
     let active = this.active
     let scrollAnimation: any
 
@@ -339,18 +339,18 @@ export default abstract class SectionedPage extends Page {
 
     this.activateSectionName(fragments.closeUp)
     this.currentlyActiveSectionRootName = fragments.rootElem
-    
+
     this.switchSectionElem(section)
 
     this.userInitedScrollEvent = false
 
-    
+
     if ((section as any).showSection !== undefined) {
       const sideEffect = (section as any).showSection()
       // if (sideEffect) this.scrollDiffCompensator.diff(sideEffect)
-    } 
+    }
     else section.show()
-    
+
     let scrollToPos = section.offsetTop;
 
 
@@ -362,14 +362,14 @@ export default abstract class SectionedPage extends Page {
         this.confirmedLastScrollProgress += this.localScrollPosStore.get()
       }
 
-      
+
 
       if (active) {
 
         let ls = this.on("keydown", (e) => {
           e.stopImmediatePropagation()
         })
-        
+
         await scrollTo(scrollToPos, {
           cancelOnUserAction: true,
           verticalOffset: this.verticalOffset,
@@ -377,18 +377,18 @@ export default abstract class SectionedPage extends Page {
           elementToScroll: this,
           easing
         })
-  
+
         ls.deactivate()
-  
+
       }
       else {
         this.scrollTop = this.verticalOffset + scrollToPos
       }
 
-  
-      
-      
-      
+
+
+
+
       if (scrollAnimation === this.inScrollAnimation.get()) {
         this.inScrollAnimation.set(undefined)
         this.userInitedScrollEvent = true
@@ -401,8 +401,8 @@ export default abstract class SectionedPage extends Page {
 
   private unreadySectionCount = new Data(0)
   private allSectionsReady = this.unreadySectionCount.tunnel((count) => count === 0)
-  private renderingSections: RenderSections = []
-  protected newSectionArrived(section: PageSection & {showSection?: () => (void | number)}, wantedPos: number) {
+  private renderingSections: RenderSections = [] as any
+  protected newSectionArrived(section: PageSection & { showSection?: () => (void | number) }, wantedPos: number) {
     const rendered = new Data(false) as Data<boolean>
     const top = section.offsetTop
 
@@ -411,16 +411,16 @@ export default abstract class SectionedPage extends Page {
 
     const isInPos = new Data() as Data<number>
     const isInWantedPos = new SyncProm((res) => {
-      
+
       const s = isInPos.get((i) => {
-        
+
         if (i === wantedPos) {
           setTimeout(() => {
             this.unreadySectionCount.set(this.unreadySectionCount.get() - 1)
             // console.log("isConfirmed", section);
-            res(); 
+            res();
           })
-          
+
           s.deactivate()
         }
       }, false)
@@ -434,59 +434,59 @@ export default abstract class SectionedPage extends Page {
       const scrollTop = this.scrollTop - this.componentBody.css("marginTop")
       const nextSib = section.nextSibling as HTMLElement
       let isAboveCurrent = wantedPos < this.renderingSections.initElemIndex
-      
+
       const sectionWillTemper = isAboveCurrent && this.confirmedLastScrollProgress < 0 && nextSib && nextSib.offsetTop && nextSib.offsetTop > scrollTop && nextSib.offsetTop < scrollTop + window.innerHeight
       let sideEffect: number
       if ((section as any).showSection !== undefined) {
         const _sideEffect = section.showSection()
-         
+
         if (_sideEffect !== undefined) {
           sideEffect = _sideEffect as any
         }
       }
       else section.show()
-      
+
       // console.log(section.offsetTop) // This is important. It forces the section to be rendered.
       if (sideEffect) {
         lastHeight = sideEffect
       }
       else {
-        lastHeight = section.offsetHeight + section.css("marginTop") + section.css("marginBottom") - lastHeight 
+        lastHeight = section.offsetHeight + section.css("marginTop") + section.css("marginBottom") - lastHeight
         if (sectionWillTemper) this.scrollTop += lastHeight
       }
 
 
       justBeforeInWantedPosScrollPos = this.scrollTop
       justBeforeInWantedPosScrollHeight = this.scrollHeight
-      
+
       calculateDimensionsAndRender()
       compensateResizeScrollDiffFromInit(section.offsetHeight)
 
 
       let first = true
-      section.on("resize", ({height}) => {
+      section.on("resize", ({ height }) => {
         if (first) {
           first = false
-          return 
+          return
         }
         if (!this.active) return
-      
+
 
         // console.log("resize", section)
-        
-        
+
+
         let localToken = globalToken = Symbol();
         compensateResizeScrollDiffFromRuntime(height).then(() => {
           if (localToken !== globalToken) return
           calculateDimensionsAndRender()
         })
-  
-  
-        
+
+
+
       })
     })
-    
-    const sec = {rendered, dimensions: {top, bot: top + section.offsetHeight}, section, isInWantedPos, isInPos, wantedPos}
+
+    const sec = { rendered, dimensions: { top, bot: top + section.offsetHeight }, section, isInWantedPos, isInPos, wantedPos }
 
     if (this.renderingSections.empty) {
       this.renderingSections[wantedPos] = sec
@@ -516,7 +516,7 @@ export default abstract class SectionedPage extends Page {
                 const prevI = i - 1
                 if (!this.renderingSections[i]) continue
                 const e = this.renderingSections[prevI] = this.renderingSections[i]
-                reverseUpdateQueue.add(() => {e.isInPos.set(prevI)})
+                reverseUpdateQueue.add(() => { e.isInPos.set(prevI) })
               }
               isInPos.set(last.index)
               this.renderingSections[last.index] = sec
@@ -540,11 +540,11 @@ export default abstract class SectionedPage extends Page {
             if (wantedPos > el.wantedPos) continue
             else {
               const reverseUpdateQueue = []
-              for (let i = this.renderingSections.length-2; i >= last.index; i--) {
+              for (let i = this.renderingSections.length - 2; i >= last.index; i--) {
                 const nextI = i + 1
                 if (!this.renderingSections[i]) continue
                 const e = this.renderingSections[nextI] = this.renderingSections[i]
-                reverseUpdateQueue.add(() => {e.isInPos.set(nextI)})
+                reverseUpdateQueue.add(() => { e.isInPos.set(nextI) })
               }
               isInPos.set(last.index)
               this.renderingSections[last.index] = sec
@@ -560,7 +560,7 @@ export default abstract class SectionedPage extends Page {
 
 
 
-    
+
     // rendered.get((rendered) => {
     //   // console.log("rendered", rendered, section)
     //   if (!rendered) section.css("containIntrinsicSize" as any, section.height() + "px")
@@ -575,7 +575,7 @@ export default abstract class SectionedPage extends Page {
     const constructResizeScrollCompensationFunction = (validator: (scrollTop: number) => boolean, calculateDiff: (height: number) => number) => {
       return (height: number): Promise<void> => {
         height = height + section.css("marginTop") + section.css("marginBottom")
-        let diff = calculateDiff(height) 
+        let diff = calculateDiff(height)
         lastHeight = height
         const scrollTop = this.scrollTop - this.componentBody.css("marginTop")
         // only compensate diff when scrolling up and the scroll event was at least once fired by the user before
@@ -588,12 +588,12 @@ export default abstract class SectionedPage extends Page {
     const compensateResizeScrollDiffFromRuntime = constructResizeScrollCompensationFunction((scrollTop) => section.offsetTop < scrollTop, (height: number) => Math.round(height - lastHeight))
     const compensateResizeScrollDiffFromInit = constructResizeScrollCompensationFunction((scrollTop) => section.offsetTop + section.offsetHeight + section.css("marginTop") + section.css("marginBottom") <= scrollTop, (height) => {
       const max = this.scrollHeight - justBeforeInWantedPosScrollHeight
-      
+
       if (max < 0) {
-        const c = this.scrollHeight - (justBeforeInWantedPosScrollPos + this.offsetHeight)  
+        const c = this.scrollHeight - (justBeforeInWantedPosScrollPos + this.offsetHeight)
         return max - c
       }
-      
+
       return Math.round(height - lastHeight)
       // return this.scrollTop - justBeforeInWantedPosScrollPos
     })
@@ -602,7 +602,7 @@ export default abstract class SectionedPage extends Page {
 
 
 
-    
+
 
     const calculateDimensionsAndRender = () => {
       const releventRenderingSection = this.renderingSections.slice(this.renderingSections.indexOf(sec))
@@ -619,8 +619,8 @@ export default abstract class SectionedPage extends Page {
 
     let globalToken: Symbol
 
-    
-    
+
+
 
   }
 
@@ -631,7 +631,7 @@ export default abstract class SectionedPage extends Page {
     scrollPos = scrollPos + this.componentBody.css("marginTop")
     const posTop = scrollPos - this.sectionRenderingMargin
     const posBot = scrollPos + this.sectionRenderingMargin + window.innerHeight
-    
+
     for (const s of renderingSections) {
       if (s === undefined) continue
       const { rendered, dimensions } = s
@@ -650,7 +650,7 @@ export default abstract class SectionedPage extends Page {
 
 
 
-    (() => {  
+    (() => {
       // this.neverScrolled = false
       // const sub = this.scrollData().get(() => {
       //   if (!this.ignoreIncScrollEventForInitialScrollDetection) {
@@ -661,7 +661,7 @@ export default abstract class SectionedPage extends Page {
       // }, false)
 
 
-      
+
       for (let i = 0; i < this.initialChilds.length; i++) {
         this.newSectionArrived(this.initialChilds[i], i)
       }
@@ -684,17 +684,17 @@ export default abstract class SectionedPage extends Page {
           else subScrollUpdate.deactivate()
         })
       })
-      
+
     })();
 
 
-    
+
 
 
     let globalToken: Symbol
     let aliasSubscriptions: DataSubscription<unknown[]>[] = []
     let localSegmentScrollDataIndex = constructIndex((pageSectionElement: PageSection) => constructIndex((endOfPage: "start" | "end" | "center" | number) => {
-      if (endOfPage === "start") return this.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop) as ScrollData 
+      if (endOfPage === "start") return this.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop) as ScrollData
       if (endOfPage === "end") return this.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop + this.innerHeight()) as ScrollData
       if (endOfPage === "center") return this.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop + this.innerHeight() / 2) as ScrollData
       if (typeof endOfPage === "number") return this.scrollData().tunnel(prog => prog - pageSectionElement.offsetTop + this.innerHeight() * endOfPage) as ScrollData
@@ -704,7 +704,7 @@ export default abstract class SectionedPage extends Page {
 
     this.mainIntersectionObserver = new IntersectionObserver(async (c) => {
       c.ea((q) => {
-        if (q.isIntersecting) { 
+        if (q.isIntersecting) {
           if (Math.abs(0 - q.boundingClientRect.y) > Math.abs(q.rootBounds.y - q.boundingClientRect.bottom)) {
             this.intersectingIndex.inject(q.target, 0)
           }
@@ -713,11 +713,11 @@ export default abstract class SectionedPage extends Page {
           }
         }
         else {
-          
+
           try {
             this.intersectingIndex.rmV(q.target)
           }
-          catch(e) {
+          catch (e) {
 
           }
         }
@@ -735,18 +735,18 @@ export default abstract class SectionedPage extends Page {
             if ((await val) === elem) {
               if (myToken !== globalToken) return
               this.currentlyActiveSectionRootName = root
-  
-  
+
+
               this.switchSectionElem(elem)
-  
+
               aliasSubscriptions.Inner("deactivate", [])
               aliasSubscriptions.clear()
-  
-  
+
+
               root = this.merge(root)
               let alias = this.sectionAliasList.getAllAliasesByRoot(root)
               if (alias) {
-  
+
                 if (alias instanceof SimpleAlias) {
                   let sub = new DataSubscription(alias.aliases.tunnel(aliases => aliases.first), this.activateSectionNameWithDomain.bind(this), false)
                   //@ts-ignore
@@ -762,42 +762,42 @@ export default abstract class SectionedPage extends Page {
                   //@ts-ignore
                   aliasSubscriptions.add(new DataCollection(...(alias.scrollProgressAliases as ScrollProgressAlias[]).Inner("progress")).get((...wantedProgresses) => {
                     currentlyTheSmallestWantedProgressTemp = Infinity
-                    
+
                     wantedProgresses.ea((wantedProgress) => {
                       if (wantedProgress < currentlyTheSmallestWantedProgressTemp) currentlyTheSmallestWantedProgressTemp = wantedProgress
                     })
-  
+
                     currentlyTheSmallestWantedProgress.set(currentlyTheSmallestWantedProgressTemp)
                   }))
-  
+
                   let lastActiveName: Data<string> = new Data()
-  
+
                   for (let i = 0; i < alias.scrollProgressAliases.length; i++) {
                     const q = alias.scrollProgressAliases[i] as ScrollProgressAlias
                     let nextProg: Data<number> = alias.scrollProgressAliases[i + 1] as any
                     if (nextProg === undefined) nextProg = new Data(Infinity)
                     else nextProg = (nextProg as any).progress
-  
+
                     let isSmallest = false
                     //@ts-ignore
                     aliasSubscriptions.add(new DataCollection(currentlyTheSmallestWantedProgress, q.progress).get((smallestProg, thisProg) => {
                       isSmallest = smallestProg === thisProg
                     }))
-  
-                    
+
+
                     let nameData = q.aliases.tunnel(aliases => aliases.first)
-  
+
                     let sub = new DataSubscription(new DataCollection(nameData, q.progress, nextProg, localSegmentScrollDataIndex(elem)(.4) as any as Data<number>) as any, (name: string, wantedProgress, nextProg, currentProgress) => {
                       if (isSmallest) {
                         wantedProgress = 0
                       }
-                      
+
                       if (wantedProgress <= currentProgress && nextProg > currentProgress) {
                         lastActiveName.set(name)
                         this.activateSectionNameWithDomain(name)
                       }
                     })
-                    
+
                     //@ts-ignore
                     aliasSubscriptions.add(sub)
                     //@ts-ignore
@@ -807,36 +807,36 @@ export default abstract class SectionedPage extends Page {
                       else sub.activate()
                     }))
                   }
-  
+
                 }
-  
+
               }
               else this.activateSectionNameWithDomain(root)
-  
+
 
               const notInit = !!this.lastLocalScrollProgressStoreSubstription
               if (notInit) {
                 this.lastLocalScrollProgressStoreSubstription.deactivate()
                 this.lastLocalScrollProgressStoreSubstription = undefined
               }
-  
+
               // this.sectionIndex.get(root).then((elem) => {
-                elem.localScrollProgressData("start").then((e) => {
-                  this.lastLocalScrollProgressStoreSubstription = e.get((e) => {
-                    this.localScrollPosStore.set(e)
-                    // this.localScrollPosStore.set.bind(this.localScrollPosStore)
-                  }, notInit)
-                })
+              elem.localScrollProgressData("start").then((e) => {
+                this.lastLocalScrollProgressStoreSubstription = e.get((e) => {
+                  this.localScrollPosStore.set(e)
+                  // this.localScrollPosStore.set.bind(this.localScrollPosStore)
+                }, notInit)
+              })
               // })
-  
-              
-  
-              
-  
+
+
+
+
+
               this.currentSectionIdStore.set(this.currentlyActiveSectionRootName)
               this.currentSectionIdIndexStore.set(this.currentlyActiveSectionIdIndex = this.sectionIndex.getAll(root).indexOf(val))
-              
-              
+
+
             }
           }
         })
@@ -852,13 +852,13 @@ export default abstract class SectionedPage extends Page {
         sec._localScrollProgressData.forEach((prom, key) => {
           prom.res(localSegmentScrollDataIndex(sec)(key))
         })
-        
+
 
         sec.localScrollProgressData = (endOfPage: "start" | "end" | "center" | number) => {
           return Promise.resolve(localSegmentScrollDataIndex(sec)(endOfPage))
         }
       }
-      
+
     })
   }
 
@@ -879,7 +879,7 @@ export default abstract class SectionedPage extends Page {
           elem = await elem as PageSection
           let el = elem.getBoundingClientRect()
 
-          
+
           if (el.top <= upperHit && el.bottom >= lowerHit) {
             if (lastHit !== elem) {
               cb(elem)
@@ -910,7 +910,7 @@ export default abstract class SectionedPage extends Page {
     let sectionRootName: string
     sectionRootName = this.sectionIndex.getLoadedKeyOfResource(section)
     let whileWaitingQueue = []
-    
+
 
     const go = async (verticalOffset: number, speed: number, force: boolean) => {
       if (this.inScrollAnimation.get() && !force) return
@@ -944,8 +944,8 @@ export default abstract class SectionedPage extends Page {
         easing
       })
 
-      
-      
+
+
 
       if (scrollAnimation === this.inScrollAnimation.get()) {
         this.inScrollAnimation.set(undefined)
@@ -953,7 +953,7 @@ export default abstract class SectionedPage extends Page {
       }
     }
 
-    
+
 
 
     return (to?: number, speed: number = scrollAnimationSpeed, force: boolean = false) => {
@@ -966,7 +966,7 @@ export default abstract class SectionedPage extends Page {
     }
   }
 
-  
+
 
 
   protected async activationCallback(active: boolean) {
@@ -978,7 +978,7 @@ export default abstract class SectionedPage extends Page {
       // let init = this.sectionAliasList.getRootOfAlias(this.domainSubscription.domain)
       // let sec = sectionIndex.get(init)
       // if (sec === undefined) return false
-    
+
       // sec.priorityThen()
       // sec.then((e: PageSection) => {
       //   let verticalOffset = padding + e.offsetTop
@@ -1018,7 +1018,7 @@ class ScrollDiffCompensator {
   private timoutId: any
   private scrollIdle = new Data(false)
   private pressingScrollbar = new Data(false)
-  private currentDiffProm: Promise<void> & {resolve: () => void}
+  private currentDiffProm: Promise<void> & { resolve: () => void }
   private working: boolean = false
 
   constructor(private page: SectionedPage) {
@@ -1053,18 +1053,18 @@ class ScrollDiffCompensator {
     })
   }
   public diff(diff: number) {
-    
+
     // This is a little hacky. For some reason you cant change scrollTop while to compensate for offset while scrolling. 
     // This is why this first resolves the diff with a negative margingTop on the scrollElementParent. And later when scroll
     // is idle resolve the diff back to the scroll position.
-    
+
     this.compensationCurrentDiff -= diff
-    
+
     if (!this.scrollIdle.get()) {
       (this.page as any).componentBody.css("marginTop", this.compensationCurrentDiff)
       if (this.currentDiffProm === undefined) {
         let r: any
-        let p = new SyncProm((resClean) => {r = resClean})
+        let p = new SyncProm((resClean) => { r = resClean })
         p.resolve = r
         return this.currentDiffProm = p
       }
@@ -1078,7 +1078,7 @@ class ScrollDiffCompensator {
       return new SyncProm((r) => r())
     }
 
-    
+
   }
   private cleanUp() {
     (this.page as any).componentBody.css("marginTop", 0)

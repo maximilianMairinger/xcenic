@@ -37,8 +37,8 @@ const titleElement = document.querySelector("title")
 const httpString = "http://"
 const httpsString = "https://"
 export const dirString = "/";
-const domIndex = [] as string[] & {setWithTrailingSlash: boolean}
-export const domainIndex = domIndex as Readonly<typeof domIndex> & {readonly setWithTrailingSlash: boolean}
+const domIndex = [] as string[] & { setWithTrailingSlash: boolean }
+export const domainIndex = domIndex as Readonly<typeof domIndex> & { readonly setWithTrailingSlash: boolean }
 
 
 function getCurrentSubDomainPath() {
@@ -66,7 +66,7 @@ function renderSubtitle(myDomainIndex: string[] = domIndex) {
     catch (e) {
       return k
     }
-    
+
   }).join(commonSubtileSeperator)
 }
 
@@ -81,7 +81,7 @@ function updateTitle() {
 
   let myDomainIndex = domIndex.clone()
   let tooMuchToTitles = false
-  while(subtitle.length > maxCharactersInTitle && myDomainIndex.length > 1) {
+  while (subtitle.length > maxCharactersInTitle && myDomainIndex.length > 1) {
     myDomainIndex.rmI(0)
     subtitle = renderSubtitle(myDomainIndex)
     tooMuchToTitles = true
@@ -94,7 +94,7 @@ function updateTitle() {
   }
 
 
-  
+
   titleElement.txt(title + subtitle)
   return title + originalSubtitle
 }
@@ -108,9 +108,9 @@ export function parseDomainIndexToDomain(domainIndex: Readonly<string[]>) {
 export function parseDomainToDomainIndex(domainIndex: string[], domain: string, level: number) {
 
   let originalLength = domainIndex.length
-  
+
   if (level < 0) {
-    level = originalLength - level    
+    level = originalLength - level
   }
   if (originalLength < level) {
     console.warn("Unexpected index: " + level + ". Replacing it with " + originalLength + ".")
@@ -119,10 +119,10 @@ export function parseDomainToDomainIndex(domainIndex: string[], domain: string, 
 
   let anyChange = false
   let subdomains = domain.split(dirString).replace(e => slugify(e))
-  
+
   domainIndex.splice(level + subdomains.length)
   if (domainIndex.length !== originalLength) anyChange = true
-  
+
   subdomains.ea((sub, i) => {
     if (sub === "") sub = undefined
     let ind = i + level
@@ -156,7 +156,7 @@ export async function set(path: string, level: number = 0, push: boolean = true,
     let currentUrlLvl = pathname.split(dirString).length
     level = level + currentUrlLvl
     if (path.startsWith("./")) path = path.slice(2)
-    while(path.startsWith("../")) {
+    while (path.startsWith("../")) {
       level--
       path = path.slice(3)
     }
@@ -171,12 +171,12 @@ export async function set(path: string, level: number = 0, push: boolean = true,
 
     if (path.startsWith(dirString)) path = path.slice(1)
   }
-  
+
   while (inDomainSet) {
     await currentDomainSet
   }
 
-  
+
   const setWithTrailingSlash = path.endsWith(dirString)
   const trailingSlashChange = setWithTrailingSlash !== domainIndex.setWithTrailingSlash
   domIndex.setWithTrailingSlash = setWithTrailingSlash
@@ -201,14 +201,14 @@ export async function set(path: string, level: number = 0, push: boolean = true,
   let endDomain = dirString + joined
   if (joined !== "") endDomain += dirString
 
-  
+
   if (notify) {
     let recall: any
     for (let keyValue of ls) {
       let r = await keyValue[1]()
       if (r) recall = r
     }
-    
+
     if (recall) {
       let { domain, domainLevel } = recall
       if (parseDomainToDomainIndex(domIndex, domain, domainLevel)) {
@@ -235,7 +235,7 @@ export async function set(path: string, level: number = 0, push: boolean = true,
 
   inDomainSet = false
   res()
-  
+
 }
 
 
@@ -266,15 +266,15 @@ type DomainFragment = string
 export function get(domainLevel: number, subscription: (domainFragment: DomainFragment) => (boolean | Promise<void> | Promise<boolean> | void), onlyInterestedInLevel?: boolean, defaultDomain?: string): DomainSubscription
 export function get(domainLevel: number, subscription: undefined | null, onlyInterestedInLevel?: boolean, defaultDomain?: string): DomainFragment
 export function get(domainLevel: number, subscription?: undefined, onlyInterestedInLevel?: boolean, defaultDomain?: string): DomainFragment
-export function get(domainLevel: number, subscription?: (domainFragment: DomainFragment) => (boolean |  Promise<void> | Promise<boolean> | void), onlyInterestedInLevel: boolean = false, defaultDomain = ""): DomainFragment | DomainSubscription {
+export function get(domainLevel: number, subscription?: (domainFragment: DomainFragment) => (boolean | Promise<void> | Promise<boolean> | void), onlyInterestedInLevel: boolean = false, defaultDomain = ""): DomainFragment | DomainSubscription {
   let calcCurrentDomain = (() => {
     let domLvl = domainLevel < 0 ? domIndex.length - domainLevel : domainLevel
     if (!onlyInterestedInLevel) {
       let myDomainIndex = domIndex.clone()
       for (let i = 0; i < domLvl; i++) {
-        myDomainIndex.shift() 
+        myDomainIndex.shift()
       }
-  
+
       let joined = parseDomainIndexToDomain(myDomainIndex)
       return dirString + (joined === "" ? defaultDomain : joined) + (domIndex.setWithTrailingSlash && joined !== "" ? dirString : "")
     }
@@ -292,13 +292,13 @@ export function get(domainLevel: number, subscription?: (domainFragment: DomainF
       if (!onlyInterestedInLevel) {
         let myDomainIndex = domIndex.clone()
         for (let i = 0; i < domLvl; i++) {
-          myDomainIndex.shift() 
+          myDomainIndex.shift()
         }
         let joined = dirString + parseDomainIndexToDomain(myDomainIndex) + (domIndex.setWithTrailingSlash ? dirString : "")
         let domain = joined === "" ? defaultDomain : joined
         await subscription(domain)
         if (joined !== domain) {
-          return {domain, domLvl}
+          return { domain, domLvl }
         }
 
       }
@@ -306,12 +306,12 @@ export function get(domainLevel: number, subscription?: (domainFragment: DomainF
         let domain = domIndex[domLvl] === undefined ? defaultDomain : domIndex[domLvl]
         await subscription(domain)
         if (domIndex[domLvl] !== domain) {
-          return {domain, domainLevel: domLvl}
+          return { domain, domainLevel: domLvl }
         }
 
       }
-      
-      
+
+
     }
 
 
@@ -319,7 +319,15 @@ export function get(domainLevel: number, subscription?: (domainFragment: DomainF
 
 
 
-    return new DomainSubscription(calcCurrentDomain, () => {
+
+    return new DomainSubscription(() => {
+      if (!onlyInterestedInLevel) {
+        return calcCurrentDomain()
+      }
+      else {
+        return domIndex[domainLevel] === undefined ? defaultDomain : domIndex[domainLevel]
+      }
+    }, () => {
       ls.set(subscription, f)
     }, () => {
       ls.delete(subscription)
@@ -330,11 +338,11 @@ export function get(domainLevel: number, subscription?: (domainFragment: DomainF
     return currentDomain
   }
 
-  
-  
-  
 
-  
+
+
+
+
 }
 
 let inUserNavigation = false
@@ -346,9 +354,9 @@ export function isInNativeUserNavigation() {
 
 
 let ls = new Map()
-window.onpopstate = async function(e) {
+window.onpopstate = async function (e) {
   inUserNavigation = true
-  while(inDomainSet) {
+  while (inDomainSet) {
     await currentDomainSet
   }
 
@@ -367,21 +375,21 @@ window.onpopstate = async function(e) {
 
   for (let keyValue of ls) {
     await keyValue[1]()
-    
+
   }
-  
-  
+
+
   inDomainSet = false
   setTimeout(() => {
     inUserNavigation = false
   })
-  
-  
+
+
   res()
 }
 
 //@ts-ignore
-window.domain = {set, get, domainIndex}
+window.domain = { set, get, domainIndex }
 
 
 
