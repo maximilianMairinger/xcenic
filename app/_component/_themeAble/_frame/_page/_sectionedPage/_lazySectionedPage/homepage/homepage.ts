@@ -14,14 +14,14 @@ import ThoughtBubbleIcon from "../../../../../_icon/_highlightAbleIcon/thoughtBu
 import RocketIcon from "../../../../../_icon/_highlightAbleIcon/rocket/rocket"
 import TeamIcon from "../../../../../_icon/_highlightAbleIcon/team/team"
 import ContactIcon from "../../../../../_icon/_highlightAbleIcon/contact/contact"
-import { AliasList, ScrollProgressAlias, ScrollProgressAliasIndex } from "../../sectionedPage"
+import { AliasList, ScrollProgressAlias, ScrollProgressAliasIndex, SimpleAlias } from "../../sectionedPage"
 import { Data } from "josm"
 
 
 
 export default class HomePage extends LazySectionedPage {
 
-  public iconIndex: {[key: string]: HightlightAbleIcon}
+  public iconIndex: { [key: string]: HightlightAbleIcon }
 
   constructor(baselink: string, sectionChangeCallback?: (section: string) => void) {
     const subsectionHeight = [new Data(300), new Data(1600)]
@@ -33,7 +33,7 @@ export default class HomePage extends LazySectionedPage {
         ), val: () => import(/* webpackChunkName: "landingSection" */"../../../../_pageSection/landingSection/landingSection")
       },
       {
-        key: new Import("lines", 1, (linesSection: typeof LinesSection) => 
+        key: new Import("lines", 1, (linesSection: typeof LinesSection) =>
           new linesSection()
         ), val: () => import(/* webpackChunkName: "linesSection" */"../../../../_pageSection/linesSection/linesSection")
       },
@@ -45,7 +45,7 @@ export default class HomePage extends LazySectionedPage {
       {
         key: new Import("services", 1, (workSection: typeof WorkSection) => {
           const sec = new workSection()
-          for (let i = 0; i < sec.serviceSection.length -1; i++) {
+          for (let i = 0; i < sec.serviceSection.length - 1; i++) {
             const subSec = sec.serviceSection[i];
             const heightData = subSec.resizeData().tunnel((rec) => rec.height)
             heightData.get(subsectionHeight[i].set.bind(subsectionHeight[i]), false)
@@ -90,6 +90,7 @@ export default class HomePage extends LazySectionedPage {
       //   ), val: () => import(/* webpackChunkName: "testSection" */"../../../../_pageSection/testSection/testSection")
       // },
     ), baselink, sectionChangeCallback, new AliasList(
+      new SimpleAlias("", ["", "video"]),
       //@ts-ignore
       new ScrollProgressAliasIndex("services", [
         new ScrollProgressAlias(0, "services/websites"),

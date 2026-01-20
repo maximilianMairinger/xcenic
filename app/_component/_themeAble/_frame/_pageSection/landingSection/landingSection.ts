@@ -15,6 +15,7 @@ import "./../../../textBlob/textBlob"
 import { EventListener } from "extended-dom"
 import { latestLatent } from "more-proms"
 import { Data } from "josm"
+import { get as getDomain, set as setDomain } from "../../../../../lib/domain"
 // import HLS from 'hls.js';
 
 
@@ -34,6 +35,23 @@ export default class LandingSection extends PageSection {
   private coverButton = (this as any).q("view-work .coverButton") as Button
   private rippleButton = this.q("view-work .rippleButton") as RippleButton
   private link = this.q("view-work c-link") as Link
+  async fullContentPaint() {
+    this.playerOpen = this.playerOpenObj.get()
+    // Check if the current domain path (level 0) is "video"
+    const parsed = getDomain(0, (fragment) => {
+      if (fragment === "video") {
+        this.playerOpenObj.set(true)
+      }
+    }, true as boolean)
+
+
+
+    // Immediate check
+    if (parsed.domain === "video") this.playerOpenObj.set(true)
+  }
+
+  private playerOpenObj: Data<boolean>
+  private playerOpen: boolean
   constructor() {
     super("light")
 
@@ -44,11 +62,11 @@ export default class LandingSection extends PageSection {
 
     this.coverButton.on("mousedown", () => {
       let release = this.rippleButton.initRipple();
-      new EventListener(this.coverButton, ["mouseup", "mouseout"], release, undefined, {once: true})
+      new EventListener(this.coverButton, ["mouseup", "mouseout"], release, undefined, { once: true })
     });
 
 
-    
+
     const player = this.body.player as any
 
     player.addEventListener('provider-change', (event) => {
@@ -62,7 +80,7 @@ export default class LandingSection extends PageSection {
     });
 
 
-    const playerOpen = new Data(false)
+    const playerOpen = this.playerOpenObj = new Data(false)
 
     const thumbnailElem = this.body.thumbnail as ThumbnailElem
     thumbnailElem.onPlay(() => {
@@ -93,12 +111,14 @@ export default class LandingSection extends PageSection {
       const player = this.body.player as any
       if (open) {
         thumbnailElem.playingState.set("loading")
-        player.qualities.switch = 'next';        
+        player.qualities.switch = 'next';
         // await canLoad
         player.startLoading()
       }
       else {
         player.pause()
+        const frag = getDomain(0)
+        if (frag === "/video/") setDomain("", 0, false)
       }
       return open
     }).then(async (open) => {
@@ -106,7 +126,7 @@ export default class LandingSection extends PageSection {
       if (open) {
         await canPlay
         player.play()
-        await playing
+
       }
       thumbnailElem.playingState.set("playing")
       return open
@@ -118,12 +138,12 @@ export default class LandingSection extends PageSection {
           k1.deactivate()
           k2.deactivate()
           // k3.deactivate()
-          
+
           playerOpen.set(false)
         }
 
 
-        const k1 = document.body.on("keydown", ({key}) => {
+        const k1 = document.body.on("keydown", ({ key }) => {
           if (key === "Escape") f()
         })
 
@@ -131,20 +151,25 @@ export default class LandingSection extends PageSection {
 
         // const k3 = this.body.playerContainer.on("wheel", f)
 
-        playerContainer.css({display: "flex"});
-        await playerContainer.anim({opacity: 1})
+        playerContainer.css({ display: "flex" });
+        await playerContainer.anim({ opacity: 1 })
       }
       else {
         thumbnailElem.playingState.set("paused")
-        await playerContainer.anim({opacity: 0})
+        await playerContainer.anim({ opacity: 0 })
       }
       return open
     }).then((open) => {
       const { playerContainer } = this.body
       if (!open) {
-        playerContainer.css({display: "none"});
+        playerContainer.css({ display: "none" });
       }
-    }))
+      return open
+    }).then(async (open) => {
+      // just for completeness
+      if (open) await playing
+      return open
+    }), false)
   }
 
   stl() {
