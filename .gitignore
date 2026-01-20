@@ -17,3 +17,8 @@ pm2Reload.js
 
 deploy.zip
 debug.log
+
+
+public/res/vid/*
+.env
+pnpm-lock.yaml
